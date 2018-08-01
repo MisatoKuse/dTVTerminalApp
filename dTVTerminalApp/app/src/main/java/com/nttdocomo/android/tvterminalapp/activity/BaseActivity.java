@@ -77,9 +77,11 @@ import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.RebuildDatabaseTableManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
@@ -92,9 +94,9 @@ import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
@@ -852,6 +854,9 @@ public class BaseActivity extends FragmentActivity implements
         if (app.getIsChangeApplicationVisible()) {
             //dアカウントチェックを呼ぶ
             chkDaccountRegist();
+
+            //ユーザー情報変更判定を呼ぶ
+            checkUserInfoChange();
         }
 
         StbConnectionManager.shared().setConnectionListener(this);
@@ -1362,6 +1367,28 @@ public class BaseActivity extends FragmentActivity implements
             }
         });
         restartDialog.showDialog();
+    }
+
+    /**
+     * エラー表示ダイアログ・OKを押した後の処理指定付き
+     *
+     * @param errorMessage 表示するエラーメッセージ
+     * @param okCallback OKボタンを押した時の処理
+     */
+    protected void showErrorDialogOfferAfterProcess(final String errorMessage
+            ,final CustomDialog.ApiOKCallback okCallback) {
+        DTVTLogger.debug("showErrorDialogOfferAfterProcess:" + errorMessage);
+        CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        errorDialog.setContent(errorMessage);
+
+        //OKを押した時の動作を指定
+        errorDialog.setOkCallBack(okCallback);
+
+        //エラーダイアログ枠外タップ不可
+        errorDialog.setOnTouchOutside(false);
+
+        //ダイアログをキューにためる処理
+        offerDialog(errorDialog);
     }
 
     /**
@@ -2753,6 +2780,58 @@ public class BaseActivity extends FragmentActivity implements
                 }
             });
         }
+    }
+
+    /**
+     * ユーザー情報が変化したかどうかを調べる処理.
+     */
+    private void checkUserInfoChange() {
+        DTVTLogger.start();
+
+        //自分のインスタンスのチェック
+        if (this instanceof StbSelectActivity
+            || this instanceof HomeActivity
+            || this instanceof LaunchActivity) {
+            //STB選択とホームの各画面は専用の処理があり、スプラッシュ画面ではそもそもチェックを行わないので、ここでは帰る
+            DTVTLogger.end("STB SELECT or HOME or Launch");
+            return;
+        }
+
+        //ユーザー情報の変更検知
+        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext()
+                , new UserInfoDataProvider.UserDataProviderCallback() {
+            @Override
+            public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> list) {
+                //ユーザー変化を見るコールバック
+                checkUserInfoChangeResult(isDataChange);
+            }
+        });
+        dataProvider.getUserInfo();
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * ユーザー情報が変化した場合は、ホーム画面に戻る処理.
+     *
+     * @param isDataChange ユーザー情報のデータプロバイダーが返したユーザー情報変更フラグ
+     */
+    private void checkUserInfoChangeResult(final boolean isDataChange) {
+        DTVTLogger.start();
+        if (isDataChange) {
+            //データ変更があった場合は、ダイアログを表示して、その後にデータクリアとホームデータ更新を行う
+            showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
+                    , new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(boolean isOK) {
+                    //OKが押された場合は、データのクリアを行う
+                    DateUtils.clearDataSave(getApplicationContext());
+                    //ホーム画面の再表示を行う
+                    reStartApplication();
+                }
+            });
+        }
+        DTVTLogger.end();
     }
 
     /**
