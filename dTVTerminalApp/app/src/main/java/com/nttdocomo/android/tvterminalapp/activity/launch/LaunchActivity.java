@@ -38,7 +38,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private boolean mIsSettingErrorNextAvctivity = false;
 
     /** 待ち時間タイマー用ハンドラー. */
-    private Handler mTimerHandler;
+    private Handler mTimerHandler = null;
     /** 待ち時間タイマー用ランナブル. */
     private Runnable mTimerRunnable = null;
     /**
@@ -47,7 +47,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private Handler mTimeoutHandler = null;
     /** タイムアウトタイマー用ランナブル. */
-    private Runnable mTimeoutRunnable;
+    private Runnable mTimeoutRunnable = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -86,16 +86,16 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onResume() {
+        //スプラッシュ画面の2秒表示用タイマーをセット
+        setFirstTimeOut();
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_splash));
 
         DTVTLogger.debug("normal exec setFirstTimeOut");
-        //スプラッシュ画面の2秒表示用タイマーをセット
-        setFirstTimeOut();
     }
 
     /**
-     * 最初に必ず2秒待つ処理
+     * 最初に必ず2秒待つ処理.
      */
     private void setFirstTimeOut() {
         if (mTimerRunnable != null) {
@@ -321,5 +321,20 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         });
 
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void onReStartCommunication() {
+        super.onReStartCommunication();
+        setFirstTimeOut();
+    }
+
+    @Override
+    protected void onStopAutoTransition() {
+        super.onStopAutoTransition();
+        if (mTimerHandler != null) {
+            mTimerHandler.removeCallbacks(mTimerRunnable);
+            mTimerRunnable = null;
+        }
     }
 }

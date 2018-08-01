@@ -275,25 +275,6 @@ public class ProcessSettingFile {
     }
 
     /**
-     * アプリを終了させる.
-     */
-    private void stopAllActivity() {
-        DTVTLogger.start();
-
-        //Androidバージョンで終了処理を使い分ける
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //finishAndRemoveTaskAPIは、タスク一覧から消すが、現在のアクティビティしか終了しない。そこでdアカウント更新時と同じように、
-            //タスク情報を消すオプションを付けてホーム画面に飛ぶ。これで画面がホーム一つに限定されるので、その後にfinishAndRemoveTaskを呼ぶ処理を行う
-            BaseActivity.forceFinishAndTaskRemove(mActivity.getApplicationContext());
-        } else {
-            //4.4ではfinishAndRemoveTaskが使えないので、この場でアプリを終了させる
-            mActivity.finishAffinity();
-        }
-
-        DTVTLogger.end();
-    }
-
-    /**
      * 実行停止ダイアログ.
      */
     private void stopAllActivityDialog() {
@@ -327,7 +308,7 @@ public class ProcessSettingFile {
             public void onOKCallback(final boolean isOK) {
                 DTVTLogger.start();
                 //自分は終わる
-                stopAllActivity();
+                mActivity.stopAllActivity();
                 DTVTLogger.end();
             }
         });

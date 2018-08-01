@@ -386,7 +386,7 @@ public class VideoTopActivity extends BaseActivity implements
         //それを代用してジャンル自体のR制限はチェックしていない.
         if(mVideoGenreListDataInfo.getGenreId() != null) {
             //初回以外は、OKを押すと前画面遷移するダイアログで表示
-            showApFinishDialog(errorMessage);
+            showFinishDialog(errorMessage);
         } else {
             //初回表示は、ホーム遷移ダイアログで表示
             showDialogToClose(this, errorMessage);
