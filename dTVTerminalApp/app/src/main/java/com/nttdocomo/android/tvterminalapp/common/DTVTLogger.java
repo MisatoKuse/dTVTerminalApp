@@ -16,7 +16,7 @@ public class DTVTLogger {
     /**
      * ログレベル debug 有効/無効(リリース版ではfalseにする事).
      */
-    private static final boolean ENABLE_LOG_DEBUG =
+    public static final boolean ENABLE_LOG_DEBUG =
             "unsigned_on".equals(BuildConfig.BUILD_TYPE) || "signed_on".equals(BuildConfig.BUILD_TYPE)
                     || "_unsigned_on".equals(BuildConfig.BUILD_TYPE) || "_signed_on".equals(BuildConfig.BUILD_TYPE);
 

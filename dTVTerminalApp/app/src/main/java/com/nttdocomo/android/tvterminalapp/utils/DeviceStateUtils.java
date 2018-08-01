@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -38,17 +39,40 @@ public class DeviceStateUtils {
      * @return ルート化Status
      */
     public static boolean isRootDevice() {
-        boolean isRoot = true;
-        try {
-            Process process = Runtime.getRuntime().exec("su");
-            process.destroy();
-            DTVTLogger.debug("DeviceStateUtils::isRootDevice===================true");
-        } catch (IOException e) {
-            //Exception発生=Root化ではない
-            DTVTLogger.debug("DeviceStateUtils::isRootDevice===================false");
-            isRoot = false;
+        //suが存在する開発端末で試験が行えなくなるため、デバッグ有効な時のみチェックする.
+        if (!DTVTLogger.ENABLE_LOG_DEBUG) {
+            boolean isRoot = true;
+
+            //su実行ができるかどうかのチェック.正常実行出来たらRootデバイスとみなす
+            try {
+                Process process = Runtime.getRuntime().exec("su");
+                process.destroy();
+                DTVTLogger.debug("DeviceStateUtils::isRootDevice===================true");
+            } catch (IOException e) {
+                //Exception発生=Root化ではない
+                DTVTLogger.debug("DeviceStateUtils::isRootDevice===================false");
+                isRoot = false;
+            }
+
+            try {
+                // suが存在しているかどうかのチェック.指定パスにsuがあればRootデバイスとみなす.
+                // 一般の商用デバイスにはsuは存在しない前提.
+                // suのパスを下記以外にうまく変えるとすり抜ける事ができるが鼬ごっこのため代表的なパスをチェックする.
+                String[] paths = {"/sbin/su", "/system/bin/su", "/system/xbin/su"};
+                for (String path : paths) {
+                    if (new File(path).exists()) {
+                        isRoot = true;
+                        break;
+                    }
+                }
+            } catch (SecurityException e) {
+                //読み取りパーミッションが無ければ失敗する.Rootデバイスとはみなさない.
+                isRoot = false;
+            }
+            return isRoot;
+        } else {
+            return false;
         }
-        return isRoot;
     }
 
     /**
