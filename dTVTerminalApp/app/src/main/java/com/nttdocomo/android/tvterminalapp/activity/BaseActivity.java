@@ -889,6 +889,12 @@ public class BaseActivity extends FragmentActivity implements
         if (app.getIsChangeApplicationInvisible()) {
             // FG → BG になったためDlnaをstopする
             DlnaManager.shared().StopDmp();
+            if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT) {
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+                if (dlnaDmsItem != null) {
+                    DlnaManager.shared().RequestRemoteDisconnect(dlnaDmsItem.mUdn);
+                }
+            }
             DTVTLogger.debug("do dlnaOnStop");
             //TODO 6/12作業保留のためコメントアウト
             // FG → BG になったため TvProgramIntentService を stop する
