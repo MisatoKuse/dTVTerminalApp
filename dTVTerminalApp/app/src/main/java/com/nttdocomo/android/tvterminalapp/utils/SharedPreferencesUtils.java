@@ -872,7 +872,7 @@ public class SharedPreferencesUtils {
         editor.putString(USER_INFO_SERIALIZABLE_DATA_KEY, preferencesData);
         editor.apply();
         //今の日時を取得日時とする
-        SharedPreferencesUtils.setSharedPreferencesUserInfoDate(context, System.currentTimeMillis());
+        SharedPreferencesUtils.setSharedPreferencesUserInfoDate(context, System.currentTimeMillis() / 1000);
         DTVTLogger.end();
     }
 

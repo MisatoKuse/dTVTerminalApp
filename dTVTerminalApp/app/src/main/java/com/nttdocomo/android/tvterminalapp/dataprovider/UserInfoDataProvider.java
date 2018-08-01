@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -199,15 +200,17 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //最終取得日時の取得
         long lastTime = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
-
+        long now = DateUtils.getNowTimeFormatEpoch();
         //現在日時が最終取得日時+1時間以下ならば、まだデータは新しい
-        if (DateUtils.getNowTimeFormatEpoch() < lastTime + DateUtils.EPOCH_TIME_ONE_HOUR) {
-            DTVTLogger.end("false");
+        DTVTLogger.end("UserInfo lastTime:" + lastTime + " now:" + now);
+        if (now < lastTime + DateUtils.EPOCH_TIME_ONE_HOUR) {
+            // ただし時刻が巻き戻った(最終取得が未来の)場合は再取得する.
+            if (now < lastTime) {
+                return true;
+            }
             return false;
         }
-
         //データは古くなった
-        DTVTLogger.end("true");
         return true;
     }
 
