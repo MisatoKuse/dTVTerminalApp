@@ -823,6 +823,7 @@ public class BaseActivity extends FragmentActivity implements
                         getApplicationContext())
                 && !ottGetAuthSwitch.isSkipPermission()) {
             if (DeviceStateUtils.isRootDevice()) {
+                onStopAutoTransition();
                 showApFinishDialog(getString(R.string.common_root_device_detection_message));
                 //Root化を検知した時点で以降の処理はしない
                 return;
@@ -2334,7 +2335,26 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * タスク一覧にアプリ情報を残さずに終了する為の準備
+     * アプリを終了させる.
+     */
+    public void stopAllActivity() {
+        DTVTLogger.start();
+
+        //Androidバージョンで終了処理を使い分ける
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //finishAndRemoveTaskAPIは、タスク一覧から消すが、現在のアクティビティしか終了しない。そこでdアカウント更新時と同じように、
+            //タスク情報を消すオプションを付けてホーム画面に飛ぶ。これで画面がホーム一つに限定されるので、その後にfinishAndRemoveTaskを呼ぶ処理を行う
+            forceFinishAndTaskRemove(getApplicationContext());
+        } else {
+            //4.4ではfinishAndRemoveTaskが使えないので、この場でアプリを終了させる
+            finishAffinity();
+        }
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * タスク一覧にアプリ情報を残さずに終了する為の準備.
      *
      * @param context コンテキスト
      */
@@ -2347,7 +2367,7 @@ public class BaseActivity extends FragmentActivity implements
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         //ホーム画面起動後にfinishAndRemoveTaskを行わせるフラグのセット
-        intent.putExtra(FORCE_FINISH,true);
+        intent.putExtra(FORCE_FINISH, true);
 
         context.startActivity(intent);
 
@@ -2366,7 +2386,7 @@ public class BaseActivity extends FragmentActivity implements
             super.startActivity(intent);
 
             //STB再起動パラメータの取得
-            boolean stbRestart = intent.getBooleanExtra(STB_SELECT_ACTIVITY_RESTART,false);
+            boolean stbRestart = intent.getBooleanExtra(STB_SELECT_ACTIVITY_RESTART, false);
             //STB再起動パラメータがfalseの場合、dアカウント処理を行う
             if (!stbRestart) {
                 //dアカウントアプリのバインドを解除する
@@ -2418,12 +2438,14 @@ public class BaseActivity extends FragmentActivity implements
                 if (RuntimePermissionUtils.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
                     // ・パーミッション要求ダイアログが拒否された場合（「今後は確認しない」チェックなし）
                     // ・一度は許可したが設定アプリから拒否された場合
+                    onStopAutoTransition();
                     SharedPreferencesUtils.setSharedPreferencesIsDisplayedPermissionDialogTwice(mContext);
                     offerDialog(createPermissionDetailDialog());
                 } else {
                     // ・初めてパーミッション要求ダイアログが表示された場合
                     // ・パーミッション要求ダイアログが拒否された場合（「今後は確認しない」チェックあり）
                     if (!SharedPreferencesUtils.getSharedPreferencesIsDisplayedPermissionDialogTwice(mContext)) {
+                        onStopAutoTransition();
                         // 「今後は確認しない」チェックなし
                         offerDialog(createPermissionDetailDialog());
                     } else {
@@ -2467,15 +2489,13 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         dialog.setOnTouchOutside(false);
         dialog.setCancelable(false);
-        // TODO 文言は仮実装
         dialog.setContent(this.getResources().getString(R.string.permission_denied_dialog_content));
-        // TODO 文言は仮実装
         dialog.setTitle(this.getResources().getString(R.string.permission_denied_dialog_title));
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
                 mShowDialog = null;
-                finishAffinity();
+                stopAllActivity();
             }
         });
         DTVTLogger.end();
@@ -2503,10 +2523,16 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                //Serviceでダウンロード中のタスクもキャンセル
-                DownloadDataProvider.cancelAll();
-                mShowDialog = createPermissionDeniedDialog();
-                mShowDialog.showDialog();
+                //アプリ終了.
+                //Androidバージョンで終了処理を使い分ける
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //finishAndRemoveTaskAPIは、タスク一覧から消すが、現在のアクティビティしか終了しない。そこでdアカウント更新時と同じように、
+                    //タスク情報を消すオプションを付けてホーム画面に飛ぶ。これで画面がホーム一つに限定されるので、その後にfinishAndRemoveTaskを呼ぶ処理を行う
+                    BaseActivity.forceFinishAndTaskRemove(mActivity.getApplicationContext());
+                } else {
+                    //4.4ではfinishAndRemoveTaskが使えないので、この場でアプリを終了させる
+                    mActivity.finishAffinity();
+                }
             }
         });
         dialog.setContent(this.getResources().getString(
@@ -2519,7 +2545,6 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * permissionの用途を表示するダイアログ.
-     * TODO 文言は仮実装
      *
      * @return 表示するCustomDialog
      */
@@ -2571,6 +2596,7 @@ public class BaseActivity extends FragmentActivity implements
                 onReStartCommunication();
             } else {
                 // 海外通信
+                onStopAutoTransition();
                 showTransoceanicCommunicationDialog();
                 mShowDialog = createTransoceanicCommunicationDialog();
                 mShowDialog.showDialog();
@@ -2580,6 +2606,14 @@ public class BaseActivity extends FragmentActivity implements
             onReStartCommunication();
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 自動画面遷移の停止.
+     * 共通のダイアログを表示するタイミングでコールする.
+     */
+    protected void onStopAutoTransition() {
+        //自動的に画面遷移させるような画面はオーバーライドして処理を実装する事.
     }
 
     /**
@@ -2623,8 +2657,8 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 通信可能通知.
      * onResume処理及び止めた通信の再開処理を行う.
-     * TODO 各ActivityはこのメソッドをOverrideしてResume処理を行う.
-     * TODO ※必ずBaseActivityのメソッドを呼び出してから各ActivityのResume処理を行う
+     *  各ActivityはこのメソッドをOverrideしてResume処理を行う.
+     *  ※必ずBaseActivityのメソッドを呼び出してから各ActivityのResume処理を行う
      */
     protected void onStartCommunication() {
         DTVTLogger.start();
@@ -2907,6 +2941,28 @@ public class BaseActivity extends FragmentActivity implements
         apFinishDialog.setContent(errorMessage);
         apFinishDialog.showDialog();
         apFinishDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+            @Override
+            public void allDismissCallback() {
+                stopAllActivity();
+            }
+            @Override
+            public void otherDismissCallback() {
+                //NOP
+            }
+        });
+    }
+
+    /**
+     * 前画面遷移ダイアログ.
+     *
+     * (ベースアクティビティ以外でも使用する為、パブリックに変更)
+     * @param errorMessage エラーメッセージ
+     */
+    public void showFinishDialog(final String errorMessage) {
+        CustomDialog finishDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        finishDialog.setContent(errorMessage);
+        finishDialog.showDialog();
+        finishDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
             @Override
             public void allDismissCallback() {
                 finish();
