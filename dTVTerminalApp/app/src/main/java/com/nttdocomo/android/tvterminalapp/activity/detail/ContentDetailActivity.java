@@ -1620,6 +1620,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             }
                         }
                     }
+                    String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
+                    if (mViewIngType == null) {
+                        mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, null);
+                    }
                     responseResultCheck(mViewIngType, mContentsType);
                 } else {
                     showErrorDialog(ErrorType.roleListGet);
@@ -3006,6 +3010,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
         String contractStatus = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
         ContentUtils.ContentsDetailUserType detailUserType = ContentUtils.getContentDetailUserType(userState, connectionStatus, contractStatus);
+        if (contentsType != null) {
+            shapeViewType(detailUserType, contentsType, mViewIngType);
+        }
         if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_LOGOUT)) {
             loginNgDisplay();
             Button button = setThumbnailMessage(getString(R.string.contents_detail_login_message), getString(R.string.contents_detail_login_button), true, true);
@@ -3172,6 +3179,41 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * ひかり未契約の場合視聴可否を視聴不可に変更.
+     * @param detailUserType コンテンツ詳細ユーザタイプ
+     * @param contentsType コンテンツタイプ
+     * @param viewIngType 視聴可否種別
+     */
+    private void shapeViewType(final ContentUtils.ContentsDetailUserType detailUserType,
+                              final ContentUtils.ContentsType contentsType,
+                              final ContentUtils.ViewIngType viewIngType) {
+        switch (contentsType) {
+            case HIKARI_TV_NOW_ON_AIR:
+            case HIKARI_TV_VOD:
+            case HIKARI_TV_WITHIN_TWO_HOUR:
+            case HIKARI_IN_DCH:
+            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
+            case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
+            case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH_MISS:
+            case HIKARI_IN_DCH_RELATION:
+            case HIKARI_IN_DTV:
+            case HIKARI_TV:
+                //ひかり未契約の場合視聴可否を視聴不可に変更
+                if (viewIngType == ContentUtils.ViewIngType.NONE_STATUS
+                        && (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_INSIDE_HIKARI_NO_CONTRACT)
+                        || detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_NO_CONTRACT)
+                        || detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_NO_CONTRACT))
+                        ) {
+                    mViewIngType = ContentUtils.ViewIngType.DISABLE_WATCH;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     /**
