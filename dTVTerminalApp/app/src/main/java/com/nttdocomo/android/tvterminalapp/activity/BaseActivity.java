@@ -2798,12 +2798,13 @@ public class BaseActivity extends FragmentActivity implements
         }
 
         //ユーザー情報の変更検知
-        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext()
-                , new UserInfoDataProvider.UserDataProviderCallback() {
+        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(),
+                new UserInfoDataProvider.UserDataProviderCallback() {
             @Override
-            public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> list) {
-                //ユーザー変化を見るコールバック
-                checkUserInfoChangeResult(isDataChange);
+            public void userInfoListCallback(final boolean isDataChange,
+                 final List<UserInfoList> list, final boolean isContractChange) {
+                //契約変化を見るコールバック
+                checkUserInfoChangeResult(isContractChange);
             }
         });
         dataProvider.getUserInfo();
@@ -2812,13 +2813,13 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * ユーザー情報が変化した場合は、ホーム画面に戻る処理.
+     * 契約情報が変化した場合は、ホーム画面に戻る処理.
      *
-     * @param isDataChange ユーザー情報のデータプロバイダーが返したユーザー情報変更フラグ
+     * @param isContractChange ユーザー情報のデータプロバイダーが返した契約情報変更フラグ
      */
-    private void checkUserInfoChangeResult(final boolean isDataChange) {
+    private void checkUserInfoChangeResult(final boolean isContractChange) {
         DTVTLogger.start();
-        if (isDataChange) {
+        if (isContractChange) {
             //データ変更があった場合は、ダイアログを表示して、その後にデータクリアとホームデータ更新を行う
             showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
                     , new CustomDialog.ApiOKCallback() {

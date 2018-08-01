@@ -1160,22 +1160,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> userList) {
-        //ユーザー情報の変更を確認
-        if (isDataChange) {
+    public void userInfoListCallback(final boolean isDataChange,
+        final List<UserInfoList> userList, final boolean isContractChange) {
+        //契約情報の変更を確認
+        if (isContractChange) {
             //データ変更があった場合は、ダイアログを表示して、その後に処理を行う
             showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
                     , new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(boolean isOK) {
                     //OKが押された場合は、ユーザー情報処理の既存処理を実行する
-                    // (ソースチェックがisDataChangeが常にtrueと警告するが、isDataChangeの値を使用する事を明示する為、変更は行わない)
                     userInfoListCallbackResult(isDataChange,userList);
                 }
             });
         } else {
             //ユーザー情報に変化が無ければ、そのままユーザー情報処理の既存処理を実行する
-            // (ソースチェックがisDataChangeが常にfalseと警告するが、isDataChangeの値を使用する事を明示する為、変更は行わない)
             userInfoListCallbackResult(isDataChange,userList);
         }
     }

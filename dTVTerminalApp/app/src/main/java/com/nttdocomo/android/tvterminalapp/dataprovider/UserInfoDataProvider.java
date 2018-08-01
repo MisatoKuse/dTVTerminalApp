@@ -97,9 +97,11 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         /**
          * ユーザー情報一覧用コールバック.
          *@param isDataChange データ更新
-         * @param list コンテンツリスト
+         *@param list コンテンツリスト
+         *@param isUserContractChange 契約情報変更
          */
-        void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> list);
+        void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> list,
+                                  final boolean isUserContractChange);
     }
 
     /**
@@ -263,8 +265,24 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             }
         }
 
+        //旧契約情報の取得
+        String oldContractInfo = SharedPreferencesUtils.getSharedPreferencesContractInfo(mContext);
+
+        //新契約情報の取得
+        String newContractInfo = UserInfoUtils.getUserContractInfo(tmpUserInfoLists);
+
+        //契約情報の変化・変わっているならばtrue
+        boolean contractAnswer = false;
+
+        //新旧契約情報の比較・契約無しの場合は"none"が入るので、単純な比較で契約情報の変更は検出できる
+        if (!newContractInfo.equals(oldContractInfo)) {
+            //新旧の契約情報が違うので、trueにする
+            contractAnswer = true;
+        }
+
         //結果を返すコールバックを呼ぶ(userInfoListsはfinal付与の余波でヌルのままになる場合があるので、ここはtmpUserInfoListsを指定)
-        mUserDataProviderCallback.userInfoListCallback(isChangeAge, tmpUserInfoLists);
+        mUserDataProviderCallback.userInfoListCallback(isChangeAge, tmpUserInfoLists
+                , contractAnswer);
 
         DTVTLogger.end();
     }
