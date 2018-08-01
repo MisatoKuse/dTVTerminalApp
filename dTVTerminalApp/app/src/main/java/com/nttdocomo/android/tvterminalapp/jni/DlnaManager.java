@@ -554,7 +554,7 @@ public class DlnaManager {
      * リモート切断を行う.
      * @param udn udn
      */
-    private void RequestRemoteDisconnect(final String udn) {
+    public void RequestRemoteDisconnect(final String udn) {
         requestRemoteDisconnect(udn);
     }
 
