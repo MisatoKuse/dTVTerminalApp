@@ -2314,7 +2314,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //mIsSend に因らず毎回判定する
                 && mThumbnailContractButtonClicked ) {
             DTVTLogger.debug("contract button clicked.");
-            mThumbnailContractButtonClicked = false;
             //「契約する」ボタンの動線でのサービスアプリ連携判定
             switch (mDetailData.getServiceId()) {
                 case ContentUtils.DTV_CONTENTS_SERVICE_ID: // dTV
@@ -2371,7 +2370,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     String validLicenseId = "";
                     //現在Epoch秒
                     long nowDate = DateUtils.getNowTimeFormatEpoch();
-                    //ひかりアプリ起動フラグ、くるくる処理ちゃんと消えるため
+                    //購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合:true
                     boolean isLicensedRentalVod = false;
                     DTVTLogger.debug(String.format("start application HikariTvCategoryHikaritvVod: bvflg=0, puid=%s", puid));
                     for (String liinf : liinfArray) {
@@ -2398,15 +2397,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             }
                         }
                     }
-                    if (!isLicensedRentalVod) {
-                        DTVTLogger.debug("licenseId is not match!");
-                        // TODO: DREM-3097 （正式回答までiOS側に合わせる：有効なライセンスが見つからなかった場合はlicense_idは渡さない）
-                        validLicenseId = "";
+                    //購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
+                    if (isLicensedRentalVod) {
+                        DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s)",
+                                validLicenseId, mDetailFullData.getCid(), mDetailFullData.getCrid()));
+                        requestStartApplicationHikariTvCategoryHikaritvVod(validLicenseId,
+                                mDetailFullData.getCid(), mDetailFullData.getCrid());
+                    } else {
+                        DTVTLogger.debug("license_id is not match!");
+                        DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryDtvSvod(%s)",
+                                mDetailFullData.getCrid()));
+                        // ひかりTV内VOD(dTV含む)のシリーズ
+                        requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
                     }
-                    DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s)",
-                            validLicenseId, mDetailFullData.getCid(), mDetailFullData.getCrid()));
-                    requestStartApplicationHikariTvCategoryHikaritvVod(validLicenseId,
-                            mDetailFullData.getCid(), mDetailFullData.getCrid());
                 } else {
                     if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.GONE);
@@ -2501,6 +2504,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     break;
             }
         }
+        //「契約する」ボタンが押下された契機でリモコンが表示されていた場合は押下フラグを下げる。
+        // （「契約する」ボタンの押下を判定してmIsSend に因らず毎回、ひかりTVアプリの連携起動するため）
+        mThumbnailContractButtonClicked = false;
         super.onEndRemoteControl();
     }
     //endregion
