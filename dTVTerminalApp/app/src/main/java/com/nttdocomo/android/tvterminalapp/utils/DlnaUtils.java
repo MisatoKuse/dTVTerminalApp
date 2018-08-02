@@ -336,15 +336,15 @@ public class DlnaUtils {
                 } else if (remainingDays <= REMAINING_ZERO_DAYS) {
                     // 残り0日を切った場合、期限切れ又は当日メッセージ.期限切れは接続できなくなるので厳密に判定しておく
                     if (DateUtils.isExpired(expireDate)) {
-                        if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_FOUR) {
+                        if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_FIVE) {
                             msg = context.getString(R.string.remote_expired_message);
                         }
-                        SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
+                        SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FIVE);
                     } else {
-                        if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_FIVE) {
+                        if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_FOUR) {
                             msg = context.getString(R.string.remote_remaining_zero_day_message);
                         }
-                        SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FIVE);
+                        SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
                     }
                 }
             }
