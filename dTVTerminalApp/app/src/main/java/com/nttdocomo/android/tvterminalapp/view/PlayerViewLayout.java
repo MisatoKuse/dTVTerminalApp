@@ -556,9 +556,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * @param isShow true 表示　false 非表示
      */
     public void showPlayingProgress(final boolean isShow) {
-        if (mIsLocalPlay) {
-            return;
-        }
         if (mProgressBar == null) {
             mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyle);
             LayoutParams layoutParams = new LayoutParams(
@@ -690,6 +687,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
             case MediaPlayerDefinitions.PE_START_BUFFERING:
             case MediaPlayerDefinitions.PE_START_RENDERING:
+                if (mIsLocalPlay && mProgressBar.getVisibility() == GONE) {
+                    showPlayingProgress(true);
+                }
                 mReconnectStartTime = 0;
                 mDmsDisconnectedTime = 0;
                 break;
@@ -1255,11 +1255,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mSecureVideoPlayer.init(mPlayerController);
         initPlayerView();
         setCanPlay(true);
-        if (playStartPosition == 0) {
-            playStart(true);
-        } else {
-            playPause();
-        }
+        playStart(true);
         DTVTLogger.end();
     }
 

@@ -422,13 +422,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mPlayerData == null || mPlayerData.isRemote()) {
                     setRemotePlayArrow(mPlayerData);
                 } else {
-                    if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                        showPlayIcon(false);
-                        mContractLeadingView.setVisibility(View.GONE);
-                        mThumbnail.setVisibility(View.GONE);
-                        mPlayerViewLayout.setPlayerEvent();
-                        mPlayerViewLayout.setUserAgeInfo();
-                        mThumbnailBtn.setVisibility(View.GONE);
+                    if (mPlayerData.isIsLive()) {
+                        if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
+                            showPlayIcon(false);
+                            mContractLeadingView.setVisibility(View.GONE);
+                            mThumbnail.setVisibility(View.GONE);
+                            mPlayerViewLayout.setPlayerEvent();
+                            mPlayerViewLayout.setUserAgeInfo();
+                            mThumbnailBtn.setVisibility(View.GONE);
+                        }
+                    } else {
+                        setRemotePlayArrow(mPlayerData);
                     }
                 }
             } else {
@@ -3361,33 +3365,38 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 @Override
                 public void onClick(final View v) {
                     if (isFastClick()) {
-                        switch (StbConnectionManager.shared().getConnectionStatus()) {
-                            case NONE_LOCAL_REGISTRATION:
-                                showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
-                                break;
-                            case HOME_OUT:
-                                if (mDetailFullData != null) {
-                                    mPlayerData = null;
-                                    showRemotePlayingProgress(true);
-                                    getMultiChannelData();
-                                } else {
-                                    if (playData != null) {
+                        if (mPlayerData != null
+                                && (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == mPlayerData.getDownLoadStatus())) {
+                            initPlayer(playData);
+                        } else {
+                            switch (StbConnectionManager.shared().getConnectionStatus()) {
+                                case NONE_LOCAL_REGISTRATION:
+                                    showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
+                                    break;
+                                case HOME_OUT:
+                                    if (mDetailFullData != null) {
+                                        mPlayerData = null;
+                                        showRemotePlayingProgress(true);
+                                        getMultiChannelData();
+                                    } else {
+                                        if (playData != null) {
+                                            initPlayer(playData);
+                                        }
+                                    }
+                                    break;
+                                case HOME_OUT_CONNECT:
+                                case HOME_IN:
+                                    if (playData == null) {
+                                        showRemotePlayingProgress(true);
+                                        getMultiChannelData();
+                                    } else {
                                         initPlayer(playData);
                                     }
-                                }
-                                break;
-                            case HOME_OUT_CONNECT:
-                            case HOME_IN:
-                                if (playData == null) {
-                                    showRemotePlayingProgress(true);
-                                    getMultiChannelData();
-                                } else {
-                                    initPlayer(playData);
-                                }
-                                break;
-                            case NONE_PAIRING:
-                            default:
-                                break;
+                                    break;
+                                case NONE_PAIRING:
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
