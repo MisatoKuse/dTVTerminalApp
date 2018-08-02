@@ -190,7 +190,7 @@ public class ProgramDataManager {
             DataBaseManager databaseManager = DataBaseManager.getChInstance();
             synchronized (databaseManager) {
                 try {
-                    SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
+                    SQLiteDatabase database = databaseManager.openChDatabase();
                     database.acquireReference();
                     TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
