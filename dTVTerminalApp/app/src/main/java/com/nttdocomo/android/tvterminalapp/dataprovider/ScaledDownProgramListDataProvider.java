@@ -696,9 +696,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         chNos[i] = fromWebAPI.get(i);
                     }
                     if (isTvProgramList) {
-                        mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-                        mTvScheduleWebClient.setChannelNoList(chNos, dateList, filter);
-                        mTvScheduleWebClientLinkedList.offer(mTvScheduleWebClient);
+                        //キューに仕込む分はローカル変数を作成する(中断処理が別系統となるため)
+                        TvScheduleWebClient tvScheduleWebClient = new TvScheduleWebClient(mContext);
+                        tvScheduleWebClient.setChannelNoList(chNos, dateList, filter);
+                        mTvScheduleWebClientLinkedList.offer(tvScheduleWebClient);
                         pollTvScheduleWebClient();
                     } else {
                         mTvScheduleWebClient = new TvScheduleWebClient(mContext);
@@ -773,6 +774,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     public void enableConnect() {
         DTVTLogger.start();
         mIsStop = false;
+        //通信再開時は番組リスト取得中フラグを初期化する
+        mIsTvScheduleRequest = false;
         if (mChannelWebClient != null) {
             mChannelWebClient.enableConnection();
         }
