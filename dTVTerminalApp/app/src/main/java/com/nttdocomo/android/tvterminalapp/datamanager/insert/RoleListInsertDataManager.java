@@ -72,7 +72,7 @@ public class RoleListInsertDataManager {
                 }
                 //データ保存日時を格納
                 DateUtils dateUtils = new DateUtils(mContext);
-                dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
+                dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             } catch (SQLiteException e) {
                 DTVTLogger.debug("RoleListInsertDataManager::insertRoleList, e.cause=" + e.getCause());
             } finally {
