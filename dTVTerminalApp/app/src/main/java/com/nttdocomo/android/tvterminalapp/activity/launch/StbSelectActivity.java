@@ -637,11 +637,17 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         //ペアリングしてるので、タイマーを解除する.
         stopCallbackTimer();
+        RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(dip2px(162), dip2px(44));
+        imageLayoutParams.setMargins(0, 0, 0, dip2px(16));
+        imageLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        imageLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        imageLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE | RelativeLayout.ALIGN_BOTTOM);
+        mPairingImage.setLayoutParams(imageLayoutParams);
+        mPairingImage.setImageResource(R.mipmap.startup_icon_03);
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
             super.sendScreenView(getString(R.string.str_stb_pairing));
-
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
             //次回表示しないTextView表示フラグをTRUEにする
@@ -651,8 +657,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mCheckMark.setVisibility(View.GONE);
                 mParingDevice.setVisibility(View.GONE);
             }
+            enableHeaderBackIcon(false);
+            enableStbStatusIcon(false);
+            enableGlobalMenuIcon(false);
             TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
-
             //Android5.0未満の表示問題対策
             fixStatusTextView(statusSetting);
 
