@@ -778,7 +778,7 @@ public class SharedPreferencesUtils {
         editor.putString(VIDEO_GENRE_LIST_DATA, genreData);
         editor.apply();
         DateUtils dateUtils = new DateUtils(context);
-        dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+        dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
         DTVTLogger.end();
     }
 

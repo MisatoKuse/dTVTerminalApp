@@ -92,7 +92,7 @@ public class ChannelInsertDataManager {
                 }
                 //データ保存日時を格納
                 DateUtils dateUtils = new DateUtils(mContext);
-                dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+                dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
                 database.setTransactionSuccessful();
             } catch (SQLiteException e) {
                 DTVTLogger.debug("ChannelInsertDataManager::insertChannelInsertList, e.cause=" + e.getCause());

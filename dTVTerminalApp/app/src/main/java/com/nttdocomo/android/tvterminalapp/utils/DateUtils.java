@@ -31,277 +31,165 @@ import java.util.TimeZone;
  */
 public class DateUtils {
 
-    /**
-     * Context.
-     */
+    /** Context. */
     private Context mContext = null;
 
-    /**
-     * VodClipList取得日付キー.
-     */
+    /** VodClipList取得日付キー. */
     public static final String VOD_LAST_INSERT = "VodLastInsert";
 
-    /**
-     * TV_LAST_INSERT.
-     */
+    /** TV_LAST_INSERT. */
     public static final String TV_LAST_INSERT = "TvLastInsert";
 
-    /**
-     * DailyRankList取得日付キー.
-     */
+    /** DailyRankList取得日付キー. */
     public static final String DAILY_RANK_LAST_INSERT = "DailyRankLastInsert";
 
-    /**
-     * ChannelList取得日付キー.
-     */
+    /** ChannelList取得日付キー. */
     public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
 
-    /**
-     * ホームのおすすめ番組取得日付キー.
-     */
+    /** ホームのおすすめ番組取得日付キー. */
     public static final String RECOMMEND_HOME_CH_LAST_INSERT = "RecommendHomeChLastInsert";
 
-    /**
-     * ホームのおすすめビデオ取得日付キー.
-     */
+    /** ホームのおすすめビデオ取得日付キー. */
     public static final String RECOMMEND_HOME_VD_LAST_INSERT = "RecommendHomeVdLastInsert";
 
-    /**
-     * おすすめ番組取得日付キー.
-     */
+    /** おすすめ番組取得日付キー. */
     public static final String RECOMMEND_CH_LAST_INSERT = "RecommendChLastInsert";
 
-    /**
-     * おすすめビデオ取得日付キー.
-     */
+    /** おすすめビデオ取得日付キー. */
     public static final String RECOMMEND_VD_LAST_INSERT = "RecommendVdLastInsert";
 
-    /**
-     * TvScheduleList取得日付キー.
-     */
+    /** TvScheduleList取得日付キー. */
     public static final String TV_SCHEDULE_LAST_INSERT = "TvScheduleLastInsert";
 
-    /**
-     * UserInfo取得日付キー.
-     */
+    /** UserInfo取得日付キー. */
     public static final String USER_INFO_LAST_INSERT = "UserInfoLastInsert";
 
-    /**
-     * WeeklyRank取得日付キー.
-     */
+    /** WeeklyRank取得日付キー. */
     public static final String WEEKLY_RANK_LAST_INSERT = "WeeklyRankLastInsert";
 
-    /**
-     * VideoRank取得日付キー.
-     */
+    /** VideoRank取得日付キー. */
     public static final String VIDEO_RANK_LAST_INSERT = "VideoRankLastInsert";
 
-    /**
-     * おすすめdTV取得日付キー.
-     */
+    /** おすすめdTV取得日付キー. */
     public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
 
-    /**
-     * おすすめdチャンネル取得日付キー.
-     */
+    /** おすすめdチャンネル取得日付キー. */
     public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
 
-    /**
-     * おすすめdTV取得日付キー.
-     */
+    /** おすすめdTV取得日付キー. */
     public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
 
-    /**
-     * 視聴中ビデオ一覧日付キー.
-     */
+    /** 視聴中ビデオ一覧日付キー. */
     public static final String WATCHING_VIDEO_LIST_LAST_INSERT = "WatchingVideoListLastInsert";
 
-    /**
-     * 購入済みVOD取得日付キー.
-     */
+    /** 購入済みVOD取得日付キー. */
     public static final String RENTAL_VOD_LAST_UPDATE = "RentalVodLastUpdate";
 
-    /**
-     * 購入済みチャンネル取得日付キー.
-     */
+    /** 購入済みチャンネル取得日付キー. */
     public static final String RENTAL_CHANNEL_LAST_UPDATE = "RentalChannelLastUpdate";
 
-    /**
-     * チャンネル取得日付キー.
-     */
+    /** チャンネル取得日付キー. */
     public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
 
-    /**
-     * DLNAブラウズ取得日付キー.
-     */
+    /** DLNAブラウズ取得日付キー. */
     public static final String DLNA_BROWSE_UPDATE = "DlnaBrowseLastUpdate";
 
-    /**
-     * ロールリスト取得日付キー.
-     */
+    /** ロールリスト取得日付キー. */
     public static final String ROLELIST_LAST_UPDATE = "RoleListLastUpdate";
 
-    /**
-     * 番組表取得日付キー.
-     */
+    /** 番組表取得日付キー. */
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 
-    /**
-     * SharedPreferences用データ.
-     */
+    /** SharedPreferences用データ. */
     private static final String DATA_SAVE = "DataSave";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     private static final String DATE_PATTERN_UNTIL_MINUTE = "yyyy/MM/dd HH:mm";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) HH:mm";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_NOMARK_YYYYMMDD = "yyyyMMdd";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_YYYY_MM_DDHHMMSS = "yyyy/MM/ddHH:mm:ss";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_PATTERN_HYPHEN = "yyyy-MM-dd HH:mm:ss";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     private static final String DATE_MDE = "M/d (E)";
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     private static final String DATE_HYPHEN = " - ";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_YYYYMMDDE = "yyyy年MM月dd日 (E)";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_YYYYMMDD = "yyyy-MM-dd";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_YYYY_MM_DD_J = "yyyy年MM月dd日";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_HHMMSS = "HHmmss";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_STANDARD_START = "04:00:00";
 
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String DATE_STANDARD_END = "03:59:59";
 
-    /**
-     * DB保存期限.
-     */
+    /** DB保存期限. */
     private static final int LIMIT_HOUR = 1;
 
-    /**
-     * 曜日配列.
-     */
+    /** 曜日配列. */
     public static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
-    /**
-     * ビデオジャンル一覧データ.
-     */
+    /** ビデオジャンル一覧データ. */
     public static final String VIDEO_GENRE_LIST_LAST_INSERT = "video_genre_list_last_insert";
 
-    /**
-     * 日曜日の固定値.
-     */
+    /** 日曜日の固定値. */
     public static final int DAY_OF_WEEK_SUNDAY = 1;
-    /**
-     * 月曜日の固定値.
-     */
+    /** 月曜日の固定値. */
     public static final int DAY_OF_WEEK_MONDAY = 2;
-    /**
-     * 火曜日の固定値.
-     */
+    /** 火曜日の固定値. */
     public static final int DAY_OF_WEEK_TUESDAY = 3;
-    /**
-     * 水曜日の固定値.
-     */
+    /** 水曜日の固定値. */
     public static final int DAY_OF_WEEK_WEDNESDAY = 4;
-    /**
-     * 木曜日の固定値.
-     */
+    /** 木曜日の固定値. */
     public static final int DAY_OF_WEEK_THURSDAY = 5;
-    /**
-     * 金曜日の固定値.
-     */
+    /** 金曜日の固定値. */
     public static final int DAY_OF_WEEK_FRIDAY = 6;
-    /**
-     * 土曜日の固定値.
-     */
+    /** 土曜日の固定値. */
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
-    /**
-     * 1日のエポック秒(用途ができたので、public化).
-     */
+    /** 1日のエポック秒(用途ができたので、public化). */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
 
-    /**
-     * 1時間のエポック秒.
-     */
+    /** 1時間のエポック秒. */
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
-    /**
-     * 2時間のエポック秒.
-     */
-    public static final long EPOCH_TIME_TWO_HOUR = 7200;
-    /**
-     * 30分のエポック秒.
-     */
-    public final static int EPOCH_TIME_THIRTY_MINUTES = 1800;
+    /** 2時間のエポック秒. */
+    private static final long EPOCH_TIME_TWO_HOUR = 7200;
+    /** 30分のエポック秒. */
+    private final static int EPOCH_TIME_THIRTY_MINUTES = 1800;
+    /** 1000msのエポック秒. */
+    private final static long EPOCH_TIME_MILLI_SECOND = 1000L;
 
-    /**
-     * 配信期限(avail_end_date/vod_end_date)の判定基準.
-     */
+    /** 配信期限(avail_end_date/vod_end_date)の判定基準. */
     private static final int AVAILABLE_BASE_DAY = 31;
-    /**
-     * 配信期限一週間.
-     */
+    /** 配信期限一週間. */
     private static final int PUBLISH_BASE_DAY = 7;
-    /**
-     * " ".
-     */
+    /** " ". */
     private static final String DATE_FORMAT_BLANK = " ";
 
     /** string　format. */
@@ -328,16 +216,14 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化.
+     * 現在日時に1h加算した後に永続化.
      *
      * @param key Preferencesキー
      */
     public void addLastDate(final String key) {
 
-        // TODO :DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         //現在日時を取得
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         saveDataToSharePre(key, sdf.format(c.getTime()));
     }
@@ -357,7 +243,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化.
+     * 現在日付を永続化.
      *
      * @param key Preferencesキー
      */
@@ -449,13 +335,12 @@ public class DateUtils {
     }
 
     /**
-     * 日付が期限内か判定.
+     * 日付が期限内か判定(取得期限 = 1h).
      *
      * @param str チェック日付
-     * @return 日付チェック結果
+     * @return 期限外(取得対象) true 期限内 false(取得対象外)
      */
     public boolean isBeforeLimitDate(final String str) {
-        // TODO :DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO :文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         if (str == null) {
             // null渡しされた場合は取得すべきとして期限切れ判定.
@@ -469,7 +354,14 @@ public class DateUtils {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
                 limit.setTime(sdf.parse(str.replace("-", "/")));
-                if (limit.compareTo(now) < 0) {
+                //更新期限
+                long limitTime = limit.getTimeInMillis() + EPOCH_TIME_ONE_HOUR * EPOCH_TIME_MILLI_SECOND;
+                //現在時刻
+                long nowTime = now.getTimeInMillis();
+                //最大更新時刻(現在時刻 + 1h を上回る更新期限が設定されていないかを判定(端末日付を未来にした後に戻した場合等))
+                long nowAfterLimit = nowTime + EPOCH_TIME_ONE_HOUR * EPOCH_TIME_MILLI_SECOND;
+                //更新期限 < 現在時刻なら更新フラグを TRUE 最大更新時刻 < 更新期限でも更新フラグを TRUE
+                if (limitTime < nowTime || nowAfterLimit < limitTime) {
                     isExpired = true;
                 }
             } catch (ParseException e) {
@@ -494,16 +386,24 @@ public class DateUtils {
         }
         //現在の日時を用意する.
         long nowTime = getNowTimeFormatEpoch();
+        //更新期限
+        long limitTime = Long.parseLong(lastDate) + EPOCH_TIME_ONE_DAY;
+        //最大更新時刻(現在時刻 + 1h を上回る更新期限が設定されていないかを判定(端末日付を未来にした後に戻した場合等))
+        long nowAfterLimit = nowTime + EPOCH_TIME_ONE_DAY;
 
-        Long cacheLimitDate = Long.parseLong(lastDate) + EPOCH_TIME_ONE_DAY;
-        return nowTime > cacheLimitDate;
+        boolean isExpired = false;
+        //更新期限 < 現在時刻なら更新フラグを TRUE 最大更新時刻 < 更新期限でも更新フラグを TRUE
+        if (limitTime < nowTime || nowAfterLimit < limitTime) {
+            isExpired = true;
+        }
+        return isExpired;
     }
 
     /**
-     * 日付が期限内か判定.
+     * 日付が期限内か判定(取得期限 = 24h).
      *
      * @param lastStr 前回取得できた日付
-     * @return 現在日付と前回の比較の判定
+     * @return 期限外(取得対象) true 期限内 false(取得対象外)
      */
     public boolean isBeforeProgramLimitDate(final String lastStr) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
@@ -518,8 +418,15 @@ public class DateUtils {
         } catch (Exception e) {
             DTVTLogger.debug(e);
         }
+        //更新期限(保存日時に24h追加)
+        long limitTime = lastDate.getTime() + EPOCH_TIME_ONE_DAY * EPOCH_TIME_MILLI_SECOND;
+        //現在時刻
+        long nowTime = nowDate.getTime();
+        //最大更新時刻(現在時刻 + 24h を上回る更新期限が設定されていないかを判定(端末日付を未来にした後に戻した場合等))
+        long nowAfterLimit = nowTime + EPOCH_TIME_ONE_DAY * EPOCH_TIME_MILLI_SECOND;
         boolean isExpired = false;
-        if (lastDate.compareTo(nowDate) != 0) {
+        //更新期限 < 現在時刻なら更新フラグを TRUE 最大更新時刻 < 更新期限でも更新フラグを TRUE
+        if (limitTime < nowTime || nowAfterLimit < limitTime) {
             isExpired = true;
         }
         return isExpired;

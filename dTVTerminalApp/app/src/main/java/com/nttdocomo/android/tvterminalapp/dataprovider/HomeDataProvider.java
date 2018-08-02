@@ -518,14 +518,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
         if (genreListResponse != null && !genreListResponse.getTypeList().isEmpty()) {
             //取得した情報を保存する
-            DateUtils dateUtils = new DateUtils(mContext);
-            String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-            if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
-                dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-                dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-                SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
-                        StringUtils.toGenreListResponseBase64(genreListResponse));
-            }
+            SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
+                    StringUtils.toGenreListResponseBase64(genreListResponse));
         } else {
             //取得したデータが空の場合は保存しないで取得日付をクリアする
             DateUtils.clearLastProgramDate(mContext, DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
@@ -1167,7 +1161,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 mRentalChListWebClient = new RentalChListWebClient(mContext);
@@ -1189,7 +1183,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
-                dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
                 mRoleListWebClient = new RoleListWebClient(mContext);
                 mRoleListWebClient.getRoleListApi(this);
             } else {

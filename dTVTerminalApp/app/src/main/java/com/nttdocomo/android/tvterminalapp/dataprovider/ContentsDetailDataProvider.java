@@ -270,8 +270,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
 
         mPurchasedVodListResponse = purchasedVodListResponse;
         if (mPurchasedVodListResponse != null) {
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_UPDATE);
@@ -327,8 +325,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     @Override
     public void onRoleListJsonParsed(final RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             mRoleListInfo = roleListResponse.getRoleList();
             if (mRoleListInfo != null) {
                 Handler handler = new Handler(); //チャンネル情報更新
@@ -556,7 +552,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         mIsInRentalVodListRequest = true;
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             Handler handler = new Handler(); //チャンネル情報更新
             try {
@@ -576,23 +572,13 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     /**
-     * 購入済みVOD一覧を強制的にサーバーから取得.
-     */
-    public void getForceVodListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-        mRentalVodListWebClient = new RentalVodListWebClient(mContext);
-        mRentalVodListWebClient.getRentalVodListApi(this);
-    }
-
-    /**
      * 購入済みCH一覧取得.
      */
     public void getChListData() {
         mIsInRentalChListRequest = true;
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             Handler handler = new Handler(); //チャンネル情報更新
             try {
