@@ -728,63 +728,64 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
-        final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-        if (dlnaRecVideoItems != null) {
-            baseFragment.setFragmentName(RLA_FragmentName_All);
-            List<Map<String, String>> resultList = getDownloadListFromDb();
-            baseFragment.clearQueueIndex();
-            final boolean hideDownloadBtn = getConnectionStatus();
-            for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
-                DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
-                String checkItemId = itemData.mItemId;
-                if (!TextUtils.isEmpty(checkItemId) && !checkItemId.startsWith(DownloaderBase.sDlPrefix)) {
-                    checkItemId = DownloaderBase.getFileNameById(checkItemId);
-                }
-                if (checkDataIsExist(checkItemId, baseFragment)) {
-                    continue;
-                }
-                RecordedContentsDetailData detailData = new RecordedContentsDetailData();
-                detailData.setItemId(itemData.mItemId);
-                detailData.setUpnpIcon(itemData.mUpnpIcon);
-                detailData.setSize(itemData.mSize);
-                detailData.setResUrl(itemData.mResUrl);
-                detailData.setResolution(itemData.mResolution);
-                detailData.setBitrate(itemData.mBitrate);
-                detailData.setDuration(itemData.mDuration);
-                detailData.setTitle(itemData.mTitle);
-                detailData.setVideoType(itemData.mVideoType);
-                detailData.setClearTextSize(itemData.mClearTextSize);
-                detailData.setXml(getXmlToDl(dlnaRecVideoItems.get(0).mXml, itemData.mItemId));
-                detailData.setRecordedChannelName(itemData.mChannelName);
-                detailData.setDate(itemData.mDate);
-                if (hideDownloadBtn) {
-                    detailData.setIsRemote(true);
-                }
-                if (resultList != null && resultList.size() > 0) {
-                    for (Map<String, String> hashMap : resultList) {
-                        String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                        if (!TextUtils.isEmpty(itemId)) {
-                            String allItemId = itemData.mItemId;
-                            if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
-                                allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
-                            }
-                            if (itemId.equals(allItemId)) {
-                                String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
-                                if (TextUtils.isEmpty(downloadStatus)) {
-                                    detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
-                                }
-                            }
-                        }
-                    }
-                }
-                baseFragment.addContentsList(detailData);
-                setNotifyData(baseFragment, itemData, detailData.getDlFileFullPath(), detailData.getDownLoadStatus(), hideDownloadBtn);
-            }
-            setDownLoadQue(baseFragment, baseFragment.getContentsList(), resultList);
-        }
+        DTVTLogger.start();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                if (dlnaRecVideoItems != null) {
+                    baseFragment.setFragmentName(RLA_FragmentName_All);
+                    List<Map<String, String>> resultList = getDownloadListFromDb();
+                    baseFragment.clearQueueIndex();
+                    final boolean hideDownloadBtn = getConnectionStatus();
+                    for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
+                        DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
+                        String checkItemId = itemData.mItemId;
+                        if (!TextUtils.isEmpty(checkItemId) && !checkItemId.startsWith(DownloaderBase.sDlPrefix)) {
+                            checkItemId = DownloaderBase.getFileNameById(checkItemId);
+                        }
+                        if (checkDataIsExist(checkItemId, baseFragment)) {
+                            continue;
+                        }
+                        RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+                        detailData.setItemId(itemData.mItemId);
+                        detailData.setUpnpIcon(itemData.mUpnpIcon);
+                        detailData.setSize(itemData.mSize);
+                        detailData.setResUrl(itemData.mResUrl);
+                        detailData.setResolution(itemData.mResolution);
+                        detailData.setBitrate(itemData.mBitrate);
+                        detailData.setDuration(itemData.mDuration);
+                        detailData.setTitle(itemData.mTitle);
+                        detailData.setVideoType(itemData.mVideoType);
+                        detailData.setClearTextSize(itemData.mClearTextSize);
+                        detailData.setXml(getXmlToDl(dlnaRecVideoItems.get(0).mXml, itemData.mItemId));
+                        detailData.setRecordedChannelName(itemData.mChannelName);
+                        detailData.setDate(itemData.mDate);
+                        if (hideDownloadBtn) {
+                            detailData.setIsRemote(true);
+                        }
+                        if (resultList != null && resultList.size() > 0) {
+                            for (Map<String, String> hashMap : resultList) {
+                                String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                                if (!TextUtils.isEmpty(itemId)) {
+                                    String allItemId = itemData.mItemId;
+                                    if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
+                                        allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
+                                    }
+                                    if (itemId.equals(allItemId)) {
+                                        String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                                        if (TextUtils.isEmpty(downloadStatus)) {
+                                            detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        baseFragment.addContentsList(detailData);
+                        setNotifyData(baseFragment, itemData, detailData.getDlFileFullPath(), detailData.getDownLoadStatus(), hideDownloadBtn);
+                    }
+                    setDownLoadQue(baseFragment, baseFragment.getContentsList(), resultList);
+                }
                 if (baseFragment.getContentsData().size() == 0) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
                     mNoDataMessage.setText(getString(R.string.common_empty_data_message));
@@ -801,6 +802,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         });
+        DTVTLogger.end();
     }
 
     /**
