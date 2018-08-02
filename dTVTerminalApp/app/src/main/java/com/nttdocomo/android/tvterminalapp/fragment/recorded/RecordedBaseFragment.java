@@ -85,9 +85,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**コールバックリスナー.*/
     private ScrollListenerCallBack mScrollListenerCallBack;
     /**UI更新あるか.*/
-    private boolean mIsUiRunning = true;
+    private boolean mIsUiRunning = false;
     /** Toast（連続して出さない為に保持）. */
-    public Toast mToast = null;
+    private Toast mToast = null;
 
     /**
      * コールバックリスナー.
