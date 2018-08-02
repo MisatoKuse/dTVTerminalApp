@@ -1650,7 +1650,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     && !mContentsDetailDataProvider.isIsInRentalChListRequest()
                     && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
                     && !mContentsDetailDataProvider.isIsInRoleListRequest())) {
-            displayThumbnail(contentsType, mViewIngType);
+            //ログアウト状態ならそのまま表示する
+            UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
+            StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
+            String contractStatus = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
+            ContentUtils.ContentsDetailUserType detailUserType = ContentUtils.getContentDetailUserType(userState, connectionStatus, contractStatus);
+            if (contentsType != null) {
+                shapeViewType(detailUserType, contentsType, viewIngType);
+            }
+            displayThumbnail(contentsType, mViewIngType, detailUserType);
             getDetailFragment().changeVisibilityRecordingReservationIcon(viewIngType, contentsType);
             getDetailFragment().noticeRefresh();
             showProgressBar(false);
@@ -3007,21 +3015,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      *
      * @param contentsType コンテンツ種別
      * @param viewIngType  視聴可否判定結果
+     * @param detailUserType ユーザタイプ
      */
     @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyComplexMethod", "OverlyLongMethod"})
-    private void displayThumbnail(final ContentUtils.ContentsType contentsType, final ContentUtils.ViewIngType viewIngType) {
+    private void displayThumbnail(final ContentUtils.ContentsType contentsType, final ContentUtils.ViewIngType viewIngType, final ContentUtils.ContentsDetailUserType detailUserType) {
         DTVTLogger.start();
         //Pure系コンテンツはサムネイル表示済みのため何もしない
         if (ContentUtils.isPureContents(contentsType)) {
             return;
-        }
-        //ログアウト状態ならそのまま表示する
-        UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
-        StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
-        String contractStatus = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
-        ContentUtils.ContentsDetailUserType detailUserType = ContentUtils.getContentDetailUserType(userState, connectionStatus, contractStatus);
-        if (contentsType != null) {
-            shapeViewType(detailUserType, contentsType, mViewIngType);
         }
         if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_LOGOUT)) {
             loginNgDisplay();
