@@ -1162,25 +1162,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void userInfoListCallback(final boolean isDataChange,
         final List<UserInfoList> userList, final boolean isContractChange) {
-        //契約情報の変更を確認
-        if (isContractChange) {
-            //データ変更があった場合は、ダイアログを表示して、その後に処理を行う
-            showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
-                    , new CustomDialog.ApiOKCallback() {
-                @Override
-                public void onOKCallback(boolean isOK) {
-                    //OKが押された場合は、ユーザー情報処理の既存処理を実行する
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //契約情報の変更を確認
+                if (isContractChange) {
+                    //データ変更があった場合は、ダイアログを表示して、その後に処理を行う
+                    showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
+                            , new CustomDialog.ApiOKCallback() {
+                                @Override
+                                public void onOKCallback(boolean isOK) {
+                                    //OKが押された場合は、ユーザー情報処理の既存処理を実行する
+                                    userInfoListCallbackResult(isDataChange,userList);
+                                }
+                            });
+                } else {
+                    //ユーザー情報に変化が無ければ、そのままユーザー情報処理の既存処理を実行する
                     userInfoListCallbackResult(isDataChange,userList);
                 }
-            });
-        } else {
-            //ユーザー情報に変化が無ければ、そのままユーザー情報処理の既存処理を実行する
-            userInfoListCallbackResult(isDataChange,userList);
-        }
+            }
+        });
     }
 
     /**
-     * ユーザー情報の処理の実体
+     * ユーザー情報の処理の実体.
      *
      * @param isDataChange ユーザー情報に変化があればtrue
      * @param userList ユーザー情報リスト
@@ -1267,71 +1272,107 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void rentalListNgCallback() {
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> clipContentInfo) {
-        showPartDataGetFailedDialog(clipContentInfo);
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showPartDataGetFailedDialog(clipContentInfo);
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void genreListCallback(@Nullable final List<GenreCountGetMetaData> listData) {
-        //callbackが帰ってきたらProgressDialogを消す
-        showPartDataGetFailedDialog(listData);
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showPartDataGetFailedDialog(listData);
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void genreListMapCallback(final Map<String, VideoGenreList> map, final List<String> firstGenreIdList) {
-        showPartDataGetFailedDialog(firstGenreIdList);
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showPartDataGetFailedDialog(firstGenreIdList);
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
-        showPartDataGetFailedDialog(roleListInfo);
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showPartDataGetFailedDialog(roleListInfo);
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void recordingReservationResult(final RemoteRecordingReservationResultResponse response) {
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void onRentalVodListCallback(final PurchasedVodListResponse response) {
-        showPartDataGetFailedDialog(response);
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showPartDataGetFailedDialog(response);
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
 
     @Override
     public void onRentalChListCallback(final PurchasedChannelListResponse response) {
-        showPartDataGetFailedDialog(response);
-        //callbackが帰ってきたらProgressDialogを消す
-        showProgessBar(false);
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showPartDataGetFailedDialog(response);
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
+            }
+        });
     }
     /**
      * 一部データ取得失敗時に表示するエラーダイアログ.

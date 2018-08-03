@@ -2034,7 +2034,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * (オーバーライドの為にprotected指定で分離)
      */
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     protected void showDAccountErrorDialog() {
         //現状エラー文言は1種類なので、文言切り替えは必要ない
         CustomDialog errorDialog = new CustomDialog(
