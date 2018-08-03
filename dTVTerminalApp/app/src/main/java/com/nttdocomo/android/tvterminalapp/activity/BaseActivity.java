@@ -2173,6 +2173,7 @@ public class BaseActivity extends FragmentActivity implements
             public void onCancelCallback() {
                 //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
                 OttGetAuthSwitch.INSTANCE.setNowAuth(true);
+                chkDaccountRegist();
             }
         });
 
@@ -2195,6 +2196,8 @@ public class BaseActivity extends FragmentActivity implements
                         logoutDialog.setButtonTap(true);
                         //ダイアログが閉じた理由が電源ボタンやホームボタンなので、帰る
                         return;
+                    } else {
+                        chkDaccountRegist();
                     }
 
                     pollDialog();
