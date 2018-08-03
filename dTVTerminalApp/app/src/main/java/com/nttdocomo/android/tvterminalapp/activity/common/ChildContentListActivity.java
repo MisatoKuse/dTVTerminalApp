@@ -316,9 +316,6 @@ public class ChildContentListActivity extends BaseActivity implements
             @Override
             public void run() {
                 showProgressBar(false);
-                if (contentsDataList != null && clipStatusContentsDataList.size() < DtvtConstants.REQUEST_LIMIT_50) {
-                    mIsEndPage = true;
-                }
                 displayChildContentList(clipStatusContentsDataList);
             }
         });
@@ -376,6 +373,9 @@ public class ChildContentListActivity extends BaseActivity implements
             mNoDataMessage.setVisibility(View.VISIBLE);
         } else {
             mNoDataMessage.setVisibility(View.GONE);
+        }
+        if (mContentsList.size() >= mChildContentDataProvider.getTotal()) {
+            mIsEndPage = true;
         }
     }
 

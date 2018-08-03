@@ -56,6 +56,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     private boolean mIsCancel = false;
     /**子コンテンツ一覧データ取得位置.*/
     private int mPagerOffset = 0;
+    /**子コンテンツ一覧全体の件数.*/
+    private int mTotal = 0;
 
     // endregion variable
 
@@ -89,6 +91,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         } else {
             if (response.getPager().getOffset() >= 0 && response.getPager().getCount() >= 0) {
                 mPagerOffset = response.getPager().getOffset() + response.getPager().getCount();
+            }
+            if (response.getPager().getTotal() >= 0) {
+                mTotal = response.getPager().getTotal();
             }
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
@@ -257,5 +262,14 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
      */
     public int getPagerOffset() {
         return mPagerOffset;
+    }
+
+    /**
+     * 全体の件数取得
+     *
+     * @return 全体の件数
+     */
+    public int getTotal() {
+        return mTotal;
     }
 }

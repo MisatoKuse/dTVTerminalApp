@@ -348,7 +348,7 @@ public class ClipListActivity extends BaseActivity implements
                     return;
                 }
 
-                if (clipContentInfo.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                if (clipContentInfo.size() < DtvtConstants.REQUEST_LIMIT_1) {
                     mIsEndPageTV = true;
                 }
 
@@ -430,7 +430,7 @@ public class ClipListActivity extends BaseActivity implements
                     return;
                 }
 
-                if (clipContentInfo.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                if (clipContentInfo.size() < DtvtConstants.REQUEST_LIMIT_1) {
                     mIsEndPageVOD = true;
                 }
 

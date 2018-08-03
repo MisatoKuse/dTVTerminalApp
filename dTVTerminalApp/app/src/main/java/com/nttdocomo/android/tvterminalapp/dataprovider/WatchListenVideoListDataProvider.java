@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
@@ -164,11 +165,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
         int ageReq = userInfoDataProvider.getUserAge();
-        int lowerPageLimit = 1;
         String pagerDirection = "next";
 
-        mWebClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
-                lowerPageLimit, mPagerOffset, pagerDirection, this);
+        mWebClient.getWatchListenVideoApi(ageReq, DtvtConstants.REQUEST_LIMIT_50,
+                DtvtConstants.REQUEST_LIMIT_1, mPagerOffset, pagerDirection, this);
     }
 
     /**
