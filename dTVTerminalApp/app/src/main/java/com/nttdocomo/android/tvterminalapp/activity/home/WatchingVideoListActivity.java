@@ -300,7 +300,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
                 }
 
-                if (watchListenVideoContentInfo.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                if (watchListenVideoContentInfo.size() < DtvtConstants.REQUEST_LIMIT_1) {
                     mIsEndPage = true;
                 }
 
