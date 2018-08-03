@@ -272,6 +272,7 @@ public class DlnaManager {
 
     /**
      * コンテキスト取得.
+     * @return コンテキスト
      */
     public Context getContext() {
         return DlnaManager.shared().mContext;
@@ -451,6 +452,7 @@ public class DlnaManager {
     /**
      * containerIdのチェック.
      * @param containerId containerId
+     * @return true: containerId一致
      */
     private boolean checkContainerId(final String containerId) {
         boolean result = true;
@@ -477,6 +479,7 @@ public class DlnaManager {
 
     /**
      * RestartDirag.
+     * @return Dirag起動状態
      */
     public boolean RestartDirag() {
         return restartDirag();
@@ -515,6 +518,7 @@ public class DlnaManager {
 
     /**
      * Dlna起動されるかどうか.
+     * @return dlna起動状態
      */
     public boolean dlnaIsStart() {
         return DlnaManager.shared().mIsStarted;
@@ -569,6 +573,7 @@ public class DlnaManager {
 
     /**
      * ダウンロードdtcp起動.
+     * @return downloadDtcp起動状態
      */
     public boolean initDownload() {
         return downLoadStartDtcp();
@@ -986,13 +991,17 @@ public class DlnaManager {
      * @param limit limit
      * @param containerId containerId
      * @param controlUrl controlUrl
+     * @return true:ブラウズ成功
      */
     private native boolean browseContentWithContainerId(final int offset, final int limit, final String containerId, final String controlUrl);
     /** dtcpを開始.*/
     private native void startDtcp();
     /** dtcpを停止.*/
     private native void stopDtcp();
-    /** Diragを再起動.*/
+    /**
+     * Diragを再起動.
+     * @return true:起動成功
+     */
     private native boolean restartDirag();
     /** Diragを起動.*/
     private native void startDirag();
@@ -1022,11 +1031,20 @@ public class DlnaManager {
      * @return DeviceExpireDate 有効期限日
      */
     private native String getRemoteDeviceExpireDate(final String udn);
-    /** ダウンロード開始前のddtcpスタート.*/
+    /**
+     * ダウンロード開始前のdtcpスタート.
+     * @return true:起動成功
+     */
     private native boolean downLoadStartDtcp();
-    /** ダウンロードをキャンセル.*/
+    /**
+     * ダウンロードをキャンセル.
+     * @return true:キャンセル成功
+     */
     private native boolean downloadCancel();
-    /** ダウンロードをキャンセル.*/
+    /**
+     * ダウンロードを停止.
+     * @return true:停止成功
+     */
     private native boolean downloadStop();
     /**
      * ダウンロード.
