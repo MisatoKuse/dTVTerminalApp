@@ -980,7 +980,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);
-                holder.tv_time.setVisibility(View.GONE);
+                if (!listContentInfo.isIsAfterLimitContents()) {
+                    holder.tv_time.setVisibility(View.GONE);
+                }
             }
         } else {
             if (TextUtils.isEmpty(listContentInfo.getChannelName()) && holder.tv_recorded_ch_name != null
