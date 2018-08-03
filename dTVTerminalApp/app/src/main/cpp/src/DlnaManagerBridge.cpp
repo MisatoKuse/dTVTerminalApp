@@ -592,7 +592,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistratio
     const char *udnString = env->GetStringUTFChars(udn, 0);
     const char *deviceNameString = env->GetStringUTFChars(deviceName, 0);
     LOG_WITH("udnString = %s", udnString);
-    dlnaRemoteConnect->requestLocalRegistration(dmp, DU_UCHAR(udnString), DU_UCHAR(deviceNameString));
+    bool result = dlnaRemoteConnect->requestLocalRegistration(dmp, DU_UCHAR(udnString), DU_UCHAR(deviceNameString));
+    if (!result) {
+        if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
+            DlnaRemoteConnect::LocalRegistrationCallback(false, LocalRegistrationResultTypeUnknownError);
+        }
+    }
 }
 
 JNIEXPORT void JNICALL
