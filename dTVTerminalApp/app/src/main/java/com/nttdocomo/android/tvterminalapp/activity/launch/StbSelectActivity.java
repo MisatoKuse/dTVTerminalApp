@@ -348,6 +348,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             enableHeaderBackIcon(false);
             setTitleText(getString(R.string.str_app_title));
             enableGlobalMenuIcon(false);
+            setImageLayoutParams(dip2px(70), dip2px(36));
+            mPairingImage.setImageResource(R.mipmap.startup_icon_01);
             return;
         } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {
             RelativeLayout pairingRelativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
@@ -410,6 +412,20 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             DTVTLogger.debug("StbSelectFromMode :StartMode Error ");
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * setImageLayoutParams.
+     * @param width width
+     * @param height height
+     */
+    private void setImageLayoutParams(final int width, final int height) {
+        RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(width, height);
+        imageLayoutParams.setMargins(0, 0, 0, dip2px(16));
+        imageLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        imageLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        imageLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE | RelativeLayout.ALIGN_BOTTOM);
+        mPairingImage.setLayoutParams(imageLayoutParams);
     }
 
     @Override
@@ -637,12 +653,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         //ペアリングしてるので、タイマーを解除する.
         stopCallbackTimer();
-        RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(dip2px(162), dip2px(44));
-        imageLayoutParams.setMargins(0, 0, 0, dip2px(16));
-        imageLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        imageLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        imageLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE | RelativeLayout.ALIGN_BOTTOM);
-        mPairingImage.setLayoutParams(imageLayoutParams);
+        setImageLayoutParams(dip2px(162), dip2px(44));
         mPairingImage.setImageResource(R.mipmap.startup_icon_03);
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
