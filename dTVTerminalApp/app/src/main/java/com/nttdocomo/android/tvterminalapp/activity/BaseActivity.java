@@ -2041,7 +2041,10 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog errorDialog = new CustomDialog(
                 BaseActivity.this, CustomDialog.DialogType.ERROR);
         int errorCode = 0;
-        DaccountControl.CheckLastClassEnum checkLastClassEnum = DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
+
+        //初期値を入れている
+        DaccountControl.CheckLastClassEnum checkLastClassEnum =
+                DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
         //失敗原因コードを取得
         if (mDAccountControl != null) {
             errorCode = mDAccountControl.getResult();
@@ -2049,8 +2052,9 @@ public class BaseActivity extends FragmentActivity implements
         }
         boolean isNeedDialog = true;
         if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
-                || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
-                || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+            || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+            || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)
+            || DaccountControl.CheckLastClassEnum.CONTROL.equals(checkLastClassEnum)) {
             DTVTLogger.debug("showDAccountErrorDialog errCode:" + errorCode);
             switch (errorCode) {
                 case IDimDefines.RESULT_USER_INVALID_STATE:

@@ -838,13 +838,16 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //失敗原因コードを取得
             DaccountControl daccountControl = getDAccountControl();
             int errorCode = 0;
-            DaccountControl.CheckLastClassEnum checkLastClassEnum = DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
+            //初期値を格納している
+            DaccountControl.CheckLastClassEnum checkLastClassEnum =
+                    DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
             if (daccountControl != null) {
                 errorCode = daccountControl.getResult();
                 checkLastClassEnum =  daccountControl.getmResultClass();
                 if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
-                        || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
-                        || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+                    || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+                    || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)
+                    || DaccountControl.CheckLastClassEnum.CONTROL.equals(checkLastClassEnum)) {
                     if (errorCode == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
                         // dアカアプリ未インストールの場合はdアカアプリ起動(関数内でチェックしてストア誘導する画面に飛ぶ).
                         DTVTLogger.debug("dAccountApp is not installed.");
@@ -1462,7 +1465,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         CustomDialog errorDialog = new CustomDialog(
                 this, CustomDialog.DialogType.ERROR);
         int errorCode = 0;
-        DaccountControl.CheckLastClassEnum checkLastClassEnum = DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
+        //初期値を格納している
+        DaccountControl.CheckLastClassEnum checkLastClassEnum =
+                DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
         //失敗原因コードを取得
         DaccountControl daccountControl = getDAccountControl();
         if (daccountControl != null) {
@@ -1472,8 +1477,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
         boolean isNeedDialog = true;
         if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
-                || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
-                || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+            || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+            || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)
+            || DaccountControl.CheckLastClassEnum.CONTROL.equals(checkLastClassEnum)) {
             DTVTLogger.debug("showDAccountErrorDialog errCode:" + errorCode);
             switch (errorCode) {
                 case IDimDefines.RESULT_USER_INVALID_STATE:

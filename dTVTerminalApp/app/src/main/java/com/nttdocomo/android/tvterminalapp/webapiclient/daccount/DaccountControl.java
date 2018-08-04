@@ -78,6 +78,10 @@ public class DaccountControl implements
          * ワンタイムパスワード登録.
          */
         ONE_TIME_PASS_WORD,
+        /**
+         * コントロール処理自体でのエラー
+         */
+        CONTROL,
     }
 
     /**
@@ -213,6 +217,8 @@ public class DaccountControl implements
             DTVTLogger.end("not install idmanager");
             mIsOTTCheckFinished = true;
             mResult = DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE;
+            //クラスの識別値を設定
+            mResultClass = CheckLastClassEnum.CONTROL;
             mDaccountControlCallBack.daccountControlCallBack(false);
             return;
         }

@@ -79,6 +79,8 @@ public class DaccountInductionActivity extends BaseActivity {
                     finish();
                 }
             });
+            //ダイアログの枠外の操作の無効化
+            dAccountInstallDialog.setOnTouchOutside(false);
             dAccountInstallDialog.showDialog();
         } else if (view.equals(mUseWithoutLogIn)) {
             //dアカウント未登録時の"ログインしないで使用する"ボタン
