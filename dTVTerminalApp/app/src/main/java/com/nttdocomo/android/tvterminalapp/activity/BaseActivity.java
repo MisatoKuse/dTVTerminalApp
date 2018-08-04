@@ -822,7 +822,7 @@ public class BaseActivity extends FragmentActivity implements
         // dアカウント変更後の再起動フラグやパーミッションチェックスキップフラグが立っているならば、パーミッションチェックなどは行わない
         if (app.getIsChangeApplicationVisible()
                 && !SharedPreferencesUtils.getSharedPreferencesRestartFlag(
-                        getApplicationContext())
+                getApplicationContext())
                 && !ottGetAuthSwitch.isSkipPermission()) {
             if (DeviceStateUtils.isRootDevice()) {
                 onStopAutoTransition();
@@ -1964,16 +1964,16 @@ public class BaseActivity extends FragmentActivity implements
         boolean firstDaccountError = false;
 
         //初回dアカウント取得かどうかの判定
-        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
-            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
-            firstDaccountError = true;
-        } else {
-            //初回以外はダイアログを出さないので、処理中フラグはリセット
-            mDAccountControl.setDAccountBusy(false);
-        }
+//        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
+//            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
+//            firstDaccountError = true;
+//        } else {
+//            //初回以外はダイアログを出さないので、処理中フラグはリセット
+//            mDAccountControl.setDAccountBusy(false);
+//        }
 
         //初回dアカウント取得が行われていた場合は終わらせる
-        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
+//        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
 
         onDaccountOttGetComplete(result);
         //dアカウントの登録結果を受け取るコールバック
@@ -1998,23 +1998,24 @@ public class BaseActivity extends FragmentActivity implements
         }
 
         //dアカウント処理クラスがヌルか、初回起動時にdアカウント取得で問題が発生したかどうかを確認
-        if (mDAccountControl == null || firstDaccountError) {
-            //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            //今はUIスレッドではないので、ダイアログの処理を移譲する
-            mFirstDaccountErrorHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    //初回実行時に限り、エラーダイアログを表示する。
-                    showDAccountErrorDialog();
+//        if (mDAccountControl == null) {
+        //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
+        //今はUIスレッドではないので、ダイアログの処理を移譲する
+        mFirstDaccountErrorHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                //エラーダイアログを表示する.基本的に再認証オプション付きでOTT取得しており、別途ログアウトダイアログを表示するため
+                //認証無効に関しては特にここではダイアログ表示はしない. 必要のある画面は showDAccountErrorDialog をオーバライドする事.
+                showDAccountErrorDialog();
 
-                    //ダイアログを出す場合はここで処理中フラグをリセット
-                    mDAccountControl.setDAccountBusy(false);
-                }
-            });
+                //ダイアログを出す場合はここで処理中フラグをリセット
+                mDAccountControl.setDAccountBusy(false);
+            }
+        });
 
-            DTVTLogger.end("null end or first daccount get error");
-            return;
-        }
+//            DTVTLogger.end("null end or first daccount get error");
+//            return;
+//        }
 
         if (mDAccountControl.isOneTimePass() || mDAccountControl.isCheckService()) {
             //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
@@ -2034,9 +2035,9 @@ public class BaseActivity extends FragmentActivity implements
      *
      * (オーバーライドの為にprotected指定で分離)
      */
-    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
+    @SuppressWarnings("OverlyLongMethod")
     protected void showDAccountErrorDialog() {
-        //現状エラー文言は1種類なので、文言切り替えは必要ない
+
         CustomDialog errorDialog = new CustomDialog(
                 BaseActivity.this, CustomDialog.DialogType.ERROR);
         int errorCode = 0;
@@ -2046,6 +2047,7 @@ public class BaseActivity extends FragmentActivity implements
             errorCode = mDAccountControl.getResult();
             checkLastClassEnum =  mDAccountControl.getmResultClass();
         }
+        boolean isNeedDialog = true;
         if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
                 || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
                 || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
@@ -2055,19 +2057,28 @@ public class BaseActivity extends FragmentActivity implements
                     errorDialog.setContent(getString(R.string.d_account_user_abnormality_error));
                     break;
                 case IDimDefines.RESULT_NETWORK_ERROR:
-                    errorDialog.setContent(getString(R.string.d_account_network_error));
+                    //ｄアカアプリ側でダイアログが表示されるため、ドコテレとしては通常の画面では出さない.
+                    //（STB選択画面のSTB選択時のOTT取得では表示する）
+                    isNeedDialog = false;
+//                    errorDialog.setContent(getString(R.string.d_account_network_error));
                     break;
                 case IDimDefines.RESULT_USER_TIMEOUT:
                     errorDialog.setContent(getString(R.string.d_account_user_timeout_error));
                     break;
                 case IDimDefines.RESULT_USER_CANCEL:
-                    errorDialog.setContent(getString(R.string.d_account_user_interruption_error));
+                    // OTT取得を再認証オプションで呼び出しており
+                    // 認証キャンセルはログアウトダイアログを別途表示するのでここではダイアログ表示しない.
+                    // ダイアログが必要な特別な画面は、別途オーバライドする事.
+                    isNeedDialog = false;
+//                    errorDialog.setContent(getString(R.string.d_account_user_interruption_error));
                     break;
                 case IDimDefines.RESULT_SERVER_ERROR:
                     errorDialog.setContent(getString(R.string.d_account_server_error));
                     break;
                 case IDimDefines.RESULT_INVALID_ID:
-                    errorDialog.setContent(getString(R.string.d_account_authentication_invalid_error));
+                    // OTT取得を再認証オプションで呼び出しているため基本的にID無効でエラーダイアログは出さない.
+                    isNeedDialog = false;
+//                    errorDialog.setContent(getString(R.string.d_account_authentication_invalid_error));
                     break;
                 case IDimDefines.RESULT_INTERNAL_ERROR:
                     errorDialog.setContent(getString(R.string.d_account_internal_error));
@@ -2078,6 +2089,15 @@ public class BaseActivity extends FragmentActivity implements
                 case IDimDefines.RESULT_REMOTE_EXCEPTION:
                     errorDialog.setContent(getString((R.string.d_account_remote_exception_error)));
                     break;
+                case IDimDefines.RESULT_NO_AVAILABLE_ID:
+                    //有効IDなし. dアカアプリを起動してID設定せずに戻った場合に返却される.
+                    //毎回警告を出すことになるので出さない.
+                    isNeedDialog = false;
+                    break;
+                case IDimDefines.RESULT_COMPLETE:
+                    //正常終了
+                    isNeedDialog = false;
+                    break;
                 case DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE:
                     //事前チェックでdアカウント設定アプリが未インストールである事が分かった場合のエラー
                     errorDialog.setContent(getString(R.string.d_account_deleted_message));
@@ -2087,12 +2107,15 @@ public class BaseActivity extends FragmentActivity implements
                     break;
             }
         }
-        //次のダイアログを呼ぶ為の処理
-        errorDialog.setDialogDismissCallback(BaseActivity.this);
-        errorDialog.setOnTouchOutside(false);
 
-        //showDialogの代わり・重複ダイアログ実現用
-        offerDialog(errorDialog);
+        if (isNeedDialog) {
+            //次のダイアログを呼ぶ為の処理
+            errorDialog.setDialogDismissCallback(BaseActivity.this);
+            errorDialog.setOnTouchOutside(false);
+
+            //showDialogの代わり・重複ダイアログ実現用
+            offerDialog(errorDialog);
+        }
     }
 
     /**
@@ -2171,9 +2194,10 @@ public class BaseActivity extends FragmentActivity implements
         logoutDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
+                //ログアウトのダイアログは閉じられたので、認証画面を再表示する
                 OttGetAuthSwitch.INSTANCE.setNowAuth(true);
-                chkDaccountRegist();
+                mDAccountControl = new DaccountControl();
+                mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
             }
         });
 
@@ -2197,20 +2221,12 @@ public class BaseActivity extends FragmentActivity implements
                         //ダイアログが閉じた理由が電源ボタンやホームボタンなので、帰る
                         return;
                     } else {
-                        chkDaccountRegist();
-                    }
-
-                    pollDialog();
-
-                    //STB選択画面かつランチャー起動だった場合の判定
-                    if (!(mActivity instanceof StbSelectActivity &&
-                            ((StbSelectActivity)mActivity).getmStartMode()
-                            == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal())) {
-                        DTVTLogger.debug("daccount recall");
-                        //条件を満たさない通常時は、dアカウントの処理を行う
+                        OttGetAuthSwitch.INSTANCE.setNowAuth(true);
                         mDAccountControl = new DaccountControl();
                         mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
                     }
+
+                    pollDialog();
                 }
 
                 @Override
@@ -2774,14 +2790,14 @@ public class BaseActivity extends FragmentActivity implements
             //ワンタイムトークンの取得を行う事で、dアカウントのチェックとする。dアカウントが無効ならば認証画面に遷移する
             mGetOtt.execDaccountGetOTT(getApplicationContext(),
                     ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
-                @Override
-                public void getOttCallBack(int result, String id, String oneTimePassword) {
-                    DTVTLogger.debug("ott" + oneTimePassword);
-                    //dアカウントの制御のワンタイムトークン処理を呼び出す。
-                    daccountControl.setResult(result);
-                    daccountControlCallBack(false);
-                }
-            });
+                        @Override
+                        public void getOttCallBack(int result, String id, String oneTimePassword) {
+                            DTVTLogger.debug("ott" + oneTimePassword);
+                            //dアカウントの制御のワンタイムトークン処理を呼び出す。
+                            daccountControl.setResult(result);
+                            daccountControlCallBack(false);
+                        }
+                    });
         }
     }
 
@@ -2793,8 +2809,8 @@ public class BaseActivity extends FragmentActivity implements
 
         //自分のインスタンスのチェック
         if (this instanceof StbSelectActivity
-            || this instanceof HomeActivity
-            || this instanceof LaunchActivity) {
+                || this instanceof HomeActivity
+                || this instanceof LaunchActivity) {
             //STB選択とホームの各画面は専用の処理があり、スプラッシュ画面ではそもそもチェックを行わないので、ここでは帰る
             DTVTLogger.end("STB SELECT or HOME or Launch");
             return;
@@ -2803,13 +2819,13 @@ public class BaseActivity extends FragmentActivity implements
         //ユーザー情報の変更検知
         UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(),
                 new UserInfoDataProvider.UserDataProviderCallback() {
-            @Override
-            public void userInfoListCallback(final boolean isDataChange,
-                 final List<UserInfoList> list, final boolean isContractChange) {
-                //契約変化を見るコールバック
-                checkUserInfoChangeResult(isContractChange);
-            }
-        });
+                    @Override
+                    public void userInfoListCallback(final boolean isDataChange,
+                                                     final List<UserInfoList> list, final boolean isContractChange) {
+                        //契約変化を見るコールバック
+                        checkUserInfoChangeResult(isContractChange);
+                    }
+                });
         dataProvider.getUserInfo();
 
         DTVTLogger.end();
@@ -2826,14 +2842,14 @@ public class BaseActivity extends FragmentActivity implements
             //データ変更があった場合は、ダイアログを表示して、その後にデータクリアとホームデータ更新を行う
             showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
                     , new CustomDialog.ApiOKCallback() {
-                @Override
-                public void onOKCallback(boolean isOK) {
-                    //OKが押された場合は、データのクリアを行う
-                    DateUtils.clearDataSave(getApplicationContext());
-                    //ホーム画面の再表示を行う
-                    reStartApplication();
-                }
-            });
+                        @Override
+                        public void onOKCallback(boolean isOK) {
+                            //OKが押された場合は、データのクリアを行う
+                            DateUtils.clearDataSave(getApplicationContext());
+                            //ホーム画面の再表示を行う
+                            reStartApplication();
+                        }
+                    });
         }
         DTVTLogger.end();
     }

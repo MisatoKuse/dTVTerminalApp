@@ -35,10 +35,13 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,10 +201,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private boolean mOttGetComplete = false;
     /**
-     * デバイスがクリック.
-     */
-    private boolean mIsItemClicked = false;
-    /**
      * デバイス選択デフォルト値.
      */
     private static final int SELECT_DEVICE_ITEM_DEFAULT = -1;
@@ -213,6 +212,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * dアカウントエラーダイアログ表示中フラグ.
      */
     private boolean mIsDAccountErrorDialogShowing = false;
+    /**
+     * dアカウント単純起動中フラグ.
+     */
+    private boolean mIsDAccountAppStarting = false;
+
     /**
      * タイマーステータス.
      */
@@ -433,11 +437,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         super.onResume();
         DTVTLogger.start();
         //新しいdアカウントが送られていた場合は、STB選択画面の再起動を行う
-        if(mNewDaccountGet) {
+        if (mNewDaccountGet) {
             reStartApplication();
             return;
         }
-
+        mIsDAccountAppStarting = false;
         initResumeView();
 
         //dアカウント変更コールバックの設定
@@ -774,8 +778,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
 
         //STB選択画面起動時にdアカウント認証画面を表示しないために、ここでdアカウントの処理を開始する
+        //一度再認証オプション付けたらそれ以上付けない制御があるが、この場合必ず認証画面を出す.
+        OttGetAuthSwitch.INSTANCE.setNowAuth(true);
         setDaccountControl();
-
+        mOttGetComplete = false;
         //選択されたSTB番号を保持
         mSelectDevice = i;
         if (mDlnaDmsItemList != null) {
@@ -784,12 +790,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         }
         //ペアリング中画面を出す
         showParingView();
-        if (mOttGetComplete) {
-            checkDAccountApp();
-        } else {
-            mIsItemClicked = true;
-        }
-    }
+   }
 
     /**
      * dアカウントのOTT取得完了.
@@ -799,16 +800,69 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     protected void onDaccountOttGetComplete(final boolean result) {
         DTVTLogger.start();
 
-        if (getDAccountControl().getResult() == IDimDefines.RESULT_USER_CANCEL) {
-            //dアカウント再認証がキャンセルされたのでここでは何もしない
-            return;
-        }
+        if (result) {
+            //OTT取得終わったのでtrueにする
+            mOttGetComplete = true;
+            boolean isDAccountFlag = checkDAccountLogin();
 
-        //OTT取得終わったのでtrueにする
-        mOttGetComplete = true;
-        if (mIsItemClicked) {
-            checkDAccountApp();
-            mIsItemClicked = false;
+            if (isDAccountFlag) {
+                setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
+                storeSTBData();
+            } else {
+                //万が一ID保存されていなかったケースはエラーダイアログ出して戻る.
+                CustomDialog errorDialog = new CustomDialog(
+                        this, CustomDialog.DialogType.ERROR);
+                errorDialog.setContent(getString(R.string.d_account_regist_error));
+                errorDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(final boolean isOK) {
+                        //ダイアログを閉じたらSTB選択画面に戻る.
+                        resetDmpForResume();
+                        initResumeView();
+                    }
+                });
+                errorDialog.setCancelable(false);
+                errorDialog.setOnTouchBackkey(false);
+
+                //次のダイアログを呼ぶ為の処理
+                errorDialog.setDialogDismissCallback(this);
+                errorDialog.setOnTouchOutside(false);
+                errorDialog.showDialog();
+
+                //ダイアログ表示のタイミングでタイマ停止
+                mIsDAccountErrorDialogShowing = true;
+                stopCallbackTimer();
+            }
+        } else {
+            //失敗原因コードを取得
+            DaccountControl daccountControl = getDAccountControl();
+            int errorCode = 0;
+            DaccountControl.CheckLastClassEnum checkLastClassEnum = DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
+            if (daccountControl != null) {
+                errorCode = daccountControl.getResult();
+                checkLastClassEnum =  daccountControl.getmResultClass();
+                if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
+                        || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+                        || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+                    if (errorCode == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                        // dアカアプリ未インストールの場合はdアカアプリ起動(関数内でチェックしてストア誘導する画面に飛ぶ).
+                        DTVTLogger.debug("dAccountApp is not installed.");
+                        checkDAccountApp();
+                    } else if (errorCode == IDimDefines.RESULT_NO_AVAILABLE_ID) {
+                        //有効ID無しなら同じくdアカアプリ起動.
+                        DTVTLogger.debug("dAccountID is not Registered.");
+                        // dアカアプリを単純起動してID登録せずに戻るとなぜかOTTの応答コールバックが呼ばれる
+                        // 延々と呼び続ける事になるので、ガードする.
+                        // dアカアプリ起動～ドコテレ復帰の間は再起動しない.
+                        // また多くの場合はコールバックが復帰後に来るため、ペアリング中の状態以外では起動しない
+                        // （Resume時には必ずSTB選択の状態に戻している事を利用）
+                        if (!mIsDAccountAppStarting && mLoadMoreView.getVisibility() == View.VISIBLE) {
+                            checkDAccountApp();
+                        }
+                    }
+                }
+            }
         }
         DTVTLogger.end();
     }
@@ -1149,18 +1203,19 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         try {
 
             //dカウント登録状態チェック
-            boolean isDAccountFlag = checkDAccountLogin();
+//            boolean isDAccountFlag = checkDAccountLogin();
 
-            if (isDAccountFlag) {
-                setRelayClientHandler();
-                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
-                storeSTBData();
-            } else {
+//            if (isDAccountFlag) {
+//                setRelayClientHandler();
+//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
+//                storeSTBData();
+//            } else {
                 //端末内にdアカウントアプリがある場合はアプリ起動
+                mIsDAccountAppStarting = true;
                 startActivity(intent);
                 mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
                 mDaccountFlag = true;
-            }
+//            }
             //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
         } catch (ActivityNotFoundException e) {
             revertSelectStbState();
@@ -1169,7 +1224,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 再度STB選択状態へ戻す.
+     * dアカウントアプリインストール誘導画面に遷移.
      */
     private void revertSelectStbState() {
         DTVTLogger.debug("not daccount app");
@@ -1252,7 +1307,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 mParingTextView.setText(R.string.str_stb_no_pair_use_text);
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                                // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
                                 Intent homeIntent = new Intent(this, HomeActivity.class);
                                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(homeIntent);
@@ -1401,11 +1455,112 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     protected void showDAccountErrorDialog() {
-        super.showDAccountErrorDialog();
-        //ダイアログ表示のタイミングでタイマ停止
-        mIsDAccountErrorDialogShowing = true;
-        stopCallbackTimer();
+        //専用処理がある為オーバライド.
+        //初期フローのペアリングの場合は、再認証キャンセル時はログアウトでなくエラーダイアログの表示を行う
+        //ログアウトダイアログは設定＞ペアリングの際のみ必要だが別メソッドで表示
+        //エラーダイアログを閉じたらSTB選択画面へ戻る
+        CustomDialog errorDialog = new CustomDialog(
+                this, CustomDialog.DialogType.ERROR);
+        int errorCode = 0;
+        DaccountControl.CheckLastClassEnum checkLastClassEnum = DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
+        //失敗原因コードを取得
+        DaccountControl daccountControl = getDAccountControl();
+        if (daccountControl != null) {
+            errorCode = daccountControl.getResult();
+            checkLastClassEnum =  daccountControl.getmResultClass();
+        }
+
+        boolean isNeedDialog = true;
+        if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
+                || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+                || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+            DTVTLogger.debug("showDAccountErrorDialog errCode:" + errorCode);
+            switch (errorCode) {
+                case IDimDefines.RESULT_USER_INVALID_STATE:
+                    errorDialog.setContent(getString(R.string.d_account_user_abnormality_error));
+                    break;
+                case IDimDefines.RESULT_NETWORK_ERROR:
+                    errorDialog.setContent(getString(R.string.d_account_network_error));
+                    break;
+                case IDimDefines.RESULT_USER_TIMEOUT:
+                    errorDialog.setContent(getString(R.string.d_account_user_timeout_error));
+                    break;
+                case IDimDefines.RESULT_USER_CANCEL:
+                    if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                        errorDialog.setContent(getString(R.string.d_account_user_interruption_error));
+                    } else {
+                        //設定>ペアリングの場合は、別途ログアウトダイアログを表示するのでエラーダイアログは表示しない
+                        isNeedDialog = false;
+                    }
+                    break;
+                case IDimDefines.RESULT_SERVER_ERROR:
+                    errorDialog.setContent(getString(R.string.d_account_server_error));
+                    break;
+                case IDimDefines.RESULT_INVALID_ID:
+                    // OTT取得を再認証オプションで呼び出しているため基本的にID無効でエラーダイアログは出さない.
+                    isNeedDialog = false;
+//                    errorDialog.setContent(getString(R.string.d_account_authentication_invalid_error));
+                    break;
+                case IDimDefines.RESULT_INTERNAL_ERROR:
+                    errorDialog.setContent(getString(R.string.d_account_internal_error));
+                    break;
+                case IDimDefines.RESULT_NOT_REGISTERED_SERVICE:
+                    errorDialog.setContent(getString(R.string.d_account_service_unregistered_error));
+                    break;
+                case IDimDefines.RESULT_REMOTE_EXCEPTION:
+                    errorDialog.setContent(getString((R.string.d_account_remote_exception_error)));
+                    break;
+                case IDimDefines.RESULT_NO_AVAILABLE_ID:
+                    //有効IDなし.
+                    //STB選択は別途専用画面に誘導するのでダイアログは出さない.
+                    isNeedDialog = false;
+                    break;
+                case IDimDefines.RESULT_COMPLETE:
+                    //正常終了
+                    isNeedDialog = false;
+                    break;
+                case DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE:
+                    //事前チェックでdアカウント設定アプリが未インストールである事が分かった場合のエラー
+                    //STB選択は別途専用画面に誘導するのでダイアログは出さない.
+                    isNeedDialog = false;
+//                    errorDialog.setContent(getString(R.string.d_account_deleted_message));
+                    break;
+                default:
+                    errorDialog.setContent(getString(R.string.d_account_regist_error));
+                    break;
+            }
+        }
+        if (isNeedDialog) {
+            errorDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    //ダイアログを閉じたらSTB選択画面に戻る.
+                    resetDmpForResume();
+                    initResumeView();
+                }
+            });
+            errorDialog.setCancelable(false);
+            errorDialog.setOnTouchBackkey(false);
+
+            //次のダイアログを呼ぶ為の処理
+            errorDialog.setDialogDismissCallback(this);
+            errorDialog.setOnTouchOutside(false);
+            errorDialog.showDialog();
+
+            //ダイアログ表示のタイミングでタイマ停止
+            mIsDAccountErrorDialogShowing = true;
+            stopCallbackTimer();
+        }
         DTVTLogger.end();
+    }
+
+    @Override
+    public void showLogoutDialog() {
+        //初期ペアリングではログアウトダイアログは出さないのでオーバライドする
+        //ただし設定＞ペアリングの場合はログアウトダイアログを表示するため親クラス処理を利用する
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            super.showLogoutDialog();
+        }
     }
 
     @Override

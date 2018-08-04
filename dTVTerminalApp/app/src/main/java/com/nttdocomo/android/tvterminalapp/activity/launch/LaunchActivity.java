@@ -32,8 +32,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private static boolean sIsFirstRun = true;
     /** 次のアクティビティ情報. */
     private Intent mNextActivity = null;
-    /** アプリ起動直後のdアカウントエラーの状況. */
-    private boolean mDaccountStatus = false;
+//    /** アプリ起動直後のdアカウントエラーの状況. */
+//    private boolean mDaccountStatus = false;
     /** 次の画面で設定画面エラーを出すならtrueにする. */
     private boolean mIsSettingErrorNextAvctivity = false;
 
@@ -61,8 +61,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setTitleVisibility(false);
 
         //現在のdアカウントダイアログの状況を取得
-        mDaccountStatus = SharedPreferencesUtils.isFirstDaccountGetProcess(
-                getApplicationContext());
+//        mDaccountStatus = SharedPreferencesUtils.isFirstDaccountGetProcess(
+//                getApplicationContext());
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
@@ -257,12 +257,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
                 toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
                 mCheckSetting.setGooglePlay(false);
 
-                if (mDaccountStatus) {
-
-                    //この場合は、dアカウントフラグのクリアを行う
-                    SharedPreferencesUtils.setFirstExecFlag(getApplicationContext(),
-                            SharedPreferencesUtils.FIRST_D_ACCOUNT_GET_BEFORE);
-                }
+//                if (mDaccountStatus) {
+//
+//                    //この場合は、dアカウントフラグのクリアを行う
+//                    SharedPreferencesUtils.setFirstExecFlag(getApplicationContext(),
+//                            SharedPreferencesUtils.FIRST_D_ACCOUNT_GET_BEFORE);
+//                }
             }
         }
     }

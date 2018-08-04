@@ -185,15 +185,15 @@ public class DaccountControl implements
         }
 
         //初回実行である事を設定する
-        if (context != null) {
-            SharedPreferencesUtils.setFirstExecStart(context);
-        }
+//        if (context != null) {
+//            SharedPreferencesUtils.setFirstExecStart(context);
+//        }
 
         //初回起動の場合を判定
-        if (context != null && SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
-            //初回の場合はダイアログを表示するので、処理中フラグを立てる
-            mDAccountBusy = true;
-        }
+//        if (context != null && SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
+//            //初回の場合はダイアログを表示するので、処理中フラグを立てる
+//            mDAccountBusy = true;
+//        }
 
         //コールバックがヌルならば何もできないので帰る
         if (daccountControlCallBackSource == null) {
@@ -224,8 +224,8 @@ public class DaccountControl implements
 
             //設定画面でdアカウントを切り替えた際は、ホーム画面の情報切り替えの為に、サービス登録済みでもコールバックが必要となる
             //登録済みでも、dアカウントの取得に失敗している場合があったので、存在の有無で処理を変更する
-            if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))
-                    || TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesOneTimePass(context))) {
+//            if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))
+//                    || TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesOneTimePass(context))) {
                 DTVTLogger.debug("”execDaccountGetOTT” Daccount get retry");
 
                 //認証画面の表示状況のインスタンスの取得
@@ -237,12 +237,12 @@ public class DaccountControl implements
                 mDaccountGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), this);
                 //クラスの識別値を設定
                 mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
-            } else {
-                DTVTLogger.debug("Daccount true return");
-                mIsOTTCheckFinished = true;
-                //dアカウントは取れているので、trueを返す
-                mDaccountControlCallBack.daccountControlCallBack(true);
-            }
+//            } else {
+//                DTVTLogger.debug("Daccount true return");
+//                mIsOTTCheckFinished = true;
+//                //dアカウントは取れているので、trueを返す
+//                mDaccountControlCallBack.daccountControlCallBack(true);
+//            }
 
             return;
         }
