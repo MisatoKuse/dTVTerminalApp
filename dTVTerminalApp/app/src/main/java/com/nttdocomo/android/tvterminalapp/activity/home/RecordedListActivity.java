@@ -643,6 +643,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 public void run() {
                     RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo);
                     baseFragment.clear();
+                    baseFragment.setIsUiRunning(false);
                     baseFragment.notifyDataSetChanged();
                 }
             });
@@ -794,6 +795,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                     return;
                 }
+                baseFragment.setIsUiRunning(true);
                 baseFragment.notifyDataSetChanged();
                 if (mRequestIndex != 0) {
                     baseFragment.loadComplete();

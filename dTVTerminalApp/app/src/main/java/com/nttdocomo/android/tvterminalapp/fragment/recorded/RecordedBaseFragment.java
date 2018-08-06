@@ -274,6 +274,15 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     }
 
     /**
+     * UI状態設定.
+     *
+     * @param isUiRunning UI更新可否
+     */
+    public void setIsUiRunning(final boolean isUiRunning) {
+        this.mIsUiRunning = isUiRunning;
+    }
+
+    /**
      * データ取得.
      *
      * @return コンテンツデータ
@@ -476,6 +485,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param index インデックス
      */
     private void setCancelStatusOnly(final String fullPath, final int index) {
+        if (!mIsUiRunning) {
+            return;
+        }
         if (-1 < index - mQueueIndex.size()) {
             return;
         }
