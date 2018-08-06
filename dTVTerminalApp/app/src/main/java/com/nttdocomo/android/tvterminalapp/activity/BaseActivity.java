@@ -259,6 +259,8 @@ public class BaseActivity extends FragmentActivity implements
      * 詳細画面起動元Classを保存.
      */
     private static String sSourceScreenClass = "";
+    /**起動時チェックフラグ.*/
+    private static boolean sIsLaunchChecked = false;
     /**
      * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu).
      */
@@ -831,13 +833,6 @@ public class BaseActivity extends FragmentActivity implements
                 return;
             }
             permissionCheckExec();
-            if (!(this instanceof LaunchActivity)) {
-                //リモート視聴設定期限表示
-                String msg = (DlnaUtils.getLocalRegisterExpireDateCheckMessage(this));
-                if (!TextUtils.isEmpty(msg)) {
-                    showErrorDialogOffer(msg);
-                }
-            }
             //TODO 6/12作業保留(今後の対応とする)のためコメントアウト
             // BG → FG でのonResumeで TvProgramIntentService を開始
 //            DTVTLogger.debug("do TvProgramIntentService start");
@@ -845,7 +840,6 @@ public class BaseActivity extends FragmentActivity implements
 //            scaledDownProgramListDataProvider.startTvProgramIntentService();
         } else {
             onStartCommunication();
-            downloadStatusCheck();
             //パーミッションチェックフラグの効果は1度のみなので、リセットする
             ottGetAuthSwitch.setSkipPermission(false);
         }
@@ -857,6 +851,14 @@ public class BaseActivity extends FragmentActivity implements
 
             //ユーザー情報変更判定を呼ぶ
             checkUserInfoChange();
+            if (!(this instanceof LaunchActivity)) {
+                //リモート視聴設定期限表示
+                localRegisterExpireDateCheck();
+            }
+        } else if (!sIsLaunchChecked && this instanceof HomeActivity) {
+            localRegisterExpireDateCheck();
+            downloadStatusCheck();
+            sIsLaunchChecked = true;
         }
 
         StbConnectionManager.shared().setConnectionListener(this);
@@ -2524,14 +2526,22 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
+     * リモート視聴設定期限表示.
+     */
+    private void localRegisterExpireDateCheck() {
+        String msg = (DlnaUtils.getLocalRegisterExpireDateCheckMessage(this));
+        if (!TextUtils.isEmpty(msg)) {
+            showErrorDialogOffer(msg);
+        }
+    }
+
+    /**
      * ダウンロード状態チェック.
      */
     private void downloadStatusCheck() {
-        if (this instanceof HomeActivity) {
-            DownloadDataProvider downloadDataProvider = DownloadDataProvider.getInstance(mActivity);
-            if (downloadDataProvider.getDownloadService() == null && downloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
-                showErrorDialogOffer(getResources().getString(R.string.record_download_not_completed_msg));
-            }
+        DownloadDataProvider downloadDataProvider = DownloadDataProvider.getInstance(mActivity);
+        if (downloadDataProvider.getDownloadService() == null && downloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
+            showErrorDialogOffer(getResources().getString(R.string.record_download_not_completed_msg));
         }
     }
 
