@@ -258,6 +258,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             mIsEndPage = true;
         }
         setVideoBrows(dstList);
+        mRequestIndex = mRequestIndex + dstList.size();
     }
 
     @Override
@@ -502,14 +503,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * DMSデバイスを取り始める.
      */
     public void getData() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (progressBar != null && progressBar.getVisibility() == View.GONE) {
-                    progressBar.setVisibility(View.VISIBLE);
+        if (mRequestIndex == 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (progressBar != null && progressBar.getVisibility() == View.GONE) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
-        });
+            });
+        }
         mHandler.post(new Runnable() {
             @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
             @Override
@@ -796,7 +799,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     baseFragment.loadComplete();
                     mIsLoading = false;
                 }
-                mRequestIndex = baseFragment.getContentsData().size();
                 if (baseFragment.getQueueIndexSize() > 0) {
                     baseFragment.bindServiceFromBackground();
                 }
