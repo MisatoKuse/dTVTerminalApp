@@ -852,7 +852,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         // dアカアプリ未インストールの場合はdアカアプリ起動(関数内でチェックしてストア誘導する画面に飛ぶ).
                         DTVTLogger.debug("dAccountApp is not installed.");
                         checkDAccountApp();
-                    } else if (errorCode == IDimDefines.RESULT_NO_AVAILABLE_ID) {
+                    } else if (errorCode == IDimDefines.RESULT_NO_AVAILABLE_ID || errorCode == IDimDefines.RESULT_INVALID_ID ) {
                         //有効ID無しなら同じくdアカアプリ起動.
                         DTVTLogger.debug("dAccountID is not Registered.");
                         // dアカアプリを単純起動してID登録せずに戻るとなぜかOTTの応答コールバックが呼ばれる
