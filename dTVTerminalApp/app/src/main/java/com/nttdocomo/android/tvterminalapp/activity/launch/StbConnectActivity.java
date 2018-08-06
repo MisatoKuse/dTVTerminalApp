@@ -150,11 +150,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     private void showRemoteConfirmDialog() {
         //　アプリが無ければインストール画面に誘導
         CustomDialog remoteConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_first_start));
-        } else if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
-            remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_setting));
-        }
+        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_first_start));
         remoteConfirmDialog.setConfirmText(R.string.custom_dialog_ok);
         remoteConfirmDialog.setCancelText(R.string.custom_dialog_cancel);
         remoteConfirmDialog.setOnTouchOutside(false);
