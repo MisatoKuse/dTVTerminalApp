@@ -909,9 +909,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private void showDialogToConfirmUnDownload(final boolean completed, final View view) {
         CustomDialog customDialog = new CustomDialog(getContext(), CustomDialog.DialogType.CONFIRM);
         if (completed) {
-            customDialog.setTitle(getResources().getString(R.string.record_download_delete_title));
+            customDialog.setContent(getResources().getString(R.string.record_download_delete_title));
         } else {
-            customDialog.setTitle(getResources().getString(R.string.record_download_cancel_title));
+            customDialog.setContent(getResources().getString(R.string.record_download_cancel_title));
             customDialog.setConfirmText(R.string.record_download_cancel_confirm);
         }
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
