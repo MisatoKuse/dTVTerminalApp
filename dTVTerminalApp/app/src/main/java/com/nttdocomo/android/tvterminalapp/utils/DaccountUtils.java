@@ -11,7 +11,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
+import com.nttdocomo.android.ocsplib.bouncycastle.operator.RuntimeOperatorException;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
@@ -78,9 +80,18 @@ public class DaccountUtils {
      * @return インストールされているならばtrue
      */
     public static boolean checkInstalled(final Context context, final String packageName) {
-        //アプリ一覧の取得
-        final PackageManager packageManager = context.getPackageManager();
-        List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
+        PackageManager packageManager = null;
+        List<PackageInfo> packageInfos = null;
+        try {
+            //アプリ一覧の取得
+            packageManager = context.getPackageManager();
+            packageInfos = packageManager.getInstalledPackages(0);
+        } catch (RuntimeException exception) {
+            //Androidのバグと思われる原因により、稀に本例外が発生する。情報が取得できないので、アプリ有りの扱いとする
+            //本メソッドは現状dアカウントアプリの有無のみ使用している。本当にdアカウントアプリが存在しなければ、後のバインドでエラーとなるので許容する
+            DTVTLogger.debug(exception);
+            return true;
+        }
 
         //情報数だけ回る
         for (PackageInfo individualInfo : packageInfos) {

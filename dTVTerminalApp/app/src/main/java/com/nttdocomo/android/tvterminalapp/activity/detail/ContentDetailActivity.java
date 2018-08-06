@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -2011,16 +2012,23 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         String errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
                         showErrorDialog(errorMessage);
                     } else {
+                        boolean execResult = true;
                         //RESERVED4は4の場合
                         if (RESERVED4_TYPE4.equals(detailData.getReserved4())) {
-                            startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getContentsId());
+                            execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getContentsId());
                             //RESERVED4は7,8の場合
                         } else if (RESERVED4_TYPE7.equals(detailData.getReserved4())
                                 || RESERVED4_TYPE8.equals(detailData.getReserved4())) {
-                            startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getContentsId());
+                            execResult = startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getContentsId());
                             //その他の場合
                         } else {
-                            startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getContentsId());
+                            execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getContentsId());
+                        }
+
+                        //実行時に実行に失敗していた場合は、メッセージを表示する
+                        if(!execResult) {
+                            //DTVのエラーを表示
+                            execFailDialog(DTV_PACKAGE_NAME);
                         }
                     }
                 }
@@ -2052,12 +2060,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 @Override
                 public void onOKCallback(final boolean isOK) {
                     int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
+                    boolean execResult = true;
+
                     //バージョンチェック
                     if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
                         String errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
                         showErrorDialog(errorMessage);
                     } else {
-                        startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + detailData.getContentsId());
+                        execResult = startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + detailData.getContentsId());
+                    }
+
+                    //実行時に実行に失敗していた場合は、メッセージを表示する
+                    if(!execResult) {
+                        //dアニメのエラーを表示
+                        execFailDialog(DANIMESTORE_PACKAGE_NAME);
                     }
                 }
             });
@@ -2092,15 +2108,24 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
                         String errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
                         showErrorDialog(errorMessage);
-                    } else {    //テレビ再生  「categoryId」が「01」の場合
+                    } else {
+                        boolean execResult = true;
+
+                        //テレビ再生  「categoryId」が「01」の場合
                         if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(detailData.getCategoryId())) {
-                            startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getChannelId());
+                            execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getChannelId());
                             DTVTLogger.debug("channelId :----" + detailData.getChannelId());
                             //ビデオ再生  「categoryId」が「02」または「03」の場合
                         } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(detailData.getCategoryId())
                                 || DTV_CHANNEL_CATEGORY_RELATION.equals(detailData.getCategoryId())) {
-                            startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getContentsId());
+                            execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getContentsId());
                             DTVTLogger.debug("ContentId :----" + detailData.getContentsId());
+                        }
+
+                        //実行時に実行に失敗していた場合は、メッセージを表示する
+                        if(!execResult) {
+                            //dTVチャンネルのエラーを表示
+                            execFailDialog(DTVCHANNEL_PACKAGE_NAME);
                         }
                     }
                 }
@@ -2137,12 +2162,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         String errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
                         showErrorDialog(errorMessage);
                     } else {
+                        boolean execResult = true;
+
                         if (METARESPONSE1.equals(detailData.getDtvType())) {
-                            startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getTitle_id());
+                            execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getTitle_id());
                         } else if (METARESPONSE2.equals(detailData.getDtvType())) {
-                            startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
+                            execResult = startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
                         } else {
-                            startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                            execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                        }
+
+                        //実行時に実行に失敗していた場合は、メッセージを表示する
+                        if(!execResult) {
+                            //dTVのエラーを表示
+                            execFailDialog(DTV_PACKAGE_NAME);
                         }
                     }
                 }
@@ -2181,18 +2214,26 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         showErrorDialog(errorMessage);
                     } else {
                         if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(detailData.getmTv_service())) {
+                            boolean execResult = true;
+
                             //「contents_type」が「0」または未設定
                             if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(detailData.getmContent_type())
                                     || null == detailData.getmContent_type()) {
                                 DTVTLogger.debug("contentsType :----" + detailData.getmContent_type());
-                                startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getmService_id());
+                                execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getmService_id());
                                 DTVTLogger.debug("chno :----" + detailData.getmService_id());
                                 //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
                             } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(detailData.getmContent_type())
                                     || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(detailData.getmContent_type())
                                     || ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(detailData.getmContent_type())) {
-                                startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getCrid());
+                                execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getCrid());
                                 DTVTLogger.debug("crid :----" + detailData.getCrid());
+                            }
+
+                            //実行時に実行に失敗していた場合は、メッセージを表示する
+                            if(!execResult) {
+                                //dTVチャンネルのエラーを表示
+                                execFailDialog(DTVCHANNEL_PACKAGE_NAME);
                             }
                         }
                     }
@@ -2214,15 +2255,65 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
+     * 指定されたパッケージ名のアプリの実行に失敗しているので、ダウンロードダイアログを表示する.
+     *
+     * @param packageName 実行に失敗したパッケージ名
+     */
+    void execFailDialog(String packageName) {
+        String message = "";
+        String downloadUrlBuffer = "";
+
+        //指定されたパッケージ名で処理を振り分ける
+        if (packageName.equals(DTV_PACKAGE_NAME)) {
+            //DTVの実行に失敗したので、メッセージとURLを指定
+            message = getResources().getString(R.string.dtv_content_service_application_not_install);
+            downloadUrlBuffer = UrlConstants.WebUrl.DTV_GOOGLEPLAY_DOWNLOAD_URL;
+        } else if (packageName.equals(DANIMESTORE_PACKAGE_NAME)) {
+            //Dアニメの実行に失敗したので、メッセージとURLを指定
+            message = getResources().getString(R.string.d_anime_store_application_not_install_dialog);
+            downloadUrlBuffer = UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL;
+        } else if (packageName.equals(DTVCHANNEL_PACKAGE_NAME)) {
+            //DTVチャンネルの実行に失敗したので、メッセージとURLを指定
+            message = getResources().getString(R.string.dtv_channel_service_application_not_install_dialog);
+            downloadUrlBuffer = UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL;
+        } else {
+            DTVTLogger.debug("Other package:" + packageName);
+        }
+
+        //コールバックに値を伝える為にファイナル化
+        final String downloadUrl = downloadUrlBuffer;
+
+        //再ダウンロードダイアログを表示
+        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+        installAppDialog.setContent(message);
+        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                toGooglePlay(downloadUrl);
+            }
+        });
+        installAppDialog.showDialog();
+    }
+
+    /**
      * 機能：APP起動.
      *
      * @param url URL
      */
-    private void startApp(final String url) {
+    private boolean startApp(final String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivityForResult(intent, START_APPLICATION_REQUEST_CODE);
+
+        try {
+            startActivityForResult(intent, START_APPLICATION_REQUEST_CODE);
+        } catch (ActivityNotFoundException exception) {
+            //Androidのバグと思われる原因により、インストール情報の取得ができない場合がある。その場合は、この例外が発生する
+            DTVTLogger.debug(exception);
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -2233,8 +2324,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @return 中継アプリがインストールされているか
      */
     private boolean isAppInstalled(final Context context, final String packageName) {
-        final PackageManager packageManager = context.getPackageManager();
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+        PackageManager packageManager = null;
+        List<PackageInfo> pinfo = null;
+        try {
+            packageManager = context.getPackageManager();
+            pinfo = packageManager.getInstalledPackages(0);
+        } catch (RuntimeException exception) {
+            //Androidのバグと思われる原因により、稀に本例外が発生する。情報が取得できないので、アプリ有りの扱いとする
+            //本メソッドは現状DTV等他のアプリの起動時に使用する。アプリが本当に存在しなければ起動に失敗し、ダウンロードを促すダイアログを表示する
+            return true;
+        }
         List<String> pName = new ArrayList<>();
         if (pinfo != null) {
             for (int i = 0; i < pinfo.size(); i++) {
