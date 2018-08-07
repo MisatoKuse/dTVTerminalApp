@@ -87,6 +87,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     /** 読み込み中断フラグ. */
     private boolean mCancelLoad = false;
+    /** ロード終了. */
+    private boolean mIsEndPage = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -262,6 +264,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             if (null == mContentsAdapter) {
                 return;
             }
+            if (mIsEndPage) {
+                return;
+            }
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
                     && absListView.getLastVisiblePosition() == mContentsAdapter.getCount() - 1) {
                 if (mIsCommunicating) {
@@ -341,6 +346,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             mNoDataMessage.setVisibility(View.VISIBLE);
             displayMoreData(false);
             return;
+        }
+        //ロード終了
+        if (videoContentInfo.size() < DtvtConstants.REQUEST_LIMIT_1) {
+            mIsEndPage = true;
         }
 
         for (int i = 0; i < videoContentInfo.size(); ++i) {
