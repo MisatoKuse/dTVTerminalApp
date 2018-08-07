@@ -2620,6 +2620,7 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setDialogDismissCallback(this);
         dialog.setCancelable(false);
         dialog.setOnTouchOutside(false);
+        dialog.setOnTouchBackkey(false);
         dialog.setConfirmText(R.string.permission_detail_dialog_confirm);
         dialog.setConfirmVisibility(View.VISIBLE);
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
