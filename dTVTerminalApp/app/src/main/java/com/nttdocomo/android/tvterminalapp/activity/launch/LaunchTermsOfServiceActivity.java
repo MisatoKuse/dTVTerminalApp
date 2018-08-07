@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
  * 初回起動時の利用規約アクティビティ.
@@ -83,6 +84,7 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
                 Intent intent = new Intent(this, StbSelectActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
+                SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this, true);
                 startActivity(intent);
                 break;
             case R.id.externally_transmit_layout:
