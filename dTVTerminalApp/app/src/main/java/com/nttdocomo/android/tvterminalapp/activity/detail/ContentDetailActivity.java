@@ -1347,11 +1347,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * ビューページャの再設定.
      */
     private void setViewPagerTab() {
-        mTabNames = getResources().getStringArray(R.array.contents_detail_tab_vod);
-        mTabLayout.resetTabView(mTabNames);
-        mFragmentFactory.delFragment();
-        mViewPager.addOnPageChangeListener(null);
-        mContentsDetailPagerAdapter.notifyDataSetChanged();
+        if (mTabNames == null || mTabNames.length == 2) {
+            mTabNames = getResources().getStringArray(R.array.contents_detail_tab_vod);
+            mTabLayout.resetTabView(mTabNames);
+            mFragmentFactory.delFragment();
+            mViewPager.addOnPageChangeListener(null);
+            mContentsDetailPagerAdapter.notifyDataSetChanged();
+        }
     }
     //region ContentsDetailDataProvider.ApiDataProviderCallback
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
