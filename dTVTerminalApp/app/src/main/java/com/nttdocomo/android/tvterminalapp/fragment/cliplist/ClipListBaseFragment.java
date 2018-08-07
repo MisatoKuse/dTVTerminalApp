@@ -129,10 +129,10 @@ public class ClipListBaseFragment extends Fragment
         ContentsAdapter.ActivityTypeItem type;
         if (position == 0) {
             type = ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV;
-            showProgressBar(true);
         } else {
             type = ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO;
         }
+        showProgressBar(true);
         mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, type);
         mTvListView.setAdapter(mClipMainAdapter);
         DTVTLogger.end();
