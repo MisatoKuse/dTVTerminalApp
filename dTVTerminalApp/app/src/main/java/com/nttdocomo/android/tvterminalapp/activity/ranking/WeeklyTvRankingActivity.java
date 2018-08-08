@@ -170,6 +170,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             //タブ移動時にそれまでのデータ取得要求はキャンセルする
+            if (mViewPager.getCurrentItem() == position) {
+                return;
+            }
             mViewPager.setCurrentItem(position);
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
             if (fragment != null) {
