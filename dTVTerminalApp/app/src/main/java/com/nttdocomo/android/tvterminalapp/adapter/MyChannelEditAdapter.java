@@ -99,7 +99,7 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
         bundle.putString(TITLE_MY_CHANNEL_LIST, channel.getTitle());
         editBt.setTag(bundle);
         editBt.setOnClickListener(this);
-        titleTv.setText(channel.getTitle());
+        titleTv.setText(channel.getDisplayTitle());
         noTv.setText(channel.getIndex());
         if (!TextUtils.isEmpty(channel.getServiceId())) { //登録
             noTv.setTextColor(ContextCompat.getColor(mContext, R.color.item_num_black));

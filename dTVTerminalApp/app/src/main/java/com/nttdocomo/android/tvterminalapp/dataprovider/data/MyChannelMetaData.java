@@ -18,15 +18,17 @@ public class MyChannelMetaData implements Serializable {
     private static final long serialVersionUID = -5113796911971449210L;
     //仕様書の名前に合わせているので、フルスペルではない変数名もあります
     /**サービスID.*/
-    private String mServiceId;
+    private String mServiceId = null;
     /**チャンネル名.*/
-    private String mTitle;
+    private String mTitle = null;
+    /**表示用チャンネル名.*/
+    private String mDisplayTitle = null;
     /**パレンタル情報.*/
-    private String mRValue;
+    private String mRValue = null;
     /**チャンネルのアダルトタイプ.*/
-    private String mAdultType;
+    private String mAdultType = null;
     /**マイチャンネル登録位置.*/
-    private String mIndex;
+    private String mIndex = null;
 
     /**
      * サービスID取得.
@@ -58,6 +60,22 @@ public class MyChannelMetaData implements Serializable {
      */
     public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
+    }
+
+    /**
+     * 表示用チャンネル名取得.
+     * @return チャンネル名
+     */
+    public String getDisplayTitle() {
+        return mDisplayTitle;
+    }
+
+    /**
+     * 表示用チャンネル名設定.
+     * @param mDisplayTitle チャンネル名
+     */
+    public void setDisplayTitle(final String mDisplayTitle) {
+        this.mDisplayTitle = mDisplayTitle;
     }
 
     /**

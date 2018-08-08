@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
@@ -29,13 +30,12 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 
-import com.nttdocomo.android.tvterminalapp.common.DtvtConstants.ErrorType;
-
 /**
  * マイ番組表設定.
  */
 public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener,
         MyChannelEditAdapter.EditMyChannelItemImpl,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         MyChannelDataProvider.ApiDataProviderCallback, AbsListView.OnScrollListener {
 
     //region variable
@@ -43,6 +43,10 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     private static final int EDIT_CHANNEL_LIST_COUNT = WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
     /** マイ番組表データプロバイダー.*/
     private MyChannelDataProvider mMyChannelDataProvider;
+    /** 番組表データプロバイダー. */
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /** My番組表一覧. */
+    private ArrayList<MyChannelMetaData> mMyChannelMetaData = null;
     /** コンマ.*/
     private static final String COMMA = ",";
     /** bracket left.*/
@@ -185,20 +189,52 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
         DTVTLogger.start();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (myChannelMetaData != null) {
+                    mMyChannelMetaData = myChannelMetaData;
+                    //画面表示用チャンネル名を取得するためにチャンネル一覧を取得
+                    mScaledDownProgramListDataProvider =
+                            new ScaledDownProgramListDataProvider(MyChannelEditActivity.this);
+                    mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+                    //for channelListCallback
+                } else {
+                    //その他のエラーなので、その他のエラーを表示
+                    showErrorDialog();
+                }
+            }
+        });
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        DTVTLogger.start();
         final MyChannelEditActivity me = this;
         runOnUiThread(new Runnable() {
+            @SuppressWarnings("OverlyLongMethod")
             @Override
             public void run() {
                 //APIの実行が終わったので、再実行を許可
                 getOk = true;
 
-                if (myChannelMetaData != null) {
+                if (channels != null) {
                     mEditList = new ArrayList<>();
                     if (mEditList.size() == 0) {
                         for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
                             MyChannelMetaData myChannelItemData = null;
-                            for (int j = 0; j < myChannelMetaData.size(); j++) {
-                                MyChannelMetaData myChData = myChannelMetaData.get(j);
+                            for (int j = 0; j < mMyChannelMetaData.size(); j++) {
+                                MyChannelMetaData myChData = mMyChannelMetaData.get(j);
+                                //念のため初期値に blank を設定
+                                myChData.setDisplayTitle("");
+                                for (int k = 0; k < channels.size(); k++) {
+                                    //画面表示用チャンネル名はチャンネル一覧のものを使用する
+                                    if (myChData.getServiceId().equals(channels.get(k).getServiceId())) {
+                                        myChData.setDisplayTitle(channels.get(k).getTitle());
+                                        break;
+                                    }
+                                }
                                 int index = Integer.parseInt(myChData.getIndex());
                                 if (i == index) {
                                     myChannelItemData = myChData;
@@ -213,19 +249,19 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                         }
                     } else {
                         ArrayList<MyChannelMetaData> rmList = new ArrayList<>();
-                        for (int i = 0; i < myChannelMetaData.size(); i++) {
+                        for (int i = 0; i < mMyChannelMetaData.size(); i++) {
                             for (int j = 0; j < mEditList.size(); j++) {
-                                String myChannelItemServiceId = myChannelMetaData.get(i).getServiceId();
+                                String myChannelItemServiceId = mMyChannelMetaData.get(i).getServiceId();
                                 if (myChannelItemServiceId != null) {
                                     if (myChannelItemServiceId.equals(mEditList.get(j).getServiceId())) {
-                                        rmList.add(myChannelMetaData.get(i));
+                                        rmList.add(mMyChannelMetaData.get(i));
                                         break;
                                     }
                                 }
                             }
                         }
-                        myChannelMetaData.removeAll(rmList);
-                        mEditList.addAll(myChannelMetaData);
+                        mMyChannelMetaData.removeAll(rmList);
+                        mEditList.addAll(mMyChannelMetaData);
                     }
                     MyChannelEditAdapter myEditAdapter = new MyChannelEditAdapter(me, mEditList);
                     mEditListView.setAdapter(myEditAdapter);
@@ -348,7 +384,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private void showDialogToConfirmUnRegistration(final Bundle bundle) {
         CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        customDialog.setContent(BRACKET_LEFT + mEditList.get(mDeletePosition).getTitle() + BRACKET_RIGHT
+        customDialog.setContent(BRACKET_LEFT + mEditList.get(mDeletePosition).getDisplayTitle() + BRACKET_RIGHT
                 + getResources().getString(R.string.my_channel_list_setting_dialog_content_unregister));
         customDialog.setConfirmText(R.string.positive_response);
         customDialog.setCancelText(R.string.negative_response);
