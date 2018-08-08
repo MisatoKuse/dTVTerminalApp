@@ -223,6 +223,9 @@ public class VideoRankingActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
+            if (mViewPager.getCurrentItem() == position) {
+                return;
+            }
             mViewPager.setCurrentItem(position);
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
             if (fragment != null) {
