@@ -2037,7 +2037,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * (オーバーライドの為にprotected指定で分離)
      */
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     protected void showDAccountErrorDialog() {
 
         CustomDialog errorDialog = new CustomDialog(
@@ -2106,7 +2106,17 @@ public class BaseActivity extends FragmentActivity implements
                     break;
                 case DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE:
                     //事前チェックでdアカウント設定アプリが未インストールである事が分かった場合のエラー
-                    errorDialog.setContent(getString(R.string.d_account_deleted_message));
+                    //errorDialog.setContent(getString(R.string.d_account_regist_error));
+                    //dアカウントアプリ未インストールの場合に出すメッセージは、ログイン中であった場合の
+                    //dアカウント変更後のホーム画面復帰だけと判明した。ホーム画面復帰は別途処理が行われるので、
+                    //ここではメッセージは表示しない事になった。
+                    isNeedDialog = false;
+                    break;
+                case IDimDefines.RESULT_SERVICE_AVAILABLE:
+                    //エラーダイアログ表示でこのコードが来るのは、dアカウントアプリ未インストールかつ
+                    //未ログイン又はログオフ済みの場合となる。これまではdefault:で処理されていたが、
+                    //この場合もメッセージは表示しない事になった。
+                    isNeedDialog = false;
                     break;
                 default:
                     errorDialog.setContent(getString(R.string.d_account_regist_error));
