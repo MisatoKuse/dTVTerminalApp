@@ -161,28 +161,6 @@ public class SharedPreferencesUtils {
     private static final String PERMISSION_DIALOG_DISPLAYED_TWICE
             = "PERMISSION_DIALOG_DISPLAYED_TWICE";
     /**
-//     * 初回dアカウント取得フラグ.
-//     * ランチャーアクティビティの最初に初回実行状態に更新し、dアカウントの最初の取得処理で初回実行終了とする
-//     * 以後はdアカウントユーザー切り替えも含めて内容は変更しない。
-//     */
-//    private static final String FIRST_D_ACCOUNT_GET_KEY = "FIRST_D_ACCOUNT_GET_KEY";
-//    /**
-//     * 初回dアカウント取得フラグのデフォルト値.
-//     */
-//    public static final int FIRST_D_ACCOUNT_GET_BEFORE = 0;
-//    /**
-//     * 初回dアカウント取得フラグの、取得中の値.
-//     */
-//    private static final int FIRST_D_ACCOUNT_GET_NOW = 1;
-//    /**
-//     * 初回dアカウント取得フラグの、取得後の値。一度この値になると、以後の変化は無い.
-//     */
-//    private static final int FIRST_D_ACCOUNT_GET_AFTER = 2;
-//    /**
-//     * 初回dアカウント取得フラグの、強制設定値.
-//     */
-//    private static final int FIRST_D_ACCOUNT_FORCE_RESET = 3;
-    /**
      * ローカルレジストレーション期限表示ダイアログフラグ.
      */
     private static final String REGISTER_EXPIREDATE_DIALOG_FLG
@@ -191,6 +169,12 @@ public class SharedPreferencesUtils {
      * ローカルレジストレーションの成功日時.
      */
     private static final String LOCAL_REGIST_SUCCCES_TIME = "LOCAL_REGIST_SUCCCES_TIME";
+
+    /**
+     * dアカウントの未認証状態を保存する.
+     */
+    private static final String D_ACCOUNT_UNCERTIFIED_DACCOUNT
+            = "D_ACCOUNT_UNCERTIFIED_DACCOUNT";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -263,6 +247,8 @@ public class SharedPreferencesUtils {
             REGISTER_EXPIREDATE_DIALOG_FLG,
             //ローカルレジストレーションの成功日時
             LOCAL_REGIST_SUCCCES_TIME,
+            //dアカウント未認証状態
+            D_ACCOUNT_UNCERTIFIED_DACCOUNT,
     };
 
 
@@ -1288,5 +1274,42 @@ public class SharedPreferencesUtils {
 
         DTVTLogger.end();
         return answer;
+    }
+
+    /**
+     * dアカウントが未認証である事を明示する処理.
+     *
+     * dアカウントの値が空白か否かでは、ログオフとログオンは判定できるが、未認証は判定できない。
+     * dアカウントアプリから未認証を返された際にtrueをセットして、直接分かるようにする
+     * @param context コンテキスト
+     * @param certifiedFlag dアカウントが未認証ならばtrue
+     */
+    public static void setUncertifiedDaccount(Context context, final boolean certifiedFlag) {
+        DTVTLogger.start();
+
+        if (context != null) {
+            SharedPreferences data = context.getSharedPreferences(
+                    D_ACCOUNT_UNCERTIFIED_DACCOUNT, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = data.edit();
+            editor.putBoolean(D_ACCOUNT_UNCERTIFIED_DACCOUNT, certifiedFlag);
+            editor.apply();
+        }
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * dアカウントが未認証かどうかを取得する処理.
+     *
+     * @param context コンテキスト
+     * @return dアカウントが未認証ならばtrue
+     */
+    public static boolean isUncertifiedDaccount(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                D_ACCOUNT_UNCERTIFIED_DACCOUNT, Context.MODE_PRIVATE);
+
+        //保存したdアカウント未認証状態を返却
+        return data.getBoolean(D_ACCOUNT_UNCERTIFIED_DACCOUNT, false);
     }
 }
