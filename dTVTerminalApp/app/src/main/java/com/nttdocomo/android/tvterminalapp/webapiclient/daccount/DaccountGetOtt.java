@@ -79,6 +79,9 @@ public class DaccountGetOtt {
                 //キャンセルか認証状態無効だった場合は、いち早くベースアクティビティ側に知らせて、
                 //ログアウト等のダイアログを海外判定のダイアログよりも優先表示する
                 OttGetAuthSwitch.getInstance().setSkipPermission(true);
+
+                //未認証状態である事を宣言
+                SharedPreferencesUtils.setUncertifiedDaccount(mContext,true);
             } else {
                 //エラーではないので、ログアウトダイアログの優先表示は必要ない。falseを設定
                 OttGetAuthSwitch.getInstance().setSkipPermission(false);
@@ -100,6 +103,9 @@ public class DaccountGetOtt {
                 resultOneTimePassword = "";
             } else {
                 resultOneTimePassword = oneTimePassword;
+
+                //ワンタイムパスワードが取得できたので、認証状態である事を宣言
+                SharedPreferencesUtils.setUncertifiedDaccount(mContext,false);
             }
 
             if (mDaccountGetOttCallBack != null) {

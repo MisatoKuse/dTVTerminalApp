@@ -639,11 +639,23 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * PR画像、契約導線表示切替.
      */
     private void showHomeBanner() {
+        //dアカウント未認証状態の取得
+        boolean uncertified = SharedPreferencesUtils.isUncertifiedDaccount(
+                getApplicationContext());
+
         UserState userState = UserInfoUtils.getUserState(this);
         switch (userState) {
             case LOGIN_OK_CONTRACT_NG:
                 DTVTLogger.debug("showHomeBanner_LOGIN_OK_CONTRACT_NG");
-                mAgreementRl.setVisibility(View.VISIBLE);
+                if (uncertified) {
+                    DTVTLogger.debug("LOGIN_OK_CONTRACT_NG & uncertified");
+                    //未認証の場合、契約情報の取得は行えず、契約の有無は不明になるので、契約のバナーは隠す
+                    mAgreementRl.setVisibility(View.GONE);
+                } else {
+                    DTVTLogger.debug("LOGIN_OK_CONTRACT_NG & certified");
+                    //認証が行われているので、契約のバナーを出す
+                    mAgreementRl.setVisibility(View.VISIBLE);
+                }
                 break;
             case CONTRACT_OK_PAIRING_NG:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PAIRING_NG");
