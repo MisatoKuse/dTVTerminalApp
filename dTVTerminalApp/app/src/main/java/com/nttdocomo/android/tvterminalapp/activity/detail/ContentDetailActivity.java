@@ -3213,7 +3213,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (ContentUtils.isContractWireDisplay(viewIngType)) {
                         Button button = setThumbnailMessage(
                                 getString(R.string.contents_detail_hikari_vod_agreement),
-                                getString(R.string.contents_detail_contract_leading_button), true, true);
+                                getString(R.string.contents_detail_tv_confirm_leading_button), true, true);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View v) {
