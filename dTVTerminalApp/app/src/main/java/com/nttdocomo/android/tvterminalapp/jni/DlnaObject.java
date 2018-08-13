@@ -36,6 +36,8 @@ public class DlnaObject {
     public String mSize;
     @SuppressWarnings("PublicField")
     public String mVideoType;
+    @SuppressWarnings("PublicField")
+    public String mRating;
     //増やす
     //public String name;
 }

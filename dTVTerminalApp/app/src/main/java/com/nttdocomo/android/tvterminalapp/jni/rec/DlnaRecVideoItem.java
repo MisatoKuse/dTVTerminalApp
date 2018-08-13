@@ -65,7 +65,10 @@ public class DlnaRecVideoItem implements Serializable {
     public String mChannelName = "";
     /**xml.*/
     @SuppressWarnings("PublicField")
-    public String mXml = "";  //upnp:channelName
+    public String mXml = "";
+    /**rating.*/
+    @SuppressWarnings("PublicField")
+    public String mRating = "";
 
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造.

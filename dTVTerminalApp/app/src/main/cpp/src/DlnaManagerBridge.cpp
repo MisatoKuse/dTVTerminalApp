@@ -42,6 +42,7 @@ struct JniStruct{
     jfieldID bitrate;
     jfieldID channelName;
     jfieldID channelNr;
+    jfieldID rating;
     jfieldID duration;
     jfieldID resUrl;
     jfieldID size;
@@ -92,6 +93,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     jniModelStruct.bitrate = env->GetFieldID(jniModelStruct.cls, "mBitrate", "Ljava/lang/String;");
     jniModelStruct.channelName = env->GetFieldID(jniModelStruct.cls, "mChannelName", "Ljava/lang/String;");
     jniModelStruct.channelNr = env->GetFieldID(jniModelStruct.cls, "mChannelNr", "Ljava/lang/String;");
+    jniModelStruct.rating = env->GetFieldID(jniModelStruct.cls, "mRating", "Ljava/lang/String;");
     jniModelStruct.duration = env->GetFieldID(jniModelStruct.cls, "mDuration", "Ljava/lang/String;");
     jniModelStruct.resUrl = env->GetFieldID(jniModelStruct.cls, "mResUrl", "Ljava/lang/String;");
     jniModelStruct.size = env->GetFieldID(jniModelStruct.cls, "mSize", "Ljava/lang/String;");
@@ -147,6 +149,10 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring channelNrString = env->NewStringUTF(src->channelNr);
     env->SetObjectField(dst, jniModelStruct.channelNr, channelNrString);
     env->DeleteLocalRef(channelNrString);
+
+    jstring ratingString = env->NewStringUTF(src->rating);
+    env->SetObjectField(dst, jniModelStruct.rating, ratingString);
+    env->DeleteLocalRef(ratingString);
 
     jstring durationString = env->NewStringUTF(src->duration);
     env->SetObjectField(dst, jniModelStruct.duration, durationString);

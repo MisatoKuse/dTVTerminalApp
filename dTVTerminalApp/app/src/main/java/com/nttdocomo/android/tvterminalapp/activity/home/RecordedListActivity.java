@@ -22,7 +22,6 @@ import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -31,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentRecordedDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
@@ -115,6 +115,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private ArrayList<DlnaRecVideoItem> mDlnaRecVideoItems = null;
     /**前回のDLNAコンテンツリストキーワード.*/
     private static final String ITEMS_MEMORY = "itemsMemory";
+    /**年齢.*/
+    private int mAgeReq;
+    /**年齢フォマット.*/
+    private static final String FORMAT_0X = "0x";
+    /**年齢フォマット.*/
+    private static final int FORMAT_16_NUM = 16;
+    /**年齢フォマット.*/
+    private static final int FORMAT_16_START_POSITION = 2;
 
     @SuppressWarnings("OverlyLongMethod")
     @Override
@@ -161,6 +169,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             mTabLayout.setTab(startPageNo);
         }
         mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
+        mAgeReq = userInfoDataProvider.getUserAge();
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
         getData();
@@ -251,6 +261,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             item.mXml = dlnaObject.mXml;
             item.mChannelName = dlnaObject.mChannelName;
             item.mDate = dlnaObject.mDate;
+            item.mRating = dlnaObject.mRating;
             dstList.add(item);
         }
         mDlnaRecVideoItems = dstList;
@@ -577,24 +588,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * トーストの表示.
-     * @param message トーストメッセージ
-     */
-    private void showToast(final String message) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        if (!this.isFinishing()) {
-            // 成功
-            mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-            mToast.show();
-        } else {
-            mToast = null;
-        }
-    }
-
-    /**
      * タブサイズ取得.
+     * @return タブポジション
      */
     public int getTabPosition() {
         return mViewPager.getCurrentItem();
@@ -726,6 +721,35 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * 年齢制限チェック.
+     *
+     * @param rating 年齢情報
+     * @return true:制限された
+     */
+    private boolean checkIsOverRating(final String rating) {
+        if (TextUtils.isEmpty(rating)) {
+            return false;
+        }
+        int resAge;
+        if (rating.contains(FORMAT_0X)) { // 16進数
+            try {
+                resAge = Integer.parseInt(rating.substring(FORMAT_16_START_POSITION), FORMAT_16_NUM);
+            } catch (NumberFormatException e) {
+                DTVTLogger.debug(e);
+                return false;
+            }
+        } else { // 10進数
+            try {
+                resAge = Integer.parseInt(rating);
+            } catch (NumberFormatException e) {
+                DTVTLogger.debug(e);
+                return false;
+            }
+        }
+        return mAgeReq < resAge;
+    }
+
+    /**
      * VideoBrowsの設定.
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
@@ -744,6 +768,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     final boolean hideDownloadBtn = getConnectionStatus();
                     for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
                         DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
+                        if (checkIsOverRating(itemData.mRating)) {
+                            continue;
+                        }
                         String checkItemId = itemData.mItemId;
                         if (!TextUtils.isEmpty(checkItemId) && !checkItemId.startsWith(DownloaderBase.sDlPrefix)) {
                             checkItemId = DownloaderBase.getFileNameById(checkItemId);
