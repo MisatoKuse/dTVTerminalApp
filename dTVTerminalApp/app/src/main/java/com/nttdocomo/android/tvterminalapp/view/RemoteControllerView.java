@@ -641,12 +641,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * @param licenseId ラインセンスID
      * @param cid コンテンツID
      * @param crid コンテンツ識別子.
+     * @param extraParameter   追加パラメータ
      */
     public void sendStartApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
-                                                                       final String cid, final String crid) {
+                                                                       final String cid, final String crid,
+                                                                       final String extraParameter) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryHikaritvVodRequest(
-                licenseId, cid, crid, mContext);
+                licenseId, cid, crid, extraParameter, mContext);
         DTVTLogger.end();
     }
 
@@ -667,10 +669,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * ・ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）
      *
      * @param crid  ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）コンテンツID
+     * @param extraParameter   追加パラメータ
      */
-    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(final String crid) {
+    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(final String crid,
+                                                                            final String extraParameter) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(crid, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(crid, extraParameter, mContext);
         DTVTLogger.end();
     }
 
@@ -680,10 +684,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      *
      * @param episodeId エピソードID
      * @param crid コンテンツ識別子
+     * @param extraParameter   追加パラメータ
      */
-    public void sendStartApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final String crid) {
+    public void sendStartApplicationHikariTvCategoryDtvVodRequest(final String episodeId,
+                                                                  final String crid,
+                                                                  final String extraParameter) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, crid, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, crid, extraParameter, mContext);
         DTVTLogger.end();
     }
 
