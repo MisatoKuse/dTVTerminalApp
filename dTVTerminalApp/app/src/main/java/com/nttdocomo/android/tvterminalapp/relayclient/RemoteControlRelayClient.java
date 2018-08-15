@@ -385,14 +385,28 @@ public class RemoteControlRelayClient {
     /**ひかりTVの番組の chno を SERVICE_REF への変換.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF = "arib://7780.%04x.%04x"; // ひかりTVの番組の chno を SERVICE_REF への変換
     /** ひかりTVアプリの連携起動用URLスキーム追加パラメータ:レジューム再生（固定文字列）.*/
-    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_POSITION_RESUME = "&startPosition=resume";
+    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_POSITION_RESUME = "&startPosition=%s";
+    /**
+     * ひかりTVアプリの連携起動用URLスキーム追加パラメータを返す.
+     * @param startPosition 再生開始位置（コンテンツの先頭からの秒数）
+     * @return URLスキームパラメータ
+     */
+    public static String getRelayCommandArgumentExtraParameterStartPositionResume(final String startPosition) {
+        String startPositionResume = "";
+        if (startPosition != null && !startPosition.isEmpty()) {
+            startPositionResume = String.format(RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_POSITION_RESUME, startPosition);
+        }
+        return startPositionResume;
+    }
+    /** ひかりTVアプリの連携起動用URLスキーム追加パラメータ:レジューム再生（固定文字列）.*/
+    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_RESUME_1 = "&startResume=1";
     /**
      * ひかりTVアプリの連携起動用URLスキーム追加パラメータ.
      * レジューム再生（固定文字列）を返す
      * @return
      */
-    public static String getRelayCommandArgumentExtraParameter() {
-        return RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_POSITION_RESUME;
+    public static String getRelayCommandArgumentExtraParameterStartResume1() {
+        return RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_RESUME_1;
     }
     //
     /**result.*/

@@ -316,6 +316,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private int mPlayStartPosition;
     /** 再生停止フラグ.*/
     private boolean mIsPlayerPaused = false;
+    /** ひかりTVアプリの連携起動用URLスキーム追加パラメータ.
+     * "resume" or 再生開始位置（コンテンツの先頭からの秒数）
+     */
+    private static String mRelayCommandArgumentExtraParameterStartPosition = "resume";
 
     /**
      * 前回リモートコントローラービュー表示フラグ.
@@ -2467,10 +2471,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
                     requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
                             mDetailFullData.getCid(), mDetailFullData.getCrid(),
-                            RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
+                            RemoteControlRelayClient.getRelayCommandArgumentExtraParameterStartResume1());
                     DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s, %s)",
                             mDetailFullData.getPuid(), mDetailFullData.getCid(), mDetailFullData.getCrid(),
-                            RemoteControlRelayClient.getRelayCommandArgumentExtraParameter()));
+                            RemoteControlRelayClient.getRelayCommandArgumentExtraParameterStartResume1()));
                 } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
                     //liinfを"|"区切りで分解する
                     if (mPurchasedVodListResponse == null) {
@@ -2518,10 +2522,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (isLicensedRentalVod) {
                         requestStartApplicationHikariTvCategoryHikaritvVod(validLicenseId,
                                 mDetailFullData.getCid(), mDetailFullData.getCrid(),
-                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
+                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameterStartResume1());
                         DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s, %s)",
                                 validLicenseId, mDetailFullData.getCid(), mDetailFullData.getCrid(),
-                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameter()));
+                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameterStartResume1()));
                     } else {
                         DTVTLogger.debug("license_id is not match!");
                         DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryDtvSvod(%s)",
@@ -2537,7 +2541,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             } else if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
                 //ひかりTV内dTVのVOD,「episode_id」,「crid」を通知する
                 requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id(),
-                        mDetailFullData.getCrid(), RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
+                        mDetailFullData.getCrid(),
+                        RemoteControlRelayClient.getRelayCommandArgumentExtraParameterStartPositionResume(
+                                mRelayCommandArgumentExtraParameterStartPosition));
             } else {
                 if (!mIsFromHeader) {
                     setRemoteProgressVisible(View.GONE);
@@ -2572,7 +2578,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
                         // ひかりTV内dTVチャンネル 見逃し／関連番組
                         requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getCrid(),
-                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
+                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameterStartPositionResume(
+                                        mRelayCommandArgumentExtraParameterStartPosition));
                     } else {
                         if (!mIsFromHeader) {
                             setRemoteProgressVisible(View.GONE);
