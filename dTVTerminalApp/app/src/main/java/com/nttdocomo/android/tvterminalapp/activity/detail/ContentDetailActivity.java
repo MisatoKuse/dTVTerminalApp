@@ -2466,7 +2466,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 String puid = mDetailFullData.getPuid();
                 if (BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
                     requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
-                            mDetailFullData.getCid(), mDetailFullData.getCrid());
+                            mDetailFullData.getCid(), mDetailFullData.getCrid(),
+                            RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
+                    DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s, %s)",
+                            mDetailFullData.getPuid(), mDetailFullData.getCid(), mDetailFullData.getCrid(),
+                            RemoteControlRelayClient.getRelayCommandArgumentExtraParameter()));
                 } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
                     //liinfを"|"区切りで分解する
                     if (mPurchasedVodListResponse == null) {
@@ -2512,10 +2516,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                     //購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
                     if (isLicensedRentalVod) {
-                        DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s)",
-                                validLicenseId, mDetailFullData.getCid(), mDetailFullData.getCrid()));
                         requestStartApplicationHikariTvCategoryHikaritvVod(validLicenseId,
-                                mDetailFullData.getCid(), mDetailFullData.getCrid());
+                                mDetailFullData.getCid(), mDetailFullData.getCrid(),
+                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
+                        DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s, %s)",
+                                validLicenseId, mDetailFullData.getCid(), mDetailFullData.getCrid(),
+                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameter()));
                     } else {
                         DTVTLogger.debug("license_id is not match!");
                         DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryDtvSvod(%s)",
@@ -2531,7 +2537,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             } else if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
                 //ひかりTV内dTVのVOD,「episode_id」,「crid」を通知する
                 requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id(),
-                        mDetailFullData.getCrid());
+                        mDetailFullData.getCrid(), RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
             } else {
                 if (!mIsFromHeader) {
                     setRemoteProgressVisible(View.GONE);
@@ -2565,7 +2571,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     } else if (DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getmVod_start_date()
                             && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
                         // ひかりTV内dTVチャンネル 見逃し／関連番組
-                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getCrid());
+                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getCrid(),
+                                RemoteControlRelayClient.getRelayCommandArgumentExtraParameter());
                     } else {
                         if (!mIsFromHeader) {
                             setRemoteProgressVisible(View.GONE);
