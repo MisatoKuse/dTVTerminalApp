@@ -305,12 +305,13 @@
     <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
     <string name="contents_detail_thumbnail_text_unable_viewing">お使いの端末では視聴できません</string>
     <string name="contents_detail_contract_leading_button">契約する</string>
+    <string name="contents_detail_tv_confirm_leading_button">テレビで確認する</string>
     <string name="contents_detail_tab_program_detail">番組詳細</string>
     <string name="contents_detail_tab_channel">チャンネル</string>
     <string name="contents_detail_tab_episode">エピソード</string>
     <string name="contents_detail_tab_contents_info">作品情報</string>
     <string name="contents_detail_hikari_channel_agreement">ご覧になるにはチャンネルの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
-    <string name="contents_detail_hikari_vod_agreement">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
+    <string name="contents_detail_hikari_vod_agreement">本コンテンツ（有料）はテレビで視聴できます。\nコンテンツの契約状態はテレビでご確認ください。</string>
     <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
     <string-array name="contents_detail_tab_vod">
         <item>@string/contents_detail_tab_contents_info</item>
