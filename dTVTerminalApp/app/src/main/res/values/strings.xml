@@ -531,6 +531,21 @@
     <string name="google_analytics_screen_name_agreement">初回起動時に表示する規約画面</string>
     <string name="google_analytics_screen_name_contract">契約ページ</string>
 
+    <!-- Google Analytics イベントカテゴリ -->
+    <string name="google_analytics_category_service_name_h4d">ひかりTV for DoCoMo</string>
+    <string name="google_analytics_category_service_name_dtv">dTV</string>
+    <string name="google_analytics_category_service_name_dtv_ch">dTVチャンネル</string>
+    <string name="google_analytics_category_service_name_danime">dアニメ</string>
+    <string name="google_analytics_category_service_name_dazn">DAZN</string>
+
+    <!-- Google Analytics イベントアクション -->
+    <string name="google_analytics_category_action_watch_tv">テレビで視聴するをタップ</string>
+    <string name="google_analytics_category_action_h4d">ひかりTV for DoCoMoをタップ</string>
+    <string name="google_analytics_category_action_dtv">dTVをタップ</string>
+    <string name="google_analytics_category_action_dtv_ch">dTVチャンネルをタップ</string>
+    <string name="google_analytics_category_action_danime">dアニメをタップ</string>
+    <string name="google_analytics_category_action_dazn">DAZNをタップ</string>
+
     <!-- リモート視聴設定（期限表示） -->
     <string name="remote_remaining_days_message_begin">リモート視聴の有効期限が残り</string>
     <string name="remote_remaining_days_message_end">日となっています。\nドコモテレビターミナルが接続されているWi-Fiに接続した状態で「メニュー＞設定＞リモート視聴設定」を行ってください。</string>

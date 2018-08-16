@@ -38,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
@@ -991,6 +992,72 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
+     * result ok.
+     * @param isFromMenu requestCommand
+     * @param appType appType
+     */
+    private void sendGoogleAnalyticsEvent(final boolean isFromMenu, final RemoteControlRelayClient.STB_APPLICATION_TYPES appType) {
+            String category = "";
+            String action = "";
+            String label = "";
+            boolean isOtherService = false;
+            switch (appType) {
+                case DTV:
+                    category = getString(R.string.google_analytics_category_service_name_dtv);
+                    if (isFromMenu) {
+                        action = getString(R.string.google_analytics_category_action_dtv);
+                    } else {
+                        action = getString(R.string.google_analytics_category_action_watch_tv);
+                        label = getTitleText().toString();
+                    }
+                    break;
+                case DANIMESTORE:
+                    category = getString(R.string.google_analytics_category_service_name_danime);
+                    if (isFromMenu) {
+                        action = getString(R.string.google_analytics_category_action_danime);
+                    } else {
+                        action = getString(R.string.google_analytics_category_action_watch_tv);
+                        label = getTitleText().toString();
+                    }
+                    break;
+                case DTVCHANNEL:
+                    category = getString(R.string.google_analytics_category_service_name_dtv_ch);
+                    if (isFromMenu) {
+                        action = getString(R.string.google_analytics_category_action_dtv_ch);
+                    } else {
+                        action = getString(R.string.google_analytics_category_action_watch_tv);
+                        label = getTitleText().toString();
+                    }
+                    break;
+                case HIKARITV:
+                    category = getString(R.string.google_analytics_category_service_name_h4d);
+                    if (isFromMenu) {
+                        action = getString(R.string.google_analytics_category_action_h4d);
+                    } else {
+                        action = getString(R.string.google_analytics_category_action_watch_tv);
+                        label = getTitleText().toString();
+                    }
+                    break;
+                case DAZN:
+                    category = getString(R.string.google_analytics_category_service_name_dazn);
+                    if (isFromMenu) {
+                        action = getString(R.string.google_analytics_category_action_dazn);
+                    } else {
+                        action = getString(R.string.google_analytics_category_action_watch_tv);
+                        label = getTitleText().toString();
+                    }
+                    break;
+                case UNKNOWN:
+                default:
+                    isOtherService = true;
+                    break;
+            }
+            if (!isOtherService) {
+                sendEvent(category, action, label);
+            }
+    }
+
+    /**
      * STB応答時処理.
      *
      * @param msg 応答メッセージ
@@ -1002,6 +1069,13 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
             case RelayServiceResponseMessage.RELAY_RESULT_OK:
+                RemoteControlRelayClient.STB_APPLICATION_TYPES appType
+                        = ((RelayServiceResponseMessage) msg.obj).getApplicationTypes();
+                if (RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.START_APPLICATION.equals(requestCommand)) {
+                    sendGoogleAnalyticsEvent(true, appType);
+                } else if (RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL.equals(requestCommand)) {
+                    sendGoogleAnalyticsEvent(false, appType);
+                }
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
                 int resultCode = ((RelayServiceResponseMessage) msg.obj).getResultCode();
@@ -3574,7 +3648,29 @@ public class BaseActivity extends FragmentActivity implements
         TvtApplication app = (TvtApplication) getApplication();
         Tracker tracker = app.getDefaultTracker();
         tracker.setScreenName(screenName);
-        tracker.send(new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * イベントを送る.
+     *
+     * @param category イベントのカテゴリ
+     * @param action イベントのアクション
+     * @param label ラベル
+     */
+    private void sendEvent(final String category, final String action, final String label) {
+        DTVTLogger.start("google sendEvent category: " + category + " action: " + action + " label: " + label);
+
+        TvtApplication app = (TvtApplication) getApplication();
+        Tracker tracker = app.getDefaultTracker();
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .setValue(1)
+                .build());
 
         DTVTLogger.end();
     }
