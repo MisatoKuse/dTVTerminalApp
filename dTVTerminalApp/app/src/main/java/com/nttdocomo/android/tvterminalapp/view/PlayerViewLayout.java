@@ -1617,7 +1617,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 if (!mIsOperateActivated) {
                     return false;
                 }
-                if (mRecordCtrlView != null && mVideoPlayPause != null && mPlayerController != null) {
+                if (mRecordCtrlView != null && mVideoPlayPause != null && mPlayerController != null && e1 != null && e2 != null) {
                     if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
                             && e2.getY() > (float) mRecordCtrlView.getHeight() / 3
                             && e2.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)
