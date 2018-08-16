@@ -74,8 +74,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/contents_detail_contract_leading_text_bottom_margin"
                     android:gravity="center"
-                    android:ellipsize="end"
-                    android:maxLines="2"
                     android:textColor="@color/contents_contract_leading_text_color"
                     android:textSize="@dimen/contents_detail_contract_leading_text_size" />
                 <Button
