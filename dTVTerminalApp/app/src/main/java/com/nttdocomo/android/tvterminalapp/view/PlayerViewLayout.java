@@ -687,9 +687,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
             case MediaPlayerDefinitions.PE_START_BUFFERING:
             case MediaPlayerDefinitions.PE_START_RENDERING:
-                if (mIsLocalPlay && mProgressBar.getVisibility() == GONE) {
-                    showPlayingProgress(true);
-                }
                 mReconnectStartTime = 0;
                 mDmsDisconnectedTime = 0;
                 break;
