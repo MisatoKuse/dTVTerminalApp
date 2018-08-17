@@ -534,7 +534,7 @@ public class DtvContentsDetailFragment extends Fragment {
                 tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
                 contentParams.setMargins(STAFF_MARGIN_0, (int) getResources().getDimension(
                         R.dimen.contents_detail_staff_margin_top), STAFF_MARGIN_0, STAFF_MARGIN_0);
-                if (text.contains(File.separator)) {
+                if (text.endsWith(File.separator)) {
                     tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
                     tabTextView.setText(text.substring(0, text.length() - 1));
                 } else {
