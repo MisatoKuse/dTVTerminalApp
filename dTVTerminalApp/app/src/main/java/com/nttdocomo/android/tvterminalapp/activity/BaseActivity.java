@@ -1729,11 +1729,10 @@ public class BaseActivity extends FragmentActivity implements
      * @param licenseId ライセンスID
      * @param cid       コンテンツID
      * @param crid      crid
-     * @param extraParameter   追加パラメータ
      */
     protected void requestStartApplicationHikariTvCategoryHikaritvVod(
-            final String licenseId, final String cid, final String crid, final String extraParameter) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryHikaritvVodRequest(licenseId, cid, crid, extraParameter);
+            final String licenseId, final String cid, final String crid) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryHikaritvVodRequest(licenseId, cid, crid);
     }
 
     /**
@@ -1742,12 +1741,9 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param episodeId エピソードID
      * @param crid      crid
-     * @param extraParameter   追加パラメータ
      */
-    protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId,
-                                                                 final String crid,
-                                                                 final String extraParameter) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId, crid, extraParameter);
+    protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId, final String crid) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId, crid);
     }
 
     /**
@@ -1776,11 +1772,9 @@ public class BaseActivity extends FragmentActivity implements
      * ひかりTV内dTVチャンネルのVOD（見逃し／関連番組）
      *
      * @param crid コンテンツID
-     * @param extraParameter   追加パラメータ
      */
-    protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String crid,
-                                                                           final String extraParameter) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(crid, extraParameter);
+    protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String crid) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(crid);
     }
 
     /**

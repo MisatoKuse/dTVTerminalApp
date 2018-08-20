@@ -369,45 +369,13 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_ARGUMENT_CID_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
     /**crid_hikaritv_arg4.*/
     private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
-    /**extra_parameter_hikaritv_arg4.*/
-    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETER_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
     // ひかりTVのタイトル詳細起動：電文パラメータ：カテゴリー分類毎に別のパラメータを意味する
     /**ARG5.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG5 = "ARG5";
     /**crid_hikaritv_arg5.*/
     private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG5 = RELAY_COMMAND_ARGUMENT_ARG5;
-    /**extra_parameter_hikaritv_arg5.*/
-    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETER_HIKARITV_ARG5 = RELAY_COMMAND_ARGUMENT_ARG5;
-    /**ARG6.*/
-    private static final String RELAY_COMMAND_ARGUMENT_ARG6 = "ARG6";
-    /**extra_parameter_hikaritv_arg6.*/
-    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETER_HIKARITV_ARG6 = RELAY_COMMAND_ARGUMENT_ARG6;
     /**ひかりTVの番組の chno を SERVICE_REF への変換.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF = "arib://7780.%04x.%04x"; // ひかりTVの番組の chno を SERVICE_REF への変換
-    /** ひかりTVアプリの連携起動用URLスキーム追加パラメータ:レジューム再生（固定文字列）.*/
-    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_POSITION_RESUME = "&startPosition=%s";
-    /**
-     * ひかりTVアプリの連携起動用URLスキーム追加パラメータを返す.
-     * @param startPosition 再生開始位置（コンテンツの先頭からの秒数）
-     * @return URLスキームパラメータ
-     */
-    public static String getRelayCommandArgumentExtraParameterStartPositionResume(final String startPosition) {
-        String startPositionResume = "";
-        if (startPosition != null && !startPosition.isEmpty()) {
-            startPositionResume = String.format(RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_POSITION_RESUME, startPosition);
-        }
-        return startPositionResume;
-    }
-    /** ひかりTVアプリの連携起動用URLスキーム追加パラメータ:レジューム再生（固定文字列）.*/
-    private static final String RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_RESUME_1 = "&startResume=1";
-    /**
-     * ひかりTVアプリの連携起動用URLスキーム追加パラメータ.
-     * レジューム再生（固定文字列）を返す
-     * @return
-     */
-    public static String getRelayCommandArgumentExtraParameterStartResume1() {
-        return RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETAER_START_RESUME_1;
-    }
     //
     /**result.*/
     private static final String RELAY_RESULT = "RESULT";
@@ -442,7 +410,7 @@ public class RemoteControlRelayClient {
     /**ひかりTV内VOD(dTV含む)のシリーズ.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTV_SVOD = "H4D_CATEGORY_DTV_SVOD"; // ひかりTV内VOD(dTV含む)のシリーズ
     /**dTVTアプリバージョンコード（Android, iOSで共通）.*/
-    private static final int DTVT_APPLICATION_VERSION_CODE = 2;
+    private static final int DTVT_APPLICATION_VERSION_CODE = 1;
     /**STBのバージョンコード β版、プレリリース版... と 1つずつ上がる.*/
     private static final int STB_RELAY_SERVICE_VERSION_CODE = 3;
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
@@ -953,18 +921,15 @@ public class RemoteControlRelayClient {
      * @param licenseId ビデオ視聴可能商品ID
      * @param cid       コンテンツID
      * @param crid      CRID
-     * @param extraParameter   追加パラメータ
      * @param context   コンテキスト
      * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
-                                                                      final String cid,
-                                                                      final String crid,
-                                                                      final String extraParameter,
+                                                                      final String cid, final String crid,
                                                                       final Context context) {
         return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD,
-                context, rfc3986UrlEncode(licenseId), rfc3986UrlEncode(cid), rfc3986UrlEncode(crid), extraParameter);
+                context, rfc3986UrlEncode(licenseId), rfc3986UrlEncode(cid), rfc3986UrlEncode(crid));
     }
 
     /**
@@ -988,16 +953,13 @@ public class RemoteControlRelayClient {
      * 　ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）
      *
      * @param crid   コンテンツID
-     * @param extraParameter   追加パラメータ
      * @param context コンテキスト
      * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvchannelMissedRequest(final String crid,
-                                                                           final String extraParameter,
                                                                            final Context context) {
         return startApplicationHikariTvCategoryRequest(
-                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED, context,
-                rfc3986UrlEncode(crid), extraParameter);
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED, context, rfc3986UrlEncode(crid));
     }
 
     /**
@@ -1007,17 +969,14 @@ public class RemoteControlRelayClient {
      *
      * @param episodeId エピソードID
      * @param crid      CRID
-     * @param extraParameter   追加パラメータ
      * @param context   コンテキスト
      * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvVodRequest(final String episodeId,
-                                                                 final String crid,
-                                                                 final String extraParameter,
-                                                                 final Context context) {
+                                                                 final String crid, final Context context) {
         return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, context, rfc3986UrlEncode(episodeId),
-                rfc3986UrlEncode(crid), extraParameter);
+                rfc3986UrlEncode(crid));
     }
 
     /**
@@ -1574,7 +1533,6 @@ public class RemoteControlRelayClient {
         String serviceRef = "";
         String licenseId;
         String episodeId = "";
-        String extraParameter = "";
 
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
@@ -1592,13 +1550,10 @@ public class RemoteControlRelayClient {
                     licenseId = args[0];
                     cid = args[1];
                     crid = args[2];
-                    extraParameter = args[3];
                     requestJson.put(RELAY_COMMAND_ARGUMENT_LICENSE_ID_HIKARITV_ARG3, licenseId);
                     requestJson.put(RELAY_COMMAND_ARGUMENT_CID_HIKARITV_ARG4, cid);
                     requestJson.put(RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG5, crid);
-                    requestJson.put(RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETER_HIKARITV_ARG6, extraParameter);
-                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] license_id:[%s] cid:[%s] crid:[%s] extraParameter:[%s]",
-                            serviceCategoryType, licenseId, cid, crid, extraParameter));
+                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] license_id:[%s] cid:[%s] crid:[%s]", serviceCategoryType, licenseId, cid, crid));
                     break;
                 case H4D_CATEGORY_DTVCHANNEL_BROADCAST: // ひかりTV内 dTVチャンネルの番組
                     chno = args[0];
@@ -1608,20 +1563,16 @@ public class RemoteControlRelayClient {
                 case H4D_CATEGORY_DTVCHANNEL_MISSED: // ひかりTV内 dTVチャンネル VOD（見逃し）
                 case H4D_CATEGORY_DTVCHANNEL_RELATION: // ひかりTV内 dTVチャンネル VOD（関連番組）
                     crid = args[0];
-                    extraParameter = args[1];
                     requestJson.put(RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG3, crid);
-                    requestJson.put(RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETER_HIKARITV_ARG4, extraParameter);
-                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] crid:[%s] extraParameter:[%s]", serviceCategoryType, crid, extraParameter));
+                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] crid:[%s]", serviceCategoryType, crid));
                     break;
                 case H4D_CATEGORY_DTV_VOD: // ひかりTV内 dTVのVOD
                     episodeId = args[0];
                     crid = args[1];
-                    extraParameter = args[2];
                     requestJson.put(RELAY_COMMAND_ARGUMENT_EPISODE_ID_HIKARITV_ARG3, episodeId);
                     requestJson.put(RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG4, crid);
-                    requestJson.put(RELAY_COMMAND_ARGUMENT_EXTRA_PARAMETER_HIKARITV_ARG5, extraParameter);
-                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] episode_id:[%s] crid:[%s] extraParameter:[%s]",
-                            serviceCategoryType, episodeId, crid, extraParameter));
+                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] episode_id:[%s] crid:[%s]",
+                            serviceCategoryType, episodeId, crid));
                     break;
                 case H4D_CATEGORY_DTV_SVOD: // ひかりTV内VOD(dTV含む)のシリーズ
                     crid = args[0];
