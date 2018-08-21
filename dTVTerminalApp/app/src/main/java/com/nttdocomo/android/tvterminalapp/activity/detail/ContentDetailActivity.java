@@ -271,8 +271,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /* player start */
     /**FrameLayout.*/
     private FrameLayout mFrameLayout = null;
-    /**TvLogo.*/
-    private final ImageView mTvLogo = null;
     /**録画予約コンテンツ詳細情報.*/
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
     /**録画予約ダイアログ.*/
@@ -316,20 +314,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private int mPlayStartPosition;
     /** 再生停止フラグ.*/
     private boolean mIsPlayerPaused = false;
-
-    /**
-     * 前回リモートコントローラービュー表示フラグ.
-     */
+    /** 前回リモートコントローラービュー表示フラグ.*/
     private boolean mVisibility = false;
-    /**
-     * 前回リモートコントローラービュー表示フラグ.
-     */
+    /** 前回リモートコントローラービュー表示フラグ.*/
     private static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
-    /**
-     * ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの開始値
-     */
+    /** ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの開始値.*/
     private static final int RETRY_ERROR_START = 2000;
-
+    /** ディスプレイ幅.*/
+    private int mWidth;
+    /** ディスプレイ高さ.*/
+    private int mHeight;
+    /** ナビゲーションバー含むディスプレイ高さ.*/
+    private int mScreenNavHeight;
     /* player end */
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
@@ -620,12 +616,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setVisibility(View.VISIBLE);
         mPlayerViewLayout.setPlayerStateListener(this);
-        initDisplayMetrics();
-        int width = getWidthDensity();
-        initDisplayMetrics();
-        int height = getHeightDensity();
-        mPlayerViewLayout.setScreenSize(width, height);
-        mPlayerViewLayout.setScreenNavigationBarSize(width, getScreenHeight());
+        mPlayerViewLayout.setScreenSize(mWidth, mHeight);
+        mPlayerViewLayout.setScreenNavigationBarSize(mWidth, mScreenNavHeight);
         mPlayerViewLayout.setParentLayout(mThumbnailRelativeLayout);
         mPlayerViewLayout.setDensity(getDensity());
         boolean mIsOncreateOk = mPlayerViewLayout.initMediaInfo(playerData);
@@ -659,6 +651,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void initView() {
         mIntent = getIntent();
+        setScreenSize();
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
         mThumbnailBtn.setOnClickListener(this);
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
@@ -1170,6 +1163,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     "dimen", "android");
         }
         return getResources().getDimensionPixelSize(resourceId);
+    }
+
+    /**
+     * スクリーンのサイズを設定.
+     */
+    private void setScreenSize() {
+        initDisplayMetrics();
+        mWidth = getWidthDensity();
+        initDisplayMetrics();
+        mHeight = getHeightDensity();
+        mScreenNavHeight = getScreenHeight();
     }
 
     /**
