@@ -31,8 +31,8 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -1005,7 +1005,7 @@ public class ContentUtils {
      */
     public static long getRentalChannelValidEndDate(final PurchasedChannelListResponse response, final ChannelInfo channelInfo) {
         ChannelList channelList = response.getChannelListData();
-        HashMap<String, String> chList = checkChServiceIdListSame(channelList.getChannelList(), channelInfo);
+        Map<String, String> chList = checkChServiceIdListSame(channelList.getChannelList(), channelInfo);
 
         //最長のvalid_end_dateを格納する
         long vodLimitDate = 0;
@@ -1087,10 +1087,10 @@ public class ContentUtils {
      * @param channelInfo チャンネルデータ
      * @return true:一致 false:不一致
      */
-    private static HashMap<String, String> checkChServiceIdListSame(final List<HashMap<String, String>> chList, final ChannelInfo channelInfo) {
+    private static Map<String, String> checkChServiceIdListSame(final List<Map<String, String>> chList, final ChannelInfo channelInfo) {
 
         //CHのservice_id一覧を取得
-        for (HashMap<String, String> hashMap : chList) {
+        for (Map<String, String> hashMap : chList) {
             String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
             if (serviceId != null && !serviceId.isEmpty()) {
                 if (serviceId.equals(channelInfo.getServiceId())) {

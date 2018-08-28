@@ -484,7 +484,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList, final boolean isPlala) {
         if (channelList != null && scheduleList != null) {
-            List<HashMap<String, String>> list = channelList.getChannelList();
+            List<Map<String, String>> list = channelList.getChannelList();
             for (int i = 0; i < scheduleList.size(); i++) {
                 String scheduleId = "";
                 if (!isPlala) {
@@ -493,7 +493,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                     scheduleId = scheduleList.get(i).getServiceId();
                 }
                 if (!TextUtils.isEmpty(scheduleId)) {
-                    for (HashMap<String, String> hashMap : list) {
+                    for (Map<String, String> hashMap : list) {
                         String channelId = (hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID));
                         //番組表と
                         if (!TextUtils.isEmpty(channelId) && scheduleId.equals(channelId)) {
@@ -898,7 +898,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param channelList チャンネル情報
      */
     private void getTvScheduleFromChInfo(final ChannelList channelList) {
-        List<HashMap<String, String>> channelInfoList;
+        List<Map<String, String>> channelInfoList;
 
         // 最大30チャンネルを対象にする
         if (channelList.getChannelList().size() >= NOW_ON_AIR_CHANNEL_LIMIT) {
@@ -908,7 +908,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         }
 
         List<String> chNoList = new ArrayList<>();
-        for (HashMap<String, String> hashMap : channelInfoList) {
+        for (Map<String, String> hashMap : channelInfoList) {
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
             if (!TextUtils.isEmpty(chNo)) {
                 chNoList.add(chNo);
@@ -1261,7 +1261,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void setStructDB(final ChannelList channelList) {
         DTVTLogger.start();
         mChannelList = channelList;
-        List<HashMap<String, String>> chList = mChannelList.getChannelList();
+        List<Map<String, String>> chList = mChannelList.getChannelList();
         if (chList != null && !chList.isEmpty()) {
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
@@ -1365,7 +1365,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (purchasedChannelListResponse != null) {
             mPurchasedChannelListResponse = purchasedChannelListResponse;
             ArrayList<ActiveData> actionData = mPurchasedChannelListResponse.getChActiveData();
-            List<HashMap<String, String>> channelList = mPurchasedChannelListResponse.getChannelListData().getChannelList();
+            List<Map<String, String>> channelList = mPurchasedChannelListResponse.getChannelListData().getChannelList();
             if (actionData != null && actionData.size() > 0 && channelList != null && !channelList.isEmpty()) {
                 //DB保存
                 Handler handler = new Handler(Looper.getMainLooper());

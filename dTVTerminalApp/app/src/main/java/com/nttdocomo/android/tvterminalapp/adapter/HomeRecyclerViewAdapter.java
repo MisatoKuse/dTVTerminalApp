@@ -30,8 +30,8 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Home画面に表示するコンテンツリストのアダプタ.
@@ -718,8 +718,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             return "";
         }
         if (mChannelList != null) {
-            List<HashMap<String, String>> list = mChannelList.getChannelList();
-            for (HashMap<String, String> hashMap : list) {
+            List<Map<String, String>> list = mChannelList.getChannelList();
+            for (Map<String, String> hashMap : list) {
                 if (!TextUtils.isEmpty(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
                     if (serviceId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
                         return hashMap.get(JsonConstants.META_RESPONSE_TITLE);

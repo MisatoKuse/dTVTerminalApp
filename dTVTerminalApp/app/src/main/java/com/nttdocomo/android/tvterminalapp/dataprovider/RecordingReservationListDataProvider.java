@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ public class RecordingReservationListDataProvider implements
     /**
      * チャンネル一覧.
      */
-    private List<HashMap<String, String>> mTvScheduleList = null;
+    private List<Map<String, String>> mTvScheduleList = null;
 
     /**
      * 録画予約情報受信時刻.

@@ -24,7 +24,6 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +136,7 @@ public class RentalListInsertDataManager {
                 database.acquireReference();
 
                 RentalListDao rentalListDao = new RentalListDao(database);
-                List<HashMap<String, String>> clList = rentalChList.getChannelListData().getChannelList();
+                List<Map<String, String>> clList = rentalChList.getChannelListData().getChannelList();
                 ArrayList<ActiveData> activeDataList = rentalChList.getChActiveData();
 
                 //DB保存前に前回取得したデータは全消去する

@@ -4,12 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -80,10 +77,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     //CH毎番組取得のフィルター
     /** release. */
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE = "release";
-    /** チャンネルリスト送受信用キー. */
-    public static final String SEND_CHANNEL_LIST = "com.nttdocomo.android.idmanager.action.SEND_CHANNEL_LIST";
-    /** 番組表リスト送受信用キー. */
-    public static final String SEND_SCHEDULE_LIST = "com.nttdocomo.android.idmanager.action.SEND_SCHEDULE_LIST";
     /** 通信エラー時ウェイト処理. */
     private static final long SLEEP_TIME = 100L;
 
@@ -290,7 +283,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         ArrayList<ChannelInfo> channels = null;
         if (channelLists != null && channelLists.size() > 0) {
             mChannelList = channelLists.get(0);
-            List<HashMap<String, String>> channelList = mChannelList.getChannelList();
+            List<Map<String, String>> channelList = mChannelList.getChannelList();
 
             channels = new ArrayList<>();
             setChannelData(channels, channelList);
@@ -527,9 +520,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param channelList channelList
      */
     private void setChannelData(final ArrayList<ChannelInfo> channels,
-                                final List<HashMap<String, String>> channelList) {
+                                final List<Map<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
-            HashMap<String, String> hashMap = channelList.get(i);
+            Map<String, String> hashMap = channelList.get(i);
             String adult =  hashMap.get(JsonConstants.META_RESPONSE_ADULT);
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
             String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
@@ -621,7 +614,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (TextUtils.isEmpty(lastDate) || (!dateUtils.isBeforeProgramLimitDate(lastDate) && NetWorkUtils.isOnline(mContext))) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 mChannelWebClient = new ChannelWebClient(mContext);
                 mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
@@ -736,8 +729,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         //TvProgramIntentServiceが実行していない場合のみ開始する
         if (!ServiceUtils.isRunningService(mContext, TvProgramIntentService.class.getName())) {
             TvProgramIntentService.startTvProgramService(mContext);
-            mContext.registerReceiver(receiver, new IntentFilter(SEND_CHANNEL_LIST));
-            mContext.registerReceiver(receiver, new IntentFilter(SEND_SCHEDULE_LIST));
         }
     }
 
@@ -748,7 +739,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         //TvProgramIntentServiceが実行している場合のみ終了する
         if (ServiceUtils.isRunningService(mContext, TvProgramIntentService.class.getName())) {
             Intent intent = new Intent(mContext, TvProgramIntentService.class);
-            mContext.unregisterReceiver(receiver);
             mContext.stopService(intent);
         }
     }
@@ -792,39 +782,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         }
     }
-
-    /**
-     * TvProgramIntentServiceからのBroadcastレシーバー.
-     */
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            DTVTLogger.start();
-            String key = intent.getAction();
-            Handler handler = new Handler(Looper.getMainLooper());
-            DataBaseThread thread;
-            switch (key) {
-                case SEND_CHANNEL_LIST:
-                    DTVTLogger.debug("ScaledDownProgramListDataProvider BroadcastReceiver CHANNEL_UPDATE");
-                    mChannelList = intent.getParcelableExtra(SEND_CHANNEL_LIST);
-                    thread = new DataBaseThread(handler, ScaledDownProgramListDataProvider.this, CHANNEL_UPDATE);
-                    thread.setChannelList(mChannelList);
-                    thread.start();
-                    break;
-                case SEND_SCHEDULE_LIST:
-                    DTVTLogger.debug("ScaledDownProgramListDataProvider BroadcastReceiver SCHEDULE_UPDATE");
-                    mChannelsInfoList = intent.getParcelableExtra(SEND_SCHEDULE_LIST);
-                    thread = new DataBaseThread(handler, ScaledDownProgramListDataProvider.this, SCHEDULE_UPDATE);
-                    thread.setChannelsInfoList(mChannelsInfoList);
-                    thread.start();
-                    break;
-                default:
-                    break;
-            }
-            mContext.unregisterReceiver(receiver);
-            DTVTLogger.end();
-        }
-    };
 
     /**
      * 複数チャンネルクラス送信.

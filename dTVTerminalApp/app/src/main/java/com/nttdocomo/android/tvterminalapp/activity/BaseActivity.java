@@ -137,73 +137,39 @@ public class BaseActivity extends FragmentActivity implements
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
 
         DaccountReceiver.DaccountChangedCallBack {
-    /**
-     * ヘッダーBaseレイアウト.
-     */
+    /** ヘッダーBaseレイアウト. */
     private LinearLayout mBaseLinearLayout = null;
-    /**
-     * 　ステータスレイアウト.
-     */
+    /**　ステータスレイアウト. */
     private LinearLayout mStatusLinearLayout = null;
-    /**
-     * 　タイトルレイアウト.
-     */
+    /**　タイトルレイアウト. */
     private RelativeLayout mHeaderTitleLayout = null;
-    /**
-     * ヘッダーレイアウト.
-     */
+    /** ヘッダーレイアウト. */
     private RelativeLayout mHeaderLayout = null;
-    /**
-     * ヘッダータイトル.
-     */
+    /** ヘッダータイトル. */
     protected TextView mTitleTextView = null;
-    /**
-     * ヘッダーロゴ用ImageView.
-     */
+    /** ヘッダーロゴ用ImageView. */
     private ImageView mTitleImageView = null;
-    /**
-     * 番組表タイトル横矢印.
-     */
+    /** 番組表タイトル横矢印. */
     protected ImageView mTitleArrowImage = null;
-    /**
-     * ヘッダーの戻るボタン.
-     */
+    /** ヘッダーの戻るボタン. */
     private ImageView mHeaderBackIcon = null;
-    /**
-     * ペアリングアイコン.
-     */
+    /** ペアリングアイコン. */
     private ImageView mStbStatusIcon = null;
-    /**
-     * メニューアイコン.
-     */
+    /** メニューアイコン. */
     private ImageView mMenuImageViewForBase = null;
-    /**
-     * リモコンレイアウト.
-     */
+    /** リモコンレイアウト. */
     private RemoteControllerView mRemoteControllerView = null;
-    /**
-     * Activityのコンテキスト.
-     */
+    /** Activityのコンテキスト. */
     private Context mContext = null;
-    /**
-     * Activityのコンテキスト.
-     */
+    /** Activityのコンテキスト. */
     private Activity mActivity = null;
-    /**
-     * 中継アプリ連携クライアント.
-     */
+    /** 中継アプリ連携クライアント. */
     protected RemoteControlRelayClient mRemoteControlRelayClient = null;
-    /**
-     * ダブルクリック防止用.
-     */
+    /** ダブルクリック防止用. */
     private long mLastClickTime = 0;
-    /**
-     * クリップボタン.
-     */
+    /** クリップボタン. */
     private ImageView mClipButton = null;
-    /**
-     * クリップリクエスト用データ.
-     */
+    /** クリップリクエスト用データ. */
     private ClipRequestData mClipRequestData = null;
     /**
      * クリップ登録／解除実行中かを取得.
@@ -212,129 +178,75 @@ public class BaseActivity extends FragmentActivity implements
     public boolean isClipRunTime() {
         return mClipRunTime;
     }
-    /**
-     * クリップ実行中フラグ.
-     */
+    /** クリップ実行中フラグ.*/
     private boolean mClipRunTime = false;
     /** DialogQue. **/
     private final LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
-    /**
-     * タイムアウト時間.
-     */
+    /** タイムアウト時間. */
     protected static final int LOAD_PAGE_DELAY_TIME = 1000;
-    /**
-     * ページング単位.
-     */
+    /** ページング単位.*/
     protected static final int NUM_PER_PAGE = 50;
-    /**
-     * webViewの読み込み完了値.
-     */
+    /** webViewの読み込み完了値. */
     protected final static int PROGRESS_FINISH = 100;
-    /**
-     * ダブルクリック抑止用 DELAY.
-     */
+    /** ダブルクリック抑止用 DELAY. */
     private static final int MIN_CLICK_DELAY_TIME = 500;
-    /**
-     * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列.
-     */
+    /** スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列. */
     protected final static String SHOW_SETTING_FILE_DIALOG = "SHOW_SETTING_FILE_DIALOG";
-    /**
-     * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示内容表示識別文字列.
-     */
+    /** スプラッシュ画面用のファイル設定ファイル用ダイアログ表示内容表示識別文字列. */
     protected final static String SHOW_SETTING_FILE_DIALOG_DATA
             = "SHOW_SETTING_FILE_DIALOG_DATA";
-    /**
-     * STB選択画面でログアウトが発生してランチャーを再起動する際のパラメータ
-     */
+    /** STB選択画面でログアウトが発生してランチャーを再起動する際のパラメータ. */
     protected final static String STB_SELECT_ACTIVITY_RESTART
             = "STB_SELECT_ACTIVITY_RESTART";
-    /**
-     * dアカウント設定アプリ登録処理.
-     */
+    /** dアカウント設定アプリ登録処理. */
     private DaccountControl mDAccountControl = null;
-    /**
-     * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー.
-     */
+    /** 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー. */
     private Handler mFirstDaccountErrorHandler = null;
-    /**
-     * 詳細画面起動元Classを保存.
-     */
+    /** 詳細画面起動元Classを保存. */
     private static String sSourceScreenClass = "";
     /**起動時チェックフラグ.*/
     private static boolean sIsLaunchChecked = false;
-    /**
-     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu).
-     */
+    /** ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu). */
     private static final String HEADER_ICON_MENU = "menu";
-    /**
-     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(close).
-     */
+    /** ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(close). */
     private static final String HEADER_ICON_CLOSE = "close";
-    /**
-     * requestPermissions()表示によるonPauseを判断するためのフラグ.
-     */
+    /** requestPermissions()表示によるonPauseを判断するためのフラグ. */
     private boolean mShowPermissionDialogFlag = false;
-    /**
-     * 表示中ダイアログ.
-     */
+    /** 表示中ダイアログ. */
     private CustomDialog mShowDialog = null;
-    /**
-     * 設定ファイル処理クラス.
-     */
+    /** 設定ファイル処理クラス. */
     protected ProcessSettingFile mCheckSetting = null;
-    /**
-     * 国内通信 MCC (440 Japan).
-     */
+    /** 国内通信 MCC (440 Japan). */
     private static final int DOMESTIC_COMMUNICATION_MCC_1 = 440;
-    /**
-     * 国内通信 MCC (441 Japan).
-     */
+    /** 国内通信 MCC (441 Japan). */
     private static final int DOMESTIC_COMMUNICATION_MCC_2 = 441;
-    /**
-     * dアカウント関連処理の必要有無判定.
-     */
+    /** dアカウント関連処理の必要有無判定. */
     private boolean mNecessaryDAccountRegistService = true;
-    /**
-     * ワンタイムトークン取得クラス（dアカウントチェック用）.
-     */
+    /** ワンタイムトークン取得クラス（dアカウントチェック用）. */
     private DaccountGetOtt mGetOtt = null;
-    /**
-     * クリップ状態.
-     */
+    /** クリップ状態. */
     public static final String CLIP_ACTIVE_STATUS = "active";
-    /**
-     * 未クリップ状態.
-     */
+    /** 未クリップ状態. */
     public static final String CLIP_OPACITY_STATUS = "opacity";
-    /**
-     * クリップ状態.
-     */
+    /** クリップ状態. */
     public static final String CLIP_SCHEDULE_END_ACTIVE_STATUS = "schedule_end_active";
-    /**
-     * 未クリップ状態.
-     */
+    /** 未クリップ状態. */
     public static final String CLIP_SCHEDULE_END_OPACITY_STATUS = "schedule_end_opacity";
-    /**
-     * アダプタ内でのリスト識別用定数.
-     */
+    /** アダプタ内でのリスト識別用定数. */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
     /**
      * リモコン表示時の鍵交換処理フラグ.
      * ※ペアリングアイコンからのリモコン表示時のみ鍵交換を行う
      */
     private static boolean mKeyExchangeFlag = false;
-    /**
-     * アクティビティが活性状態ならばtrue.
-     */
-    private boolean mActivityActive = false;
-    /**
-     * 終了後にタスク一覧からどこテレアプリを削除する場合に指定するフラグ.
-     */
+    /** 終了後にタスク一覧からどこテレアプリを削除する場合に指定するフラグ. */
     public static final  String FORCE_FINISH = "FORCE_FINISH";
     /** DisplayMetrics.*/
     private DisplayMetrics mDisplayMetrics = null;
     /** Toast（連続して出さない為に保持）. */
     public Toast mToast = null;
+    /** 番組表情報取得DataProvider. */
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -753,14 +665,6 @@ public class BaseActivity extends FragmentActivity implements
         //その画面の最初のワンタイムトークン取得処理では、認証画面を表示するようにフラグを初期化する
         OttGetAuthSwitch.INSTANCE.setNowAuth(true, this);
 
-        //TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
-        //TODO 現状、このタイミングで実行するとHome画面でエラーになる(Home画面開始前にProgressBarを表示しようとするため)
-        //TODO onResumeに移動すれば一応動作するが、確認が必要
-        //ユーザー情報の変更検知
-//        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
-//        dataProvider.getUserInfo();
-
-
         DTVTLogger.end();
     }
 
@@ -813,9 +717,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
 
-        //アクティビティが活性化したのでtrue
-        mActivityActive = true;
-
         DaccountReceiver.setDaccountChangedCallBack(this);
 
         //dアカウント認証画面の表示制御のインスタンスを取得
@@ -834,11 +735,6 @@ public class BaseActivity extends FragmentActivity implements
                 return;
             }
             permissionCheckExec();
-            //TODO 6/12作業保留(今後の対応とする)のためコメントアウト
-            // BG → FG でのonResumeで TvProgramIntentService を開始
-//            DTVTLogger.debug("do TvProgramIntentService start");
-//            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
-//            scaledDownProgramListDataProvider.startTvProgramIntentService();
         } else {
             onStartCommunication();
             //パーミッションチェックフラグの効果は1度のみなので、リセットする
@@ -856,6 +752,8 @@ public class BaseActivity extends FragmentActivity implements
                 //リモート視聴設定期限表示
                 localRegisterExpireDateCheck();
             }
+            // BG → FG でのonResumeで TvProgramIntentService を開始
+            startTvProgramIntentService();
         } else if (!sIsLaunchChecked && this instanceof HomeActivity) {
             localRegisterExpireDateCheck();
             downloadStatusCheck();
@@ -864,6 +762,19 @@ public class BaseActivity extends FragmentActivity implements
 
         StbConnectionManager.shared().setConnectionListener(this);
         DTVTLogger.end();
+    }
+
+    /**
+     * アプリ起動時に番組表データ(先頭10件)取得.
+     */
+    private void startTvProgramIntentService() {
+        //番組表画面では別の番組表データ取得処理が実行されるのでサービスを実行しない
+        if (this instanceof TvProgramListActivity) {
+            return;
+        }
+        DTVTLogger.debug("do TvProgramIntentService start");
+        mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
+        mScaledDownProgramListDataProvider.startTvProgramIntentService();
     }
 
     @Override
@@ -904,11 +815,12 @@ public class BaseActivity extends FragmentActivity implements
                 }
             }
             DTVTLogger.debug("do dlnaOnStop");
-            //TODO 6/12作業保留のためコメントアウト
-            // FG → BG になったため TvProgramIntentService を stop する
-//            DTVTLogger.debug("do TvProgramIntentService stop");
-//            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
-//            scaledDownProgramListDataProvider.stopTvProgramIntentService();
+            if (mScaledDownProgramListDataProvider != null) {
+                // FG → BG時に TvProgramIntentService を stop する
+                DTVTLogger.debug("do TvProgramIntentService stop");
+                mScaledDownProgramListDataProvider.stopTvProgramIntentService();
+                mScaledDownProgramListDataProvider = null;
+            }
         }
         DTVTLogger.end();
     }
@@ -996,6 +908,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param isFromMenu requestCommand
      * @param appType appType
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void sendGoogleAnalyticsEvent(final boolean isFromMenu, final RemoteControlRelayClient.STB_APPLICATION_TYPES appType) {
             String category = "";
             String action = "";
@@ -1676,9 +1589,6 @@ public class BaseActivity extends FragmentActivity implements
 
         dismissDialogOnPause();
         super.onPause();
-
-        //アクティビティが非活性化したのでfalse
-        mActivityActive = false;
 
         //ワンタイムトークン取得のキャンセル
         cancelOttConnection();

@@ -4,36 +4,26 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * チャンネルリスト情報.
  */
-public class ChannelList implements Parcelable {
+public class ChannelList {
+    /** WebAPIレスポンス情報(チャンネルリスト情報以外). */
+    private HashMap<String, String> mResponseInfoMap = null;
 
-    // TODO :メンバを固定でnewしているが、結局setter関数でまるごと置き換えているので無駄にnewしている.
-    // TODO :コンストラクタで必要な情報をすべて受け取り初期化するか、初期値をnullにして利用箇所は全てnull判定するなりすべき.
-    /**
-     * WebAPIレスポンス情報(チャンネルリスト情報以外).
-     */
-    private HashMap<String, String> mResponseInfoMap = new HashMap<>();
-
-    /**
-     * チャンネルリスト情報.
-     */
-    private List<HashMap<String, String>> mChannelList = new ArrayList<>();
+    /** チャンネルリスト情報. */
+    private List<Map<String, String>> mChannelList = null;
 
     /**
      * WebAPIレスポンス情報(チャンネルリスト情報以外)取得.
      * @return レスポンス情報
      */
     public HashMap getResponseInfoMap() {
-       return mResponseInfoMap;
+        return mResponseInfoMap;
     }
 
     /**
@@ -48,7 +38,7 @@ public class ChannelList implements Parcelable {
      * WebAPIレスポンス情報(チャンネルリスト情報以外)情報取得.
      * @return チャンネルリスト情報
      */
-    public List<HashMap<String, String>> getChannelList() {
+    public List<Map<String, String>> getChannelList() {
         return mChannelList;
     }
 
@@ -59,37 +49,4 @@ public class ChannelList implements Parcelable {
     public void setChannelList(final List clList) {
         this.mChannelList = clList;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeSerializable(this.mResponseInfoMap);
-        dest.writeList(this.mChannelList);
-    }
-
-    public ChannelList() {
-    }
-
-    private ChannelList(final Parcel in) {
-        this.mResponseInfoMap = (HashMap<String, String>) in.readSerializable();
-        this.mChannelList = new ArrayList<HashMap<String, String>>();
-        //TODO 自動生成したのにビルドエラーが出るので一時的にコメントアウト(対策は後回し)
-//        in.readList(this.mChannelList, HashMap<String, String>.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<ChannelList> CREATOR = new Parcelable.Creator<ChannelList>() {
-        @Override
-        public ChannelList createFromParcel(Parcel source) {
-            return new ChannelList(source);
-        }
-
-        @Override
-        public ChannelList[] newArray(int size) {
-            return new ChannelList[size];
-        }
-    };
 }
