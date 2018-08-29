@@ -140,7 +140,6 @@ public class ChildContentListActivity extends BaseActivity implements
         DTVTLogger.debug("mCrid = " + mCrid + ", title = " + title);
         setTitleText(title);
         setHeaderColor(false);
-        enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         changeGlobalMenuIcon(false);
         setStatusBarColor(R.color.contents_header_background);
@@ -249,6 +248,7 @@ public class ChildContentListActivity extends BaseActivity implements
                 intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
                 intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
                 intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+                intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
                 startActivityForResult(intent, REQUEST_CODE_CHILD_CONTENT_LIST);
             }
         } else {
@@ -404,6 +404,14 @@ public class ChildContentListActivity extends BaseActivity implements
      * 画面初期設定.
      */
     private void initView() {
+        Intent intent = getIntent();
+        //ヘッダーの設定
+        String sourceClass = intent.getStringExtra(DtvtConstants.SOURCE_SCREEN);
+        if (sourceClass == null || sourceClass.isEmpty()) {
+            enableHeaderBackIcon(false);
+        } else {
+            enableHeaderBackIcon(true);
+        }
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         if (mContentsList == null) {
             mContentsList = new ArrayList<>();
