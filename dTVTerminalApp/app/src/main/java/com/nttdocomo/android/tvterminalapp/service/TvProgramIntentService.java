@@ -166,9 +166,12 @@ public class TvProgramIntentService extends IntentService {
             mTvScheduleWebClientSync = new TvScheduleWebClientSync(TvProgramIntentService.this);
             mTvScheduleWebClientSync.enableConnect();
             ChannelInfoList channelInfoList = mTvScheduleWebClientSync.getTvScheduleApi(getApplicationContext(), fromWebAPIChNos, dateList, "");
-            //最終日付チェックした後に取得
-            TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(getApplicationContext());
-            scheduleInsertDataManager.insertTvScheduleInsertList(channelInfoList, WebApiBasePlala.DATE_NOW);
+            //サービス中断時に channelInfoList が null で返却される可能性があるためチェックを入れる
+            if (channelInfoList != null && channelInfoList.getChannels() != null) {
+                //最終日付チェックした後に取得
+                TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(getApplicationContext());
+                scheduleInsertDataManager.insertTvScheduleInsertList(channelInfoList, WebApiBasePlala.DATE_NOW);
+            }
         }
         DTVTLogger.end();
     }
