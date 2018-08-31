@@ -2286,8 +2286,7 @@ public class BaseActivity extends FragmentActivity implements
             public void onCancelCallback() {
                 //ログアウトのダイアログは閉じられたので、認証画面を再表示する
                 OttGetAuthSwitch.INSTANCE.setNowAuth(true);
-                mDAccountControl = new DaccountControl();
-                mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
+                chkDaccountRegist();
             }
         });
 
