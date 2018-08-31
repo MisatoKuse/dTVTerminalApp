@@ -848,7 +848,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
                     || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)
                     || DaccountControl.CheckLastClassEnum.CONTROL.equals(checkLastClassEnum)) {
-                    if (errorCode == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                    if (errorCode == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE && mSelectDevice != SELECT_DEVICE_ITEM_DEFAULT) {
                         // dアカアプリ未インストールの場合はdアカアプリ起動(関数内でチェックしてストア誘導する画面に飛ぶ).
                         DTVTLogger.debug("dAccountApp is not installed.");
                         checkDAccountApp();
@@ -860,7 +860,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         // dアカアプリ起動～ドコテレ復帰の間は再起動しない.
                         // また多くの場合はコールバックが復帰後に来るため、ペアリング中の状態以外では起動しない
                         // （Resume時には必ずSTB選択の状態に戻している事を利用）
-                        if (!mIsDAccountAppStarting && mLoadMoreView.getVisibility() == View.VISIBLE) {
+                        if (!mIsDAccountAppStarting && mLoadMoreView.getVisibility() == View.VISIBLE && mSelectDevice != SELECT_DEVICE_ITEM_DEFAULT) {
                             checkDAccountApp();
                         }
                     }
