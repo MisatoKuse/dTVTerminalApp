@@ -287,6 +287,21 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
+    @Override
+    public void onRemoteConnectTimeOutCallback() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setProgressBarGone();
+                showGetDataFailedToast();
+                setVideoBrows(null);
+                if (mNoDataMessage.getVisibility() == View.VISIBLE) {
+                    mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                }
+            }
+        });
+    }
+
     /**
      * リモート視聴の場合もオブジェクトID統一するようを編集.
      *

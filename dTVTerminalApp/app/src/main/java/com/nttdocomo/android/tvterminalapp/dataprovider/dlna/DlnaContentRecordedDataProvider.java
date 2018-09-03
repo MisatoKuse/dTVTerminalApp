@@ -36,6 +36,10 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
          * @param errorCode エラーコード
          */
         void onConnectErrorCallback(final int errorCode);
+        /**
+         * 接続タイムアウト場合のエラーコールバック.
+         */
+        void onRemoteConnectTimeOutCallback();
     }
     /**コールバック.*/
     private CallbackListener mCallbackListener = null;
@@ -87,6 +91,13 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     public void onRemoteConnectStatusCallBack(final int errorCode) {
         if (mCallbackListener != null) {
             mCallbackListener.onConnectErrorCallback(errorCode);
+        }
+    }
+
+    @Override
+    public void onContentBrowseRemoteTimeOut() {
+        if (mCallbackListener != null) {
+            mCallbackListener.onRemoteConnectTimeOutCallback();
         }
     }
 }

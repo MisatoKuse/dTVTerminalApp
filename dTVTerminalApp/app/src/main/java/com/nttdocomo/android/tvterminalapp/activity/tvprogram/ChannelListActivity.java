@@ -482,6 +482,20 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
+    public void onRemoteConnectTimeOutCallback() {
+        int pos = mViewPager.getCurrentItem();
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, mCurrentType, null);
+        updateUi(fragment);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showGetDataFailedToast();
+                showListMessage(false);
+            }
+        });
+    }
+
+    @Override
     public void onClickTab(final int position) {
         DTVTLogger.debug("position = " + position);
         if (null != mViewPager) {

@@ -34,6 +34,10 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
          * @param errorCode エラーコード
          */
         void onConnectErrorCallback(final int errorCode);
+        /**
+         * 接続タイムアウト場合のエラーコールバック.
+         */
+        void onRemoteConnectTimeOutCallback();
     }
 
     /** チャンネル番号. */
@@ -101,6 +105,13 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     public void onRemoteConnectStatusCallBack(final int errorCode) {
         if (mOnMultiChCallbackListener != null) {
             mOnMultiChCallbackListener.onConnectErrorCallback(errorCode);
+        }
+    }
+
+    @Override
+    public void onContentBrowseRemoteTimeOut() {
+        if (mOnMultiChCallbackListener != null) {
+            mOnMultiChCallbackListener.onRemoteConnectTimeOutCallback();
         }
     }
 }

@@ -3067,6 +3067,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             }
                         });
                     }
+
+                    @Override
+                    public void onRemoteConnectTimeOutCallback() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showRemotePlayingProgress(false);
+                                showErrorDialog(getString(R.string.contents_player_bad_contents_info));
+                                setRemotePlayArrow(null);
+                            }
+                        });
+                    }
                 });
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (dlnaDmsItem != null) {

@@ -31,6 +31,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * DLNAマネージャー.
@@ -109,6 +111,8 @@ public class DlnaManager {
     private static final int DOWNLOADER_STATUS_CANCELLED = 14;
     /** ERROR_OCCURED. */
     private static final int DOWNLOADER_STATUS_ERROR_OCCURED = 15;
+    /** リモート接続　タイムアウト　秒数. */
+    private static final int REMOTE_TIME_OUT = 30 * 1000;
     /** dms検出リスナー. */
     public DlnaManagerListener mDlnaManagerListener = null;
 
@@ -144,6 +148,8 @@ public class DlnaManager {
     private AribUtils mAribUtils = null;
     /** ダウンロードキャンセル処理. */
     private boolean mIsCanceled = false;
+    /** リモート接続する際に、タイムアウト. */
+    private Timer mTimer = null;
 
     // region Listener declaration
 
@@ -224,6 +230,10 @@ public class DlnaManager {
          * @param containerId パス
          */
         void onContentBrowseErrorCallback(final String containerId);
+        /**
+         * リモート接続タイムアウトコールバック.
+         */
+        void onContentBrowseRemoteTimeOut();
     }
 
     /**
@@ -353,6 +363,15 @@ public class DlnaManager {
     }
 
     /**
+     * タイマーキャンセル.
+     */
+    private void cancelTimer() {
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+    }
+
+    /**
      * Queueをクリア.
      */
     public void clearQue() {
@@ -385,6 +404,7 @@ public class DlnaManager {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
+                            cancelTimer();
                             StartDtcp();
                             if (!RestartDirag()) {
                                 BrowseListener listener = DlnaManager.shared().mBrowseListener;
@@ -438,6 +458,7 @@ public class DlnaManager {
                 @Override
                 public void run() {
                     if (!browseContentWithContainerId(requestIndex, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, controlUrl)) {
+                        DlnaManager.shared().clearQue();
                         BrowseListener listener = DlnaManager.shared().mBrowseListener;
                         if (listener != null) {
                             listener.onContentBrowseErrorCallback(containerId);
@@ -551,7 +572,25 @@ public class DlnaManager {
      * @param udn udn
      */
     private void RequestRemoteConnect(final String udn) {
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+        mTimer = new Timer();
+        TimerTask task = new TimerTask() {
+
+            @Override
+            public void run() {
+                if (DlnaManager.shared().remoteConnectStatus != RemoteConnectStatus.CONNECTED) {
+                    RequestRemoteDisconnect(udn);
+                    BrowseListener listener = DlnaManager.shared().mBrowseListener;
+                    if (listener != null) {
+                        listener.onContentBrowseRemoteTimeOut();
+                    }
+                }
+            }
+        };
         requestRemoteConnect(udn);
+        mTimer.schedule(task, REMOTE_TIME_OUT);
     }
 
     /**
@@ -766,12 +805,14 @@ public class DlnaManager {
                 break;
             case REMOTE_CONNECT_STATUS_CONNECTED:
                 status = RemoteConnectStatus.CONNECTED;
+                cancelTimer();
                 break;
             case REMOTE_CONNECT_STATUS_DISCONNECTION:
                 status = RemoteConnectStatus.DETECTED_DISCONNECTION;
                 break;
             case REMOTE_CONNECT_STATUS_RECONNECTION:
                 status = RemoteConnectStatus.GAVEUP_RECONNECTION;
+                cancelTimer();
                 if (listener != null && StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN) {
                     listener.onRemoteConnectStatusCallBack(errorCode);
                 }
@@ -914,6 +955,7 @@ public class DlnaManager {
                 SharedPreferencesUtils.setSharedPreferencesStbInfo(DlnaManager.shared().mContext, newItem);
             }
         }
+        cancelTimer();
     }
 
     /**

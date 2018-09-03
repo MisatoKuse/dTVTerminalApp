@@ -38,6 +38,10 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
          * @param errorCode エラーコード
          */
         void onConnectErrorCallback(final int errorCode);
+        /**
+         * 接続タイムアウト場合のエラーコールバック.
+         */
+        void onRemoteConnectTimeOutCallback();
     }
 
     /**コールバック.*/
@@ -86,6 +90,13 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
     public void onRemoteConnectStatusCallBack(final int errorCode) {
         if (mCallback != null) {
             mCallback.onConnectErrorCallback(errorCode);
+        }
+    }
+
+    @Override
+    public void onContentBrowseRemoteTimeOut() {
+        if (mCallback != null) {
+            mCallback.onRemoteConnectTimeOutCallback();
         }
     }
 }
