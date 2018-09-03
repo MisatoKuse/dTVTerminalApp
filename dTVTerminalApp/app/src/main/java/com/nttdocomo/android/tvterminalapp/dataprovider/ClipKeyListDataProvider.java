@@ -421,19 +421,19 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             String serviceId = data.getServiceId();
             String eventId = data.getEventId();
             String titleId = data.getTitleId();
-            ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentType);
 
-            if (tableType != null) {
-                switch (operationId) {
-                    case CLIP_ROW_DELETE:
-                        dataManager.deleteRowSqlStart(tableType, crid, serviceId, eventId, titleId);
-                        break;
-                    case CLIP_ROW_INSERT:
+            switch (operationId) {
+                case CLIP_ROW_DELETE:
+                    dataManager.deleteRowSqlStart(crid, serviceId, eventId, titleId);
+                    break;
+                case CLIP_ROW_INSERT:
+                    ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentType);
+                    if (tableType != null) {
                         dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                         break;
-                    default:
-                        break;
-                }
+                    }
+                default:
+                    break;
             }
         }
     }

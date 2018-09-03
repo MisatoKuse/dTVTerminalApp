@@ -139,14 +139,13 @@ public class ClipKeyListInsertDataManager {
     /**
      * 条件に一致する行を削除する.
      *
-     * @param tableType テーブル種別(TV/VOD)
      * @param crId      コンテンツ識別子
      * @param serviceId サービスID
      * @param eventId   イベントID
      * @param titleId   タイトルID
      */
     public void deleteRowSqlStart(
-            final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
+            final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
 
@@ -165,7 +164,8 @@ public class ClipKeyListInsertDataManager {
                         JsonConstants.META_RESPONSE_TITLE_ID, "=?");
 
                 String[] columns = {crId, serviceId, eventId, titleId};
-                clipKeyListDao.deleteRowData(tableType, query, columns);
+                clipKeyListDao.deleteRowData(ClipKeyListDao.TableTypeEnum.TV, query, columns);
+                clipKeyListDao.deleteRowData(ClipKeyListDao.TableTypeEnum.VOD, query, columns);
             } catch (SQLiteException e) {
                 DTVTLogger.debug("ClipKeyListInsertDataManager::deleteRowSqlStart, e.cause=" + e.getCause());
             } finally {
