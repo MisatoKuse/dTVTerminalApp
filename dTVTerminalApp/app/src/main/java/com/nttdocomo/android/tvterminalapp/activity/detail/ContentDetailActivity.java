@@ -2170,12 +2170,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     } else {
                         boolean execResult = true;
 
+                        DTVTLogger.debug("dtv_type:"+ detailData.getDtvType() + " title_id:" + detailData.getTitle_id() +" episode_id:"+ detailData.getEpisode_id());
                         if (METARESPONSE1.equals(detailData.getDtvType())) {
-                            execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getTitle_id());
+                            execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getEpisode_id());
+                            DTVTLogger.debug("Start title with the specified episode_id:"+ detailData.getEpisode_id());
                         } else if (METARESPONSE2.equals(detailData.getDtvType())) {
                             execResult = startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
+                            DTVTLogger.debug("Start title with the specified title_id:"+ detailData.getTitle_id());
                         } else {
                             execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                            DTVTLogger.debug("Start title with the specified title_id:"+ detailData.getTitle_id());
                         }
 
                         //実行時に実行に失敗していた場合は、メッセージを表示する
