@@ -67,6 +67,8 @@ public class ContentUtils {
     public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     /**レコメンド情報キー.*/
     public static final String RECOMMEND_INFO_BUNDLE_KEY = "recommendInfoKey";
+    /**検索情報キー.*/
+    public static final String SEARCH_INFO_BUNDLE_KEY = "searchInfoKey";
     /**ぷらら情報キー.*/
     public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
     /** disp_type(tv_program).*/

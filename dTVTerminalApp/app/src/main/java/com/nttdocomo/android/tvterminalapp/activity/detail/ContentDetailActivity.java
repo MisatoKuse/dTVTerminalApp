@@ -930,6 +930,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
+        if (mDetailData == null) {
+            mDetailData = mIntent.getParcelableExtra(ContentUtils.SEARCH_INFO_BUNDLE_KEY);
+        }
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
             if (ContentUtils.isOtherService(serviceId)) {
