@@ -94,6 +94,17 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         DTVTLogger.debug("normal exec setFirstTimeOut");
     }
 
+    @Override
+    protected void onPause() {
+        DTVTLogger.start();
+        if (mTimerHandler != null) {
+            mTimerHandler.removeCallbacks(mTimerRunnable);
+            mTimerRunnable = null;
+        }
+        super.onPause();
+        DTVTLogger.end();
+    }
+
     /**
      * 最初に必ず2秒待つ処理.
      */
