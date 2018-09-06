@@ -245,6 +245,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String DTV_CHANNEL_CATEGORY_MISSED = "02";
     /**dTVチャンネルカテゴリー関連.*/
     private static final String DTV_CHANNEL_CATEGORY_RELATION = "03";
+    /** 作品IDの長さ.*/
+    private static final int CONTENTS_ID_VALID_LENGTH = 8;
 
     /**他サービス起動リクエストコード.*/
     private static final int START_APPLICATION_REQUEST_CODE = 0;
@@ -2032,16 +2034,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         showErrorDialog(errorMessage);
                     } else {
                         boolean execResult = true;
-                        //RESERVED4は4の場合
-                        if (RESERVED4_TYPE4.equals(detailData.getReserved4())) {
-                            execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getContentsId());
-                            //RESERVED4は7,8の場合
-                        } else if (RESERVED4_TYPE7.equals(detailData.getReserved4())
-                                || RESERVED4_TYPE8.equals(detailData.getReserved4())) {
-                            execResult = startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getContentsId());
-                            //その他の場合
-                        } else {
-                            execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getContentsId());
+                        try {
+                            // contentsId が16桁の場合に下8桁を使用する。※前提条件:contentsId は8桁または16桁である
+                            String contentsId = detailData.getContentsId().substring(
+                                    detailData.getContentsId().length() -CONTENTS_ID_VALID_LENGTH);
+                            DTVTLogger.debug("Reserved4["+ detailData.getReserved4() + "] contentsId:" +detailData.getContentsId() +" lower 8 digits:"+ contentsId);
+                            //タイトルタイプの別
+                            //4:音楽コンテンツ
+                            if (RESERVED4_TYPE4.equals(detailData.getReserved4())) {
+                                execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + contentsId);
+                                //7,8:ライブ配信コンテンツ
+                            } else if (RESERVED4_TYPE7.equals(detailData.getReserved4())
+                                    || RESERVED4_TYPE8.equals(detailData.getReserved4())) {
+                                execResult = startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + contentsId);
+                                //その他の場合
+                            } else {
+                                execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + contentsId);
+                            }
+                        } catch (StringIndexOutOfBoundsException e) {
+                            DTVTLogger.debug(e);
                         }
 
                         //実行時に実行に失敗していた場合は、メッセージを表示する
