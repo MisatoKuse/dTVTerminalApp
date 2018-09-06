@@ -55,151 +55,82 @@ import java.util.TimerTask;
  */
 public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdapter.MyViewHolder> {
 
-    /**
-     * サムネイル高さ.
-     */
+    /** サムネイル高さ. */
     private static final int THUMBNAIL_HEIGHT = 69;
-    /**
-     * サムネイル幅.
-     */
+    /** サムネイル幅. */
     private static final int THUMBNAIL_WIDTH = 122;
-    /**
-     * 1時間幅(番組表表示時).
-     */
+    /** 1時間幅(番組表表示時). */
     private static final int ONE_HOUR_UNIT = 180;
-    /**
-     * タイムライン幅.
-     */
+    /** タイムライン幅. */
     private static final int TIME_LINE_WIDTH = 44;
-    /**
-     * 上部クリアランス.
-     */
+    /** 上部クリアランス. */
     private static final int PADDING_TOP = 12;
-    /**
-     * 下部クリアランス.
-     */
+    /** 下部クリアランス. */
     private static final int PADDING_BOTTOM = 15;
-    /**
-     * サムネイルタイトル用上部マージン.
-     */
+    /** サムネイルタイトル用上部マージン. */
     private static final int THUMB_MARGIN_TOP_TITLE = 16;
-    /**
-     * サムネイル左側マージン.
-     */
+    /** サムネイル左側マージン. */
     private static final int THUMB_MARGIN_LEFT = 30;
-    /**
-     * 右側クリアランス.
-     */
+    /** 右側クリアランス. */
     private static final int PADDING_RIGHT = 8;
-    /**
-     * エピソード上部用マージン.
-     */
+    /** エピソード上部用マージン. */
     private static final int EPI_MARGIN_TOP_THUMB = 4;
-    /**
-     * ハイフン.
-     */
+    /** ハイフン. */
     private static final String HYPHEN = "-";
 
-    /**
-     * スペース.
-     */
+    /** スペース. */
     private static final String SPACE = " ";
-    /**
-     * 00.
-     */
+    /** 00. */
     private static final String ZERO_MILLISECOND = "00";
 
-    /**
-     * 日付タイトル.
-     */
-
+    /** 日付タイトル. */
     private String mDateTitleText = null;
-    /**
-     * 見逃し判定(あり)パラメータ.
-     */
+    /** 見逃し判定(あり)パラメータ. */
     private static final String MISS_CUT_OUT = "1";
-    /**
-     * 見逃し判定(あり)パラメータ.
-     */
+    /** 見逃し判定(あり)パラメータ. */
     private static final String MISS_COMPLETE = "2";
-    /**
-     * コンテキスト.
-     */
+    /** コンテキスト. */
     private Context mContext = null;
-    /**
-     * ディスプレイ幅.
-     */
+    /** ディスプレイ幅. */
     private int mScreenWidth = 0;
-    /**
-     * サムネイル取得プロバイダー.
-     */
+    /** サムネイル取得プロバイダー. */
     private ThumbnailProvider mThumbnailProvider = null;
-    /**
-     * 現在時刻.
-     */
+    /** 現在時刻. */
     private String mCurDate = null;
 
-    /**
-     * 年齢パレンタル情報.
-     */
+    /** 年齢パレンタル情報. */
     private int mAgeReq = 8;
-    /**
-     * 現在時刻フォマード.
-     */
+    /** 現在時刻フォマード. */
     private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
 
-    /**
-     * 番組データ.
-     */
+    /** 番組データ. */
     private List<ChannelInfo> mProgramList = null;
-    /**
-     * クリップボタンサイズ(dp).
-     */
+    /** クリップボタンサイズ(dp). */
     private final static int CLIP_BUTTON_SIZE = 16;
-    /**
-     * クリップボタン上マージン(dp).
-     */
+    /** クリップボタン上マージン(dp). */
     private final static int CLIP_BUTTON_TOP_MARGIN_SIZE = 8;
-    /**
-     * コンテンツ取得エラーテキストサイズ.
-     */
+    /** コンテンツ取得エラーテキストサイズ. */
     private final static int GET_CONTENT_ERROR_TEXT_SIZE = 11;
-    /**
-     * チャンネルのWIDTH.
-     */
+    /** チャンネルのWIDTH. */
     private final static int CHANNEL_WIDTH = 720;
-    /**
-     * ダウンロード禁止判定フラグ.
-     */
+    /** ダウンロード禁止判定フラグ. */
     private boolean mIsDownloadStop = false;
-    /**
-     * 設定済みViewHolder.
-     */
+    /** 設定済みViewHolder. */
     private List<MyViewHolder> mMyViewHolder = new ArrayList<>();
-    /**
-     * 放送中または未放送viewHolder Tag.
-     */
+    /** 放送中または未放送viewHolder Tag. */
     private final static int VIEW_HOLDER_TAG_ONE = 1;
-    /**
-     * 関連VOD(なし)viewHolder Tag.
-     */
+    /** 関連VOD(なし)viewHolder Tag. */
     private final static int VIEW_HOLDER_TAG_ZERO = 0;
-    /**
-     * 日付比較リザルト.
-     */
+    /** 日付比較リザルト. */
     private final static int DATE_COMPARE_TO_LOW = -1;
-    /**
-     * クリップ非活性フラグ.
-     */
+    /** クリップ非活性フラグ. */
     private boolean mIsClipActive = false;
-    /**
-     * 番組描画間隔. 短いとスクロールが重くなるが描画が遅くなる
-     */
+    /** 番組描画間隔. 短いとスクロールが重くなるが描画が遅くなる. */
     private final static int PROGRAM_DRAW_DURATION_TIME = 100;
-    /**
-     * 最新の縦スクロールY位置（番組描画順序決定用、見えている位置から近いものを順に描画する）.
-     */
+    /** 最新の縦スクロールY位置（番組描画順序決定用、見えている位置から近いものを順に描画する）. */
     private int mProgramScrollY = 0;
+    /** クリップ非活性フラグ. */
+    private boolean mIsScheduleClickEnable = true;
 
     /**
      * コンストラクタ.
@@ -499,7 +430,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE) {
+                        //スクロール中は View のフォーカスを 横スクロールView(ProgramRecyclerView)に奪われてしまうので、その時はクリックイベントを無効にする
+                        if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE && mIsScheduleClickEnable) {
                             Intent intent = new Intent();
                             intent.setClass(mContext, ContentDetailActivity.class);
                             intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
@@ -508,6 +440,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                             TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
                             tvProgramListActivity.startActivity(intent);
                         }
+                        //クリックイベントを有効に戻す
+                        mIsScheduleClickEnable = true;
                     }
                 });
             }
@@ -516,6 +450,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
             itemViewHolder.mContent.setText(title);
         }
+    }
+
+    /**
+     * コンテンツタップフラグをセットする.
+     *
+     * @param mIsScheduleClickEnable コンテンツタップフラグ
+     */
+    public void setIsScheduleClickEnable(final boolean mIsScheduleClickEnable) {
+        this.mIsScheduleClickEnable = mIsScheduleClickEnable;
     }
 
     /**

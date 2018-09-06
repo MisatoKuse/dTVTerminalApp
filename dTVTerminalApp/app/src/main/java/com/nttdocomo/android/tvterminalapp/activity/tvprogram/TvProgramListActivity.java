@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -75,172 +77,92 @@ public class TvProgramListActivity extends BaseActivity implements
         ProgramScrollView.OnScrollOffsetListener,
         MyChannelDataProvider.ApiDataProviderCallback,
         TabItemLayout.OnClickTabTextListener {
-    /**
-     * マイチャンネルタブインデックス.
-     */
+    /** マイチャンネルタブインデックス. */
     private int mMyChannelTabNo = -1;
-    /**
-     * 番組パネルリサイクルビュー.
-     */
+    /** 番組パネルリサイクルビュー. */
     private ProgramRecyclerView mProgramRecyclerView = null;
-    /**
-     *  番組パネルスクロールビュー.
-     */
+    /**  番組パネルスクロールビュー. */
     private ProgramScrollView mProgramScrollViewParent = null;
-    /**
-     * メニュー起動.
-     */
+    /** メニュー起動. */
     private Boolean mIsMenuLaunch = false;
-    /**
-     * マイ番組表非表示フラグ(未ログイン又は未契約状態).
-     */
+    /** マイ番組表非表示フラグ(未ログイン又は未契約状態). */
     private boolean mIsDisableMyChannel = false;
-    /**
-     * 左側タイムスクロール.
-     */
+    /** 左側タイムスクロール. */
     private ProgramScrollView mTimeScrollView = null;
-    /**
-     * チャンネルリサイクルビュー.
-     */
+    /** チャンネルリサイクルビュー. */
     private RecyclerView mChannelRecyclerView = null;
-    /**
-     * 共通タブレイアウト.
-     */
+    /** 共通タブレイアウト. */
     private TabItemLayout mTabLayout = null;
-    /**
-     * "現在カレンダーボタン".
-     */
+    /** "現在カレンダーボタン". */
     private ImageView mTagImageView = null;
-    /**
-     * 標準時間.
-     */
+    /** 標準時間. */
     private static final int STANDARD_TIME = 24;
-    /**
-     * タイムライン幅.
-     */
+    /** タイムライン幅. */
     private static final int TIME_LINE_WIDTH = 44;
-    /**
-     * タイムライン高さ.
-     */
+    /** タイムライン高さ. */
     private static final int TIME_LINE_HEIGHT = 56;
-    /**
-     * チャンネルリサイクルビュー丈.
-     */
+    /** チャンネルリサイクルビュー丈. */
     private static final int CH_VIEW_HEIGHT = 44;
-    /**
-     * 1時間帯基準値.
-     */
+    /** 1時間帯基準値. */
     private static final int ONE_HOUR_UNIT = 180;
 
-    //時間を4時に設定する値
+    /** 時間を4時に設定する値. */
     private static final int HOUR_4 = 4;
 
-    /**
-     * 選択中日付.
-     */
+    /** 選択中日付. */
     private String mSelectDateStr = null;
-    /**
-     * 選択中日付(JAVAのエポック秒版).
-     */
+    /** 選択中日付(JAVAのエポック秒版). */
     private long mSelectDate = 0;
-    /**
-     * today.
-     */
+    /** today. */
     private String mToDay = null;
-    /**
-     * 時間軸.
-     */
+    /** 時間軸. */
     private LinearLayout mLinearLayout = null;
-    /**
-     * チャンネルタブネーム.
-     */
+    /** チャンネルタブネーム. */
     private String[] mProgramTabNames = null;
-    /**
-     * EXPIRE_DATE.
-     */
+    /** EXPIRE_DATE. */
     private static final int EXPIRE_DATE = 7;
-    /**
-     * タブインデックス.
-     */
+    /** タブインデックス. */
     private int mTabIndex = 0;
     /** 初回取得チャンネル数指定. **/
     private final static int FIRST_GET_CHANNEL_NUM = 3;
-    /**
-     * 番組表中身アダプター.
-     */
+    /** 番組表中身アダプター. */
     private TvProgramListAdapter mTvProgramListAdapter = null;
-    /**
-     * チャンネルアダプター.
-     */
+    /** チャンネルアダプター. */
     private ProgramChannelAdapter mProgramChannelAdapter = null;
-    /**
-     * ひかりチャンネルリスト.
-     */
+    /** ひかりチャンネルリスト. */
     private ArrayList<ChannelInfo> mHikariChannels = null;
-    /**
-     * マイ番組表データ.
-     */
+    /** マイ番組表データ. */
     private ArrayList<MyChannelMetaData> mMyChannelDataList = null;
-    /**
-     * レッドタイムライン.
-     */
+    /** レッドタイムライン. */
     private RelativeLayout mTimeLine;
-    /**
-     * NOW.
-     */
-    private ImageView mNowImage;
-    /**
-     * 毎チャンネルエラーメッセージ.
-     */
+    /** 毎チャンネルエラーメッセージ. */
     private TextView mMyChannelNoDataTxT;
-    /**
-     * DAY_PRE0.
-     */
+    /** DAY_PRE0. */
     private static final String DAY_PRE0 = "0";
-    /**
-     * DATE_LINE.
-     */
+    /** DATE_LINE. */
     private static final String DATE_LINE = "-";
-    /**
-     * タブインデックス　マイ番組表.
-     */
+    /** タブインデックス　マイ番組表. */
     private static final int TAB_INDEX_MY_PROGRAM = 0;
-    /**
-     * タブインデックス　ひかりTV for docomo.
-     */
+    /** タブインデックス　ひかりTV for docomo. */
     private static final int TAB_INDEX_HIKARI = 1;
-    /**
-     * タブインデックス　dTVチャンネル.
-     */
+    /** タブインデックス　dTVチャンネル. */
     private static final int TAB_INDEX_DTVCH = 2;
-    /**
-     * マイ番組表データプロバイダー.
-     */
+    /** マイ番組表データプロバイダー. */
     private MyChannelDataProvider mMyChannelDataProvider;
-    /**
-     * 番組表データプロバイダー.
-     */
+    /** 番組表データプロバイダー. */
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider;
-    /**
-     * リスト0件メッセージ.
-     */
+    /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
-    /**
-     * 前回のタブポジション.
-     */
+    /** 前回のタブポジション. */
     private final static String TAB_INDEX = "tabIndex";
-    /**
-     * 番組RecyclerViewキャッシュサイズ.多いとViewが残りやすいがメモリを消費する.
-     */
+    /** 番組RecyclerViewキャッシュサイズ.多いとViewが残りやすいがメモリを消費する. */
     private final static int PROGRAM_RECYCLER_CACHE_SIZE = 12;
-    /**
-     * 番組RecyclerView PreDraw領域比率(ディスプレイ横幅に対する倍数).増やすと先読み数が増えるが重くなる.
-     */
+    /** 番組RecyclerView PreDraw領域比率(ディスプレイ横幅に対する倍数).増やすと先読み数が増えるが重くなる. */
     private final static float PROGRAM_RECYCLER_EXTRA_WIDTH = 1.5f;
-    /**
-     * NOWバーの時刻.
-     */
-    String mNowCurTime = null;
+    /** NOWバーの時刻. */
+    private String mNowCurTime = null;
+    /** スクロール終了待ちスレッド. */
+    private HandlerThread mStopScrollHandler = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -338,7 +260,6 @@ public class TvProgramListActivity extends BaseActivity implements
 
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
-        mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
         mMyChannelNoDataTxT = findViewById(R.id.tv_program_list_main_layout_tip_tv);
         mNoDataMessage = findViewById(R.id.tv_program_list_no_items);
 
@@ -1300,7 +1221,26 @@ public class TvProgramListActivity extends BaseActivity implements
         }
         if(mTvProgramListAdapter != null) {
             mTvProgramListAdapter.setProgramScrollY(mProgramScrollViewParent.getScrollY());
+            //スクロール中は横スクロールView (ProgramRecyclerView) にフォーカスが奪われるため、コンテンツタップを無効にする
+            mTvProgramListAdapter.setIsScheduleClickEnable(false);
         }
+        //スクロール終了が検知できないため、最後にスクロールイベントが発生してから0.3秒後をスクロール終了とする
+        if (mStopScrollHandler != null) {
+            //既に開始しているThreadは止めてから再開する
+            mStopScrollHandler.quit();
+            mStopScrollHandler = null;
+        }
+        mStopScrollHandler = new HandlerThread("StopScrollWait");
+        mStopScrollHandler.start();
+        new Handler(mStopScrollHandler.getLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mTvProgramListAdapter != null) {
+                    //スクロール終了時(ProgramRecyclerViewからフォーカスが外れた時)にクリックイベントを有効にする
+                    mTvProgramListAdapter.setIsScheduleClickEnable(true);
+                }
+            }
+        }, 300);
     }
 
     /**
