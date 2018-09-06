@@ -82,7 +82,8 @@ public class DataConverter {
         detailData.setTitle(info.getTitle());
 
         //レコメンド独自のデータ設定
-        if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
+        if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)
+                || ContentUtils.SEARCH_INFO_BUNDLE_KEY.equals(recommendFlg)) {
             int servieId = Integer.parseInt(info.getServiceId());
             detailData.setServiceId(servieId);
             detailData.setContentCategory(ContentUtils.getRecommendContentsType(info));
