@@ -701,6 +701,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         initContentsView();
+        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            setTabVisibility(false);
+        }
     }
     //endregion
 
@@ -1172,11 +1175,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * スクリーンのサイズを設定.
      */
     private void setScreenSize() {
+        boolean isLandscape = getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        if (isLandscape) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         initDisplayMetrics();
         mWidth = getWidthDensity();
         initDisplayMetrics();
         mHeight = getHeightDensity();
         mScreenNavHeight = getScreenHeight();
+        if (isLandscape) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
     }
 
     /**
@@ -3012,9 +3022,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void onScreenOrientationChangeCallBack(final boolean isLandscape) {
         if (isLandscape) {
             setTitleVisibility(false);
+            setTabVisibility(false);
             setRemoteControllerViewVisibility(View.GONE);
         } else {
             setTitleVisibility(true);
+            setTabVisibility(true);
             setRemoteControllerViewVisibility(View.VISIBLE);
         }
         initDisplayMetrics();
@@ -3022,6 +3034,35 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         initDisplayMetrics();
         int height = getHeightDensity();
         mPlayerViewLayout.setScreenSize(width, height);
+    }
+
+    /**
+     * 番組情報/チャンネルタブの表示設定.
+     *
+     * @param visible 表示要否
+     */
+    private void setTabVisibility(final boolean visible) {
+        switch (mDisplayState) {
+            case CONTENTS_DETAIL_ONLY:
+            case PLAYER_AND_CONTENTS_DETAIL:
+                if (visible) {
+                    findViewById(R.id.dtv_contents_detail_main_layout_vp).setVisibility(View.VISIBLE);
+                    findViewById(R.id.rl_dtv_contents_detail_tab).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.dtv_contents_detail_main_layout_vp).setVisibility(View.GONE);
+                    findViewById(R.id.rl_dtv_contents_detail_tab).setVisibility(View.GONE);
+                }
+                break;
+            case PLAYER_ONLY:
+                if (visible) {
+                    findViewById(R.id.dtv_contents_detail_player_only).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.dtv_contents_detail_player_only).setVisibility(View.GONE);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     /**
