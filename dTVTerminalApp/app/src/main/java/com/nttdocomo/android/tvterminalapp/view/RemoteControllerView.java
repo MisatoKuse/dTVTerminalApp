@@ -276,7 +276,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 }
                 //指が離すまで子ビュ―の移動した距離は子ビューの1/4に超えた場合、
                 // 自動的にTOPまで移動する
-                if (mMovedY > mScrollHeight / 4 && !mIsTop) {
+                if (mMovedY > mScrollHeight / 4) {
                     mScroller.startScroll(0, getScrollY(), 0, (mScrollHeight - getScrollY()));
                     invalidate();
                     setHeaderContent(false);
