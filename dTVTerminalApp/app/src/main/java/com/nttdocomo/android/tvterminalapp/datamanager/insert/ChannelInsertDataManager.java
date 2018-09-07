@@ -19,7 +19,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class ChannelInsertDataManager {
                 SQLiteDatabase database = databaseManager.openDatabase();
                 database.acquireReference();
                 ChannelListDao channelListDao = new ChannelListDao(database);
-                List<HashMap<String, String>> hashMaps = channelList.getChannelList();
+                List<Map<String, String>> hashMaps = channelList.getChannelList();
             try {
                 DTVTLogger.debug("bulk insert start");
                 database.beginTransaction();

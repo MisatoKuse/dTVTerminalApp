@@ -32,7 +32,6 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
     /** 停止クラスの初期値. */
     private static final int LATCH_COUNT_MAX = 1;
 
-
     @Override
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         DTVTLogger.start();
@@ -104,5 +103,26 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
 
         //値が存在したので、それを返す
         return mChannelLists;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        if (mChannelWebClient != null) {
+            mChannelWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        //通信再開時は番組リスト取得中フラグを初期化する
+        if (mChannelWebClient != null) {
+            mChannelWebClient.enableConnection();
+        }
     }
 }
