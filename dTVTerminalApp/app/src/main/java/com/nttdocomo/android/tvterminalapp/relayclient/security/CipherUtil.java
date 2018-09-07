@@ -51,6 +51,10 @@ public class CipherUtil {
 
     /** 暗号化処理の鍵交換の同期カウンター. */
     private static final int LATCH_COUNT_MAX = 1;
+    /** 共通鍵アルゴリズム. */
+    private static final String SHARED_KEY_ALGORITHM = "AES/CBC/PKCS5Padding";
+    /** 公開鍵アルゴリズム. */
+    private static final String PUBLIC_KEY_ALGORITHM = "RSA/ECB/PKCS1Padding";
 
     /**
      * CipherUtil.decodeData の例外状態取得.
@@ -69,7 +73,7 @@ public class CipherUtil {
     private static boolean mCipherDecodeError = false;
 
     /**
-     * 共通鍵あるかをチェック.
+     * 共通鍵が設定済みかチェックする.
      * @return true or false
      */
     public static boolean hasShareKey() {
@@ -78,7 +82,8 @@ public class CipherUtil {
         return result;
     }
     /**
-     * 公開鍵生成. 公開鍵生成済みであれば、生成のし直しは行わず、生成済みの公開鍵を返す.
+     * 公開鍵ペア（RSA）を生成する.
+     * 公開鍵が生成済みであれば、生成のし直しは行わず、生成済みの公開鍵を返す.
      * 再生成が必要な場合には、clearPublicKey() を呼び出し鍵情報をクリアすること.
      *
      * @return 鍵生成結果.
@@ -93,9 +98,9 @@ public class CipherUtil {
                 keygen.initialize(2048);
                 KeyPair keyPair = keygen.generateKeyPair();
 
-                // 秘密キー
+                // 秘密鍵
                 sPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
-                // 公開キー
+                // 公開鍵
                 sPublicKey = (RSAPublicKey) keyPair.getPublic();
             }
 
@@ -107,6 +112,7 @@ public class CipherUtil {
 
     /**
      * 共通鍵を設定する.
+     * ※公開鍵（RSA）で暗号化された共通鍵を秘密鍵で復号する.
      * @param shareKey shareKey
      * @return 設定結果
      */
@@ -114,7 +120,7 @@ public class CipherUtil {
         DTVTLogger.start();
         synchronized (sLockObject) {
             try {
-                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                Cipher cipher = Cipher.getInstance(PUBLIC_KEY_ALGORITHM);
                 cipher.init(Cipher.DECRYPT_MODE, sPrivateKey);
                 sSecureDigest = cipher.doFinal(shareKey);
                 sShareKey = new SecretKeySpec(sSecureDigest, "AES");
@@ -147,9 +153,10 @@ public class CipherUtil {
             }
             try {
                 byte[] srcDataBytes = srcDataString.getBytes("UTF-8");
-                SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-                byte[] ivSourceCode = random.generateSeed(IV_SIZE);
-                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                SecureRandom random = new SecureRandom(); // 暗号的に強い乱数で初期化ベクトルを生成する ※SHA1PRNG アルゴリズム廃止.
+                byte[] ivSourceCode = new byte[IV_SIZE];
+                random.nextBytes(ivSourceCode);
+                Cipher cipher = Cipher.getInstance(SHARED_KEY_ALGORITHM);
                 cipher.init(Cipher.ENCRYPT_MODE, sShareKey, new IvParameterSpec(ivSourceCode));
                 encodeByteStream = cipher.doFinal(srcDataBytes);
                 ivCode = cipher.getIV();
@@ -192,7 +199,7 @@ public class CipherUtil {
             }
             try {
                 setCipherDecodeError(false);
-                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                Cipher cipher = Cipher.getInstance(SHARED_KEY_ALGORITHM);
                 cipher.init(Cipher.DECRYPT_MODE, sShareKey, new IvParameterSpec(ivCode));
                 decodeByteStream = cipher.doFinal(encodeByteStream);
                 decodeString = new String(decodeByteStream, "UTF-8");
