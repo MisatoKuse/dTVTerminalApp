@@ -221,6 +221,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String METARESPONSE1 = "1";
     /**レスポンス(2).*/
     private static final String METARESPONSE2 = "2";
+    /**レスポンス(3).*/
+    private static final String METARESPONSE3 = "3";
     /**予約済みタイプ(4).*/
     private static final String RESERVED4_TYPE4 = "4";
     /**予約済みタイプ(7).*/
@@ -2194,16 +2196,33 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     } else {
                         boolean execResult = true;
 
-                        DTVTLogger.debug("dtv_type:"+ detailData.getDtvType() + " title_id:" + detailData.getTitle_id() +" episode_id:"+ detailData.getEpisode_id());
+                        DTVTLogger.debug("dtv_type[" + detailData.getDtvType() + "] title_id:" + detailData.getTitle_id() + " episode_id:" + detailData.getEpisode_id());
                         if (METARESPONSE1.equals(detailData.getDtvType())) {
                             execResult = startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getEpisode_id());
-                            DTVTLogger.debug("Start title with the specified episode_id:"+ detailData.getEpisode_id());
+                            DTVTLogger.debug("Start title with the specified episode_id:" + detailData.getEpisode_id()
+                                    + " URLScheme:" + UrlConstants.WebUrl.WORK_START_TYPE + detailData.getEpisode_id());
                         } else if (METARESPONSE2.equals(detailData.getDtvType())) {
                             execResult = startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
-                            DTVTLogger.debug("Start title with the specified title_id:"+ detailData.getTitle_id());
+                            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id()
+                                    + " URLScheme:" + UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
+                        } else if (METARESPONSE3.equals(detailData.getDtvType())) {
+                            String episodeId = detailData.getEpisode_id();
+
+                            if (episodeId == null || episodeId.isEmpty()) {
+                                execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id()
+                                        + " URLScheme:" + UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                            } else {
+                                // ※作品IDが設定されていた場合は、タイトル詳細を作品ID指定で起動させる
+                                execResult = startApp(String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE,
+                                        detailData.getTitle_id(), episodeId));
+                                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " episode_id:" + episodeId
+                                        + " URLScheme:" + String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, detailData.getTitle_id(), episodeId));
+                            }
                         } else {
                             execResult = startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
-                            DTVTLogger.debug("Start title with the specified title_id:"+ detailData.getTitle_id());
+                            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id()
+                                    + " URLScheme:" + UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
                         }
 
                         //実行時に実行に失敗していた場合は、メッセージを表示する

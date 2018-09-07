@@ -27,16 +27,24 @@ public class UrlConstants {
         public static final String DTV_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
         /**
          * DTV起動URL.
+         * 超スピード配信タイトル指定起動
          */
         public static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
         /**
          * DTV起動URL.
+         * 作品指定アプリ起動
          */
         public static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
         /**
          * DTV起動URL.
+         * タイトル指定アプリ起動(作品IDがない場合)
          */
         public static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
+        /**
+         * DTV起動URL.
+         * タイトル指定アプリ起動(作品IDが設定されていた場合)
+         */
+        public static final String TITTLE_EPISODE_START_TYPE = "dmktvideosc:///openTitle?titleId=%s&episodeId=%s";
 
         /**
          * dアニメストアアプリGoogle Play ストア‎URL.
