@@ -417,7 +417,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void initPlayerStart(final boolean isFromBack) {
         if (mPlayerViewLayout != null) {
-            if (isFromBack) {
+            if (isTvPlaying()) {
+                setRemotePlayArrow(mPlayerData);
+            } else if (isFromBack) {
                 if (mPlayerData == null || mPlayerData.isRemote()) {
                     setRemotePlayArrow(mPlayerData);
                 } else {
@@ -2478,10 +2480,28 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     break;
             }
         }
+        if (isTvPlaying()) {
+            if (mPlayerViewLayout != null) {
+                mPlayerViewLayout.onPause();
+                setRemotePlayArrow(mPlayerData);
+            }
+        }
         super.onStartRemoteControl(isFromHeader);
         DTVTLogger.end();
 
     } // end of onStartRemoteControl
+
+    /**
+     * テレビで視聴中であるかどうか.
+     */
+    private boolean isTvPlaying() {
+        if (mIsFromHeader) {
+            return false;
+        }
+        RemoteControllerView mRemoteControllerView = getRemoteControllerView();
+        return mRemoteControllerView != null && mRemoteControllerView.isTopRemoteControllerUI();
+    }
+
 
     /**
      * STBのサービスアプリ起動（ひかり）.
