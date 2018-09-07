@@ -245,6 +245,7 @@
     <string name="now_on_air">NOW ON AIR</string>
 
     <!-- MenuDisplay -->
+    <string name="nav_menu_status_login_ng">未ログイン</string>
     <string name="nav_menu_item_home">ホーム</string>
     <string name="nav_menu_item_program_list">番組表</string>
     <string name="nav_menu_item_channel_list">チャンネルリスト</string>

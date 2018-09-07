@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -43,6 +44,9 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.adapter.MenuListAdapter;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +142,27 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             @Override
             public boolean onTouch(final View v, final MotionEvent event) {
                 return false;
+            }
+        });
+        ImageView menuClose = popupWindowView.findViewById(R.id.account_status_icon_close);
+        menuClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                if (mPopupWindow != null) {
+                    mPopupWindow.dismiss();
+                }
+            }
+        });
+        TextView accountId = popupWindowView.findViewById(R.id.account_status_text);
+        if (UserState.LOGIN_NG.equals(mUserState)) {
+            accountId.setText(mActivity.getString(R.string.nav_menu_status_login_ng));
+        } else {
+            accountId.setText(StringUtils.modifyAccountId(SharedPreferencesUtils.getSharedPreferencesDaccountId(mActivity)));
+        }
+        accountId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                DaccountUtils.startDAccountApplication(mActivity);
             }
         });
         loadMenuList(popupWindowView);

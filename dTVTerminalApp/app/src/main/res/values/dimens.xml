@@ -45,6 +45,8 @@
     <dimen name="global_menu_list_item_title_icon_left_margin">32dp</dimen>
     <dimen name="global_menu_list_item_image_icon_width">95dp</dimen>
     <dimen name="global_menu_list_item_image_icon_height">10dp</dimen>
+    <dimen name="global_menu_account_status_text_width">185dp</dimen>
+    <dimen name="global_menu_account_status_text_size">14dp</dimen>
 
     <!--rating共通-->
     <dimen name="rating_star_numbers_width">24dp</dimen>

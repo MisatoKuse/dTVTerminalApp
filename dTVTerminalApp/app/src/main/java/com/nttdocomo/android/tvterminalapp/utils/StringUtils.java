@@ -49,74 +49,40 @@ import javax.crypto.spec.SecretKeySpec;
  * 文字列加工に関する処理を記載する.
  */
 public class StringUtils {
-
-    /**
-     * タイプ.
-     */
+    /**タイプ.*/
     private static String type;
-
-    /**
-     * データがないときのDefault値(PG12制限).
-     */
+    /**データがないときのDefault値(PG12制限).*/
     public static final int DEFAULT_USER_AGE_REQ = 8;
-    /**
-     * データがないときのDefault値(無制限).
-     */
+    /**データがないときのDefault値(無制限).*/
     public static final int DEFAULT_R_VALUE = 0;
-    /**
-     * 年齢制限値=PG12.
-     */
+    /** 年齢制限値=PG12.*/
     public static final int USER_AGE_REQ_PG12 = 9;
-    /**
-     * 年齢制限値=R15.
-     */
+    /**年齢制限値=R15.*/
     public static final int USER_AGE_REQ_R15 = 12;
-    /**
-     * 年齢制限値=R18.
-     */
+    /**年齢制限値=R18.*/
     public static final int USER_AGE_REQ_R18 = 15;
-    /**
-     * 年齢制限値=R20.
-     */
+    /**年齢制限値=R20.*/
     public static final int USER_AGE_REQ_R20 = 17;
-    /**
-     * PG-X or R-Xのチェック用正規表現式.
-     */
+    /**PG-X or R-Xのチェック用正規表現式.*/
     private static final String R_VALUE_PG_R_MATCH_PATTERN = "(PG)|R-[0-9]{1,2}";
-    /**
-     * 年齢取得用正規表現式.
-     */
+    /**年齢取得用正規表現式.*/
     private static final String R_VALUE_AGE_MATCH_PATTERN = "[0-9]{1,2}";
-    /**
-     * 年齢取得用正規表現式.
-     */
+    /**年齢取得用正規表現式.*/
     private static final int VALUE_OF_CHANGE_RVALUE_TO_AGE = 3;
-    /**
-     * カンマ.
-     */
+    /**カンマ.*/
     private static final String COMMA_SEPARATOR = ",";
-
-    /**
-     * 数字以外は置き換える為の正規表現.
-     */
+    /**数字以外は置き換える為の正規表現.*/
     private static final String REPLACE_ANYTHING_EXCEPT_NUMBERS = "[^0-9]";
-
-    /**
-     * 暗号化方法(AES).
-     */
+    /**暗号化方法(AES).*/
     private static final String CIPHER_TYPE = "AES";
-    /**
-     * 暗号化方法(AES/ECB/PKCS5Padding).
-     */
+    /**暗号化方法(AES/ECB/PKCS5Padding).*/
     private static final String CIPHER_DATA = "AES/ECB/PKCS5Padding";
-    /**
-     * 暗号化キーの長さ.
-     */
+    /**暗号化キーの長さ.*/
     private static final int CIPHER_KEY_LENGTH = 16;
-    /**
-     * ハッシュアルゴリズム指定.
-     */
+    /**ハッシュアルゴリズム指定.*/
     private static final String HASH_ALGORITHME = "SHA-256";
+    /**「@」マーク.*/
+    private static final String AT_SIGN = "@";
 
     /**
      * 文字列を連結する.
@@ -809,5 +775,59 @@ public class StringUtils {
      */
     public static String deleteExceptNumbers(final String source) {
         return source.replaceAll(REPLACE_ANYTHING_EXCEPT_NUMBERS, "");
+    }
+
+    /**
+     * アカウントIDを編集する.
+     *
+     * @param accountId アカウントID
+     * @return 編集後のアカウントID
+     */
+    public static String modifyAccountId(final String accountId) {
+        if (TextUtils.isEmpty(accountId)) {
+            return accountId;
+        }
+        StringBuilder newAccountId = new StringBuilder();
+        if (accountId.contains(AT_SIGN)) {
+            String[] idText = accountId.split(AT_SIGN);
+            for (int i = 0; i < idText.length; i++) {
+                if (i == 0) {
+                    if (idText[i].length() > 3) {
+                        newAccountId.append(replaceTextWithAsterisk(idText[i], 2));
+                    } else if (idText[i].length() == 3) {
+                        newAccountId.append(replaceTextWithAsterisk(idText[i], 1));
+                    } else {
+                        newAccountId.append(replaceTextWithAsterisk(idText[i], 0));
+                    }
+                    continue;
+                }
+                newAccountId.append(AT_SIGN).append(idText[i]);
+            }
+        } else {
+            newAccountId.append(replaceTextWithAsterisk(accountId, 4));
+        }
+        return newAccountId.toString();
+    }
+
+    /**
+     * 文字列を「*」に変換する.
+     *
+     * @param text 変換前の文字列
+     * @param count 変換しない桁数
+     * @return 変換後の文字列
+     */
+    private static String replaceTextWithAsterisk(final String text, final int count) {
+        if (TextUtils.isEmpty(text) || count < 0) {
+            return text;
+        }
+        StringBuilder newText = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            if (i < count) {
+                newText.append(text.substring(i, i + 1));
+            } else {
+                newText.append("*");
+            }
+        }
+        return newText.toString();
     }
 }
