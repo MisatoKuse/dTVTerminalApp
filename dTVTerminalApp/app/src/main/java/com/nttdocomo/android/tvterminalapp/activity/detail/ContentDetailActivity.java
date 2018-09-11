@@ -673,18 +673,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!TextUtils.isEmpty(playerData.getTitle())) {
                 setTitleText(playerData.getTitle());
             }
-            switch (StbConnectionManager.shared().getConnectionStatus()) {
-                case HOME_IN:
-                    initPlayer(playerData);
-                    break;
-                default:
-                    if (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus()) {
-                        initPlayer(playerData);
-                    } else {
-                        playerData.setIsRemote(true);
-                        setRemotePlayArrow(playerData);
-                    }
-                    break;
+            if (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus() || !playerData.isRemote()) {
+                initPlayer(playerData);
+            } else {
+                setRemotePlayArrow(playerData);
             }
             if (!playerData.isIsLive()) {
                 showPlayerOnlyView(playerData);

@@ -656,6 +656,11 @@ public class BaseActivity extends FragmentActivity implements
 
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
+        if (!(this instanceof LaunchActivity)) {
+            if (!DlnaManager.shared().dlnaIsLaunched() && DlnaManager.shared().getContext() == null) {
+                DlnaManager.shared().dlnaRestart(getApplicationContext());
+            }
+        }
         mContext = this;
         mActivity = this;
         initView();
@@ -2580,7 +2585,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * ダウンロード状態チェック.
      */
-    private void downloadStatusCheck() {
+    protected void downloadStatusCheck() {
         DownloadDataProvider downloadDataProvider = DownloadDataProvider.getInstance(mActivity);
         if (downloadDataProvider.getDownloadService() == null && downloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
             showErrorDialogOffer(getResources().getString(R.string.record_download_not_completed_msg));
