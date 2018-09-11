@@ -216,7 +216,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1h加算した後に永続化.
+     * 現在日時を永続化.
      *
      * @param key Preferencesキー
      */
@@ -229,13 +229,14 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化.
+     * 現在日時を永続化.
      *
      * @param key   name
      * @param value value
      */
     private void saveDataToSharePre(final String key, final String value) {
         //データ永続化
+        DTVTLogger.debug("add data regist date::key = " + key + " value = " + value);
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);

@@ -131,8 +131,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     private List<Map<String, String>> mPurchasedVodActiveList = null;
     /** 購入済みチャンネルリスト情報を保持. */
     private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
-    /** 購入済みチャンネルのactive_listの情報を保持. */
-    private List<Map<String, String>> mPurchasedChActiveList = null;
     /** ロールリスト情報を保持. */
     private ArrayList<RoleListMetaData> mRoleListInfo = null;
     /** クリップキーレスポンス保持. */
@@ -390,48 +388,13 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                         executeRentalVodListCallback(purchasedVodListData);
                     }
                     break;
-                case RENTAL_CHANNEL_SELECT:
-                    PurchasedChannelListResponse purchasedChannelListResponse = new PurchasedChannelListResponse();
-                    ChannelList channelList = new ChannelList();
-                    List<HashMap<String, String>> list = new ArrayList<>();
-
-                    for (int i = 0; i < resultSet.size(); i++) {
-                        Map<String, String> hashMap = resultSet.get(i);
-                        HashMap<String, String> vcListMap = new HashMap<>();
-                        for (String para : JsonConstants.METADATA_LIST_PARA) {
-                            vcListMap.put(para, hashMap.get(para));
-                        }
-                        list.add(vcListMap);
-                    }
-                    channelList.setChannelList(list);
-                    purchasedChannelListResponse.setChannelListData(channelList);
-
-                    ArrayList<ActiveData> activeChDatas = new ArrayList<>();
-                    for (int i = 0; i < mPurchasedChActiveList.size(); i++) {
-                        Map<String, String> hashMap = mPurchasedChActiveList.get(i);
-
-                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
-                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
-                        ActiveData activeDate = new ActiveData();
-                        activeDate.setLicenseId(active_list_license_id);
-                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
-
-                        activeChDatas.add(activeDate);
-                    }
-                    purchasedChannelListResponse.setChActiveData(activeChDatas);
-                    if (null != mApiDataProviderCallback) {
-                        executeRentalChListCallback(purchasedChannelListResponse);
-                    }
-                    break;
                 default:
                     break;
             }
         }
     }
 
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     @Override
     public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
         super.dbOperation(dataBaseThread, operationId);
@@ -469,12 +432,47 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 break;
             case RENTAL_CHANNEL_SELECT: //DBから購入済みCHデータを取得して返却する
                 RentalListDataManager rentalChListDataManager = new RentalListDataManager(mContext);
-                resultSet = rentalChListDataManager.selectRentalChListData();
-                mPurchasedChActiveList = rentalChListDataManager.selectRentalChActiveListData();
-                if (mPurchasedChActiveList == null || mPurchasedChActiveList.size() < 1) {
+                List<Map<String, String>> purchasedChActiveList = rentalChListDataManager.selectRentalChActiveListData();
+                PurchasedChannelListResponse purchasedChannelListResponse = new PurchasedChannelListResponse();
+                if (purchasedChActiveList == null || purchasedChActiveList.size() < 1) {
                     //DBから取得したデータがない場合は初期化したデータを渡す
-                    PurchasedChannelListResponse purchasedChannelListResponse = new PurchasedChannelListResponse();
                     executeRentalChListCallback(purchasedChannelListResponse);
+                } else {
+                    ChannelList channelList = new ChannelList();
+                    List<HashMap<String, String>> list = new ArrayList<>();
+
+                    resultSet = rentalChListDataManager.selectRentalChListData();
+                    if (resultSet != null) {
+                        for (int i = 0; i < resultSet.size(); i++) {
+                            Map<String, String> hashMap = resultSet.get(i);
+                            HashMap<String, String> vcListMap = new HashMap<>();
+                            for (String para : JsonConstants.METADATA_LIST_PARA) {
+                                vcListMap.put(para, hashMap.get(para));
+                            }
+                            list.add(vcListMap);
+                        }
+                    }
+                    channelList.setChannelList(list);
+                    purchasedChannelListResponse.setChannelListData(channelList);
+
+                    ArrayList<ActiveData> activeChDatas = new ArrayList<>();
+                    for (int i = 0; i < purchasedChActiveList.size(); i++) {
+                        Map<String, String> hashMap = purchasedChActiveList.get(i);
+
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
+                        ActiveData activeDate = new ActiveData();
+                        activeDate.setLicenseId(active_list_license_id);
+                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
+
+                        activeChDatas.add(activeDate);
+                    }
+                    purchasedChannelListResponse.setChActiveData(activeChDatas);
+                    if (null != mApiDataProviderCallback) {
+                        executeRentalChListCallback(purchasedChannelListResponse);
+                    }
                 }
                 break;
             default:
