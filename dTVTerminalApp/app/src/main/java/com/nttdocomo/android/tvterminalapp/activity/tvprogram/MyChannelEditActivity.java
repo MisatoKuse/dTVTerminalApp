@@ -168,6 +168,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private void loadData() {
         if (getOk) {
+            showProgressView(View.VISIBLE);
             mMyChannelDataProvider = new MyChannelDataProvider(this);
             mMyChannelDataProvider.getMyChannelList(R.layout.my_channel_edit_main_layout);
             getOk = false;
@@ -201,6 +202,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                     //for channelListCallback
                 } else {
                     //その他のエラーなので、その他のエラーを表示
+                    showProgressView(View.GONE);
                     showErrorDialog();
                 }
             }
@@ -275,6 +277,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         if (mEditListView != null) {
             mEditListView.setSelectionFromTop(mScrollPosition, mScrollTop);
         }
+        showProgressView(View.GONE);
         DTVTLogger.end();
     }
 
@@ -289,6 +292,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             //そのまま通信してデータ取得
             loadData();
         } else {
+            showProgressView(View.GONE);
             showFailedDialog(getResources().getString(R.string
                     .my_channel_list_setting_failed_dialog_content_register));
         }
@@ -316,9 +320,24 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             //そのまま通信してデータ取得
             loadData();
         } else {
+            showProgressView(View.GONE);
             showFailedDialog(getResources().getString(R.string
                     .my_channel_list_setting_failed_dialog_content_unregister));
         }
+    }
+
+    /**
+     * くるくる処理.
+     *
+     * @param visible 進捗バー
+     */
+    private void showProgressView(final int visible) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRemoteProgressVisible(visible);
+            }
+        });
     }
 
     /**
@@ -328,6 +347,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @param channel チャンネル情報
      */
     private void executeMyChannelListRegister(final int position, final ChannelInfo channel) {
+        showProgressView(View.VISIBLE);
         mMyChannelDataProvider = new MyChannelDataProvider(this);
         mMyChannelDataProvider.getMyChannelRegisterStatus(channel.getServiceId(),
                 channel.getTitle(), WebApiBasePlala.MY_CHANNEL_R_VALUE_G,
@@ -393,6 +413,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             public void onOKCallback(final boolean isOK) {
                 if (isOK && bundle != null) {
                     //解除通信
+                    showProgressView(View.VISIBLE);
                     mMyChannelDataProvider.getMyChannelDeleteStatus(bundle.getString(MyChannelEditAdapter.SERVICE_ID_MY_CHANNEL_LIST));
                 }
             }
