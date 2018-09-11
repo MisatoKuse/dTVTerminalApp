@@ -247,6 +247,8 @@ public class BaseActivity extends FragmentActivity implements
     public Toast mToast = null;
     /** 番組表情報取得DataProvider. */
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /** 遷移先のクラス名. */
+    private String mClassName = null;
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -759,7 +761,7 @@ public class BaseActivity extends FragmentActivity implements
             downloadStatusCheck();
             sIsLaunchChecked = true;
         }
-
+        mClassName = null;
         StbConnectionManager.shared().setConnectionListener(this);
         DTVTLogger.end();
     }
@@ -1512,6 +1514,35 @@ public class BaseActivity extends FragmentActivity implements
         } else {
             finish();
         }
+    }
+
+    @Override
+    public void finish() {
+        if (checkIsNotNeedFinish()) {
+            return;
+        }
+        super.finish();
+    }
+
+    /**
+     * バックキーとコンテンツ同時にタップ防止.
+     *
+     * @return true:バックキーとコンテンツ同時に押下
+     */
+    private boolean checkIsNotNeedFinish() {
+        if (mClassName != null) {
+            try {
+                Class mClass = Class.forName(mClassName);
+                //詳細画面へ遷移する場合は遷移元画面に戻れるため、finish制御
+                if (mClass == ContentDetailActivity.class) {
+                    mClassName = null;
+                    return true;
+                }
+            } catch (ClassNotFoundException e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        return false;
     }
 
     /**
@@ -2434,6 +2465,12 @@ public class BaseActivity extends FragmentActivity implements
     public void startActivity(final Intent intent) {
         if (isFastClick()) {
             //普通にアクティビティを起動する
+            if (intent.getComponent() != null) {
+                mClassName = intent.getComponent().getClassName();
+            }
+            if (isFinishing() && checkIsNotNeedFinish()) {
+                return;
+            }
             super.startActivity(intent);
 
             //STB再起動パラメータの取得
