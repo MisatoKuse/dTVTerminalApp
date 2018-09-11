@@ -20,10 +20,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +45,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -249,6 +253,11 @@ public class BaseActivity extends FragmentActivity implements
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
     /** 遷移先のクラス名. */
     private String mClassName = null;
+    /** CustomDrawerLayout.*/
+    private CustomDrawerLayout mDrawerLayout;
+    /**メニューリストビュー.*/
+    private ListView mGlobalMenuListView = null;
+
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -305,6 +314,9 @@ public class BaseActivity extends FragmentActivity implements
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
         mStbStatusIcon = findViewById(R.id.header_stb_status_icon);
         mMenuImageViewForBase = findViewById(R.id.header_layout_menu);
+        mDrawerLayout = findViewById(R.id.baseCustomDrawerLayout);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        mGlobalMenuListView = findViewById(R.id.menu_list);
         DTVTLogger.end();
     }
 
@@ -330,10 +342,10 @@ public class BaseActivity extends FragmentActivity implements
                 view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.header_background_color_black));
             }
 
-            LinearLayout linearLayout = findViewById(R.id.baseStatusBarLayout);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linearLayout.getLayoutParams();
+            CustomDrawerLayout customDrawerLayout = findViewById(R.id.baseCustomDrawerLayout);
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) customDrawerLayout.getLayoutParams();
             layoutParams.setMargins(0, statusBarHeight, 0, 0);
-            linearLayout.setLayoutParams(layoutParams);
+            customDrawerLayout.setLayoutParams(layoutParams);
         }
     }
 
@@ -1470,7 +1482,7 @@ public class BaseActivity extends FragmentActivity implements
     private void setUserState(final UserState userState) {
         synchronized (this) {
             MenuDisplay menu = MenuDisplay.getInstance();
-            menu.setActivityAndListener(this, this);
+            menu.setActivityAndListener(this, this, mDrawerLayout, mGlobalMenuListView);
             menu.changeUserState(userState);
         }
     }
@@ -3692,5 +3704,17 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void clipKeyResult() {
         //Nop 仕様により実装のみ
+    }
+
+    /**
+     * ドロワーメニューをクローズする.
+     * @return true or false
+     */
+    public boolean closeDrawerMenu() {
+        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(Gravity.END)) {
+            mDrawerLayout.closeDrawers();
+            return true;
+        }
+        return false;
     }
 }

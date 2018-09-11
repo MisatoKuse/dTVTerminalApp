@@ -81,6 +81,9 @@ public class SettingMenuFaqActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
             if (mFaqWebView.canGoBack()) {
                 mFaqWebView.goBack();
                 return false;

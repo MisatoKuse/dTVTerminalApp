@@ -90,6 +90,9 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
             if (mNoticeWebView.canGoBack()) {
                 mNoticeWebView.goBack();
                 return false;

@@ -93,6 +93,9 @@ public class PairingHelpActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
             contentsDetailBackKey(null);
             return false;
         }

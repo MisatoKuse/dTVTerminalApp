@@ -331,6 +331,9 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
+                if (closeDrawerMenu()) {
+                    return false;
+                }
                 contentsDetailBackKey(null);
                 return false;
             default:

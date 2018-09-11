@@ -1,5 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/baseStatusBarLayout"
+<com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/baseCustomDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -57,4 +57,51 @@
                 android:layout_centerInParent="true" />
         </RelativeLayout>
     </RelativeLayout>
-</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="@dimen/global_menu_list_width"
+        android:layout_height="match_parent"
+        android:background="@color/menuList"
+       android:layout_gravity = "end">
+
+        <LinearLayout
+            android:id="@+id/account_status"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/global_menu_list_height"
+            android:background="@color/header_background_color_red">
+
+            <ImageView
+                android:id="@+id/account_status_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/global_menu_list_item_default_title_left_margin"
+                android:src="@mipmap/icon_normal_account"/>
+
+            <TextView
+                android:id="@+id/account_status_text"
+                android:layout_width="@dimen/global_menu_account_status_text_width"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_toEndOf="@id/account_status_image"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="@dimen/global_menu_account_status_text_size"
+                android:textColor="@color/menuListProgramTitle"/>
+
+            <ImageView
+                android:id="@+id/account_status_icon_close"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@mipmap/header_material_icon_close"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/menu_list"
+            android:layout_below="@id/account_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </ListView>
+
+    </RelativeLayout>
+</com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout>

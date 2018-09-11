@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -1602,5 +1603,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //(送られてきたdアカウントは直接使用せず、既存のdアカウント取得処理に委ねる)
         mNewDaccountGet = true;
         DTVTLogger.end();
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

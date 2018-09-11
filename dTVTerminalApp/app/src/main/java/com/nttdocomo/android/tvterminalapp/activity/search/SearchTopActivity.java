@@ -794,6 +794,9 @@ public class SearchTopActivity extends BaseActivity
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
+                if (closeDrawerMenu()) {
+                    return false;
+                }
                 if (mIsMenuLaunch) {
                     //メニューから起動の場合ホーム画面に戻る
                     contentsDetailBackKey(null);

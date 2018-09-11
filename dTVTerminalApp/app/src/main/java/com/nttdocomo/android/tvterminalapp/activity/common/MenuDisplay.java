@@ -6,16 +6,13 @@ package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -76,10 +73,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
     /** メニュー表示種別 .*/
     public static final int INT_NONE_COUNT_STATUS = -1;
-    /**
-     * GlobalMenu横幅.
-     */
-    private static final int GLOBAL_MENU_WIDTH = 265;
+    /**ドロワーレイアウト.*/
+    private CustomDrawerLayout mDrawerLayout;
+    /** 項目名.*/
+    private String mMenuName = null;
 
     /**
      * 機能.
@@ -100,11 +97,16 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
      * baseActivityに設定する.
      * @param activity BaseActivity
      * @param context コンテキスト
+     * @param customDrawerLayout ドロワーレイアウト
+     * @param menuListview メニューリスト
      */
-    public void setActivityAndListener(final BaseActivity activity, final Context context) {
+    public void setActivityAndListener(final BaseActivity activity, final Context context,
+                                       final CustomDrawerLayout customDrawerLayout, final ListView menuListview) {
         synchronized (MenuDisplay.class) {
             mContext = context;
             mActivity = activity;
+            mDrawerLayout = customDrawerLayout;
+            mGlobalMenuListView = menuListview;
         }
     }
 
@@ -128,32 +130,39 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
     /** ポップアップメニュー初期化.*/
     private void initPopupWindow() {
-        View popupWindowView = mActivity.getLayoutInflater().inflate(R.layout.nav_pop, null);
-        mPopupWindow = new PopupWindow(popupWindowView, mActivity.dip2px(GLOBAL_MENU_WIDTH),
-                LinearLayout.LayoutParams.MATCH_PARENT, true);
-        mPopupWindow.setAnimationStyle(R.style.AnimationRightFade);
-        ColorDrawable dw = new ColorDrawable(ContextCompat.getColor(
-                mActivity, R.color.global_menu_popup_window_background_color));
-        mPopupWindow.setBackgroundDrawable(dw);
-        mPopupWindow.showAtLocation(mActivity.getLayoutInflater()
-                .inflate(R.layout.home_main_layout, null), Gravity.END, 0, 0);
-        mPopupWindow.setOnDismissListener(new PopupDismissListener());
-        popupWindowView.setOnTouchListener(new View.OnTouchListener() {
+        CustomDrawerLayout.DrawerListener drawerListener = new CustomDrawerLayout.DrawerListener() {
             @Override
-            public boolean onTouch(final View v, final MotionEvent event) {
-                return false;
+            public void onDrawerSlide(final View drawerView, final float slideOffset) {
             }
-        });
-        ImageView menuClose = popupWindowView.findViewById(R.id.account_status_icon_close);
+            @Override
+            public void onDrawerOpened(final View drawerView) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+            }
+            @Override
+            public void onDrawerClosed(final View drawerView) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                if (mMenuName != null) {
+                    startMenuItem(mMenuName);
+                }
+            }
+            @Override
+            public void onDrawerStateChanged(final int newState) {
+
+            }
+        };
+        mDrawerLayout.addDrawerListener(drawerListener);
+        mDrawerLayout.openDrawer(Gravity.END);
+        ImageView menuClose = mDrawerLayout.findViewById(R.id.account_status_icon_close);
         menuClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if (mPopupWindow != null) {
-                    mPopupWindow.dismiss();
+                if (mDrawerLayout.isDrawerOpen(Gravity.END)) {
+                    mDrawerLayout.closeDrawer(Gravity.END);
                 }
             }
         });
-        TextView accountId = popupWindowView.findViewById(R.id.account_status_text);
+        TextView accountId = mDrawerLayout.findViewById(R.id.account_status_text);
         if (UserState.LOGIN_NG.equals(mUserState)) {
             accountId.setText(mActivity.getString(R.string.nav_menu_status_login_ng));
         } else {
@@ -165,7 +174,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 DaccountUtils.startDAccountApplication(mActivity);
             }
         });
-        loadMenuList(popupWindowView);
+        loadMenuList();
     }
 
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
@@ -174,138 +183,141 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         TextView title = view.findViewById(R.id.tv_title);
         if (null != title) {
-            String menuName = (String) title.getText();
+             mMenuName = (String) title.getText();
 
             //「ひかりTV for docomo」、「テレビアプリを起動する」のClickは無効
-            if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv_none_action))
-                || menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
+            if (mMenuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv_none_action))
+                || mMenuName.equals(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 return;
             }
 
-            //GlobalMenuから開いたページはRootActivityとなるため、後ろのActivityは存在しない状態にする
-            Intent intent = mActivity.getIntent();
-
-            mPopupWindow.dismiss(); // 閉じるアニメーションを見せてから遷移させる為、先に閉じる
-            if (menuName.equals(mActivity.getString(R.string.nav_menu_item_home))) {
-                intent.setClass(mActivity, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_program_list))) {
-                intent.setClass(mActivity, TvProgramListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_channel_list))) {
-                intent.setClass(mActivity, ChannelListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recorder_program))) {
-                intent.setClass(mActivity, RecordedListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
-                intent.setClass(mActivity, RecommendActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
-                    //4月時は非対応
-                DTVTLogger.debug("4月時は非対応");
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_ranking))) {
-                intent.setClass(mActivity, RankingTopActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_clip))) {
-                intent.setClass(mActivity, ClipListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_purchased_video))) {
-                //4月時は非対応
-                DTVTLogger.debug("4月時は非対応");
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_watch_listen_video))) {
-                intent.setClass(mActivity, WatchingVideoListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
-                intent.setClass(mActivity, RecordReservationListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_video))) {
-                intent.setClass(mActivity, VideoTopActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_keyword_search))) {
-                intent.setClass(mActivity, SearchTopActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_video))) {
-                intent.setClass(mActivity, PremiumVideoActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
-                intent.setClass(mActivity, RentalListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
-                intent.setClass(mActivity, NoticeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_setting))) {
-                intent.setClass(mActivity, SettingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_anime_copyright))) {
-                //dアニメストアのコピーライト表記サイトを表示する為、外部ブラウザを呼び出す
-                Uri uri = Uri.parse(UrlConstants.WebUrl.D_ANIME_COPYRIGHT_SITE_URL);
-                intent = new Intent(Intent.ACTION_VIEW, uri);
-                mActivity.startActivity(intent);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
-                mActivity.setRemoteProgressVisible(View.VISIBLE);
-                // TVアプリ起動導線(ひかりTV)
-                mActivity.setRelayClientHandler();
-                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, mContext);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
-                mActivity.setRemoteProgressVisible(View.VISIBLE);
-                // TVアプリ起動導線(dTVチャンネル)
-                mActivity.setRelayClientHandler();
-                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
-                mActivity.setRemoteProgressVisible(View.VISIBLE);
-                // TVアプリ起動導線(dTV)
-                mActivity.setRelayClientHandler();
-                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContext);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
-                mActivity.setRemoteProgressVisible(View.VISIBLE);
-                // TVアプリ起動導線(dアニメ)
-                mActivity.setRelayClientHandler();
-                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContext);
-            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
-                mActivity.setRemoteProgressVisible(View.VISIBLE);
-                // TVアプリ起動導線(DAZN)
-                mActivity.setRelayClientHandler();
-                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mContext);
-            }
+            // 閉じるアニメーションを見せてから遷移させる為、先に閉じる
+            mDrawerLayout.closeDrawers();
         }
     }
-    /** ポップアップメニュークローズリスナー.*/
-  private class PopupDismissListener implements PopupWindow.OnDismissListener {
-        @Override
-        public void onDismiss() {
-            backgroundAlpha(1f);
+
+    /**
+     * GlobalMenuから起動.
+     * @param menuName　項目名
+     */
+    private void startMenuItem(final String menuName) {
+
+        //GlobalMenuから開いたページはRootActivityとなるため、後ろのActivityは存在しない状態にする
+        Intent intent = mActivity.getIntent();
+
+        if (menuName.equals(mActivity.getString(R.string.nav_menu_item_home))) {
+            intent.setClass(mActivity, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_program_list))) {
+            intent.setClass(mActivity, TvProgramListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_channel_list))) {
+            intent.setClass(mActivity, ChannelListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recorder_program))) {
+            intent.setClass(mActivity, RecordedListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
+            intent.setClass(mActivity, RecommendActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
+            //4月時は非対応
+            DTVTLogger.debug("4月時は非対応");
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_ranking))) {
+            intent.setClass(mActivity, RankingTopActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_clip))) {
+            intent.setClass(mActivity, ClipListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_purchased_video))) {
+            //4月時は非対応
+            DTVTLogger.debug("4月時は非対応");
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_watch_listen_video))) {
+            intent.setClass(mActivity, WatchingVideoListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
+            intent.setClass(mActivity, RecordReservationListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_video))) {
+            intent.setClass(mActivity, VideoTopActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_keyword_search))) {
+            intent.setClass(mActivity, SearchTopActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_video))) {
+            intent.setClass(mActivity, PremiumVideoActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
+            intent.setClass(mActivity, RentalListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
+            intent.setClass(mActivity, NoticeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_setting))) {
+            intent.setClass(mActivity, SettingActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_anime_copyright))) {
+            //dアニメストアのコピーライト表記サイトを表示する為、外部ブラウザを呼び出す
+            Uri uri = Uri.parse(UrlConstants.WebUrl.D_ANIME_COPYRIGHT_SITE_URL);
+            intent = new Intent(Intent.ACTION_VIEW, uri);
+            mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
+            mActivity.setRemoteProgressVisible(View.VISIBLE);
+            // TVアプリ起動導線(ひかりTV)
+            mActivity.setRelayClientHandler();
+            RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, mContext);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
+            mActivity.setRemoteProgressVisible(View.VISIBLE);
+            // TVアプリ起動導線(dTVチャンネル)
+            mActivity.setRelayClientHandler();
+            RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
+            mActivity.setRemoteProgressVisible(View.VISIBLE);
+            // TVアプリ起動導線(dTV)
+            mActivity.setRelayClientHandler();
+            RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContext);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
+            mActivity.setRemoteProgressVisible(View.VISIBLE);
+            // TVアプリ起動導線(dアニメ)
+            mActivity.setRelayClientHandler();
+            RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContext);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
+            mActivity.setRemoteProgressVisible(View.VISIBLE);
+            // TVアプリ起動導線(DAZN)
+            mActivity.setRelayClientHandler();
+            RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mContext);
         }
+        mMenuName = null;
     }
 
     /**
@@ -320,10 +332,8 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
     /**
      * メニューリストロード.
-     * @param popupWindowView ポップアップウィンドウビュー
      */
-    private void loadMenuList(final View popupWindowView) {
-        mGlobalMenuListView = popupWindowView.findViewById(R.id.menu_list);
+    private void loadMenuList() {
 //        addFooterView(mGlobalMenuListView); //アカウント名アイテム追加
         initMenuListData();
 

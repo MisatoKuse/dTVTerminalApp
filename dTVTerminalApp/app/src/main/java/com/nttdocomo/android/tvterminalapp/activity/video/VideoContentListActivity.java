@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -467,5 +468,12 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
         stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 mContentsAdapter);
+    }
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (closeDrawerMenu()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

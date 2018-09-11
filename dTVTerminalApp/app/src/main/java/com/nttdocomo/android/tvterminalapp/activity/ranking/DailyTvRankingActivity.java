@@ -271,6 +271,9 @@ public class DailyTvRankingActivity extends BaseActivity implements
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
+        if (closeDrawerMenu()) {
+            return false;
+        }
         return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
     }
 

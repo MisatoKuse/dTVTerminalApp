@@ -78,6 +78,9 @@ public class DaccountSettingHelpActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
             if (dAccountHelpPageWebView.canGoBack()) {
                 dAccountHelpPageWebView.goBack();
                 return false;

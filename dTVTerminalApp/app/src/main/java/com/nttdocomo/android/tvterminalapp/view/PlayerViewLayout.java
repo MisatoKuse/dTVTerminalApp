@@ -40,6 +40,7 @@ import com.digion.dixim.android.util.ExternalDisplayHelper;
 import com.digion.dixim.android.util.SafetyRunnable;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -1024,10 +1025,10 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 statusBarHeight = 0;
             }
             ViewGroup contentView = (ViewGroup) mActivity.getWindow().getDecorView();
-            LinearLayout linearLayout = contentView.findViewById(R.id.baseStatusBarLayout);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linearLayout.getLayoutParams();
+            CustomDrawerLayout customDrawerLayout = contentView.findViewById(R.id.baseCustomDrawerLayout);
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) customDrawerLayout.getLayoutParams();
             layoutParams.setMargins(0, statusBarHeight, 0, 0);
-            linearLayout.setLayoutParams(layoutParams);
+            customDrawerLayout.setLayoutParams(layoutParams);
         }
     }
 

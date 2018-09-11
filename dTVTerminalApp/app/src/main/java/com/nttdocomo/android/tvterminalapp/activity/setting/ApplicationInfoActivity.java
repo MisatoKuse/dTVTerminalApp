@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -116,5 +117,10 @@ public class ApplicationInfoActivity extends BaseActivity {
             DTVTLogger.debug(e);
         }
         return null;
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
     }
 }
