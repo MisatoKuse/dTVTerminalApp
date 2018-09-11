@@ -471,8 +471,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        if (closeDrawerMenu()) {
-            return false;
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

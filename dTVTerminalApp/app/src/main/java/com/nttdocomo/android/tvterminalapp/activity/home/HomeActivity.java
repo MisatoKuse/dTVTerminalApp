@@ -1399,10 +1399,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        if (closeDrawerMenu()) {
-            return false;
-        }
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
             DlnaManager.shared().StopDmp();
             finish();
         }

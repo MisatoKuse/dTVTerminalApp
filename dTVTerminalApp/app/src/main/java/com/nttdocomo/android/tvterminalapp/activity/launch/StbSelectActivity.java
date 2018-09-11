@@ -1607,8 +1607,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
-            return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+                return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

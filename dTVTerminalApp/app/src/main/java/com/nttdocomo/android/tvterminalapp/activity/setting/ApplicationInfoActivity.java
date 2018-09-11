@@ -121,6 +121,11 @@ public class ApplicationInfoActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (closeDrawerMenu()) {
+                return false;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
