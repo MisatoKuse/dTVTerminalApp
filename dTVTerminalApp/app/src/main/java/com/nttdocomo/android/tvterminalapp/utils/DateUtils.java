@@ -216,7 +216,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1h加算した後に永続化.
+     * 現在日時を永続化.
      *
      * @param key Preferencesキー
      */
@@ -229,13 +229,14 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化.
+     * 現在日時を永続化.
      *
      * @param key   name
      * @param value value
      */
     private void saveDataToSharePre(final String key, final String value) {
         //データ永続化
+        DTVTLogger.debug("add database insert date::key = " + key + " value = " + value);
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);
@@ -249,10 +250,9 @@ public class DateUtils {
      */
     public void addLastProgramDate(final String key) {
 
-        // TODO :DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         //現在日時を取得
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DDHHMMSS);
         saveDataToSharePre(key, sdf.format(c.getTime()));
     }
 
@@ -406,7 +406,7 @@ public class DateUtils {
      * @return 期限外(取得対象) true 期限内 false(取得対象外)
      */
     public boolean isBeforeProgramLimitDate(final String lastStr) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DDHHMMSS);
         //日付の比較
         Calendar calendar = Calendar.getInstance();
         String nowStr = sdf.format(calendar.getTime());
@@ -1513,5 +1513,18 @@ public class DateUtils {
             DTVTLogger.debug(e);
         }
         return date;
+    }
+
+    /**
+     * 当日日付を返却する.
+     *
+     * @return 当日日付(yyyyMMdd形式)
+     */
+    public static String getStringNowDate() {
+        long nowTimeEpoch = getNowTimeFormatEpoch();
+        if (isLastDay()) {
+            nowTimeEpoch = nowTimeEpoch - EPOCH_TIME_ONE_DAY;
+        }
+        return formatEpochToSimpleDate(nowTimeEpoch);
     }
 }
