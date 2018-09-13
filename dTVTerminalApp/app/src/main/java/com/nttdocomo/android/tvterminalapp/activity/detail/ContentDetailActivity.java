@@ -1488,6 +1488,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (contentsType == ContentUtils.ContentsType.TV) {
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
+                        mVodEndDateText = date;
                     } else {
                         if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31
                                 || contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
