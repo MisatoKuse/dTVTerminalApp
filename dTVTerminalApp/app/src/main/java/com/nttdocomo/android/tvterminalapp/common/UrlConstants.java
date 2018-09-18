@@ -51,9 +51,13 @@ public class UrlConstants {
          */
         public static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
         /**
-         * dアニメストア起動用URL.
+         * dアニメストア起動用URL(アニメ（映像）).
          */
         public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=https://anime.dmkt-sp.jp/animestore/ci?workId=";
+        /**
+         * dアニメストア起動用URL(アニソン（音楽）).
+         */
+        public static final String D_ANIME_SONG_STORE_START_URL = "danimestore://openWebView?url=https://anime.dmkt-sp.jp/animestore/mci?workId=";
 
         /**
          * dTVチャンネル起動用URL(テレビ).
