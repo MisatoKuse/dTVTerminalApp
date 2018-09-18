@@ -93,6 +93,8 @@ public class ContentsData {
     private String mReserved5 = null;
     /**mobileViewingFlg.*/
     private String  mobileViewingFlg = null;
+    /**作品種別.*/
+    private String mTitleKind = null;
     /**chsvod.*/
     private String  mChsVod = null;
     /**estFlg.*/
@@ -1052,6 +1054,22 @@ public class ContentsData {
      */
     public void setMobileViewingFlg(final String mobileViewingFlg) {
         this.mobileViewingFlg = mobileViewingFlg;
+    }
+
+    /**
+     * 作品種別取得.
+     * @return 作品種別
+     */
+    public String getTitleKind() {
+        return mTitleKind;
+    }
+
+    /**
+     * 作品種別設定.
+     * @param titleKind 作品種別
+     */
+    public void setTitleKind(final String titleKind) {
+        this.mTitleKind = titleKind;
     }
 
     /**

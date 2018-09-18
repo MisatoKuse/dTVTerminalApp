@@ -88,6 +88,7 @@ public class DataConverter {
             detailData.setServiceId(servieId);
             detailData.setContentCategory(ContentUtils.getRecommendContentsType(info));
             detailData.setThumb(info.getThumURL());
+            detailData.setTitleKind(info.getTitleKind());
             if (servieId != ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID) {
                 detailData.setDetail(info.getSynopFromDescription());
             }

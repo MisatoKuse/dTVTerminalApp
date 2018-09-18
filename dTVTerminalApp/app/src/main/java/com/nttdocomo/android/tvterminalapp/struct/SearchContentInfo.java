@@ -87,6 +87,10 @@ public class SearchContentInfo {
      */
     private final String mViewAbleAge;
     /**
+     *  mobileViewingFlg.
+     */
+    public final String mTitleKind;
+    /**
      *  reserved1.
      */
     public final String mReserved1;
@@ -109,8 +113,7 @@ public class SearchContentInfo {
 
     /**
      * コンストラクタ.
-     *
-     * @param clipFlag  クリップフラグ
+     *  @param clipFlag  クリップフラグ
      * @param contentsId コンテンツID
      * @param serviceId サービスID
      * @param categoryId カテゴリーID
@@ -119,6 +122,7 @@ public class SearchContentInfo {
      * @param title     タイトル
      * @param rank     ランク
      * @param mobileViewingFlg  モバイルビューフラグ
+     * @param titleKind
      * @param startViewing      開始時間
      * @param endViewing      終了時間
      * @param channelName      チャンネル名
@@ -137,7 +141,7 @@ public class SearchContentInfo {
     public SearchContentInfo(final boolean clipFlag, final String contentsId, final int serviceId,
                              final String categoryId, final String contentPictureUrl1, final String contentPictureUrl2,
                              final String title, final int rank, final String mobileViewingFlg,
-                             final String startViewing, final String endViewing, final String channelName,
+                             final String titleKind, final String startViewing, final String endViewing, final String channelName,
                              final String channelId, final String genreName, final String description1,
                              final String description2, final String description3, final String viewAbleAge,
                              final String reserved1, final String reserved2, final String reserved3,
@@ -151,6 +155,7 @@ public class SearchContentInfo {
         this.mTitle = title;
         this.mRank = String.valueOf(rank);
         this.mMobileViewingFlg = mobileViewingFlg;
+        this.mTitleKind = titleKind;
         this.mStartViewing = startViewing;
         this.mEndViewing = endViewing;
         this.mChannelName = channelName;

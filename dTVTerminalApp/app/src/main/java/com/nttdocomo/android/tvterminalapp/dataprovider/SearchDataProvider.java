@@ -74,6 +74,10 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      * dアニメtab.
      */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
+    /**
+     * dアニメ作品種別(アニメ（映像）).
+     */
+    public static final String D_ANIME_STORE_SONG_CONTENTS = "1";
 
     private static final String CONTENTS_DETAIL_GET_SEARCH_FIELDS = "contentsId";
     private static final String CONTENTS_DETAIL_GET_DISPLAY_ID = "getDetail";
@@ -247,6 +251,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             contentsData.setTitle(ci.mTitle);
             contentsData.setRecommendOrder(ci.mRank);
             contentsData.setMobileViewingFlg(ci.mMobileViewingFlg);
+            contentsData.setTitleKind(ci.mTitleKind);
             contentsData.setStartViewing(ci.mStartViewing);
             contentsData.setEndViewing(ci.mEndViewing);
             contentsData.setChannelName(ci.mChannelName);

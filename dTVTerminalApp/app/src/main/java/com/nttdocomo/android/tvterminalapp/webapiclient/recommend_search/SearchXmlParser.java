@@ -137,6 +137,10 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
      */
     private static final String VIEWABLE_AGE = "viewableAge";
     /**
+     * 作品種別.
+     */
+    private static final String TITLE_KIND = "titleKind";
+    /**
      * description1.
      */
     private static final String DESCRIPTION1 = "description1";
@@ -484,6 +488,12 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
                     int currentAgeIndex = searchResponse.getContentListSize() - 1;
                     TotalSearchResponseData.Content contentAge = searchResponse.getContentListIndex(currentAgeIndex);
                     contentAge.mViewableAge = value;
+                    break;
+                case TITLE_KIND:
+                    int currentTitleKindIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentTitleKind = searchResponse.getContentListIndex(currentTitleKindIndex);
+                    contentTitleKind.mTitleKind = value;
+                    searchResponse.setContentListElement(currentTitleKindIndex, contentTitleKind);
                     break;
                 case CATEGORY_ID:
                     int currentCategoryIdIndex = searchResponse.getContentListSize() - 1;

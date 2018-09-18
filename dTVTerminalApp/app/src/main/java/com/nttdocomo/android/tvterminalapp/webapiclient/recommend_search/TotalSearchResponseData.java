@@ -89,6 +89,10 @@ public class TotalSearchResponseData {
          */
         String mViewableAge;
         /**
+         * 作品種別.
+         */
+        String mTitleKind;
+        /**
          *  cast.
          */
         String mCast;
@@ -184,7 +188,7 @@ public class TotalSearchResponseData {
         for (Content content: mContentList) {
             SearchContentInfo info = new SearchContentInfo(false, content.mContentsId, content.mServiceId, content.mCategoryId,
                     content.mCtPicURL1, content.mCtPicURL2, content.mTitle, content.mRank, content.mMobileViewingFlg,
-                    content.mStartViewing, content.mEndViewing, content.mChannelName, content.mChannelId,
+                    content.mTitleKind, content.mStartViewing, content.mEndViewing, content.mChannelName, content.mChannelId,
                     content.mGenreName, content.mDescription1, content.mDescription2, content.mDescription3,
                     content.mViewableAge, content.mReserved1, content.mReserved2, content.mReserved3,
                     content.mReserved4, content.mReserved5);
