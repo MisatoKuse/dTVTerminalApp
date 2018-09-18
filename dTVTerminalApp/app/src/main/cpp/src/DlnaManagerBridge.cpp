@@ -523,15 +523,15 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_resetdmp(JNIEnv *env, j
     LOG_WITH_BOOL(resultDtcp, "resultDtcp");
 }
 //connectDmsWithUdn
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_connectDmsWithUdn(JNIEnv *env, jobject thiz, jstring udn) {
     LOG_WITH("");
     if (NULL==udn) {
         LOG_WITH("connectDmsWithUdn udn is NULL");
-        return;
+        return 0;
     }
     const char *udnString = env->GetStringUTFChars(udn, 0);
-    dlnaDmsBrowse->connectDmsWithUdn(dmp, DU_UCHAR(udnString));
+    return (jboolean) dlnaDmsBrowse->connectDmsWithUdn(dmp, DU_UCHAR(udnString));
 }
 
 JNIEXPORT jboolean JNICALL

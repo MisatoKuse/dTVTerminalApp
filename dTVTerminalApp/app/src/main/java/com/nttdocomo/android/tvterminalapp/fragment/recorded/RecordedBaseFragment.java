@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadData;
@@ -304,6 +305,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                         return;
                     }
                 }
+                detailData.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
                 intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, detailData);

@@ -380,6 +380,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
                     ret.setVideoType(bsI.mVideoType);
                     ret.setIsLive(true);
+                    ret.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
                     break;
                 case CH_LIST_DATA_TYPE_TDB:
                     DlnaObject bsT = (DlnaObject) mData.get(i);
@@ -393,6 +394,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
                     ret.setVideoType(bsT.mVideoType);
                     ret.setIsLive(true);
+                    ret.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
                     break;
                 default:
                     return null;
