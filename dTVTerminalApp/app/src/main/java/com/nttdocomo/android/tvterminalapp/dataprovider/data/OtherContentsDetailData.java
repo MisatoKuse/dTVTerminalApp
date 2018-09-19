@@ -104,6 +104,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String mEventId = null;
     /**タイトルID.*/
     private String mTitleId = null;
+    /**作品種別.*/
+    private String mTitleKind = null;
     /**4kflg.*/
     private int m4kflg;
     /**(音声、言語).*/
@@ -820,6 +822,22 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     /**
+     * 作品種別取得.
+     * @return 作品種別
+     */
+    public String getTitleKind() {
+        return mTitleKind;
+    }
+
+    /**
+     * 作品種別設定.
+     * @param titleKind 作品種別
+     */
+    public void setTitleKind(final String titleKind) {
+        this.mTitleKind = titleKind;
+    }
+
+    /**
      * 4kflg取得.
      * @return 4kflg
      */
@@ -968,6 +986,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mCrId);
         dest.writeString(this.mEventId);
         dest.writeString(this.mTitleId);
+        dest.writeString(this.mTitleKind);
         dest.writeInt(this.m4kflg);
         dest.writeStringArray(this.mAdinfoArray);
         dest.writeString(this.mCopy);
@@ -1031,6 +1050,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mCrId = in.readString();
         this.mEventId = in.readString();
         this.mTitleId = in.readString();
+        this.mTitleKind = in.readString();
         this.m4kflg = in.readInt();
         this.mAdinfoArray = in.createStringArray();
         this.mCopy = in.readString();

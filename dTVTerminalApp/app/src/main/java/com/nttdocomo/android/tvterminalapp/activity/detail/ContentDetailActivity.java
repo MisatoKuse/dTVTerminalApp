@@ -1020,8 +1020,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 case D_ANIME_STORE:
-                    // "dアニメストアで視聴"
-                    setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    //検レコからの遷移で titleKind が取得できてない場合は titleKind に blank を設定する
+                    if (mDetailData.getIsTranslateFromSearchFlag() && mDetailData.getTitleKind() == null) {
+                        mDetailData.setTitleKind("");
+                    }
+                    setDAnimeThumbnail();
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 default:
@@ -1107,6 +1110,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * pureDアニメ用サムネイル設定.
+     */
+    private void setDAnimeThumbnail() {
+        //titleKindが取得出来ていない状態ではアプリ連携アイコンを表示しない
+        if (mDetailData != null && mDetailData.getTitleKind() != null) {
+            DTVTLogger.debug("d anime store setThumbnailText : titleKind = " + mDetailData.getTitleKind());
+            // "dアニメストアで視聴"
+            setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+        }
     }
 
     /**
@@ -1794,7 +1809,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
         DTVTLogger.start();
         runOnUiThread(new Runnable() {
-            @SuppressWarnings("OverlyLongMethod")
+            @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
             @Override
             public void run() {
                 DTVTLogger.start();
@@ -2094,11 +2109,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         String errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
                         showErrorDialog(errorMessage);
                     } else {
-                        execResult = startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + detailData.getContentsId());
+                        if (mDetailData != null) {
+                            if (mDetailData.getTitleKind() != null && mDetailData.getTitleKind().equals(SearchDataProvider.D_ANIME_STORE_SONG_CONTENTS)) {
+                                //音楽：1
+                                execResult = startApp(UrlConstants.WebUrl.D_ANIME_SONG_STORE_START_URL + detailData.getContentsId());
+                            } else {
+                                //映像：0 ※協議の結果 1 以外は映像コンテンツとして扱う
+                                execResult = startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + detailData.getContentsId());
+                            }
+                        }
                     }
 
                     //実行時に実行に失敗していた場合は、メッセージを表示する
-                    if(!execResult) {
+                    if (!execResult) {
                         //dアニメのエラーを表示
                         execFailDialog(DANIMESTORE_PACKAGE_NAME);
                     }
@@ -3406,6 +3429,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param contentsType コンテンツタイプ
      * @param viewIngType 視聴可否種別
      */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void shapeViewType(final ContentUtils.ContentsDetailUserType detailUserType,
                               final ContentUtils.ContentsType contentsType,
                               final ContentUtils.ViewIngType viewIngType) {
@@ -3976,7 +4000,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (result.getContentsDataList().size() > 0) {
                     ContentsData info = result.getContentsDataList().get(0);
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
-
+                    mDetailData.setTitleKind(info.getTitleKind());
                     OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                     if (detailData != null) {
                         detailData.setDescription1(info.getDescription1());
@@ -3987,6 +4011,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         detailFragment.refreshDescription();
                     }
                 }
+                //ここで titleKind の値が null の場合は blank を設定することで、コールバック未返却時(titleKind = null)の場合と区別する
+                if (mDetailData.getTitleKind() == null) {
+                    mDetailData.setTitleKind("");
+                }
+                //おすすめレコメンドからの遷移では、検索レコメンドから titleKind を取得するためここで判定する
+                setDAnimeThumbnail();
                 showProgressBar(false);
             }
         });
