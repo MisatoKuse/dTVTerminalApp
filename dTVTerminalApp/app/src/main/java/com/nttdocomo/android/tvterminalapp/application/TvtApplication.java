@@ -6,15 +6,11 @@ package com.nttdocomo.android.tvterminalapp.application;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.nttdocomo.android.tvterminalapp.broadcastreceiver.NetworkBroadcastReceiver;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.GoogleAnalyticsConstants;
 
@@ -40,16 +36,10 @@ public class TvtApplication extends Application implements Application.ActivityL
      * Tracker.
      */
     private static Tracker sTracker;
-    /**
-     * ネットワーク監視.
-     */
-    private NetworkBroadcastReceiver mNetworkBroadcastReceiver;
-
     @Override
     public void onCreate() {
         super.onCreate();
         //Googleアナリティクスの情報収集
-        registReceiver();
         sAnalytics = GoogleAnalytics.getInstance(this);
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
@@ -58,7 +48,6 @@ public class TvtApplication extends Application implements Application.ActivityL
     @Override
     public void onTerminate() {
         super.onTerminate();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mNetworkBroadcastReceiver);
     }
 
     @Override
@@ -151,15 +140,5 @@ public class TvtApplication extends Application implements Application.ActivityL
             sTracker = sAnalytics.newTracker(GoogleAnalyticsConstants.GOOGLE_ANALYTICS_ID);
         }
         return sTracker;
-    }
-
-    /**
-     * レシーバー登録.
-     */
-    private void registReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        mNetworkBroadcastReceiver = new NetworkBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mNetworkBroadcastReceiver, filter);
     }
 }

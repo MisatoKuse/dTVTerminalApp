@@ -123,25 +123,6 @@ public class StbConnectionManager {
         }
     }
 
-
-    public void networkStatusChanged(final NetWorkUtils.NetworkState networkState) {
-        DTVTLogger.warning("networkState = " + networkState);
-        switch (networkState) {
-            case NONE:
-
-              break;
-            case MOBILE:
-
-                break;
-            case WIFI:
-
-                break;
-        }
-        if (StbConnectionManager.shared().connectionStatus != ConnectionStatus.NONE_PAIRING) {
-            StbConnectionManager.shared().connectionStatus = ConnectionStatus.HOME_OUT;
-        }
-    }
-
     public void setConnectionListener(final ConnectionListener listener) {
         StbConnectionManager.shared().mConnectionListener = listener;
     }

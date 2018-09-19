@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -2040,7 +2041,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
+                    long localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                     if (localVersionCode < DTV_VERSION_STANDARD) {
                         String errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
                         showErrorDialog(errorMessage);
@@ -2101,7 +2102,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
+                    long localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
                     boolean execResult = true;
 
                     //バージョンチェック
@@ -2154,7 +2155,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 @Override
                 public void onOKCallback(final boolean isOK) {
                     //バージョンコードは15
-                    int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
+                    long localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                     if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
                         String errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
                         showErrorDialog(errorMessage);
@@ -2207,7 +2208,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
+                    long localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                     if (localVersionCode < DTV_VERSION_STANDARD) {
                         String errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
                         showErrorDialog(errorMessage);
@@ -2279,7 +2280,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
+                    long localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                     if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
                         String errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
                         showErrorDialog(errorMessage);
@@ -2421,11 +2422,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param packageName 中継アプリのパッケージ名
      * @return 中継アプリのパージョン情報
      */
-    private int getVersionCode(final String packageName) {
+    @SuppressLint("NewApi")
+    private long getVersionCode(final String packageName) {
         PackageManager packageManager = getPackageManager();
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
+            return packageInfo.getLongVersionCode();
         } catch (PackageManager.NameNotFoundException e) {
             DTVTLogger.debug(e);
         }

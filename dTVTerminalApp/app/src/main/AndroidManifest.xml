@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <!-- 海外通信判定処理に必要 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
@@ -28,6 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:resizeableActivity="false"
+        android:usesCleartextTraffic="true"
         android:largeHeap="true"
         tools:targetApi="24">
 

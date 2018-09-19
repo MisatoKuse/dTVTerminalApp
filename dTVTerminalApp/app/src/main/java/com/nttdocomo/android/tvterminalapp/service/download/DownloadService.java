@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.service.download;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -168,6 +169,7 @@ public class DownloadService extends Service implements DownloadListener {
     /**
      * ダウンロード開始.
      */
+    @SuppressLint("NewApi")
     private void startService() {
         startForeground(DOWNLOAD_SERVICE_ID, DlnaUtils.getNotification(getTitle(),
                 getResources().getString(R.string.record_download_notification), this));

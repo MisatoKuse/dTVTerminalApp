@@ -28,7 +28,6 @@ public class ViewUtils {
             imageButton.setImageDrawable(null);
         } else if (view instanceof ImageView) {
             ImageView imageView = (ImageView) view;
-            imageView.destroyDrawingCache();
             imageView.setImageDrawable(null);
         } else if (view instanceof ListView) {
             ListView listView = (ListView) view;
