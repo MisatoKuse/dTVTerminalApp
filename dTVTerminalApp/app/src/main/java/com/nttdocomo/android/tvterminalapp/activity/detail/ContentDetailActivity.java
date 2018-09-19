@@ -66,6 +66,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentDetailDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSendOperateLog;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopThumbnailConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
@@ -284,6 +285,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル*/
     /** 他サービスフラグ.*/
     private boolean mIsOtherService = false;
+    /** titleKind取得フラグ.*/
+    private boolean mIsTitleKind = false;
     /** 対象コンテンツのチャンネルデータ.*/
     private ChannelInfo mChannel = null;
     /** 視聴可能期限.*/
@@ -333,6 +336,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /* player end */
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
+    /** titleKindハンドラー.*/
+    private Handler mTitleKindHandler = null;
+    /** titleKind Runnable.*/
+    private Runnable mTitleKindRunnable = null;
     /** チャンネルリストフラグメント.*/
     private DtvContentsChannelFragment mChannelFragment = null;
     /** 再生用データ.*/
@@ -475,13 +482,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     @Override
     protected void onPause() {
         super.onPause();
         if (mPlayerViewLayout != null) {
             mPlayStartPosition = mPlayerViewLayout.onPause();
             mIsPlayerPaused = true;
+        }
+        if (mTitleKindHandler != null) {
+            mTitleKindHandler.removeCallbacks(mTitleKindRunnable);
         }
         DtvContentsChannelFragment channelFragment = null;
         switch (mDisplayState) {
@@ -520,6 +530,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
                     stopScaledProListDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
                 }
+                if (mSearchDataProvider != null) {
+                    StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
+                    stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSearchDataProvider);
+                }
                 if (mSendOperateLog != null) {
                     StopSendOperateLog stopSendOperateLog = new StopSendOperateLog();
                     stopSendOperateLog.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSendOperateLog);
@@ -556,6 +570,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     //endregion
 
     //region BaseActivity
+    @SuppressWarnings("OverlyComplexMethod")
     @Override
     public void onStartCommunication() {
         DTVTLogger.start();
@@ -577,6 +592,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 if (mScaledDownProgramListDataProvider != null) {
                     mScaledDownProgramListDataProvider.enableConnect();
+                }
+                if (mSearchDataProvider != null) {
+                    mSearchDataProvider.enableConnect();
                 }
                 if (mSendOperateLog != null) {
                     mSendOperateLog.enableConnection();
@@ -1026,11 +1044,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 case D_ANIME_STORE:
-                    //検レコからの遷移で titleKind が取得できてない場合は titleKind に blank を設定する
-                    if (mDetailData.getIsTranslateFromSearchFlag() && mDetailData.getTitleKind() == null) {
-                        mDetailData.setTitleKind("");
-                    }
-                    setDAnimeThumbnail();
+                    setThumbnailDelay(getResources().getString(R.string.d_anime_store_content_service_start_text));
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 default:
@@ -1119,14 +1133,27 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * pureDアニメ用サムネイル設定.
+     * titleKind(作品種別) が取得できるまでサムネイル表示を待つ処理.
+     *
+     * @param thumbnailText サムネイル表示文言
      */
-    private void setDAnimeThumbnail() {
-        //titleKindが取得出来ていない状態ではアプリ連携アイコンを表示しない
-        if (mDetailData != null && mDetailData.getTitleKind() != null) {
-            DTVTLogger.debug("d anime store setThumbnailText : titleKind = " + mDetailData.getTitleKind());
-            // "dアニメストアで視聴"
-            setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+    private void setThumbnailDelay(final String thumbnailText) {
+        if (mDetailData != null) {
+            mTitleKindHandler = new Handler();
+            mTitleKindRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    //検索画面からの遷移ではtitleKind取得済み
+                    //おすすめ画面からの遷移ではあらすじ取得と一緒にtitleKind取得
+                    if (mDetailData.getIsTranslateFromSearchFlag() || mIsTitleKind) {
+                        DTVTLogger.debug("d anime store setThumbnailText : titleKind = " + mDetailData.getTitleKind());
+                        setThumbnailText(thumbnailText);
+                        return;
+                    }
+                    mTitleKindHandler.postDelayed(this, 300);
+                }
+            };
+            mTitleKindHandler.post(mTitleKindRunnable);
         }
     }
 
@@ -3999,12 +4026,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         detailFragment.refreshDescription();
                     }
                 }
-                //ここで titleKind の値が null の場合は blank を設定することで、コールバック未返却時(titleKind = null)の場合と区別する
-                if (mDetailData.getTitleKind() == null) {
-                    mDetailData.setTitleKind("");
-                }
-                //おすすめレコメンドからの遷移では、検索レコメンドから titleKind を取得するためここで判定する
-                setDAnimeThumbnail();
+                // titleKind 取得完了フラグを立てる
+                mIsTitleKind = true;
                 showProgressBar(false);
             }
         });
@@ -4015,6 +4038,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // titleKind 取得完了フラグを立てる
+                mIsTitleKind = true;
                 showErrorDialog(ErrorType.contentDetailGet);
             }
         });
