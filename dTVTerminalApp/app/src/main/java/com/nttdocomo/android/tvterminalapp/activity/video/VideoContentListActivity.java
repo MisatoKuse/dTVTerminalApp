@@ -94,6 +94,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.daily_tv_ranking_main_layout);
         mContentsList = new ArrayList<>();
         ImageView menuImageView = findViewById(R.id.header_layout_menu);

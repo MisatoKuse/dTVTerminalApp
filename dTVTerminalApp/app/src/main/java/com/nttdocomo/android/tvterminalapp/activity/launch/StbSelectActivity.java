@@ -267,6 +267,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             setContentView(R.layout.stb_select_main_layout);
             initLaunchView();
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            if (savedInstanceState != null) {
+                savedInstanceState.clear();
+            }
             setContentView(R.layout.stb_select_device_list_setting);
             enableHeaderBackIcon(true);
             initSettingView();
@@ -1068,7 +1071,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         DlnaManager.shared().mDlnaManagerListener = null;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            startActivity(StbSelectErrorActivity.class, null);
+            Intent stbSelectErrorIntent = new Intent(this, StbSelectErrorActivity.class);
+            stbSelectErrorIntent.putExtra(FROM_WHERE, mStartMode);
+            startActivity(stbSelectErrorIntent);
         } else {
             // リストを非表示
             mDeviceListView.setVisibility(View.GONE);

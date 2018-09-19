@@ -129,6 +129,9 @@ public class ChildContentListActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.child_content_main_layout);
 
         Intent intent = getIntent();

@@ -74,6 +74,9 @@ public class RecordReservationListActivity extends BaseActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.record_reservation_list_main_layout);
 
         //Headerの設定
