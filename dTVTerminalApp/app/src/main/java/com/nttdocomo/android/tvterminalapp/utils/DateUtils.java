@@ -236,7 +236,7 @@ public class DateUtils {
      */
     private void saveDataToSharePre(final String key, final String value) {
         //データ永続化
-        DTVTLogger.debug("add data regist date::key = " + key + " value = " + value);
+        DTVTLogger.debug("add database insert date::key = " + key + " value = " + value);
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);

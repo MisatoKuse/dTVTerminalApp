@@ -150,6 +150,8 @@ public class DlnaManager {
     private boolean mIsCanceled = false;
     /** リモート接続する際に、タイムアウト. */
     private Timer mTimer = null;
+    /** 起動フラグ. */
+    private boolean mIsLaunched = false;
 
     // region Listener declaration
 
@@ -273,7 +275,7 @@ public class DlnaManager {
         initDmp(privateDataPath);
         String diragConfigFilePath = DlnaUtils.getDiragConfileFilePath(context);
         initDirag(diragConfigFilePath);
-
+        DlnaManager.shared().mIsLaunched = true;
         //ARIB外字変換クラスの宣言
         mAribUtils = new AribUtils();
 
@@ -541,8 +543,22 @@ public class DlnaManager {
      * Dlna起動されるかどうか.
      * @return dlna起動状態
      */
-    public boolean dlnaIsStart() {
-        return DlnaManager.shared().mIsStarted;
+    public boolean dlnaIsLaunched() {
+        return DlnaManager.shared().mIsLaunched;
+    }
+
+    /**
+     * Dlnaの再起動.
+     * @param context コンテキスト
+     */
+    public void dlnaRestart(final Context context) {
+        DTVTLogger.start();
+        StbConnectionManager.shared().launch(context);
+        StbConnectionManager.shared().initializeState();
+        DlnaManager.shared().launch(context);
+        DlnaManager.shared().Start(context);
+        DlnaManager.shared().clearQue();
+        DTVTLogger.end();
     }
 
     /**
@@ -907,7 +923,7 @@ public class DlnaManager {
         if (item == null || !udn.equals(item.mUdn)) {
             return;
         }
-        DTVTLogger.error(">>> STB接続");
+        DTVTLogger.error(">>> STB Connected");
         connectDmsWithUdn(udn);
 
         String localHostAddress = null;
@@ -967,7 +983,7 @@ public class DlnaManager {
         if (item == null || !udn.equals(item.mUdn)) {
             return;
         }
-        DTVTLogger.warning("STB切断 <<<");
+        DTVTLogger.warning("STB Disconnect <<<");
         switch (StbConnectionManager.shared().getConnectionStatus()) {
             case HOME_IN:
                 StbConnectionManager.shared().initializeState();
@@ -1025,7 +1041,7 @@ public class DlnaManager {
      * connectDmsWithUdn.
      * @param udn udn
      */
-    private native void connectDmsWithUdn(String udn);
+    private native boolean connectDmsWithUdn(String udn);
 
     /**
      * browseContentWithContainerId.

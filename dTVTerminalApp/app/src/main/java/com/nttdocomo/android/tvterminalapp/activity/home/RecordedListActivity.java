@@ -135,12 +135,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
-        if (!DlnaManager.shared().dlnaIsStart()) {
-            StbConnectionManager.shared().launch(getApplicationContext());
-            StbConnectionManager.shared().initializeState();
-            DlnaManager.shared().launch(getApplicationContext());
-            DlnaManager.shared().Start(getApplicationContext());
-        }
         registReceiver();
         initView();
         initTabView();
@@ -173,6 +167,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mAgeReq = userInfoDataProvider.getUserAge();
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
+        DlnaManager.shared().clearQue();
+        downloadStatusCheck();
         getData();
         DTVTLogger.end();
     }
@@ -271,7 +267,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (isComplete) {
             mIsEndPage = true;
         }
-        setVideoBrows(dstList);
+        setVideoBrows(dstList, false);
         mRequestIndex = mRequestIndex + dstList.size();
     }
 
@@ -282,7 +278,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 setProgressBarGone();
                 showGetDataFailedToast();
-                setVideoBrows(null);
+                setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
                 }
@@ -297,7 +293,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 setProgressBarGone();
                 showGetDataFailedToast();
-                setVideoBrows(null);
+                setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
                 }
@@ -390,7 +386,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 showGetDataFailedToast();
-                setVideoBrows(null);
+                setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
                 }
@@ -553,7 +549,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         if (dlnaDmsItem.mControlUrl.isEmpty()) {
                             clearFragment(0);
                             setProgressBarGone();
-                            setVideoBrows(null);
+                            setVideoBrows(null, false);
                         } else {
                             switch (StbConnectionManager.shared().getConnectionStatus()) {
                                 case HOME_OUT:
@@ -569,18 +565,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case NONE_LOCAL_REGISTRATION:
                                     if (mDlnaRecVideoItems != null) {
                                         setRecordedTakeOutContents();
-                                        setVideoBrows(mDlnaRecVideoItems);
+                                        setVideoBrows(mDlnaRecVideoItems, true);
                                     } else {
                                         clearFragment(0);
                                         setRecordedTakeOutContents();
-                                        setVideoBrows(null);
+                                        setVideoBrows(null, false);
                                     }
                                     setProgressBarGone();
                                     break;
                                 case NONE_PAIRING:
                                 default:
                                     clearFragment(0);
-                                    setVideoBrows(null);
+                                    setVideoBrows(null, false);
                                     setProgressBarGone();
                                     break;
                             }
@@ -771,9 +767,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * VideoBrowsの設定.
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
+     * @param isFromMemory 録画ビデオアイテム
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
+    private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems, final boolean isFromMemory) {
         DTVTLogger.start();
         runOnUiThread(new Runnable() {
             @Override
@@ -783,7 +780,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     baseFragment.setFragmentName(RLA_FragmentName_All);
                     List<Map<String, String>> resultList = getDownloadListFromDb();
                     baseFragment.clearQueueIndex();
-                    final boolean hideDownloadBtn = getConnectionStatus();
+                    boolean hideDownloadBtn = getConnectionStatus();
+                    if (isFromMemory) {
+                        hideDownloadBtn = false;
+                    }
                     for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
                         DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
                         if (checkIsOverRating(itemData.mRating)) {

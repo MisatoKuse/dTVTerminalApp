@@ -673,18 +673,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!TextUtils.isEmpty(playerData.getTitle())) {
                 setTitleText(playerData.getTitle());
             }
-            switch (StbConnectionManager.shared().getConnectionStatus()) {
-                case HOME_IN:
-                    initPlayer(playerData);
-                    break;
-                default:
-                    if (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus()) {
-                        initPlayer(playerData);
-                    } else {
-                        playerData.setIsRemote(true);
-                        setRemotePlayArrow(playerData);
-                    }
-                    break;
+            if (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus() || !playerData.isRemote()) {
+                initPlayer(playerData);
+            } else {
+                setRemotePlayArrow(playerData);
             }
             if (!playerData.isIsLive()) {
                 showPlayerOnlyView(playerData);
@@ -1490,6 +1482,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (contentsType == ContentUtils.ContentsType.TV) {
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
+                        mVodEndDateText = date;
                     } else {
                         if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31
                                 || contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {

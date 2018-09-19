@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentBsChanne
 import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentTerChennelDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
@@ -183,6 +184,7 @@ public class ChannelListActivity extends BaseActivity implements
         enableGlobalMenuIcon(true);
 
         initView();
+        DlnaManager.shared().clearQue();
         initData();
         DTVTLogger.end();
     }

@@ -127,10 +127,10 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     private Context mContext = null;
     /** 購入済みVODリスト情報を保持. */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
-    /** 購入済みVODのactive_listの情報を保持. */
-    private List<Map<String, String>> mPurchasedVodActiveList = null;
     /** 購入済みチャンネルリスト情報を保持. */
     private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
+    /** 購入済みチャンネルのactive_listの情報を保持. */
+    private List<Map<String, String>> mPurchasedChActiveList = null;
     /** ロールリスト情報を保持. */
     private ArrayList<RoleListMetaData> mRoleListInfo = null;
     /** クリップキーレスポンス保持. */
@@ -369,25 +369,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     }
                     executeRoleListCallback(roleListData);
                     break;
-                case RENTAL_VOD_SELECT:
-                    PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
-                    ArrayList<ActiveData> activeDatas = new ArrayList<>();
-                    for (int i = 0; i < mPurchasedVodActiveList.size(); i++) {
-                        Map<String, String> hashMap = mPurchasedVodActiveList.get(i);
-                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
-                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
-                        ActiveData activeDate = new ActiveData();
-                        activeDate.setLicenseId(active_list_license_id);
-                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
-                        activeDatas.add(activeDate);
-                    }
-                    purchasedVodListData.setVodActiveData(activeDatas);
-                    if (null != mApiDataProviderCallback) {
-                        executeRentalVodListCallback(purchasedVodListData);
-                    }
-                    break;
                 default:
                     break;
             }
@@ -418,12 +399,28 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 break;
             case RENTAL_VOD_SELECT: //DBから購入済みVODデータを取得して返却する
                 RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
-                resultSet = rentalListDataManager.selectRentalListData();
-                mPurchasedVodActiveList = rentalListDataManager.selectRentalActiveListData();
-                if (mPurchasedVodActiveList == null || mPurchasedVodActiveList.size() < 1) {
+                List<Map<String, String>> purchasedVodActiveList = rentalListDataManager.selectRentalActiveListData();
+                PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
+                if (purchasedVodActiveList == null || purchasedVodActiveList.size() < 1) {
                     //DBから取得したデータがない場合は初期化したデータを渡す
-                    PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
                     executeRentalVodListCallback(purchasedVodListData);
+                } else {
+                    ArrayList<ActiveData> activeDatas = new ArrayList<>();
+                    for (int i = 0; i < purchasedVodActiveList.size(); i++) {
+                        Map<String, String> hashMap = purchasedVodActiveList.get(i);
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
+                        ActiveData activeDate = new ActiveData();
+                        activeDate.setLicenseId(active_list_license_id);
+                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
+                        activeDatas.add(activeDate);
+                    }
+                    purchasedVodListData.setVodActiveData(activeDatas);
+                    if (null != mApiDataProviderCallback) {
+                        executeRentalVodListCallback(purchasedVodListData);
+                    }
                 }
                 break;
             case RENTAL_CHANNEL_UPDATE: //サーバーから取得した購入済みCHデータをDBに保存する
@@ -432,25 +429,23 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 break;
             case RENTAL_CHANNEL_SELECT: //DBから購入済みCHデータを取得して返却する
                 RentalListDataManager rentalChListDataManager = new RentalListDataManager(mContext);
+                resultSet = rentalChListDataManager.selectRentalChListData();
                 List<Map<String, String>> purchasedChActiveList = rentalChListDataManager.selectRentalChActiveListData();
                 PurchasedChannelListResponse purchasedChannelListResponse = new PurchasedChannelListResponse();
-                if (purchasedChActiveList == null || purchasedChActiveList.size() < 1) {
-                    //DBから取得したデータがない場合は初期化したデータを渡す
+                if (purchasedChActiveList == null || purchasedChActiveList.size() < 1 || resultSet == null || resultSet.size() < 1) {
+                    //active_list又はmetadata_listが取得できない時は必ず購入済み判定がfalseになるため初期化したデータを渡す
                     executeRentalChListCallback(purchasedChannelListResponse);
                 } else {
                     ChannelList channelList = new ChannelList();
                     List<HashMap<String, String>> list = new ArrayList<>();
 
-                    resultSet = rentalChListDataManager.selectRentalChListData();
-                    if (resultSet != null) {
-                        for (int i = 0; i < resultSet.size(); i++) {
-                            Map<String, String> hashMap = resultSet.get(i);
-                            HashMap<String, String> vcListMap = new HashMap<>();
-                            for (String para : JsonConstants.METADATA_LIST_PARA) {
-                                vcListMap.put(para, hashMap.get(para));
-                            }
-                            list.add(vcListMap);
+                    for (int i = 0; i < resultSet.size(); i++) {
+                        Map<String, String> hashMap = resultSet.get(i);
+                        HashMap<String, String> vcListMap = new HashMap<>();
+                        for (String para : JsonConstants.METADATA_LIST_PARA) {
+                            vcListMap.put(para, hashMap.get(para));
                         }
+                        list.add(vcListMap);
                     }
                     channelList.setChannelList(list);
                     purchasedChannelListResponse.setChannelListData(channelList);
