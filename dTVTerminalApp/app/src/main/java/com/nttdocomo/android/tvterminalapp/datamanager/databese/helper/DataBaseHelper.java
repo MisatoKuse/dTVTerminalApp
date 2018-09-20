@@ -25,7 +25,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     /**
      * DBVersion.
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     /**
      * drop table if exists.
      */
@@ -107,6 +107,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DataBaseConstants.RECOMMEND_LIST_DANIME_TABLE_NAME);
     /**
+     * 「レコメンド（DAZN）」テーブルの削除用SQL.
+     */
+    private static final String DROP_RECOMMEND_DAZN_TABLE_SQL = StringUtils.getConnectStrings(
+            DROP_TABLE_IF_EXISTS, DataBaseConstants.RECOMMEND_LIST_DAZN_TABLE_NAME);
+    /**
      * 「ロールリスト」テーブルの削除用SQL.
      */
     private static final String DROP_ROLE_LIST_TABLE_SQL = StringUtils.getConnectStrings(
@@ -173,6 +178,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             DateUtils.clearLastDate(mContext);
 
             dropAllTable(sqLiteDatabase);
+            if (newVersion >= 2) {
+                try {
+                    sqLiteDatabase.execSQL(DROP_RECOMMEND_DAZN_TABLE_SQL);
+                } catch (SQLiteException e) {
+                    DTVTLogger.debug("DatabaseHelper::dropAllTable, drop " + DROP_RECOMMEND_DAZN_TABLE_SQL
+                            + " table failed, cause=" + e.getCause());
+                }
+            }
             createAllTable(sqLiteDatabase);
 
             //Upgrade時にUserInfoデータを再取得する
@@ -279,6 +292,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
                     CREATE_TABLE_RECOMMEND_DANIME_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_DAZN_SQL);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_RECOMMEND_DAZN_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_ROLE_LIST_SQL);

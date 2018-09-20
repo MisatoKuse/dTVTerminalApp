@@ -295,6 +295,9 @@ public class DataBaseUtils {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
                 tableName = DataBaseConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
                 break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DAZN:
+                tableName = DataBaseConstants.RECOMMEND_LIST_DAZN_TABLE_NAME;
+                break;
             default:
                 break;
         }

@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -201,7 +202,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ImageView mPlayIcon;
     /**再生前くるくる処理.*/
     private ProgressBar mProgressBar;
-    /** ひかりTVリトライ用のDLNAオブジェクト */
+    /** ひかりTVリトライ用のDLNAオブジェクト. */
     private DlnaObject mDlnaObject = null;
     /** ひかりTVリトライ時にリモート扱いするかどうかのフラグ. */
     private boolean mNotRemoteRetry = false;
@@ -238,6 +239,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
     /**dアニメストアバージョン.*/
     private static final int DANIMESTORE_VERSION_STANDARD = 132;
+
+    /**DAZNパッケージ名.*/
+    private static final String DAZN_PACKAGE_NAME = "com.dazn";
+    /**DAZNバージョン.*/
+    private static final int DAZN_VERSION_STANDARD = 0;
 
     /**dTVチャンネルパッケージ名.*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
@@ -956,7 +962,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
             if (ContentUtils.isOtherService(serviceId)) {
-                // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
+                // 他サービス(dtv/dtvチャンネル/DAZN/dアニメ)フラグを立てる
                 mIsOtherService = true;
                 contentType = ContentTypeForGoogleAnalytics.OTHER;
             }
@@ -970,6 +976,23 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             mIsControllerVisible = true;
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                                     R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
+                            setStartRemoteControllerUIListener(this);
+                            break;
+                        case ContentUtils.DAZN_CONTENTS_SERVICE_ID:
+                            // リモコンUIのリスナーを設定
+                            createRemoteControllerView(true);
+                            mIsControllerVisible = true;
+                            RemoteControllerView mRemoteControllerView = getRemoteControllerView();
+                            if (mRemoteControllerView != null) {
+                                TextView mTextView = mRemoteControllerView.findViewById(R.id.watch_by_tv);
+                                mTextView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_tv_bottom_dazn_text));
+                                ImageView mTvIcon = mRemoteControllerView.findViewById(R.id.remote_tv_play_icon);
+                                mTvIcon.setImageResource(R.mipmap.tv_black);
+                                ImageView mTopIcon = mRemoteControllerView.findViewById(R.id.remote_controller_down);
+                                mTopIcon.setImageResource(R.mipmap.arrow_top_black);
+                            }
+                            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                                    R.drawable.remote_watch_by_tv_bottom_corner_dazn, null));
                             setStartRemoteControllerUIListener(this);
                             break;
                         case ContentUtils.DTV_CONTENTS_SERVICE_ID: //「serviceId」が「15」(dTVコンテンツ)の場合
@@ -1040,6 +1063,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     break;
                 case D_ANIME_STORE:
                     setThumbnailDelay(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                    break;
+                case DAZN:
+                    // "DAZNで視聴"
+                    setThumbnailText(getResources().getString(R.string.dazn_content_service_start_text));
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 default:
@@ -2030,6 +2058,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else if (mDetailData != null && mDetailData.getServiceId() == ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID) {
                     //dアニメ起動
                     startDAnimeApp(mDetailData);
+                } else if (mDetailData != null && mDetailData.getServiceId() == ContentUtils.DAZN_CONTENTS_SERVICE_ID) {
+                    //DAZN起動
+                    startDAZNApp(mDetailData);
                 } else if (mDetailData != null && mDetailData.getServiceId() == ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     //dチャンネル起動.
                     startDtvChannelApp(mDetailData);
@@ -2118,9 +2149,54 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
+     * 機能：DAZN APP起動（検レコサーバ）.
+     *
+     * @param detailData 検レコサーバメタデータ
+     */
+    private void startDAZNApp(final OtherContentsDetailData detailData) {
+        if (isAppInstalled(ContentDetailActivity.this, DAZN_PACKAGE_NAME)) {
+            CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            startAppDialog.setContent(getResources().getString(R.string.dazn_content_service_start_dialog));
+            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    // long localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
+                    long localVersionCode = 1;
+                    boolean execResult = true;
+
+                    //バージョンチェック
+                    if (localVersionCode < DAZN_VERSION_STANDARD) {
+                        String errorMessage = getResources().getString(R.string.dazn_content_service_update_dialog);
+                        showErrorDialog(errorMessage);
+                    } else {
+                        execResult = startApp(UrlConstants.WebUrl.DAZN_START_URL + detailData.getContentsId());
+                    }
+
+                    //実行時に実行に失敗していた場合は、メッセージを表示する
+                    if (!execResult) {
+                        //dアニメのエラーを表示
+                        execFailDialog(DAZN_PACKAGE_NAME);
+                    }
+                }
+            });
+            startAppDialog.showDialog();
+        } else {
+            CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            installAppDialog.setContent(getResources().getString(R.string.dazn_application_not_install_dialog));
+            installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    toGooglePlay(UrlConstants.WebUrl.DAZN_GOOGLEPLAY_DOWNLOAD_URL);
+                }
+            });
+            installAppDialog.showDialog();
+        }
+    }
+
+    /**
      * 機能：dアニメAPP起動（検レコサーバ）.
      *
-     * * @param detailData 検レコサーバメタデータ
+     * @param detailData 検レコサーバメタデータ
      */
     private void startDAnimeApp(final OtherContentsDetailData detailData) {
         if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
@@ -2371,6 +2447,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //Dアニメの実行に失敗したので、メッセージとURLを指定
             message = getResources().getString(R.string.d_anime_store_application_not_install_dialog);
             downloadUrlBuffer = UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL;
+        } else if (packageName.equals(DAZN_PACKAGE_NAME)) {
+            //DAZNの実行に失敗したので、メッセージとURLを指定
+            message = getResources().getString(R.string.dazn_application_not_install_dialog);
+            downloadUrlBuffer = UrlConstants.WebUrl.DAZN_GOOGLEPLAY_DOWNLOAD_URL;
         } else if (packageName.equals(DTVCHANNEL_PACKAGE_NAME)) {
             //DTVチャンネルの実行に失敗したので、メッセージとURLを指定
             message = getResources().getString(R.string.dtv_channel_service_application_not_install_dialog);
@@ -2484,6 +2564,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentsId());
                     break;
+                case ContentUtils.DAZN_CONTENTS_SERVICE_ID: // DAZN
+                    if (!mIsFromHeader) {
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
+                    requestStartApplication(
+                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mDetailData.getContentsId());
+                    break;
                 case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
                     if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
@@ -2557,6 +2644,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * テレビで視聴中であるかどうか.
+     * @return true:「テレビで視聴する」をタップした
      */
     private boolean isTvPlaying() {
         if (mIsFromHeader) {
@@ -2724,6 +2812,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                             R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
+                    break;
+                case ContentUtils.DAZN_CONTENTS_SERVICE_ID:
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.remote_watch_by_tv_bottom_corner_dazn, null));
                     break;
                 case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                 case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID:

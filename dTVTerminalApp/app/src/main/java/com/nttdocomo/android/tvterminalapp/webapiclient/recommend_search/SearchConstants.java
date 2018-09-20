@@ -71,9 +71,12 @@ public class SearchConstants {
         /** dチャンネル. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 3;
+        /**  DAZN. */
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DAZN =
+                RECOMMEND_PAGE_NO_OF_SERVICE_TV + 4;
         /**  dアニメ. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DANIME =
-                RECOMMEND_PAGE_NO_OF_SERVICE_TV + 4;
+                RECOMMEND_PAGE_NO_OF_SERVICE_TV + 5;
         /** ホームのおすすめ番組. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 50;

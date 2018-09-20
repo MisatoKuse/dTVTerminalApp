@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -289,6 +291,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mChannel = view.findViewById(R.id.home_main_recyclerview_item_tv_channel_or_missed);
         viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
         viewHolder.mRankNum = view.findViewById(R.id.home_main_recyclerview_item_iv_rank_num);
+        viewHolder.mServiceIcon = view.findViewById(R.id.home_main_recyclerview_item_ll_service_icon);
         viewHolder.mServiceIconFirst = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_first);
         viewHolder.mServiceIconSecond = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_second);
         mMaxItemCount++;
@@ -454,6 +457,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             switch (Integer.parseInt(serviceId)) {
                 //ひかりTV
                 case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID:
+                    setServiceIconLayout(false, viewHolder);
                     List<String> list = Arrays.asList(categoryId_Hikari);
                     if (list.contains(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
@@ -467,23 +471,55 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                     break;
                 //dTV
                 case ContentUtils.DTV_CONTENTS_SERVICE_ID:
+                    setServiceIconLayout(false, viewHolder);
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv);
                     break;
                 //アニメ
                 case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
+                    setServiceIconLayout(false, viewHolder);
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_danime);
                     break;
                 //dTVチャンネル
                 case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                    setServiceIconLayout(false, viewHolder);
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dch);
+                    break;
+                //DAZN
+                case ContentUtils.DAZN_CONTENTS_SERVICE_ID:
+                    setServiceIconLayout(true, viewHolder);
+                    viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
+                    viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dazn);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    /**
+     * サービスアイコンサイズの調整.
+     *
+     * @param isDAZN コンテンツデータ
+     * @param viewHolder ViewHolder
+     */
+    private void setServiceIconLayout(final boolean isDAZN, final ViewHolder viewHolder) {
+        RelativeLayout.LayoutParams layoutParams;
+        if (isDAZN) {
+            layoutParams = new RelativeLayout.LayoutParams(
+                    (int) mContext.getResources().getDimension(R.dimen.contents_detail_service_icon_label_dazn_width_height),
+                    (int) mContext.getResources().getDimension(R.dimen.contents_detail_service_icon_label_dazn_width_height));
+        } else {
+            layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    (int) mContext.getResources().getDimension(R.dimen.contents_detail_service_icon_label_height));
+        }
+        layoutParams.setMargins(0, (int) mContext.getResources().getDimension(R.dimen.home_contents_service_margin),
+                (int) mContext.getResources().getDimension(R.dimen.home_contents_service_margin), 0);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        viewHolder.mServiceIcon.setLayoutParams(layoutParams);
     }
 
     /**
@@ -697,6 +733,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * ※ランキングコンテンツonly
          */
         TextView mRankNum;
+        /**
+         * おすすめサービスアイコン(親レイアウト).
+         */
+        LinearLayout mServiceIcon;
         /**
          * おすすめサービスアイコン.
          */

@@ -72,6 +72,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private static final int INSERT_RECOMMEND_DTV_LIST = 12;
     /** Dアニメデータキャッシュ保存用. */
     private static final int INSERT_RECOMMEND_D_ANIMATION_LIST = 13;
+    /** DAZNデータキャッシュ取得用. */
+    private static final int SELECT_RECOMMEND_DAZN_LIST = 14;
+    /** DAZNデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_DAZN_LIST = 15;
     /** レコメンドコンテンツ最大件数（システム制約）. */
     private static final int MAX_SHOW_LIST_SIZE = 100;
     /** レコメンドコンテンツ取得位置（システム制約）. */
@@ -90,6 +94,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private static final String RECOMMEND_PAGE_ID_DTVCHANNEL = "112";
     /** ページID ホーム Dアニメ. */
     private static final String RECOMMEND_PAGE_ID_DANIME = "113";
+    /** ページID ホーム DAZN. */
+    private static final String RECOMMEND_PAGE_ID_DAZN = "115";
 
     /** RecommendWebClient. */
     private RecommendWebClient mRecommendWebClient = null;
@@ -108,6 +114,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
             RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
+            RecommendRequestId.DAZN.getRequestSCId()
     };
     /** テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）. */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
@@ -158,6 +165,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         DTV_TVOD("15", "02"),
         /**dアニメストア.*/
         DANIME("17", "01"),
+        /**DAZN.*/
+        DAZN("35", "01"),
         /**dTVチャンネル　放送.*/
         DTVCHANNEL_BLOADCAST("43", "01"),
         /**dTVチャンネル　VOD（見逃し）.*/
@@ -238,6 +247,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         DCHANNEL,
         /** dアニメ. */
         DANIME,
+        /** DAZN. */
+        DAZN,
         /** 判別不能 ひかりTV_テレビ と dチャンネル は一部同じリクエストを送信するため判定できない. */
         UNKNOWN,
     }
@@ -299,6 +310,13 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          * @param recommendContentInfoList コンテンツ情報リスト
          */
         void recommendDAnimeCallback(List<ContentsData> recommendContentInfoList);
+
+        /**
+         * おすすめDAZN用コールバック.
+         *
+         * @param recommendContentInfoList コンテンツ情報リスト
+         */
+        void recommendDAZNCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * おすすめdチャンネル用コールバック.
@@ -580,6 +598,35 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
+     * おすすめDAZN取得.
+     */
+    private void getDAZNRecommend() {
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DAZN_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))) {
+            if (!mIsStop) {
+                // RequestDataのインスタンス生成
+                RecommendRequestData requestData = new RecommendRequestData();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getDAZNRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_DAZN);
+                // サーバへリクエストを送信
+                mRecommendWebClient = new RecommendWebClient(this, mContext);
+                mRecommendWebClient.getRecommendApi(requestData);
+            } else {
+                DTVTLogger.error("RecommendDataProvider is stopping connect");
+            }
+        } else {
+            //DBキャッシュ取得
+            Handler handler = new Handler(Looper.getMainLooper());
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_DAZN_LIST);
+            t.start();
+        }
+    }
+
+    /**
      * Activityからのデータ取得要求受付.
      *
      * @param requestPageNo  使用するタブ番号
@@ -608,6 +655,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
                 getDAnimationRecommend();
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DAZN: //DAZN
+                getDAZNRecommend();
                 break;
             default:
                 break;
@@ -697,6 +747,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 //DBキャッシュ取得
                 handler = new Handler(Looper.getMainLooper());
                 thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_D_ANIMATION_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
+                break;
+            case DAZN:
+                //DAZN用データ
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_DAZN_LIST);
                 thread.setRecommendChannelList(recChList);
                 thread.setContentsDataList(recommendContentInfoList);
                 thread.start();
@@ -885,6 +944,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
+     * おすすめDAZNの取得対象サービスID:カテゴリーID文字列生成.
+     *
+     * @return 取得対象サービスID:カテゴリーID文字列
+     */
+    private String getDAZNRequestSCIdStr() {
+        return RecommendRequestId.DAZN.getRequestSCId();
+    }
+
+    /**
      * 通信を止める.
      */
     public void stopConnect() {
@@ -947,6 +1015,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 break;
             case RECOMMEND_PAGE_ID_DANIME:
                 result = RESP_DATA_SERVICE_TYPE.DANIME;
+                break;
+            case RECOMMEND_PAGE_ID_DAZN:
+                result = RESP_DATA_SERVICE_TYPE.DAZN;
                 break;
             default:
                 // DAZNの判定を行う予定
@@ -1012,6 +1083,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
                 mApiDataProviderCallback.recommendDAnimeCallback(resultList);
                 break;
+            case SELECT_RECOMMEND_DAZN_LIST:
+                recommendDataManager = new RecommendListDataManager(mContext);
+                resultList = recommendDataManager.selectRecommendList(
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DAZN);
+                mApiDataProviderCallback.recommendDAZNCallback(resultList);
+                break;
             case INSERT_RECOMMEND_HOME_TV_LIST:
                 //ホームのおすすめ番組用データ
                 setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_HOME_CH_LAST_INSERT,
@@ -1053,6 +1130,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_DANIME_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
                 mApiDataProviderCallback.recommendDAnimeCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_DAZN_LIST:
+                //DAZN用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_DAZN_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DAZN);
+                mApiDataProviderCallback.recommendDAZNCallback(dataBaseThread.getContentsDataList());
                 break;
             default:
                 break;

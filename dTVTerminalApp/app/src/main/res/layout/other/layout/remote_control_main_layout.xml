@@ -59,6 +59,7 @@
                             android:layout_marginStart="14dp"
                             android:gravity="center_vertical"
                             android:text="@string/remote_controller_viewpager_watch_by_tv"
+                            android:textStyle="bold"
                             android:textColor="#ffffff"
                             android:textSize="14dp" />
 
@@ -70,7 +71,7 @@
                             android:layout_marginEnd="24dp"
                             android:layout_centerVertical="true"
                             android:contentDescription="@null"
-                            android:src="@mipmap/remote_controller_arrow_top" />
+                            android:src="@mipmap/arrow_top" />
                     </RelativeLayout>
 
                     <RelativeLayout

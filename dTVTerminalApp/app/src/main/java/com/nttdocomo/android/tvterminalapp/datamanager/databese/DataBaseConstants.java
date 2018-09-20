@@ -726,6 +726,38 @@ public class DataBaseConstants {
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
             + ")";
 
+    /**
+     * レコメンド（DAZN）データ格納用テーブル.
+     */
+    public static final String RECOMMEND_LIST_DAZN_TABLE_NAME = "recommend_dazn_list";
+    /**
+     * レコメンド（dアニメ）テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RECOMMEND_DAZN_SQL = ""
+            + "create table " + RECOMMEND_LIST_DAZN_TABLE_NAME + " ("
+            + ID_COLUMN + " integer primary key autoincrement, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
+            + ")";
+
     // TABLE、録画持ち出しリスト用
     /**
      * item id.

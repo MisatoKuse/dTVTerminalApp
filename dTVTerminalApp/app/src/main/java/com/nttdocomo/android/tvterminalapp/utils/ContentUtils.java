@@ -63,6 +63,8 @@ public class ContentUtils {
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     /**DTVチャンネルコンテンツサービスID.*/
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+    /**DAZNコンテンツサービスID.*/
+    public static final int DAZN_CONTENTS_SERVICE_ID = 35;
     /**DTVひかりコンテンツサービスID.*/
     public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     /**レコメンド情報キー.*/
@@ -166,6 +168,8 @@ public class ContentUtils {
         PURE_DTV_CHANNEL_RELATION,
         /**dアニメストア.*/
         D_ANIME_STORE,
+        /**DAZN.*/
+        DAZN,
         /**その他.*/
         OTHER
     }
@@ -259,6 +263,12 @@ public class ContentUtils {
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
                     cType = ContentsType.VOD;
+                }
+                break;
+            //DAZN
+            case DAZN_CONTENTS_SERVICE_ID:
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
+                    cType = ContentsType.TV;
                 }
                 break;
             //dTVチャンネル
@@ -720,6 +730,20 @@ public class ContentUtils {
                         case RECOMMEND_CATEGORY_ID_ONE:
                             //dアニメストア
                             return ContentsType.D_ANIME_STORE;
+                        default:
+                            return ContentsType.OTHER;
+                    }
+                }
+                //serviceId = 35
+            case DAZN_CONTENTS_SERVICE_ID:
+                if (categoryId == null) {
+                    return ContentsType.OTHER;
+                } else {
+                    switch (categoryId) {
+                        //categoryId = 01
+                        case RECOMMEND_CATEGORY_ID_ONE:
+                            //DAZN
+                            return ContentsType.DAZN;
                         default:
                             return ContentsType.OTHER;
                     }
@@ -1231,6 +1255,8 @@ public class ContentUtils {
                 return R.mipmap.label_service_dch;
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 return R.mipmap.label_service_danime;
+            case DAZN_CONTENTS_SERVICE_ID:
+                return R.mipmap.label_service_dazn;
         }
         return R.mipmap.label_service_hikari;
     }
@@ -1246,6 +1272,7 @@ public class ContentUtils {
             case DTV_CONTENTS_SERVICE_ID:
             case DTV_CHANNEL_CONTENTS_SERVICE_ID:
             case D_ANIMATION_CONTENTS_SERVICE_ID:
+            case DAZN_CONTENTS_SERVICE_ID:
                 return true;
             default:
                 return false;
@@ -1309,7 +1336,7 @@ public class ContentUtils {
      * @return 視聴可否
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isEnableDisplay(@NonNull final ContentUtils.ViewIngType viewIngType) {
+    public static boolean isEnableDisplay(@NonNull final ViewIngType viewIngType) {
         switch (viewIngType) {
             case ENABLE_WATCH:
             case ENABLE_WATCH_001:
@@ -1331,7 +1358,7 @@ public class ContentUtils {
      * @return 視聴可否
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isHikariTvProgram(@NonNull final ContentUtils.ContentsType contentsType) {
+    public static boolean isHikariTvProgram(@NonNull final ContentsType contentsType) {
         switch (contentsType) {
             case HIKARI_TV:
             case HIKARI_TV_WITHIN_TWO_HOUR:
@@ -1349,7 +1376,7 @@ public class ContentUtils {
      * @return 録画ボタン活性表示フラグ
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isRecordButtonDisplay(@NonNull final ContentUtils.ContentsType contentsType) {
+    public static boolean isRecordButtonDisplay(@NonNull final ContentsType contentsType) {
         switch (contentsType) {
             case HIKARI_TV:
             case HIKARI_IN_DCH_TV:
@@ -1366,7 +1393,7 @@ public class ContentUtils {
      * @return 契約導線表示フラグ
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isContractWireDisplay(@NonNull final ContentUtils.ViewIngType viewIngType) {
+    public static boolean isContractWireDisplay(@NonNull final ViewIngType viewIngType) {
         switch (viewIngType) {
             case DISABLE_WATCH_AGREEMENT_DISPLAY:
             case DISABLE_CHANNEL_WATCH_AGREEMENT_DISPLAY:
@@ -1384,7 +1411,7 @@ public class ContentUtils {
      * @return 表示判定中フラグ
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isSkipViewingType(@NonNull final ContentUtils.ViewIngType viewIngType, @NonNull final ContentUtils.ContentsType contentsType) {
+    public static boolean isSkipViewingType(@NonNull final ViewIngType viewIngType, @NonNull final ContentsType contentsType) {
         switch (viewIngType) {
             case PREMIUM_CHECK_START:
             case SUBSCRIPTION_CHECK_START:
@@ -1401,7 +1428,7 @@ public class ContentUtils {
      * @return 判定結果
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isPureContents(final ContentUtils.ContentsType contentsType) {
+    public static boolean isPureContents(final ContentsType contentsType) {
         if (contentsType == null) {
             // コンテンツ取得に失敗していれば判定不可
             return false;
@@ -1425,7 +1452,7 @@ public class ContentUtils {
      * @return 判定結果
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isChanelNameDisplay(final ContentUtils.ContentsType contentsType) {
+    public static boolean isChanelNameDisplay(final ContentsType contentsType) {
         if (contentsType == null) {
             // コンテンツ取得に失敗していれば判定不可
             return false;

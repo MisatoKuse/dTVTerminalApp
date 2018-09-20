@@ -129,6 +129,7 @@
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
+        <item>DAZN</item>
         <item>dアニメストア</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
@@ -296,6 +297,10 @@
     <string name="d_anime_store_content_service_start_dialog">dアニメストアを起動します</string>
     <string name="d_anime_store_content_service_update_dialog">dアニメストアアプリのアップデートが必要です</string>
     <string name="d_anime_store_application_not_install_dialog">dアニメストアアプリがインストールされていません。\nインストールしますか？</string>
+    <string name="dazn_content_service_start_text">DAZNで視聴</string>
+    <string name="dazn_content_service_start_dialog">DAZNを起動します</string>
+    <string name="dazn_content_service_update_dialog">DAZNアプリのアップデートが必要です</string>
+    <string name="dazn_application_not_install_dialog">DAZNアプリがインストールされていません。\nインストールしますか？</string>
     <string name="dtv_channel_service_start_text">dTVチャンネルで視聴</string>
     <string name="dtv_channel_service_start_dialog">dTVチャンネルを起動します</string>
     <string name="dtv_channel_service_update_dialog">dTVチャンネルアプリのアップデートが必要です</string>
@@ -507,6 +512,7 @@
     <string name="google_analytics_screen_name_recommend_dtv">おすすめ番組・ビデオ_dTV</string>
     <string name="google_analytics_screen_name_recommend_dtv_channel">おすすめ番組・ビデオ_dTVチャンネル</string>
     <string name="google_analytics_screen_name_recommend_danime">おすすめ番組・ビデオ_dアニメストア</string>
+    <string name="google_analytics_screen_name_recommend_dazn">おすすめ番組・ビデオ_DAZN</string>
     <string name="google_analytics_screen_name_setting">設定</string>
     <string name="google_analytics_screen_name_setting_paring">設定＞ペアリング設定</string>
     <string name="google_analytics_screen_name_setting_paring_completed">設定＞ペアリング設定＞ペアリング完了</string>
