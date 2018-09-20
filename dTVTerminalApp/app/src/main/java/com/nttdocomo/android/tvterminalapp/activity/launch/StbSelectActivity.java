@@ -267,6 +267,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             setContentView(R.layout.stb_select_main_layout);
             initLaunchView();
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            if (savedInstanceState != null) {
+                savedInstanceState.clear();
+            }
             setContentView(R.layout.stb_select_device_list_setting);
             enableHeaderBackIcon(true);
             initSettingView();
@@ -781,10 +784,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //STB選択画面起動時にdアカウント認証画面を表示しないために、ここでdアカウントの処理を開始する
         //一度再認証オプション付けたらそれ以上付けない制御があるが、この場合必ず認証画面を出す.
         OttGetAuthSwitch.INSTANCE.setNowAuth(true);
-        setDaccountControl();
-        mOttGetComplete = false;
         //選択されたSTB番号を保持
         mSelectDevice = i;
+        setDaccountControl();
+        mOttGetComplete = false;
         if (mDlnaDmsItemList != null) {
             //IPアドレスを設定する
             mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
@@ -1068,7 +1071,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         DlnaManager.shared().mDlnaManagerListener = null;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            startActivity(StbSelectErrorActivity.class, null);
+            Intent stbSelectErrorIntent = new Intent(this, StbSelectErrorActivity.class);
+            stbSelectErrorIntent.putExtra(FROM_WHERE, mStartMode);
+            startActivity(stbSelectErrorIntent);
         } else {
             // リストを非表示
             mDeviceListView.setVisibility(View.GONE);

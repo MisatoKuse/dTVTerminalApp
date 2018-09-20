@@ -60,15 +60,16 @@ public class PairingHelpActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
+            setTitleText(getString(R.string.str_app_title));
             firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
         } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
+            setTitleText(getString(R.string.str_stb_paring_setting_title));
             webSettings.setAllowUniversalAccessFromFileURLs(false);
             webSettings.setAllowFileAccessFromFileURLs(false);
             firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
         }
 
         //Headerの設定
-        setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(false);
         setStatusBarColor(true);

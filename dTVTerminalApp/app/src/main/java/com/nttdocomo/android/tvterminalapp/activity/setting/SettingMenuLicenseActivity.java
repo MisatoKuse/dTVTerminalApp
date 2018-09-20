@@ -28,6 +28,9 @@ public class SettingMenuLicenseActivity extends BaseActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.setting_menu_item_main_view);
 
         mLicenseWebView = findViewById(R.id.setting_menu_main_webview);

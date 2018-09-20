@@ -57,6 +57,10 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
      * 起動モード初期値.
      */
     private int mStartMode = 0;
+    /**
+     * 起動モードキー名.
+     */
+    public static final String FROM_WHERE = "FROM_WHERE";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -67,7 +71,12 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
            mStartMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
         }
         //Headerの設定
-        setTitleText("");
+
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            setTitleText(getString(R.string.str_app_title));
+        } else {
+            setTitleText(getString(R.string.str_stb_paring_setting_title));
+        }
         enableHeaderBackIcon(false);
         enableGlobalMenuIcon(false);
         setStatusBarColor(true);
@@ -154,6 +163,7 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
      */
     private void onDAccountRegButton() {
         Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
+        intent.putExtra(FROM_WHERE, mStartMode);
         startActivity(intent);
     }
 

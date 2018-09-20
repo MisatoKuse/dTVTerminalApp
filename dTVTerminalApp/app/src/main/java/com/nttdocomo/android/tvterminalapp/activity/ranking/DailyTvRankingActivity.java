@@ -73,6 +73,9 @@ public class DailyTvRankingActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.daily_tv_ranking_main_layout);
         mContentsList = new ArrayList<>();
 

@@ -67,6 +67,9 @@ public class PremiumVideoActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.premium_video_main_layout);
         mContentsList = new ArrayList<>();
 

@@ -51,7 +51,16 @@ public class StbSelectErrorActivity extends BaseActivity {
      * 画面上に表示するコンテンツを設定する.
      */
     private void setContents() {
-        setTitleText(getString(R.string.str_app_title));
+        Intent intent = getIntent();
+        int startMode = 0;
+        if (intent != null) {
+          startMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
+        }
+        if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            setTitleText(getString(R.string.str_app_title));
+        } else if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            setTitleText(getString(R.string.str_stb_paring_setting_title));
+        }
         setStatusBarColor(true);
         mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
         mParingHelp = findViewById(R.id.stb_paring_failed_help);

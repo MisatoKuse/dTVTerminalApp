@@ -123,6 +123,9 @@ public class WatchingVideoListActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.watching_video_list_main_layout);
 
         setTitleText(getString(R.string.str_watching_video_activity_title));

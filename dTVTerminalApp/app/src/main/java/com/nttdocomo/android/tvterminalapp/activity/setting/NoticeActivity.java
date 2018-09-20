@@ -33,6 +33,9 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.notice_main_layout);
 
         mNoticeWebView = findViewById(R.id.notice_main_webview);

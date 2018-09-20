@@ -503,11 +503,15 @@ public class BaseActivity extends FragmentActivity implements
      * @param text 設定する文字列
      */
     protected void setTitleText(final CharSequence text) {
-        if (this instanceof LaunchActivity || this instanceof StbConnectActivity
+        if (this instanceof LaunchActivity
+                || (this instanceof StbConnectActivity && text.equals(getString(R.string.str_app_title)))
                 || (this instanceof StbSelectActivity && text.equals(getString(R.string.str_app_title))
-                || this instanceof StbSelectErrorActivity || this instanceof PairingHelpActivity || this instanceof HomeActivity
-                || this instanceof DaccountInductionActivity || this instanceof DaccountResettingActivity
-                || this instanceof DaccountSettingHelpActivity)) {
+                || (this instanceof StbSelectErrorActivity && text.equals(getString(R.string.str_app_title)))
+                || (this instanceof PairingHelpActivity && text.equals(getString(R.string.str_app_title)))
+                || this instanceof HomeActivity
+                || this instanceof DaccountInductionActivity
+                || (this instanceof DaccountResettingActivity && text.equals(getString(R.string.str_app_title)))
+                || (this instanceof DaccountSettingHelpActivity && text.equals(getString(R.string.str_app_title))))) {
             if (mTitleImageView != null) {
                 //ヘッダーに「ドコモテレビターミナル」画像を表示する対応
                 mTitleTextView.setVisibility(View.GONE);
