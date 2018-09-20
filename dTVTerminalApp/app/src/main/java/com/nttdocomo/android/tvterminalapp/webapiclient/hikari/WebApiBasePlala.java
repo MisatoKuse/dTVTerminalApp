@@ -434,6 +434,7 @@ public class WebApiBasePlala {
     /**
      * 全ての通信を遮断する.
      */
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     synchronized void stopAllConnections() {
         DTVTLogger.start();
         if (mIsStopAllConnections) {
@@ -458,23 +459,27 @@ public class WebApiBasePlala {
         //全ての通信を止めることを宣言する
         mIsStopAllConnections = true;
 
-        //全てのコネクションにdisconnectを送る
-        Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
-        while (iterator.hasNext()) {
-            final HttpURLConnection stopConnection = iterator.next();
-            //findBugsは別クラスに分離せよと言うが、見通しが悪化するので対応しない。
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (stopConnection != null) {
-                        stopConnection.disconnect();
+        //ConcurrentModificationException 抑制のため synchronized 化
+        List<HttpURLConnection> urlConnections = mUrlConnections;
+        synchronized (urlConnections) {
+            //全てのコネクションにdisconnectを送る
+            Iterator<HttpURLConnection> iterator = urlConnections.iterator();
+            while (iterator.hasNext()) {
+                final HttpURLConnection stopConnection = iterator.next();
+                //findBugsは別クラスに分離せよと言うが、見通しが悪化するので対応しない。
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (stopConnection != null) {
+                            stopConnection.disconnect();
+                        }
                     }
-                }
-            });
-            thread.start();
+                });
+                thread.start();
 
-            //止めた物は消す
-            iterator.remove();
+                //止めた物は消す
+                iterator.remove();
+            }
         }
     }
 
