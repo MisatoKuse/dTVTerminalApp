@@ -784,10 +784,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //STB選択画面起動時にdアカウント認証画面を表示しないために、ここでdアカウントの処理を開始する
         //一度再認証オプション付けたらそれ以上付けない制御があるが、この場合必ず認証画面を出す.
         OttGetAuthSwitch.INSTANCE.setNowAuth(true);
-        setDaccountControl();
-        mOttGetComplete = false;
         //選択されたSTB番号を保持
         mSelectDevice = i;
+        setDaccountControl();
+        mOttGetComplete = false;
         if (mDlnaDmsItemList != null) {
             //IPアドレスを設定する
             mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
