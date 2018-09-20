@@ -33,6 +33,9 @@ public class SettingMenuFaqActivity extends BaseActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.setting_menu_item_main_view);
 
         mFaqWebView = findViewById(R.id.setting_menu_main_webview);

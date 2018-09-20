@@ -233,7 +233,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.home_main_layout);
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);

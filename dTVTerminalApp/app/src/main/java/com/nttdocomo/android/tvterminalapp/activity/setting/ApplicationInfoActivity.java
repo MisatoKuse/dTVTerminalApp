@@ -46,6 +46,9 @@ public class ApplicationInfoActivity extends BaseActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         DTVTLogger.start();
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.application_info_main_layout);
         //Headerの設定
         setTitleText(getString(R.string.main_setting_application_info_header));

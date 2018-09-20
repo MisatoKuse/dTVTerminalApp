@@ -119,6 +119,9 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         DTVTLogger.start();
         setContentView(R.layout.setting_main_layout);
 

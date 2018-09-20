@@ -40,6 +40,9 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         DTVTLogger.start();
         setContentView(R.layout.setting_quality_change);
 

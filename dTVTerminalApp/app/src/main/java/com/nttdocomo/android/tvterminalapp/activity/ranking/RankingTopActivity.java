@@ -115,6 +115,9 @@ public class RankingTopActivity extends BaseActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.ranking_top_main_layout);
 
         //Headerの設定

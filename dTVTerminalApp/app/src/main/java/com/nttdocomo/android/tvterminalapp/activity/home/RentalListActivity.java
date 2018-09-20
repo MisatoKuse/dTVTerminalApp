@@ -67,6 +67,9 @@ public class RentalListActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.rental_list_main_layout);
         mContentsList = new ArrayList<>();
 

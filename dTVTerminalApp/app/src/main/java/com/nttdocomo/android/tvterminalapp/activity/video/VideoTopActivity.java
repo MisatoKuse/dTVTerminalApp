@@ -77,6 +77,9 @@ public class VideoTopActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setContentView(R.layout.video_genre_main_layout);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);

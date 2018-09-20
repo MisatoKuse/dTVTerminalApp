@@ -91,7 +91,11 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
      */
     private void setContents() {
         DTVTLogger.start();
-        setTitleText(getString(R.string.str_app_title));
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            setTitleText(getString(R.string.str_app_title));
+        } else if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            setTitleText(getString(R.string.str_stb_paring_setting_title));
+        }
         enableHeaderBackIcon(false);
         setStatusBarColor(true);
         TextView connectResult = findViewById(R.id.connect_result_text);
