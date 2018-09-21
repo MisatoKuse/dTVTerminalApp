@@ -4,7 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -2529,12 +2529,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param packageName 中継アプリのパッケージ名
      * @return 中継アプリのパージョン情報
      */
-    @SuppressLint("NewApi")
+    @TargetApi(Build.VERSION_CODES.P)
+    @SuppressWarnings("deprecation")
     private long getVersionCode(final String packageName) {
         PackageManager packageManager = getPackageManager();
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.getLongVersionCode();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                return packageInfo.getLongVersionCode();
+            }
+            return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             DTVTLogger.debug(e);
         }
