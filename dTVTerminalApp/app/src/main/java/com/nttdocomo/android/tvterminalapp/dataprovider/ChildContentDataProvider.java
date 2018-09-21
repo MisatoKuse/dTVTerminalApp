@@ -5,31 +5,43 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChildContentListGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChildContentListGetWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 子コンテンツデータプロバイダー.
  */
-public class ChildContentDataProvider extends ClipKeyListDataProvider implements ChildContentListGetWebClient.JsonParserCallback {
+public class ChildContentDataProvider extends ClipKeyListDataProvider implements
+        ChildContentListGetWebClient.JsonParserCallback,
+        RentalVodListWebClient.RentalVodListJsonParserCallback,
+        DataBaseThread.DataBaseOperation {
 
     // declaration
     /**
@@ -58,7 +70,20 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     private int mPagerOffset = 0;
     /**子コンテンツ一覧全体の件数.*/
     private int mTotal = 0;
-
+    /** 購入済みチャンネルリスト取得.*/
+    private static final int RENTAL_VOD_SELECT = 1;
+    /** 購入済みチャンネルリスト更新.*/
+    private static final int RENTAL_VOD_UPDATE = 2;
+    /** レンタルVOD一覧取得WebClient.*/
+    private RentalVodListWebClient mRentalVodListWebClient = null;
+    /** 購入済みVODリスト情報を保持.*/
+    private PurchasedVodListResponse mPurchasedVodListResponse = null;
+    /** レスポンス終了フラグ.*/
+    boolean mRentalVodResponseEndFlag = false;
+    /** 購入情報取得フラグ.*/
+    private boolean mIsRental = false;
+    /** 購入情報.*/
+    private ArrayList<ActiveData> mActiveDatas;
     // endregion variable
 
     /**
@@ -70,13 +95,14 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         super(context);
         mCallback = (DataCallback) context;
         mWebClient = new ChildContentListGetWebClient(context);
+        mRentalVodListWebClient = new RentalVodListWebClient(context);
     }
 
     @Override
     public void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse
             ,final ErrorState errorState) {
         super.onVodClipKeyResult(clipKeyListResponse,errorState);
-        if (mChildContentListGetResponse != null) {
+        if (mChildContentListGetResponse != null && (!mIsRental || mRentalVodResponseEndFlag)) {
             sendData(mChildContentListGetResponse);
         }
     }
@@ -95,8 +121,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             if (response.getPager().getTotal() >= 0) {
                 mTotal = response.getPager().getTotal();
             }
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
+            if ((!mRequiredClipKeyList
+                    || mResponseEndFlag)
+                    && (!mIsRental || mRentalVodResponseEndFlag)) {
                 sendData(response);
             } else { // clipキー一覧取得が終わってない場合は待つ
                 mChildContentListGetResponse = response;
@@ -104,13 +131,66 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         }
     }
 
+
+    @Override
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
+        mPurchasedVodListResponse = purchasedVodListResponse;
+        if (purchasedVodListResponse != null) {
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_UPDATE);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
+                DTVTLogger.debug(e);
+            }
+            mActiveDatas = mPurchasedVodListResponse.getVodActiveData();
+        }
+        executeRentalVodListCallback();
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
+        List<Map<String, String>> resultSet = null;
+        switch (operationId) {
+            case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
+                RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
+                rentalListInsertDataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+                break;
+            case RENTAL_VOD_SELECT: //DBから購入済みVODデータを取得して返却する
+                RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
+                List<Map<String, String>> purchasedVodActiveList = rentalListDataManager.selectRentalActiveListData();
+                if (purchasedVodActiveList != null && purchasedVodActiveList.size() > 0) {
+                    mActiveDatas = new ArrayList<>();
+                    for (int i = 0; i < purchasedVodActiveList.size(); i++) {
+                        Map<String, String> hashMap = purchasedVodActiveList.get(i);
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
+                        ActiveData activeDate = new ActiveData();
+                        activeDate.setLicenseId(active_list_license_id);
+                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
+                        mActiveDatas.add(activeDate);
+                    }
+                }
+                executeRentalVodListCallback();
+                break;
+            default:
+                break;
+        }
+        return resultSet;
+    }
+
     /**
      * 子コンテンツ一覧取得.
      * @param crid コンテンツ識別子
      * @param offset 　取得位置
      * @param dispType 表示タイプ
+     * @param isRental 購入情報取得フラグ
      */
-    public void getChildContentList(final String crid, final int offset, final String dispType) {
+    public void getChildContentList(final String crid, final int offset, final String dispType, final boolean isRental) {
+        mIsRental = isRental;
         mPagerOffset = offset;
         mChildContentListGetResponse = null;
         if (!mIsCancel) {
@@ -129,8 +209,49 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             if (!result) {
                 mCallback.childContentListCallback(null);
             }
+            if (mIsRental) {
+                getVodListData();
+            }
         } else {
             mCallback.childContentListCallback(null);
+        }
+    }
+
+    /**
+     * 購入済みVOD一覧取得.
+     */
+    public void getVodListData() {
+        mRentalVodResponseEndFlag = false;
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_SELECT);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
+                executeRentalVodListCallback();
+                DTVTLogger.debug(e);
+            }
+        } else {
+            if (!mIsCancel) {
+                mRentalVodListWebClient.getRentalVodListApi(this);
+            } else {
+                executeRentalVodListCallback();
+                DTVTLogger.error("ChildContentDataProvider is stopping connect");
+            }
+        }
+    }
+
+    /**
+     * 購入済みVOD一覧返却用メソッド.
+     */
+    private void executeRentalVodListCallback() {
+        mRentalVodResponseEndFlag = true;
+        if (mChildContentListGetResponse != null
+                && (!mRequiredClipKeyList || mResponseEndFlag)) {
+            sendData(mChildContentListGetResponse);
         }
     }
 
@@ -144,6 +265,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         if (mWebClient != null) {
             mWebClient.stopConnection();
         }
+        if (mRentalVodListWebClient != null) {
+            mRentalVodListWebClient.stopConnection();
+        }
     }
 
     /**
@@ -155,6 +279,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         enableConnection();
         if (mWebClient != null) {
             mWebClient.enableConnection();
+        }
+        if (mRentalVodListWebClient != null) {
+            mRentalVodListWebClient.enableConnection();
         }
     }
     /**
@@ -178,8 +305,6 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
 
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
-
-        UserState userState = UserInfoUtils.getUserState(mContext);
         for (VodMetaFullData vodMetaFullData : metaFullData) {
             ContentsData data = new ContentsData();
             String title = vodMetaFullData.getTitle();
@@ -208,7 +333,13 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setEstFlg(vodMetaFullData.getEstFlag());
             data.setChsVod(vodMetaFullData.getmChsvod());
             data.setAvailStartDate(vodMetaFullData.getAvail_start_date());
-            data.setAvailEndDate(vodMetaFullData.getAvail_end_date());
+            if (mIsRental) {
+                // activeDataList から視聴可能期限を取り出し、配信期限(AvailEndDate)として使用する(DREM-2275の仕様)
+                long activeEndDate = ContentUtils.getRentalVodValidEndDate(vodMetaFullData, mActiveDatas);
+                data.setAvailEndDate(activeEndDate);
+            } else {
+                data.setAvailEndDate(vodMetaFullData.getAvail_end_date());
+            }
             data.setVodStartDate(vodMetaFullData.getmVod_start_date());
             data.setVodEndDate(vodMetaFullData.getmVod_end_date());
 

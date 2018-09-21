@@ -51,9 +51,11 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.PremiumVideoActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
@@ -2400,6 +2402,10 @@ public class BaseActivity extends FragmentActivity implements
         intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+        if (this instanceof RentalListActivity
+            || this instanceof PremiumVideoActivity) {
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_IS_RENTAL, true);
+        }
         startActivity(intent);
     }
 

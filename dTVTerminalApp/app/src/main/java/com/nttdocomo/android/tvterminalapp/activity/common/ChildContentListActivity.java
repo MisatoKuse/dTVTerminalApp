@@ -47,82 +47,49 @@ public class ChildContentListActivity extends BaseActivity implements
         AbsListView.OnScrollListener,
         AbsListView.OnTouchListener,
         ChildContentDataProvider.DataCallback {
-     /** 子コンテンツ一覧遷移時リクエストコード.*/
+    /** 子コンテンツ一覧遷移時リクエストコード.*/
     private static final int REQUEST_CODE_CHILD_CONTENT_LIST = 1000;
     /** 戻る際にアクティビティを終了するコード.*/
     private static final int RESULT_CODE_FINISH_ACTIVITY = REQUEST_CODE_CHILD_CONTENT_LIST + 1;
     // region variable
     // view
-    /**
-     * ランキングリストを表示するリスト.
-     */
+    /** ランキングリストを表示するリスト.*/
     private ListView mListView;
-    /**
-     * ProgressBar.
-     */
+    /** ProgressBar.*/
     private RelativeLayout mRelativeLayout = null;
-    /**
-     * リスト0件メッセージ.
-     */
+    /** リスト0件メッセージ.*/
     private TextView mNoDataMessage;
-    /**
-     * 検索プログレスバー.
-     */
+    /** 検索プログレスバー.*/
     private View mLoadMoreView;
-
-    /**
-     * data.
-     */
+    /** data.*/
     public static final String INTENT_KEY_CRID = "crid",
             INTENT_KEY_TITLE = "title",
-            INTENT_KEY_DISP_TYPE = "dispType";
-
-    /**
-     * ChildContentDataProvider.
-     */
+            INTENT_KEY_DISP_TYPE = "dispType",
+            INTENT_KEY_IS_RENTAL = "isRental";
+    /** ChildContentDataProvider. */
     private ChildContentDataProvider mChildContentDataProvider;
-    /**
-     * リスト表示用アダプタ.
-     */
+    /** リスト表示用アダプタ.*/
     private ContentsAdapter mContentsAdapter;
-
-    /**
-     * コンテンツデータ一覧のリスト.
-     */
+    /** コンテンツデータ一覧のリスト.*/
     private List<ContentsData> mContentsList;
-    /**
-     * コンテンツ詳細表示フラグ.
-     */
+    /** コンテンツ詳細表示フラグ.*/
     private boolean mContentsDetailDisplay = false;
-    /**
-     * mCrid.
-     */
+    /** mCrid.*/
     private String mCrid;
-    /**
-     * タイプ.
-     */
+    /** タイプ.*/
     private String mDispType;
-
-    /**
-     * データの追加読み込み状態の識別フラグ.
-     */
+    /** 購入情報取得フラグ.*/
+    private boolean mIsRental = false;
+    /** データの追加読み込み状態の識別フラグ.*/
     private boolean mIsCommunicating = false;
-    /**
-     * スクロール位置の記録.
-     */
+    /** スクロール位置の記録.*/
     private int mFirstVisibleItem = 0;
-    /**
-     * 最後のスクロール方向が上ならばtrue.
-     */
+    /** 最後のスクロール方向が上ならばtrue.*/
     private boolean mLastScrollUp = false;
-    /**
-     * 指を置いたY座標.
-     */
+    /** 指を置いたY座標.*/
     private float mStartY = 0;
-
-    /** ロード終了. */
+    /** ロード終了.*/
     private boolean mIsEndPage = false;
-
     // endregion variable
 
     // region Activity LifeCycle
@@ -139,6 +106,7 @@ public class ChildContentListActivity extends BaseActivity implements
         mCrid = intent.getStringExtra(INTENT_KEY_CRID);
         String title = intent.getStringExtra(INTENT_KEY_TITLE);
         mDispType = intent.getStringExtra(INTENT_KEY_DISP_TYPE);
+        mIsRental = intent.getBooleanExtra(INTENT_KEY_IS_RENTAL, false);
 
         DTVTLogger.debug("mCrid = " + mCrid + ", title = " + title);
         setTitleText(title);
@@ -208,13 +176,13 @@ public class ChildContentListActivity extends BaseActivity implements
                 //初回取得中に通信が停止された場合、アダプタは存在するがデータは0件という状態になるため、
                 //その場合にはデータの再取得を行う.
                 showProgressBar(true);
-                mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
+                mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType, mIsRental);
             } else {
                 mContentsAdapter.notifyDataSetChanged();
             }
         } else {
             showProgressBar(true);
-            mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
+            mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType, mIsRental);
         }
     }
 
@@ -251,6 +219,7 @@ public class ChildContentListActivity extends BaseActivity implements
                 intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
                 intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
                 intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+                intent.putExtra(ChildContentListActivity.INTENT_KEY_IS_RENTAL, mIsRental);
                 intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
                 startActivityForResult(intent, REQUEST_CODE_CHILD_CONTENT_LIST);
             }
@@ -304,7 +273,7 @@ public class ChildContentListActivity extends BaseActivity implements
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mChildContentDataProvider.getChildContentList(mCrid, mChildContentDataProvider.getPagerOffset(), mDispType);
+                        mChildContentDataProvider.getChildContentList(mCrid, mChildContentDataProvider.getPagerOffset(), mDispType, mIsRental);
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
