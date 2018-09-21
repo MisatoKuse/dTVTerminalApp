@@ -187,16 +187,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 }
             }
             createAllTable(sqLiteDatabase);
-
-            //Upgrade時にUserInfoデータを再取得する
-            UserInfoDataProvider infoDataProvider = new UserInfoDataProvider(mContext);
-            infoDataProvider.getUserInfo();
-            //Upgrade時にHome画面用データを再取得する
-            HomeDataProvider homeDataProvider = new HomeDataProvider(mContext);
-            homeDataProvider.getHomeData();
-            //Upgrade時にWeeklyRanking画面用データを再取得する
-            RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(mContext);
-            rankingTopDataProvider.getWeeklyRankingData("");
         }
         DTVTLogger.end();
     }
