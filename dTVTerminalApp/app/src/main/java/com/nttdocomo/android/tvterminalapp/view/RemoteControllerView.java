@@ -279,7 +279,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 if (mMovedY > mScrollHeight / 4) {
                     mScroller.startScroll(0, getScrollY(), 0, (mScrollHeight - getScrollY()));
                     invalidate();
-                    setHeaderContent(false);
+                    if (!mIsTop) {
+                        setHeaderContent(false);
+                    }
                 } else {
                     //1/4に満たしていない場合、元の位置に戻る
                     //表示するコンテンツを設定する
