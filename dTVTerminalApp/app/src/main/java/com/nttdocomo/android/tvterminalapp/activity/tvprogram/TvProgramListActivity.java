@@ -329,12 +329,20 @@ public class TvProgramListActivity extends BaseActivity implements
         if (mTabIndex == mProgramTabNames.length - 1) {
             gc.add(Calendar.DAY_OF_MONTH, -EXPIRE_DATE);
         }
+        gc.set(Calendar.HOUR_OF_DAY, gc.getMinimum(Calendar.HOUR_OF_DAY));
+        gc.set(Calendar.MINUTE, gc.getMinimum(Calendar.MINUTE));
+        gc.set(Calendar.SECOND, gc.getMinimum(Calendar.SECOND));
+        gc.set(Calendar.MILLISECOND, gc.getMinimum(Calendar.MILLISECOND));
         datePicker.setMinDate(gc.getTimeInMillis());
         if (mTabIndex == mProgramTabNames.length - 1) {
             gc.add(Calendar.DAY_OF_MONTH, +(EXPIRE_DATE * 2));
         } else {
             gc.add(Calendar.DAY_OF_MONTH, +EXPIRE_DATE);
         }
+        gc.set(Calendar.HOUR_OF_DAY, gc.getMaximum(Calendar.HOUR_OF_DAY));
+        gc.set(Calendar.MINUTE, gc.getMaximum(Calendar.MINUTE));
+        gc.set(Calendar.SECOND, gc.getMaximum(Calendar.SECOND));
+        gc.set(Calendar.MILLISECOND, gc.getMaximum(Calendar.MILLISECOND));
         datePicker.setMaxDate(gc.getTimeInMillis());
         datePickerDialog.show();
     }

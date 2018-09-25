@@ -506,14 +506,14 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void setTitleText(final CharSequence text) {
         if (this instanceof LaunchActivity
-                || (this instanceof StbConnectActivity && text.equals(getString(R.string.str_app_title)))
-                || (this instanceof StbSelectActivity && text.equals(getString(R.string.str_app_title))
-                || (this instanceof StbSelectErrorActivity && text.equals(getString(R.string.str_app_title)))
-                || (this instanceof PairingHelpActivity && text.equals(getString(R.string.str_app_title)))
+                || (this instanceof StbConnectActivity && getString(R.string.str_app_title).equals(text))
+                || (this instanceof StbSelectActivity && getString(R.string.str_app_title).equals(text)
+                || (this instanceof StbSelectErrorActivity && getString(R.string.str_app_title).equals(text))
+                || (this instanceof PairingHelpActivity && getString(R.string.str_app_title).equals(text))
                 || this instanceof HomeActivity
                 || this instanceof DaccountInductionActivity
-                || (this instanceof DaccountResettingActivity && text.equals(getString(R.string.str_app_title)))
-                || (this instanceof DaccountSettingHelpActivity && text.equals(getString(R.string.str_app_title))))) {
+                || (this instanceof DaccountResettingActivity && getString(R.string.str_app_title).equals(text))
+                || (this instanceof DaccountSettingHelpActivity && getString(R.string.str_app_title).equals(text)))) {
             if (mTitleImageView != null) {
                 //ヘッダーに「ドコモテレビターミナル」画像を表示する対応
                 mTitleTextView.setVisibility(View.GONE);
