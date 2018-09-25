@@ -2402,10 +2402,7 @@ public class BaseActivity extends FragmentActivity implements
         intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
-        if (this instanceof RentalListActivity
-            || this instanceof PremiumVideoActivity) {
-            intent.putExtra(ChildContentListActivity.INTENT_KEY_IS_RENTAL, true);
-        }
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_IS_RENTAL, contentsData.isRental());
         startActivity(intent);
     }
 

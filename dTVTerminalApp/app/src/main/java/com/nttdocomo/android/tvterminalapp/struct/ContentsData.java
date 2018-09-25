@@ -145,6 +145,8 @@ public class ContentsData {
     private String mDescription2 = null;
     /**description3.*/
     private String mDescription3 = null;
+    /** 購入情報取得フラグ.*/
+    private boolean mIsRental = false;
 
     /**
      * 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)取得.
@@ -1157,5 +1159,21 @@ public class ContentsData {
             }
         } while (false);
         return result;
+    }
+
+    /**
+     * 購入情報取得フラグ.
+     * @return 購入情報取得フラグ
+     */
+    public boolean isRental() {
+        return mIsRental;
+    }
+
+    /**
+     * 購入情報取得フラグ.
+     * @param isRental 購入情報取得フラグ
+     */
+    public void setIsRental(final boolean isRental) {
+        this.mIsRental = isRental;
     }
 }

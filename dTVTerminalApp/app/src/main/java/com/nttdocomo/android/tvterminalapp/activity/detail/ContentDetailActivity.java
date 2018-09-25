@@ -3129,7 +3129,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         DtvContentsDetailFragment detailFragment = getDetailFragment();
         if (mEndDate != 0L && mEndDate < mVodEndDate && (mVodEndDateText == null || mVodEndDateText.isEmpty())) {
-            String date = DateUtils.formatUntilMinuteTimeString(mEndDate);
+            String date = DateUtils.formatEpochToDateString(mEndDate);
             String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
             DTVTLogger.debug("display limit date:---" + untilDate);
 
