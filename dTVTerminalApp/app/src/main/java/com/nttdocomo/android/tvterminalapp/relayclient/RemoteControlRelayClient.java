@@ -372,9 +372,7 @@ public class RemoteControlRelayClient {
      *  ひかりTVのVODの場合にサービスアプリ連携を行うURLスキーム
      */
     private static final String RELAY_COMMAND_ARGUMENT_URL_SCHEME_HIKARITV =
-            "hikaritv-ford://com.nttdocomo.hikaritv_docomo:Service/ExtraKeyListenerService?"
-                    + "reason=launchIPTVContent&type=hikaritv"
-                    + "&purchaseId=%s&cid=%s&crid=%s&startResume=1"; // licenseId, cid, crid
+            "hikaritv-ford://com.nttdocomo.hikaritv_docomo:Service/ExtraKeyListenerService?reason=launchIPTVContent&type=hikaritv&purchaseId=%s&cid=%s&crid=%s&startResume=1"; // licenseId, cid, crid
 
     /**result.*/
     private static final String RELAY_RESULT = "RESULT";
