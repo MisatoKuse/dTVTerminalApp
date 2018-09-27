@@ -48,6 +48,7 @@
     <dimen name="global_menu_list_item_image_icon_height">10dp</dimen>
     <dimen name="global_menu_account_status_text_width">185dp</dimen>
     <dimen name="global_menu_account_status_text_size">14dp</dimen>
+    <dimen name="global_menu_account_status_text_left_margin">8dp</dimen>
 
     <!--rating共通-->
     <dimen name="rating_star_numbers_width">24dp</dimen>
