@@ -83,6 +83,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:layout_toEndOf="@id/account_status_image"
+                android:layout_marginStart="@dimen/global_menu_account_status_text_left_margin"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textSize="@dimen/global_menu_account_status_text_size"
@@ -92,7 +93,7 @@
                 android:id="@+id/account_status_icon_close"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@mipmap/header_material_icon_close"/>
+                android:src="@mipmap/icon_normal_close"/>
 
         </LinearLayout>
 
