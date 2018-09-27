@@ -225,10 +225,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          */
         TAB_D_ANIMATE,
         /**
-         * DAZN.
-         */
-        TAB_DAZN,
-        /**
          * デフォルト.
          */
         TAB_DEFAULT,
@@ -474,7 +470,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_VIDEO:
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
-            case TAB_DAZN:
             case TAB_D_TV:
                 textMargin = TITLE_MARGIN_TOP20;
                 clipMargin = CLIP_MARGIN_TOP35;
@@ -714,7 +709,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
-            case TAB_DAZN:
             case TAB_D_TV:
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
@@ -816,7 +810,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TAB_D_TV:
                 case TAB_D_CHANNEL:
                 case TAB_D_ANIMATE:
-                case TAB_DAZN:
                 case TAB_DEFAULT:
                     String date = "";
                     if (DataBaseUtils.isNumber(listContentInfo.getServiceId())) {
@@ -1035,7 +1028,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
                 break;
             case TAB_D_ANIMATE:
-            case TAB_DAZN:
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;
@@ -1159,7 +1151,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             case TAB_D_ANIMATE:
-            case TAB_DAZN:
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;

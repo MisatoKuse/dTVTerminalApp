@@ -298,12 +298,6 @@ public class DtvContentsDetailFragment extends Fragment {
         }
         //サービスアイコン
         int serviceIcon = ContentUtils.getContentsServiceName(mOtherContentsDetailData.getServiceId());
-        if (mOtherContentsDetailData.getServiceId() == ContentUtils.DAZN_CONTENTS_SERVICE_ID) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    (int) getResources().getDimension(R.dimen.contents_detail_service_icon_label_dazn_width_height),
-                    (int) getResources().getDimension(R.dimen.contents_detail_service_icon_label_dazn_width_height));
-            mImgServiceIcon.setLayoutParams(layoutParams);
-        }
         mImgServiceIcon.setImageResource(serviceIcon);
         String dtv = mOtherContentsDetailData.getDtv();
         //dtvの場合

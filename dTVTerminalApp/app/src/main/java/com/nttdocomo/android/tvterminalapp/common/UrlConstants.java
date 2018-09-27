@@ -60,16 +60,6 @@ public class UrlConstants {
         public static final String D_ANIME_SONG_STORE_START_URL = "danimestore://openWebView?url=https://anime.dmkt-sp.jp/animestore/mci?workId=";
 
         /**
-         * DAZNアプリGoogle Play ストア‎URL.
-         */
-        public static final String DAZN_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.dazn";
-
-        /**
-         * DAZN起動用URL.
-         */
-        public static final String DAZN_START_URL = "https://open.dazn.com/playVideo?eventId=";
-
-        /**
          * dTVチャンネル起動用URL(テレビ).
          */
         public static final String DTVCHANNEL_TELEVISION_START_URL = "dch://android.dch.nttdocomo.com/viewing?chno=";

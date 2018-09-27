@@ -63,8 +63,6 @@ public class ContentUtils {
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     /**DTVチャンネルコンテンツサービスID.*/
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
-    /**DAZNコンテンツサービスID.*/
-    public static final int DAZN_CONTENTS_SERVICE_ID = 35;
     /**DTVひかりコンテンツサービスID.*/
     public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     /**レコメンド情報キー.*/
@@ -168,8 +166,6 @@ public class ContentUtils {
         PURE_DTV_CHANNEL_RELATION,
         /**dアニメストア.*/
         D_ANIME_STORE,
-        /**DAZN.*/
-        DAZN,
         /**その他.*/
         OTHER
     }
@@ -263,12 +259,6 @@ public class ContentUtils {
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
                     cType = ContentsType.VOD;
-                }
-                break;
-            //DAZN
-            case DAZN_CONTENTS_SERVICE_ID:
-                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
-                    cType = ContentsType.TV;
                 }
                 break;
             //dTVチャンネル
@@ -730,20 +720,6 @@ public class ContentUtils {
                         case RECOMMEND_CATEGORY_ID_ONE:
                             //dアニメストア
                             return ContentsType.D_ANIME_STORE;
-                        default:
-                            return ContentsType.OTHER;
-                    }
-                }
-                //serviceId = 35
-            case DAZN_CONTENTS_SERVICE_ID:
-                if (categoryId == null) {
-                    return ContentsType.OTHER;
-                } else {
-                    switch (categoryId) {
-                        //categoryId = 01
-                        case RECOMMEND_CATEGORY_ID_ONE:
-                            //DAZN
-                            return ContentsType.DAZN;
                         default:
                             return ContentsType.OTHER;
                     }
@@ -1255,8 +1231,6 @@ public class ContentUtils {
                 return R.mipmap.label_service_dch;
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 return R.mipmap.label_service_danime;
-            case DAZN_CONTENTS_SERVICE_ID:
-                return R.mipmap.label_service_dazn;
         }
         return R.mipmap.label_service_hikari;
     }
@@ -1272,7 +1246,6 @@ public class ContentUtils {
             case DTV_CONTENTS_SERVICE_ID:
             case DTV_CHANNEL_CONTENTS_SERVICE_ID:
             case D_ANIMATION_CONTENTS_SERVICE_ID:
-            case DAZN_CONTENTS_SERVICE_ID:
                 return true;
             default:
                 return false;

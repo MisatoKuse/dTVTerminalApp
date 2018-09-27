@@ -27,7 +27,6 @@
 
     <!-- サービス名アイコン -->
     <LinearLayout
-        android:id="@+id/home_main_recyclerview_item_ll_service_icon"
         android:layout_marginTop="@dimen/home_contents_service_margin"
         android:layout_marginEnd="@dimen/home_contents_service_margin"
         android:layout_width="wrap_content"
