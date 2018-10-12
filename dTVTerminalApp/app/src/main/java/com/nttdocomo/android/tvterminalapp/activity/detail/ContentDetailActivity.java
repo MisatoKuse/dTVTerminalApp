@@ -2295,7 +2295,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * 機能：dTVチャンネルAPP起動（検レコサーバ）.
+     * 機能：dTVチャンネルAPP起動（ぷららサーバ）.
      *
      * @param detailData ぷららサーバメタデータ
      */
@@ -2314,19 +2314,41 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     } else {
                         if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(detailData.getmTv_service())) {
                             boolean execResult = true;
+                            boolean isVodContent = true;
+                            String contentType = detailData.getmContent_type();
 
-                            //「contents_type」が「0」または未設定
-                            if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(detailData.getmContent_type())
-                                    || null == detailData.getmContent_type()) {
+                            //「contents_type」が未設定:番組
+                            if (contentType == null) {
+                                isVodContent = false;
+                            } else switch (contentType) {
+                                case ContentUtils.CONTENT_TYPE_FLAG_ONE: //「contents_type」が「1」:見逃しVOD or 番組
+                                case ContentUtils.CONTENT_TYPE_FLAG_TWO: //「contents_type」が「2」:見逃しVOD or 番組
+                                    long vodStartDate = detailData.getmVod_start_date();
+                                    long now = DateUtils.getNowTimeFormatEpoch();
+
+                                    if (vodStartDate <= now) {
+                                        break;
+                                    }
+
+                                    isVodContent = false;
+                                    break;
+                                case ContentUtils.CONTENT_TYPE_FLAG_THREE: // 「contents_type」が「3」:関連VOD
+                                    // isVodContentの初期値が「true」のため、break
+                                    break;
+                                default: //「contents_type」が「0」:番組
+                                    isVodContent = false;
+                                    break;
+                            }
+
+                            // VODコンテンツの場合、dTVチャンネルアプリの詳細画面を表示する
+                            if (isVodContent) {
+                                execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getCrid());
+                                DTVTLogger.debug("crid :----" + detailData.getCrid());
+
+                            } else { // 番組コンテンツの場合、dTVチャンネルアプリのTOP画面を表示する
                                 DTVTLogger.debug("contentsType :----" + detailData.getmContent_type());
                                 execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getmService_id());
                                 DTVTLogger.debug("chno :----" + detailData.getmService_id());
-                                //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
-                            } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(detailData.getmContent_type())
-                                    || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(detailData.getmContent_type())
-                                    || ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(detailData.getmContent_type())) {
-                                execResult = startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getCrid());
-                                DTVTLogger.debug("crid :----" + detailData.getCrid());
                             }
 
                             //実行時に実行に失敗していた場合は、メッセージを表示する
