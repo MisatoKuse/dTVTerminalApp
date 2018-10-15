@@ -366,6 +366,10 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_ARGUMENT_ARG4 = "ARG4";
     /**crid_hikaritv_arg4.*/
     private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
+    /** ひかりTV・バージョンコード.*/
+    private static final String RELAY_COMMAND_HIKARITV_VERSION_CODE = "HIKARITV_VERSION_CODE";
+    /** ひかりTV・バージョンコード ※ h4d アプリの有効バージョンが変更となった場合はこの定数を編集すること .*/
+    private static final String HIKARITV_VALID_VERSION = "10502004";
     /**ひかりTVの番組の chno を SERVICE_REF への変換.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF = "arib://7780.%04x.%04x"; // ひかりTVの番組の chno を SERVICE_REF への変換
     /** ひかりTV for docomo URLスキーム.
@@ -1442,6 +1446,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_HIKARITV_VERSION_CODE, HIKARITV_VALID_VERSION);
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -1520,6 +1525,7 @@ public class RemoteControlRelayClient {
      * @param args                可変長
      * @return アプリ起動要求メッセージ（JSON形式）
      */
+    @SuppressWarnings("OverlyLongMethod")
     private String setTitleDetailHikariTvRequest(final H4D_SERVICE_CATEGORY_TYPES serviceCategoryType,
                                                  final String userId, final String... args) {
 
@@ -1535,6 +1541,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID_HIKARITV, STB_APPLICATION_HIKARITV);
             requestJson.put(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV, serviceCategoryType);
+            requestJson.put(RELAY_COMMAND_HIKARITV_VERSION_CODE, HIKARITV_VALID_VERSION);
             switch (serviceCategoryType) {
                 case H4D_CATEGORY_TERRESTRIAL_DIGITAL: // ひかりTVの番組（地デジ）
                 case H4D_CATEGORY_SATELLITE_BS: // ひかりTVの番組（BS）
