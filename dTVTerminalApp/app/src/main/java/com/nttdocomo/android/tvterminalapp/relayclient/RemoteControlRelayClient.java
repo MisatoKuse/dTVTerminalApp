@@ -407,9 +407,9 @@ public class RemoteControlRelayClient {
     /**ひかりTV内VOD(dTV含む)のシリーズ.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTV_SVOD = "H4D_CATEGORY_DTV_SVOD"; // ひかりTV内VOD(dTV含む)のシリーズ
     /**dTVTアプリバージョンコード（Android, iOSで共通）.*/
-    private static final int DTVT_APPLICATION_VERSION_CODE = 1;
+    private static final int DTVT_APPLICATION_VERSION_CODE = 2;
     /**STBのバージョンコード β版、プレリリース版... と 1つずつ上がる.*/
-    private static final int STB_RELAY_SERVICE_VERSION_CODE = 3;
+    private static final int STB_RELAY_SERVICE_VERSION_CODE = 14;
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     /**keyevent.*/
     private static final String RELAY_KEYEVENT = "KEYEVENT";
