@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -63,10 +66,22 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     protected void onResume() {
         super.onResume();
         DlnaManager.shared().StartDmp();
-        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed));
+        if (mIsFromBgFlg) {
+            String screenName;
+            if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                screenName = getString(R.string.google_analytics_screen_name_paring_completed);
+            } else {
+                screenName = getString(R.string.google_analytics_screen_name_setting_paring_completed);
+            }
+            super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(StbConnectActivity.this));
         } else {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed));
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, getString(R.string.google_analytics_custom_dimension_pairing_ok));
+            if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed), customDimensions);
+            } else {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed), customDimensions);
+            }
         }
     }
 
@@ -124,6 +139,14 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
              final List<UserInfoList> userList, final boolean isUserContract) {
         //契約情報確認、契約情報再取得不要
         checkContractInfo(false);
+        String contractType = ContentUtils.getContractType(StbConnectActivity.this);
+        if (!TextUtils.isEmpty(contractType)) {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
+            sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+                    getString(R.string.google_analytics_category_action_remote_contract_get_success),
+                    null, customDimensions);
+        }
     }
 
     /**

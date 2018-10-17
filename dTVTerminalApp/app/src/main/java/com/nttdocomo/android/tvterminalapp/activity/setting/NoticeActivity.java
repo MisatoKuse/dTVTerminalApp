@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * お知らせ画面.
@@ -62,7 +63,8 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_news));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_news),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(NoticeActivity.this) : null);
     }
 
     @Override

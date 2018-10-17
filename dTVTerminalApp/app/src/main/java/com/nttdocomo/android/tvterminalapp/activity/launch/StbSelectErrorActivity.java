@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
@@ -44,7 +45,8 @@ public class StbSelectErrorActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_fail));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_fail),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(StbSelectErrorActivity.this) : null);
     }
 
     /**

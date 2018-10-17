@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * ドコモテレビターミナルにdアカウントを登録するには 画面.
@@ -64,7 +65,8 @@ public class DaccountSettingHelpActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_login_help));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_login_help),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(DaccountSettingHelpActivity.this) : null);
     }
 
     @Override

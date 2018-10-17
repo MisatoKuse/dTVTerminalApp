@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -146,7 +147,14 @@ public class RankingTopActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_ranking));
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_ranking),
+                    ContentUtils.getParingAndLoginCustomDimensions(RankingTopActivity.this));
+        } else {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_ranking), customDimensions);
+        }
     }
 
     /**

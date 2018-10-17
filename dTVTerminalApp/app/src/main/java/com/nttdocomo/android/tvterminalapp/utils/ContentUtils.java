@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
 
@@ -111,6 +112,26 @@ public class ContentUtils {
     private static final String IS_BV_FLAG = "1";
     /** disp_type(WIZARD).*/
     public static final String WIZARD = "wizard";
+    // region Google アナリティクス カスタム ディメンション
+    /** 契約種別.*/
+    public static final int CUSTOMDIMENSION_CONTRACT = 1;
+    /** ペアリング.*/
+    public static final int CUSTOMDIMENSION_PAIRING = 2;
+    /** ログイン.*/
+    public static final int CUSTOMDIMENSION_LOGIN = 3;
+    /** サービス.*/
+    public static final int CUSTOMDIMENSION_SERVICE = 4;
+    /** コンテンツ種別1.*/
+    public static final int CUSTOMDIMENSION_CONTENTSTYPE1 = 5;
+    /** コンテンツ種別2.*/
+    public static final int CUSTOMDIMENSION_CONTENTSTYPE2 = 6;
+    /** コンテンツ名.*/
+    public static final int CUSTOMDIMENSION_CONTENTNAME = 7;
+    /** 検索キーワード.*/
+    public static final int CUSTOMDIMENSION_KEYWORD = 8;
+    /** ジャンル.*/
+    public static final int CUSTOMDIMENSION_GENRE = 10;
+    //endregion
 
     /**
      * コンテンツタイプ.
@@ -168,6 +189,18 @@ public class ContentUtils {
         D_ANIME_STORE,
         /**その他.*/
         OTHER
+    }
+
+    /**
+     * コンテンツ種別(ひかり).
+     */
+    public enum HikariType {
+        /**ひかりTV for docomo.*/
+        H4D,
+        /**ひかりTV内dTVチャンネル.*/
+        HIKARITV_IN_DTV_CH,
+        /**ひかりTV内dTV.*/
+        HIKARITV_IN_DTV,
     }
 
     /**
@@ -1250,6 +1283,194 @@ public class ContentUtils {
             default:
                 return false;
         }
+    }
+
+    /**
+     * 他サービススクリーム名取得.
+     *
+     * @param context コンテキスト
+     * @param id サービスID
+     * @return 他サービススクリーム名
+     */
+    public static String getOtherServiceScreenName(final Context context, final int id) {
+        String screenName = null;
+        switch (id) {
+            case DTV_CONTENTS_SERVICE_ID:
+                screenName = context.getString(R.string.google_analytics_screen_name_content_detail_other_dtv);
+                break;
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                screenName = context.getString(R.string.google_analytics_screen_name_content_detail_other_dtv_ch);
+                break;
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
+                screenName = context.getString(R.string.google_analytics_screen_name_content_detail_other_danime);
+                break;
+            default:
+                break;
+        }
+        return screenName;
+    }
+
+    /**
+     * 他サービスのサービス名取得.
+     *
+     * @param context コンテキスト
+     * @param id サービスID
+     * @return 他サービスのサービス名
+     */
+    public static String getServiceName(final Context context, final int id) {
+        String serviceName = null;
+        switch (id) {
+            case DTV_CONTENTS_SERVICE_ID:
+                serviceName = context.getString(R.string.google_analytics_custom_dimension_service_dtv);
+                break;
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                serviceName = context.getString(R.string.google_analytics_custom_dimension_service_dtv_ch);
+                break;
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
+                serviceName = context.getString(R.string.google_analytics_custom_dimension_service_danime);
+                break;
+            default:
+                break;
+        }
+        return serviceName;
+    }
+
+    /**
+     * 他サービスのコンテンツ種別1名取得.
+     *
+     * @param context コンテキスト
+     * @param id サービスID
+     * @return 他サービスのコンテンツ種別1名名
+     */
+    public static String getContentsType1(final Context context, final int id) {
+        String contentsType1 = null;
+        switch (id) {
+            case DTV_CONTENTS_SERVICE_ID:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
+                break;
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
+                break;
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
+                break;
+            default:
+                break;
+        }
+        return contentsType1;
+    }
+
+    /**
+     * ひかりのコンテンツ種別1名取得.
+     *
+     * @param context コンテキスト
+     * @param hikariType ひかりタイプ
+     * @return ひかりのコンテンツ種別1名
+     */
+    public static String getContentsType1(final Context context, final HikariType hikariType) {
+        String contentsType1 = null;
+        switch (hikariType) {
+            case H4D:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
+                break;
+            case HIKARITV_IN_DTV:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_hikari_dtv);
+                break;
+            case HIKARITV_IN_DTV_CH:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_hikari_dtv_ch);
+                break;
+            default:
+                break;
+        }
+        return contentsType1;
+    }
+
+    /**
+     * ひかりの契約種別名取得.
+     *
+     * @param context コンテキスト
+     * @return 契約種別名
+     */
+    public static String getContractType(final Context context) {
+        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(context));
+        if (TextUtils.isEmpty(contractInfo)) {
+            return contractInfo;
+        } else {
+            String contractTxt = null;
+            switch (contractInfo) {
+                case UserInfoUtils.CONTRACT_INFO_NONE:
+                    contractTxt = context.getString(R.string.google_analytics_custom_dimension_hikari_no_contract_dch_no_contract);
+                    break;
+                case UserInfoUtils.CONTRACT_INFO_DTV:
+                    contractTxt = context.getString(R.string.google_analytics_custom_dimension_hikari_no_contract_dch_contract_ok);
+                    break;
+                case UserInfoUtils.CONTRACT_INFO_H4D:
+                    contractTxt = context.getString(R.string.google_analytics_custom_dimension_hikari_contract_ing);
+                    break;
+                default:
+                    break;
+            }
+            return contractTxt;
+        }
+    }
+
+    /**
+     * カスタムディメンション取得(ペアリング、ログイン).
+     *
+     * @param context コンテキスト
+     * @return 「ペアリング、ログインス」のテータス
+     */
+    public static SparseArray<String> getParingAndLoginCustomDimensions(final Context context) {
+        SparseArray<String> customDimensions = new SparseArray<>();
+        String pairingStatus;
+        String loginStatus;
+        UserState userState = UserInfoUtils.getUserState(context);
+        if (UserState.LOGIN_NG.equals(userState)) {
+            loginStatus = context.getString(R.string.google_analytics_custom_dimension_login_ng);
+        } else {
+            loginStatus = context.getString(R.string.google_analytics_custom_dimension_login_ok);
+        }
+        if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesStbInfo(context).mUdn)) {
+            pairingStatus = context.getString(R.string.google_analytics_custom_dimension_no_pairing);
+        } else {
+            pairingStatus = context.getString(R.string.google_analytics_custom_dimension_pairing_ok);
+        }
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, pairingStatus);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
+        return customDimensions;
+    }
+
+    /**
+     * h4dタイプ取得.
+     *
+     * @param detailFullData メタデータ
+     * @return h4dタイプ
+     */
+    public static HikariType getHikariType(final VodMetaFullData detailFullData) {
+        HikariType hikariType = HikariType.H4D;
+        if (ContentUtils.VIDEO_PROGRAM.equals(detailFullData.getDisp_type())
+                || ContentUtils.VIDEO_SERIES.equals(detailFullData.getDisp_type())) {
+            if (ContentUtils.DTV_FLAG_ONE.equals(detailFullData.getDtv())) {
+                hikariType = HikariType.HIKARITV_IN_DTV;
+            }
+        } else if (ContentUtils.TV_PROGRAM.equals(detailFullData.getDisp_type())) {
+            if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(detailFullData.getmTv_service())) {
+                if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(detailFullData.getmContent_type())
+                        || TextUtils.isEmpty(detailFullData.getmContent_type())) {
+                    hikariType = HikariType.HIKARITV_IN_DTV_CH;
+                } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(detailFullData.getmContent_type())
+                        || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(detailFullData.getmContent_type())
+                        || ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(detailFullData.getmContent_type())) {
+                    if (DateUtils.getNowTimeFormatEpoch() < detailFullData.getmVod_start_date()) {
+                        hikariType = HikariType.HIKARITV_IN_DTV_CH;
+                    } else if (DateUtils.getNowTimeFormatEpoch() >= detailFullData.getmVod_start_date()
+                            && DateUtils.getNowTimeFormatEpoch() < detailFullData.getmVod_end_date()) {
+                        hikariType = HikariType.HIKARITV_IN_DTV_CH;
+                    }
+                }
+            }
+        }
+        return hikariType;
     }
 
     /**

@@ -464,7 +464,9 @@
     <string name="google_analytics_screen_name_content_detail_h4d_broadcast_channel">コンテンツ詳細_ひかりTVコンテンツ_放送_チャンネル</string>
     <string name="google_analytics_screen_name_content_detail_h4d_vod_program_detail">コンテンツ詳細_ひかりTVコンテンツ_VOD_番組詳細</string>
     <string name="google_analytics_screen_name_content_detail_h4d_vod_episode">コンテンツ詳細_ひかりTVコンテンツ_VOD_エピソード</string>
-    <string name="google_analytics_screen_name_content_detail_other">コンテンツ詳細_その他</string>
+    <string name="google_analytics_screen_name_content_detail_other_dtv">コンテンツ詳細_pure dTV</string>
+    <string name="google_analytics_screen_name_content_detail_other_dtv_ch">コンテンツ詳細_pure dTVチャンネル</string>
+    <string name="google_analytics_screen_name_content_detail_other_danime">コンテンツ詳細_pure dアニメストア</string>
     <string name="google_analytics_screen_name_recording_list">録画一覧</string>
     <string name="google_analytics_screen_name_recording_list_takeout">録画一覧_持ち出し</string>
     <string name="google_analytics_screen_name_recording_reservation">録画予約</string>
@@ -538,6 +540,8 @@
     <string name="google_analytics_category_service_name_dtv_ch">dTVチャンネル</string>
     <string name="google_analytics_category_service_name_danime">dアニメ</string>
     <string name="google_analytics_category_service_name_dazn">DAZN</string>
+    <string name="google_analytics_category_service_name_remote_control">リモコンエミュレート</string>
+    <string name="google_analytics_category_service_name_contract">契約状態変更</string>
 
     <!-- Google Analytics イベントアクション -->
     <string name="google_analytics_category_action_watch_tv">テレビで視聴するをタップ</string>
@@ -546,6 +550,47 @@
     <string name="google_analytics_category_action_dtv_ch">dTVチャンネルをタップ</string>
     <string name="google_analytics_category_action_danime">dアニメをタップ</string>
     <string name="google_analytics_category_action_dazn">DAZNをタップ</string>
+    <string name="google_analytics_category_action_contents_play">コンテンツ再生</string>
+    <string name="google_analytics_category_action_record_contents_play">録画コンテンツ再生</string>
+    <string name="google_analytics_category_action_recording_reservation">録画予約</string>
+    <string name="google_analytics_category_action_clip_regist">登録</string>
+    <string name="google_analytics_category_action_clip_delete">解除</string>
+    <string name="google_analytics_category_action_remote_control_power">電源タップ</string>
+    <string name="google_analytics_category_action_remote_contract_get_success">契約状態取得完了</string>
+
+    <!-- Google Analytics カスタムディメンション名 契約種別 -->
+    <string name="google_analytics_custom_dimension_hikari_contract_ing">ひかりTV契約中</string>
+    <string name="google_analytics_custom_dimension_hikari_no_contract_dch_contract_ok">ひかりTV契約無し・dTVチャンネル契約あり</string>
+    <string name="google_analytics_custom_dimension_hikari_no_contract_dch_no_contract">ひかりTV・dTVチャンネル契約無し</string>
+
+    <!-- Google Analytics カスタムディメンション名 ペアリング -->
+    <string name="google_analytics_custom_dimension_pairing_ok">ペアリング済み接続中</string>
+    <string name="google_analytics_custom_dimension_no_pairing">未ペアリング</string>
+
+    <!-- Google Analytics カスタムディメンション名 ログイン -->
+    <string name="google_analytics_custom_dimension_login_ng">未</string>
+    <string name="google_analytics_custom_dimension_login_ok">済み</string>
+
+    <!-- Google Analytics カスタムディメンション サービス-->
+    <string name="google_analytics_custom_dimension_service_h4d">ひかりTV for docomo</string>
+    <string name="google_analytics_custom_dimension_service_dtv">dTV</string>
+    <string name="google_analytics_custom_dimension_service_dtv_ch">dTVチャンネル</string>
+    <string name="google_analytics_custom_dimension_service_danime">dアニメストア</string>
+    <string name="google_analytics_custom_dimension_service_dazn">DAZN for docomo</string>
+
+    <!-- Google Analytics カスタムディメンション コンテンツ種別1-->
+    <string name="google_analytics_custom_dimension_contents_type1_h4d">ひかりTV for docomo</string>
+    <string name="google_analytics_custom_dimension_contents_type1_hikari_dtv_ch">ひかりTV内dTVチャンネル</string>
+    <string name="google_analytics_custom_dimension_contents_type1_hikari_dtv">ひかりTV内dTV</string>
+    <string name="google_analytics_custom_dimension_contents_type1_pure_dtv_ch">pure dTVチャンネル</string>
+    <string name="google_analytics_custom_dimension_contents_type1_pure_dtv">pure dTV</string>
+    <string name="google_analytics_custom_dimension_contents_type1_pure_danime">pure dアニメストア</string>
+    <string name="google_analytics_custom_dimension_contents_type1_pure_dazn">pure DAZN</string>
+
+    <!-- Google Analytics カスタムディメンション コンテンツ種別2-->
+    <string name="google_analytics_custom_dimension_contents_type2_live">放送</string>
+    <string name="google_analytics_custom_dimension_contents_type2_void">VOD</string>
+    <string name="google_analytics_custom_dimension_contents_type2_record">録画</string>
 
     <!-- リモート視聴設定（期限表示） -->
     <string name="remote_remaining_days_message_begin">リモート視聴の有効期限が残り</string>

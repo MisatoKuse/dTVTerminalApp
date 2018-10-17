@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -351,6 +352,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final int DEFAULT_TAB_INDEX = -1;
     /** 前回ViewPagerのタブ位置.*/
     private static final String VIEWPAGER_INDEX = "viewPagerIndex";
+    /** コンテンツ種別1のコンテンツ種別名のひかりTVタイプ.*/
+    private ContentUtils.HikariType mHikariType = null;
 
     /** コンテンツタイプ(Google Analytics用).*/
     private enum ContentTypeForGoogleAnalytics {
@@ -395,13 +398,38 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         enableStbStatusIcon(true);
         switch (mDisplayState) {
             case PLAYER_ONLY:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
+                String screenName = getString(R.string.google_analytics_screen_name_player);
+                if (mIsFromBgFlg) {
+                    super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
+                } else {
+                    String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
+                    if (findViewById(R.id.dtv_contents_detail_player_only).getVisibility() == View.VISIBLE) {
+                        contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_record);
+                    }
+                    String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
+                    String contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
+                    SparseArray<String> customDimensions = new SparseArray<>();
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+                    sendScreenView(screenName, customDimensions);
+                    super.sendScreenView(screenName, customDimensions);
+                }
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
+                        mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this) : null);
                 checkOnResumeClipStatus();
                 break;
             case CONTENTS_DETAIL_ONLY:
+                if (mIsFromBgFlg && contentType != null && mViewPager != null) {
+                    String tabName = mTabNames[mViewPager.getCurrentItem()];
+                    screenName = getScreenNameMap().get(tabName);
+                    if (screenName != null) {
+                        super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
+                    }
+                }
                 checkOnResumeClipStatus();
                 break;
             default:
@@ -496,13 +524,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mTitleKindHandler != null) {
             mTitleKindHandler.removeCallbacks(mTitleKindRunnable);
         }
-        DtvContentsChannelFragment channelFragment = null;
+        DtvContentsChannelFragment channelFragment;
         switch (mDisplayState) {
             case PLAYER_ONLY:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 //通信を止める
                 if (mContentsDetailDataProvider != null) {
                     StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
@@ -586,7 +612,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 if (mPlayerViewLayout != null) {
                     mPlayerViewLayout.enableThumbnailConnect();
                 }
@@ -638,6 +663,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param playerData 再生データ
      */
     private void initPlayer(final RecordedContentsDetailData playerData) {
+        boolean isFirstTouch = false;
+        if (mPlayerViewLayout == null) {
+            isFirstTouch = true;
+        }
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setVisibility(View.VISIBLE);
         mPlayerViewLayout.setPlayerStateListener(this);
@@ -652,6 +681,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mPlayerViewLayout.createExternalDisplayHelper();
         if (mIsOncreateOk) {
             initPlayerStart(false);
+        }
+        if (isFirstTouch) {
+            String category = getString(R.string.google_analytics_category_service_name_h4d);
+            String action;
+            if (playerData.isIsLive()) {
+                action = getString(R.string.google_analytics_category_action_contents_play);
+            } else {
+                action = getString(R.string.google_analytics_category_action_record_contents_play);
+            }
+            String label = getTitleText().toString();
+            sendEvent(category, action, label, null);
         }
     }
 
@@ -1067,8 +1107,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
                 // コンテンツ詳細(TVの場合、タブ一つに設定する)
                 mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service_tv);
+                setContentsType(ContentUtils.ContentsType.TV);
+                contentType = ContentTypeForGoogleAnalytics.TV;
             } else {
                 if (contentsType == ContentUtils.ContentsType.VOD) {
+                    contentType = ContentTypeForGoogleAnalytics.VOD;
                     if (DateUtils.isBefore(mDetailData.getmStartDate())) {
                         //配信前 m/d（曜日）から
                         date = DateUtils.getContentsDateString(this, mDetailData.getmStartDate(), true);
@@ -1294,10 +1337,64 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param position 表示中タブ
      */
     private void sendScreenViewForPosition(final int position) {
-        String tabName = mTabNames[position];
+        if (contentType == null) {
+            return;
+        }
+        String screenName = null;
+        String serviceName = null;
+        String contentsType1 = null;
+        String contentsType2 = null;
+        if (mIsOtherService) {
+            screenName = ContentUtils.getOtherServiceScreenName(ContentDetailActivity.this, mDetailData.getServiceId());
+            serviceName = ContentUtils.getServiceName(ContentDetailActivity.this, mDetailData.getServiceId());
+            contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mDetailData.getServiceId());
+            switch (contentType) {
+                case TV:
+                    contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
+                    break;
+                case VOD:
+                    contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_void);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (TextUtils.isEmpty(screenName)) {
+            String tabName = mTabNames[position];
+            screenName = getScreenNameMap().get(tabName);
+            serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
+            contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mHikariType);
+            switch (contentType) {
+                case TV:
+                    contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
+                    break;
+                case VOD:
+                    contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_void);
+                    break;
+                default:
+                    break;
+            }
+        }
+        SparseArray<String> customDimensions = null;
+        if (!TextUtils.isEmpty(contentsType1)) {
+            customDimensions  = new SparseArray<>();
+            if (!mIsOtherService) {
+                String loginStatus;
+                UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
+                if (UserState.LOGIN_NG.equals(userState)) {
+                    loginStatus = getString(R.string.google_analytics_custom_dimension_login_ng);
+                } else {
+                    loginStatus = getString(R.string.google_analytics_custom_dimension_login_ok);
+                }
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
+            }
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+        }
 
-        String screenName = getScreenNameMap().get(tabName);
-        super.sendScreenView(screenName);
+        super.sendScreenView(screenName, customDimensions);
     }
 
     /**
@@ -1306,7 +1403,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private HashMap<String, String> getScreenNameMap() {
         HashMap<String, String> screenNameMap = new HashMap<>();
-        screenNameMap.put(getString(R.string.contents_detail_tab_contents_info), getString(R.string.google_analytics_screen_name_content_detail_other));
+        screenNameMap.put(getString(R.string.contents_detail_tab_contents_info), getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
 
         if (contentType == ContentTypeForGoogleAnalytics.VOD) {
             screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(
@@ -1480,12 +1577,32 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         // disp_typeがtv_program以外なら一律VOD
                         contentType = ContentTypeForGoogleAnalytics.VOD;
                     }
-
+                    String screenName;
+                    String contentsType2;
                     if (contentType == ContentTypeForGoogleAnalytics.VOD) {
-                        sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
+                        screenName = getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail);
+                        contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_void);
                     } else {
-                        sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+                        screenName = getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail);
+                        contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
                     }
+                    UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
+                    String loginStatus;
+                    if (UserState.LOGIN_NG.equals(userState)) {
+                        loginStatus = getString(R.string.google_analytics_custom_dimension_login_ng);
+                    } else {
+                        loginStatus = getString(R.string.google_analytics_custom_dimension_login_ok);
+                    }
+                    mHikariType = ContentUtils.getHikariType(mDetailFullData);
+                    String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
+                    String contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mHikariType);
+                    SparseArray<String> customDimensions = new SparseArray<>();
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+                    sendScreenView(screenName, customDimensions);
 
                     String dispType = mDetailFullData.getDisp_type();
                     String searchOk = mDetailFullData.getmSearch_ok();
@@ -1526,6 +1643,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
                         mVodEndDateText = date;
+                        setContentsType(ContentUtils.ContentsType.TV);
                     } else {
                         if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31
                                 || contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
@@ -2641,6 +2759,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         DTVTLogger.debug("license_id is not match!");
                         DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryDtvSvod(%s)",
                                 mDetailFullData.getCrid()));
+                        if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
+                            setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV);
+                        }
                         // ひかりTV内VOD(dTV含む)のシリーズ
                         requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
                     }
@@ -2650,6 +2771,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             } else if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
+                setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV);
                 //ひかりTV内dTVのVOD,「episode_id」,「crid」を通知する
                 requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id(),
                         mDetailFullData.getCrid());
@@ -2660,6 +2782,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
             //「disp_type」が「video_series」の場合
         } else if (ContentUtils.VIDEO_SERIES.equals(mDetailFullData.getDisp_type())) {
+            if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
+                setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV);
+            }
             // ひかりTV内VOD(dTV含む)のシリーズ
             requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
             //「disp_type」が「tv_program」の場合
@@ -2673,6 +2798,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
                 if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
                         || TextUtils.isEmpty(mDetailFullData.getmContent_type())) {
+                    setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV_CH);
                     //中継アプリに「chno」を通知する
                     requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
                 } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
@@ -2680,11 +2806,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         || ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
                     //「vod_start_date」> 現在時刻の場合  ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
                     if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
+                        setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV_CH);
                         //中継アプリに「chno」を通知する
                         requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
                         //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合 「crid」を通知する
                     } else if (DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getmVod_start_date()
                             && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
+                        setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV_CH);
                         // ひかりTV内dTVチャンネル 見逃し／関連番組
                         requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getCrid());
                     } else {
@@ -2825,6 +2953,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     // 成功
                     mToast = Toast.makeText(this, getResources().getString(R.string.recording_reservation_complete_dialog_msg), Toast.LENGTH_SHORT);
                     mToast.show();
+                    sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                            getString(R.string.google_analytics_category_action_recording_reservation),
+                            getTitleText().toString(), null);
                 } else {
                     mToast = null;
                 }

@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * 利用規約.
@@ -55,7 +56,8 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_terms));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_terms),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(SettingMenuTermsOfServiceActivity.this) : null);
     }
 
     @Override

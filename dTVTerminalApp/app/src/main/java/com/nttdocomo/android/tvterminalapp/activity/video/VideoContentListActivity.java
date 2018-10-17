@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -122,8 +123,15 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     @Override
     protected void onResume() {
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_video_content_list));
         DTVTLogger.start();
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_content_list),
+                    ContentUtils.getParingAndLoginCustomDimensions(VideoContentListActivity.this));
+        } else {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_content_list), customDimensions);
+        }
         enableStbStatusIcon(true);
         //画面再表示時に読み込み中断フラグを降ろす
         mCancelLoad = false;

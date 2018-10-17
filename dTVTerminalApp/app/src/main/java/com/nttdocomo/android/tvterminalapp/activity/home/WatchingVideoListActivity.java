@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -159,7 +160,14 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
             }
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_watching_video));
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_watching_video),
+                    ContentUtils.getParingAndLoginCustomDimensions(WatchingVideoListActivity.this));
+        } else {
+            SparseArray<String> customDimensions  = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_watching_video), customDimensions);
+        }
         DTVTLogger.end();
     }
 

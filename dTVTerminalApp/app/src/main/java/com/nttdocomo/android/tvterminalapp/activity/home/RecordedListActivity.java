@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -46,6 +47,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.DownloadComparator;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -177,7 +179,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        sendScreenViewForPosition(getCurrentPosition());
+        sendScreenViewForPosition(getCurrentPosition(), false);
     }
 
     @Override
@@ -343,7 +345,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 super.onPageSelected(position);
                 requestInit();
                 setTab(position);
-                sendScreenViewForPosition(position);
+                sendScreenViewForPosition(position, true);
             }
         });
     }
@@ -351,15 +353,28 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**
      * 表示中タブの内容によってスクリーン情報を送信する.
      * @param position タブインデックス
+     * @param isFromTab true:タブ切り替え false:onResume
      */
-    private void sendScreenViewForPosition(final int position) {
+    private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
+        String screenName = null;
         switch (position) {
             case ALL_RECORD_LIST:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list));
+                screenName = getString(R.string.google_analytics_screen_name_recording_list);
                 break;
             case DOWNLOAD_OVER:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list_takeout));
+                screenName = getString(R.string.google_analytics_screen_name_recording_list_takeout);
                 break;
+            default:
+                break;
+        }
+        if (!TextUtils.isEmpty(screenName)) {
+            if (!isFromTab && mIsFromBgFlg) {
+                super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(RecordedListActivity.this));
+            } else {
+                SparseArray<String> customDimensions  = new SparseArray<>();
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+                super.sendScreenView(screenName, customDimensions);
+            }
         }
     }
 

@@ -193,7 +193,7 @@ public class ChannelListActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        sendScreenViewForPosition(mViewPager.getCurrentItem());
+        sendScreenViewForPosition(mViewPager.getCurrentItem(), false);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class ChannelListActivity extends BaseActivity implements
                         mRequestIndex = 0;
                         mIsEndPage = false;
                         mTabLayout.setTab(position);
-                        sendScreenViewForPosition(position);
+                        sendScreenViewForPosition(position, true);
                         mFactory.createFragment(position, lis, ChannelListDataType.values()[position], getActivity()).showProgressBar(true);
                     }
                 });
@@ -512,22 +512,32 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * 表示中タブの内容によってスクリーン情報を送信する.
      * @param position ポジション
+     * @param isFromTab true:タブ切り替え
      */
-    private void sendScreenViewForPosition(final int position) {
+    private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
+        String screenName = null;
         switch (position) {
             case TAB_INDEX_HIKARI:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_h4d));
+                screenName = getString(R.string.google_analytics_screen_name_channel_list_h4d);
                 break;
             case TAB_INDEX_TER:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_ter));
+                if (mTabNames.length == CHANNEL_LIST_TAB_NO_STB_LIST.length) {
+                    screenName = getString(R.string.google_analytics_screen_name_channel_list_dtv);
+                } else {
+                    screenName = getString(R.string.google_analytics_screen_name_channel_list_ter);
+                }
                 break;
             case TAB_INDEX_BS:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_bs));
+                screenName = getString(R.string.google_analytics_screen_name_channel_list_bs);
                 break;
             case TAB_INDEX_DTV:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_dtv));
+                screenName = getString(R.string.google_analytics_screen_name_channel_list_dtv);
+                break;
+            default:
                 break;
         }
+        super.sendScreenView(screenName,
+                (mIsFromBgFlg && !isFromTab) ? ContentUtils.getParingAndLoginCustomDimensions(ChannelListActivity.this) : null);
     }
 
     /**

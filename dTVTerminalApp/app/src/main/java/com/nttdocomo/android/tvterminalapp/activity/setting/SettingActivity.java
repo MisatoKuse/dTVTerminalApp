@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.setting;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
@@ -150,7 +152,21 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         checkIsPairing();
         checkImageQuality();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting));
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_setting),
+                    ContentUtils.getParingAndLoginCustomDimensions(SettingActivity.this));
+        } else {
+            UserState userState = UserInfoUtils.getUserState(SettingActivity.this);
+            String loginStatus;
+            if (UserState.LOGIN_NG.equals(userState)) {
+                loginStatus = getString(R.string.google_analytics_custom_dimension_login_ng);
+            } else {
+                loginStatus = getString(R.string.google_analytics_custom_dimension_login_ok);
+            }
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_setting), customDimensions);
+        }
     }
 
     @SuppressWarnings("OverlyComplexMethod")

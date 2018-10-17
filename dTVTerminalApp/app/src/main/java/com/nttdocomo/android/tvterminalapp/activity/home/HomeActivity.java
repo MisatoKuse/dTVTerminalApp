@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -434,7 +435,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         getUserInfoStart();
 
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_home));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_home),
+                ContentUtils.getParingAndLoginCustomDimensions(HomeActivity.this));
         DlnaManager.shared().Start(getApplicationContext());
     }
 
@@ -1185,14 +1187,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
                             , new CustomDialog.ApiOKCallback() {
                                 @Override
-                                public void onOKCallback(boolean isOK) {
+                                public void onOKCallback(final boolean isOK) {
                                     //OKが押された場合は、ユーザー情報処理の既存処理を実行する
-                                    userInfoListCallbackResult(isDataChange,userList);
+                                    userInfoListCallbackResult(isDataChange, userList);
                                 }
                             });
                 } else {
                     //ユーザー情報に変化が無ければ、そのままユーザー情報処理の既存処理を実行する
-                    userInfoListCallbackResult(isDataChange,userList);
+                    userInfoListCallbackResult(isDataChange, userList);
+                }
+                String contractType = ContentUtils.getContractType(HomeActivity.this);
+                if (!TextUtils.isEmpty(contractType)) {
+                    SparseArray<String> customDimensions = new SparseArray<>();
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
+                    sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+                            getString(R.string.google_analytics_category_action_remote_contract_get_success),
+                            null, customDimensions);
                 }
             }
         });

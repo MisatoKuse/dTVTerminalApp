@@ -36,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -446,6 +447,15 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             return;
         }
         mIsDAccountAppStarting = false;
+        if (mIsFromBgFlg) {
+            String screenName;
+            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                screenName = getString(R.string.google_analytics_screen_name_stb_select);
+            } else {
+                screenName = getString(R.string.google_analytics_screen_name_setting_paring);
+            }
+            super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(StbSelectActivity.this));
+        }
         initResumeView();
 
         //dアカウント変更コールバックの設定
@@ -478,7 +488,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mCheckboxText.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
                 mParingTextView.setText(R.string.str_stb_no_pair_use_text);
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
             } else {
                 RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
                 relativeLayout.setVisibility(View.GONE);
@@ -488,16 +498,16 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mDeviceSelectText.setVisibility(View.VISIBLE);
                 mTextDivider2.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
             }
         } else {
             if (mLoadMoreView != null && mLoadMoreView.getVisibility() == View.VISIBLE) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
             } else {
                 if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
                 } else {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
                 }
             }
         }
@@ -577,7 +587,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             // STBが見つかるまで非表示
             TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
             checkBoxText.setVisibility(View.VISIBLE);
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             //プログレスビューを初期状態に戻る
             RelativeLayout parentLayout = findViewById(R.id.paring_select_text_relative_layout);
@@ -666,7 +676,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
-            super.sendScreenView(getString(R.string.str_stb_pairing));
+            super.sendScreenView(getString(R.string.str_stb_pairing), null);
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
             //次回表示しないTextView表示フラグをTRUEにする
@@ -707,7 +717,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mParingTextView.setVisibility(View.INVISIBLE);
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
         DTVTLogger.end();
     }
 
@@ -1021,13 +1031,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start("displayMoreData:" + b);
         if (b) {
             mLoadMoreView.setVisibility(View.VISIBLE);
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
         } else {
             mLoadMoreView.setVisibility(View.GONE);
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
             } else {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
             }
         }
         DTVTLogger.end();

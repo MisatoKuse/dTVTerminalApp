@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -106,7 +107,14 @@ public class DailyTvRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("DailyTvRankingActivity::Clip Status Update");
             }
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_daily_ranking));
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_daily_ranking),
+                    ContentUtils.getParingAndLoginCustomDimensions(DailyTvRankingActivity.this));
+        } else {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_daily_ranking), customDimensions);
+        }
         DTVTLogger.end();
     }
 
