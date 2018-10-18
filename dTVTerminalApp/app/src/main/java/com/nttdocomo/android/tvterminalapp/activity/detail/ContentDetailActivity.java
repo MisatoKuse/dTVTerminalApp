@@ -1340,9 +1340,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (contentType == null) {
             return;
         }
-        String screenName = null;
-        String serviceName = null;
-        String contentsType1 = null;
+        String screenName;
+        String serviceName;
+        String contentsType1;
         String contentsType2 = null;
         if (mIsOtherService) {
             screenName = ContentUtils.getOtherServiceScreenName(ContentDetailActivity.this, mDetailData.getServiceId());
@@ -1358,8 +1358,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 default:
                     break;
             }
-        }
-        if (TextUtils.isEmpty(screenName)) {
+        } else {
             String tabName = mTabNames[position];
             screenName = getScreenNameMap().get(tabName);
             serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
@@ -1375,8 +1374,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     break;
             }
         }
+        if (screenName == null) {
+            return;
+        }
         SparseArray<String> customDimensions = null;
-        if (!TextUtils.isEmpty(contentsType1)) {
+        if (!TextUtils.isEmpty(contentsType1) && !TextUtils.isEmpty(contentsType2)) {
             customDimensions  = new SparseArray<>();
             if (!mIsOtherService) {
                 String loginStatus;

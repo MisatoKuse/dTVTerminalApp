@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -255,28 +256,39 @@ public class RecommendActivity extends BaseActivity implements
      */
     private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
         String screenName = null;
+        String serviceName = null;
         switch (position) {
             case TAB_INDEX_TV:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_tv);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
                 break;
             case TAB_INDEX_VIDEO:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_video);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
                 break;
             case TAB_INDEX_DTV:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_dtv);
+                serviceName = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
                 break;
             case TAB_INDEX_DTV_CHANNEL:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_dtv_channel);
+                serviceName = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
                 break;
             case TAB_INDEX_DANIME:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_danime);
+                serviceName = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
                 break;
             default:
                 break;
         }
         if (!TextUtils.isEmpty(screenName)) {
-            super.sendScreenView(screenName,
-                    (mIsFromBgFlg && !isFromTab) ? ContentUtils.getParingAndLoginCustomDimensions(RecommendActivity.this) : null);
+            if (mIsFromBgFlg && !isFromTab) {
+                super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(RecommendActivity.this));
+            } else {
+                SparseArray<String> customDimensions = new SparseArray<>();
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+                super.sendScreenView(screenName, customDimensions);
+            }
         }
     }
 
