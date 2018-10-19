@@ -354,6 +354,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String VIEWPAGER_INDEX = "viewPagerIndex";
     /** コンテンツ種別1のコンテンツ種別名のひかりTVタイプ.*/
     private ContentUtils.HikariType mHikariType = null;
+    /** 放送視聴可否.*/
+    private boolean mIsH4dPlayer = false;
 
     /** コンテンツタイプ(Google Analytics用).*/
     private enum ContentTypeForGoogleAnalytics {
@@ -418,8 +420,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
-                        mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this) : null);
+                if (mIsFromBgFlg) {
+                    screenName = null;
+                    if (mIsH4dPlayer) {
+                        screenName = getString(R.string.google_analytics_screen_name_player);
+                    } else {
+                        if (mViewPager != null) {
+                            String tabName = mTabNames[mViewPager.getCurrentItem()];
+                            screenName = getScreenNameMap().get(tabName);
+                        }
+                    }
+                    if (screenName != null) {
+                        super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
+                    }
+                }
                 checkOnResumeClipStatus();
                 break;
             case CONTENTS_DETAIL_ONLY:
@@ -435,7 +449,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
-        if (contentType != null) {
+        if (contentType != null && !mIsFromBgFlg) {
             if (mViewPager != null) {
                 sendScreenViewForPosition(mViewPager.getCurrentItem());
             } else {
@@ -3640,6 +3654,30 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 setRemotePlayArrow(null);
                 break;
         }
+        sendH4dPlayDimensions();
+    }
+
+    /**
+     * h4dプレイヤーカスタムディメンション送信.
+     */
+    private void sendH4dPlayDimensions() {
+        mIsH4dPlayer = true;
+        if (mHikariType == null) {
+            return;
+        }
+        String contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mHikariType);
+        if (contentsType1 == null) {
+            return;
+        }
+        String screenName = getString(R.string.google_analytics_screen_name_player);
+        String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
+        String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
+        SparseArray<String> customDimensions = new SparseArray<>();
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+        super.sendScreenView(screenName, customDimensions);
     }
 
     /**
