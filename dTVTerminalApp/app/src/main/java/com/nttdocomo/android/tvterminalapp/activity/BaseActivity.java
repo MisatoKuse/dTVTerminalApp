@@ -3716,6 +3716,8 @@ public class BaseActivity extends FragmentActivity implements
         builder.setAction(action);
         if (!TextUtils.isEmpty(label)) {
             builder.setLabel(label);
+        } else {
+            builder.setLabel("");
         }
         builder.setValue(1);
         if (customDimensions != null) {

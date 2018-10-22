@@ -1384,6 +1384,9 @@ public class TvProgramListActivity extends BaseActivity implements
                 clipButton.setTag(CLIP_ACTIVE_STATUS);
             }
             showClipToast(R.string.clip_regist_result_message);
+            sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                    getString(R.string.google_analytics_category_action_clip_regist),
+                    clipRequestData.getTitle(), null);
         } else {
             // フェールセーフで元処理に戻す
             super.onClipRegistResult();
@@ -1411,6 +1414,9 @@ public class TvProgramListActivity extends BaseActivity implements
                 clipButton.setTag(CLIP_OPACITY_STATUS);
             }
             showClipToast(R.string.clip_delete_result_message);
+            sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                    getString(R.string.google_analytics_category_action_clip_delete),
+                    clipRequestData.getTitle(), null);
         } else {
             // フェールセーフで元処理に戻す
             super.onClipDeleteResult();
