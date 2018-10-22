@@ -268,15 +268,15 @@ public class RecommendActivity extends BaseActivity implements
                 break;
             case TAB_INDEX_DTV:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_dtv);
-                serviceName = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_dtv);
                 break;
             case TAB_INDEX_DTV_CHANNEL:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_dtv_channel);
-                serviceName = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_dtv_ch);
                 break;
             case TAB_INDEX_DANIME:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_danime);
-                serviceName = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_danime);
                 break;
             default:
                 break;

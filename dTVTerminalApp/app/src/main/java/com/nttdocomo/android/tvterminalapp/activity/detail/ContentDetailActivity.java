@@ -400,28 +400,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         enableStbStatusIcon(true);
         switch (mDisplayState) {
             case PLAYER_ONLY:
-                String screenName = getString(R.string.google_analytics_screen_name_player);
                 if (mIsFromBgFlg) {
-                    super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
-                } else {
-                    String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
-                    if (findViewById(R.id.dtv_contents_detail_player_only).getVisibility() == View.VISIBLE) {
-                        contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_record);
-                    }
-                    String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
-                    String contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
-                    SparseArray<String> customDimensions = new SparseArray<>();
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-                    sendScreenView(screenName, customDimensions);
-                    super.sendScreenView(screenName, customDimensions);
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
+                            ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
                 }
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
                 if (mIsFromBgFlg) {
-                    screenName = null;
+                    String screenName = null;
                     if (mIsH4dPlayer) {
                         screenName = getString(R.string.google_analytics_screen_name_player);
                     } else {
@@ -439,7 +425,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case CONTENTS_DETAIL_ONLY:
                 if (mIsFromBgFlg && contentType != null && mViewPager != null) {
                     String tabName = mTabNames[mViewPager.getCurrentItem()];
-                    screenName = getScreenNameMap().get(tabName);
+                    String screenName = getScreenNameMap().get(tabName);
                     if (screenName != null) {
                         super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
                     }
@@ -754,6 +740,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!playerData.isIsLive()) {
                 showPlayerOnlyView(playerData);
             }
+            String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
+            if (!playerData.isIsLive()) {
+                contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_record);
+            }
+            String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
+            String contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_player), customDimensions);
         }
         //ヘッダーの設定
         String sourceClass = mIntent.getStringExtra(DtvtConstants.SOURCE_SCREEN);
@@ -1618,7 +1616,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
                     customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
                     customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-                    sendScreenView(screenName, customDimensions);
+                    ContentDetailActivity.super.sendScreenView(screenName, customDimensions);
 
                     String dispType = mDetailFullData.getDisp_type();
                     String searchOk = mDetailFullData.getmSearch_ok();

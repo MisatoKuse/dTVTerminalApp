@@ -598,19 +598,19 @@ public class SearchTopActivity extends BaseActivity
                 break;
             case TAB_INDEX_DTV:
                 if (isFromServerSuccess) {
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv));
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_dtv));
                 }
                 screenName = getString(R.string.google_analytics_screen_name_search_result_dtv);
                 break;
             case TAB_INDEX_DTV_CHANNEL:
                 if (isFromServerSuccess) {
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch));
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_dtv_ch));
                 }
                 screenName = getString(R.string.google_analytics_screen_name_search_result_dtv_channel);
                 break;
             case TAB_INDEX_DANIME:
                 if (isFromServerSuccess) {
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime));
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_danime));
                 }
                 screenName = getString(R.string.google_analytics_screen_name_search_result_danime);
                 break;
