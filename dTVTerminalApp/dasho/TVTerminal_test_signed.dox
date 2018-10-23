@@ -2,7 +2,7 @@
 <dasho version="9.1.0">
     <propertylist>
         <property name="projectname" value="dasho"/>
-        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\28.0.2"/>
+        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\28.0.3"/>
         <property name="apkOutput" value="TVTerminal_test_signed-obfuscated.apk"/>
         <property name="apkInput" value="..\app\build\outputs\apk\TVTerminal_test_signed.apk"/>
         <property name="sdk.dir" value="${ANDROID_SDK_DIR}"/>
@@ -201,5 +201,5 @@
             <runtime target="android4"/>
         </instrumentation>
     </injection>
-    <signjar keystore="..\app\keys\dcmEval20150128.keystore" storepass="[3TwHsVSmrJZ1Wf7CSz9Jtw==]" alias="dcmeval2048" keypass="[i4GpQGgswI11XJuFPCV9SQ==]">${sdk.dir}\build-tools\28.0.2\apksigner.bat</signjar>
+    <signjar keystore="..\app\keys\dcmEval20150128.keystore" storepass="[3TwHsVSmrJZ1Wf7CSz9Jtw==]" alias="dcmeval2048" keypass="[i4GpQGgswI11XJuFPCV9SQ==]">${sdk.dir}\build-tools\28.0.3\apksigner.bat</signjar>
 </dasho>

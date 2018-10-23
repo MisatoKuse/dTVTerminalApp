@@ -2,7 +2,7 @@
 <dasho version="9.1.0">
     <propertylist>
         <property name="projectname" value="dasho"/>
-        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\28.0.2"/>
+        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\28.0.3"/>
         <property name="apkOutput" value="TVTerminal-obfuscated.apk"/>
         <property name="apkInput" value="..\app\build\outputs\apk\TVTerminal.apk"/>
         <property name="sdk.dir" value="${ANDROID_SDK_DIR}"/>
@@ -201,5 +201,5 @@
             <runtime target="android4"/>
         </instrumentation>
     </injection>
-    <signjar option="off">${sdk.dir}\build-tools\28.0.2\apksigner.bat</signjar>
+    <signjar option="off">${sdk.dir}\build-tools\28.0.3\apksigner.bat</signjar>
 </dasho>

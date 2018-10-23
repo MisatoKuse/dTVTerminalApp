@@ -4,7 +4,7 @@ android {
     //リリース作業時には★印の更新値を確認する事！
 
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 19
@@ -16,7 +16,8 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11"
-                abiFilters "armeabi" //, "armeabi-v7a"
+                arguments "-DANDROID_ABI=armeabi",
+                        "-DANDROID_STL=gnustl_static"
             }
         }
         ndk {
@@ -238,7 +239,7 @@ android {
 
     // 出力apkファイル名をバリエーション毎に設定
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
+        variant.outputs.all { output ->
             if (output.outputFile != null && output.outputFile.name.endsWith('.apk')) {
                 def newName = "TVTerminal_local_signed_on.apk"
                 if (variant.flavorName == "_com_") {
@@ -262,10 +263,11 @@ android {
                         newName = "TVTerminal_test_signed_on.apk"
                     }
                 }
-                output.outputFile = new File(output.outputFile.parent, newName)
+                outputFileName = newName
             }
         }
     }
+    flavorDimensions "default"
 
     // 不要なValiantを無効化
     variantFilter { variant ->
@@ -309,19 +311,19 @@ configurations {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
     //Googleアナリティクス用ライブラリ
     //noinspection GradleDependency
-    compile 'com.google.android.gms:play-services-analytics:10.0.1'
-    compile 'com.android.support:appcompat-v7:28.0.0-rc01'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:support-v4:28.0.0-rc01'
-    compile 'com.android.support:design:28.0.0-rc01'
-    testCompile 'junit:junit:4.12'
+    implementation 'com.google.android.gms:play-services-analytics:10.0.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    testImplementation 'junit:junit:4.12'
 
     //DiXiM SecurePlayer SDK Debug Version
     local_Signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
@@ -371,5 +373,5 @@ dependencies {
     _test__unsigned_offCompile(name: 'dixim-android-util2', ext: 'aar')
 
     //SSLチェックライブラリ
-    compile files('libs/ocsplib3.0.jar')
+    implementation files('libs/ocsplib3.0.jar')
 }
