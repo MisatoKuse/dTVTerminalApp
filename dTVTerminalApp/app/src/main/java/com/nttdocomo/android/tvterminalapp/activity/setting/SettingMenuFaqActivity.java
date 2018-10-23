@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * FAQ画面.
@@ -59,7 +60,8 @@ public class SettingMenuFaqActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_faq));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_faq),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(SettingMenuFaqActivity.this) : null);
     }
 
     @Override

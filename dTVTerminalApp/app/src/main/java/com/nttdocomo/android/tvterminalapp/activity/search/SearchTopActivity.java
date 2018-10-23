@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -34,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -214,10 +216,15 @@ public class SearchTopActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        if (sCurrentSearchText.isEmpty()) {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_search));
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_search),
+                    ContentUtils.getParingAndLoginCustomDimensions(SearchTopActivity.this));
         } else {
-            sendScreenViewForPosition(mTabIndex);
+            if (sCurrentSearchText.isEmpty()) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_search), null);
+            } else {
+                sendScreenViewForPosition(mTabIndex, false);
+            }
         }
     }
 
@@ -354,7 +361,7 @@ public class SearchTopActivity extends BaseActivity
                                 clearAllFragment();
                                 mSearchViewPager = null;
 
-                                SearchTopActivity.super.sendScreenView(getString(R.string.google_analytics_screen_name_search));
+                                SearchTopActivity.super.sendScreenView(getString(R.string.google_analytics_screen_name_search), null);
                             }
                             //setSearchData(s);
                             return false;
@@ -567,24 +574,51 @@ public class SearchTopActivity extends BaseActivity
      * 表示中タブの内容によってスクリーン情報を送信する.
      *
      * @param position タブ位置
+     * @param isFromServerSuccess true:サーバ取得成功 false:その他
      */
-    private void sendScreenViewForPosition(final int position) {
+    private void sendScreenViewForPosition(final int position, final boolean isFromServerSuccess) {
+        String screenName = "";
+        SparseArray<String> customDimensions = null;
+        if (isFromServerSuccess) {
+            customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_KEYWORD, sCurrentSearchText);
+        }
         switch (position) {
             case TAB_INDEX_TV:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_tv));
+                if (isFromServerSuccess) {
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+                }
+                screenName = getString(R.string.google_analytics_screen_name_search_result_tv);
                 break;
             case TAB_INDEX_VIDEO:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_video));
+                if (isFromServerSuccess) {
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+                }
+                screenName = getString(R.string.google_analytics_screen_name_search_result_video);
                 break;
             case TAB_INDEX_DTV:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_dtv));
+                if (isFromServerSuccess) {
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_dtv));
+                }
+                screenName = getString(R.string.google_analytics_screen_name_search_result_dtv);
                 break;
             case TAB_INDEX_DTV_CHANNEL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_dtv_channel));
+                if (isFromServerSuccess) {
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_dtv_ch));
+                }
+                screenName = getString(R.string.google_analytics_screen_name_search_result_dtv_channel);
                 break;
             case TAB_INDEX_DANIME:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_danime));
+                if (isFromServerSuccess) {
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_danime));
+                }
+                screenName = getString(R.string.google_analytics_screen_name_search_result_danime);
                 break;
+            default:
+                break;
+        }
+        if (!TextUtils.isEmpty(screenName)) {
+            super.sendScreenView(screenName, customDimensions);
         }
     }
 
@@ -610,7 +644,7 @@ public class SearchTopActivity extends BaseActivity
             return;
         }
 
-        sendScreenViewForPosition(mTabIndex);
+        sendScreenViewForPosition(mTabIndex, true);
 
         synchronized (this) {
             if (mIsPaging) {
@@ -673,7 +707,7 @@ public class SearchTopActivity extends BaseActivity
         baseFragment.displayLoadMore(false);
         mSearchTotalCount = baseFragment.getContentDataSize();
         baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
-        sendScreenViewForPosition(mTabIndex);
+        sendScreenViewForPosition(mTabIndex, false);
 
         setSearchStart(false);
         showErrorMessage();

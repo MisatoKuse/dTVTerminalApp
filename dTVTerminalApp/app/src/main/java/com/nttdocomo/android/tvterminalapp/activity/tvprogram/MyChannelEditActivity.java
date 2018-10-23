@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -109,7 +110,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(MyChannelEditActivity.this) : null);
     }
 
     /**

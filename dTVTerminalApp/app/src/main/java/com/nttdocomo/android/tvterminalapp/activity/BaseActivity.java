@@ -25,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,11 +52,9 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.PremiumVideoActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
@@ -102,6 +101,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
@@ -259,7 +259,12 @@ public class BaseActivity extends FragmentActivity implements
     private CustomDrawerLayout mDrawerLayout;
     /**メニューリストビュー.*/
     private ListView mGlobalMenuListView = null;
-
+    /** コンテンツ種別1のコンテンツ種別名のひかりTVタイプ.*/
+    private ContentUtils.HikariType mHikariType = ContentUtils.HikariType.H4D;
+    /** コンテンツ種別2のコンテンツ種別名.*/
+    private ContentUtils.ContentsType mContentsType = ContentUtils.ContentsType.VOD;
+    /** bg→fg区別.*/
+    protected boolean mIsFromBgFlg = false;
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -765,7 +770,7 @@ public class BaseActivity extends FragmentActivity implements
             //パーミッションチェックフラグの効果は1度のみなので、リセットする
             ottGetAuthSwitch.setSkipPermission(false);
         }
-
+        mIsFromBgFlg = false;
         //BGからFGに遷移した場合の検知
         if (app.getIsChangeApplicationVisible()) {
             //dアカウントチェックを呼ぶ
@@ -777,6 +782,7 @@ public class BaseActivity extends FragmentActivity implements
                 //リモート視聴設定期限表示
                 localRegisterExpireDateCheck();
             }
+            mIsFromBgFlg = true;
             // BG → FG でのonResumeで TvProgramIntentService を開始
             startTvProgramIntentService();
         } else if (!sIsLaunchChecked && this instanceof HomeActivity) {
@@ -938,13 +944,15 @@ public class BaseActivity extends FragmentActivity implements
             String category = "";
             String action = "";
             String label = "";
-            boolean isOtherService = false;
+            String contentsType1 = "";
+            boolean isUnknownService = false;
             switch (appType) {
                 case DTV:
                     category = getString(R.string.google_analytics_category_service_name_dtv);
                     if (isFromMenu) {
                         action = getString(R.string.google_analytics_category_action_dtv);
                     } else {
+                        contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
                         action = getString(R.string.google_analytics_category_action_watch_tv);
                         label = getTitleText().toString();
                     }
@@ -954,6 +962,7 @@ public class BaseActivity extends FragmentActivity implements
                     if (isFromMenu) {
                         action = getString(R.string.google_analytics_category_action_danime);
                     } else {
+                        contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
                         action = getString(R.string.google_analytics_category_action_watch_tv);
                         label = getTitleText().toString();
                     }
@@ -963,6 +972,7 @@ public class BaseActivity extends FragmentActivity implements
                     if (isFromMenu) {
                         action = getString(R.string.google_analytics_category_action_dtv_ch);
                     } else {
+                        contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
                         action = getString(R.string.google_analytics_category_action_watch_tv);
                         label = getTitleText().toString();
                     }
@@ -972,12 +982,14 @@ public class BaseActivity extends FragmentActivity implements
                     if (isFromMenu) {
                         action = getString(R.string.google_analytics_category_action_h4d);
                     } else {
+                        contentsType1 = ContentUtils.getContentsType1(BaseActivity.this, mHikariType);
                         action = getString(R.string.google_analytics_category_action_watch_tv);
                         label = getTitleText().toString();
                     }
                     break;
                 case DAZN:
                     category = getString(R.string.google_analytics_category_service_name_dazn);
+                    contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dazn);
                     if (isFromMenu) {
                         action = getString(R.string.google_analytics_category_action_dazn);
                     } else {
@@ -987,12 +999,43 @@ public class BaseActivity extends FragmentActivity implements
                     break;
                 case UNKNOWN:
                 default:
-                    isOtherService = true;
+                    isUnknownService = true;
                     break;
             }
-            if (!isOtherService) {
-                sendEvent(category, action, label);
+            if (!isUnknownService) {
+                SparseArray<String> customDimensions = null;
+                if (!isFromMenu) {
+                    customDimensions = new SparseArray<>();
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+                    switch (mContentsType) {
+                        case TV:
+                            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, getString(R.string.google_analytics_custom_dimension_contents_type2_live));
+                            break;
+                        case VOD:
+                            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, getString(R.string.google_analytics_custom_dimension_contents_type2_void));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                sendEvent(category, action, label, customDimensions);
             }
+    }
+
+    /**
+     * コンテンツ種別1のコンテンツ種別名のひかりTV種別設定.
+     * @param hikariType ひかりTV種別
+     */
+    protected void setHikariType(final ContentUtils.HikariType hikariType) {
+        mHikariType = hikariType;
+    }
+
+    /**
+     * コンテンツ種別2のコンテンツ種別名.
+     * @param contentsType コンテンツ種別
+     */
+    protected void setContentsType(final ContentUtils.ContentsType contentsType) {
+        mContentsType = contentsType;
     }
 
     /**
@@ -1009,10 +1052,25 @@ public class BaseActivity extends FragmentActivity implements
             case RelayServiceResponseMessage.RELAY_RESULT_OK:
                 RemoteControlRelayClient.STB_APPLICATION_TYPES appType
                         = ((RelayServiceResponseMessage) msg.obj).getApplicationTypes();
-                if (RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.START_APPLICATION.equals(requestCommand)) {
-                    sendGoogleAnalyticsEvent(true, appType);
-                } else if (RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL.equals(requestCommand)) {
-                    sendGoogleAnalyticsEvent(false, appType);
+                switch (requestCommand) {
+                    case KEYEVENT_KEYCODE_POWER:
+                        sendEvent(getString(R.string.google_analytics_category_service_name_remote_control),
+                                getString(R.string.google_analytics_category_action_remote_control_power),
+                                null, null);
+                        break;
+                    case START_APPLICATION:
+                        sendGoogleAnalyticsEvent(true, appType);
+                        break;
+                    case TITLE_DETAIL:
+                        sendGoogleAnalyticsEvent(false, appType);
+                        break;
+                    case IS_USER_ACCOUNT_EXIST:
+                    case SET_DEFAULT_USER_ACCOUNT:
+                    case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                    case CHECK_APPLICATION_REQUEST_PROCESSING:
+                    case COMMAND_UNKNOWN:
+                    default:
+                        break;
                 }
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
@@ -1809,7 +1867,7 @@ public class BaseActivity extends FragmentActivity implements
                             setKeyExchangeFlag(true);
                         }
                         getRemoteControllerView().startRemoteUI(true);
-                        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
+                        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control), null);
                     }
                     break;
                 default:
@@ -1861,7 +1919,7 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug("Start RemoteControl");
             createRemoteControllerView(false);
             getRemoteControllerView().startRemoteUI(true);
-            sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
+            sendScreenView(getString(R.string.google_analytics_screen_name_remote_control), null);
         }
     }
 
@@ -1872,7 +1930,7 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug("Start RemoteControl");
         createRemoteControllerView(true);
         getRemoteControllerView().startRemoteUI(false);
-        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
+        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control), null);
     }
 
     /**
@@ -2893,6 +2951,14 @@ public class BaseActivity extends FragmentActivity implements
                                                      final List<UserInfoList> list, final boolean isContractChange) {
                         //契約変化を見るコールバック
                         checkUserInfoChangeResult(isContractChange);
+                        String contractType = ContentUtils.getContractType(BaseActivity.this);
+                        if (!TextUtils.isEmpty(contractType)) {
+                            SparseArray<String> customDimensions = new SparseArray<>();
+                            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
+                            sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+                                    getString(R.string.google_analytics_category_action_remote_contract_get_success),
+                                    null, customDimensions);
+                        }
                     }
                 });
         dataProvider.getUserInfo();
@@ -3549,6 +3615,9 @@ public class BaseActivity extends FragmentActivity implements
         mClipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
         mClipButton.setTag(CLIP_ACTIVE_STATUS);
         showClipToast(R.string.clip_regist_result_message);
+        sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                getString(R.string.google_analytics_category_action_clip_regist),
+                mClipRequestData == null ? null : mClipRequestData.getTitle(), null);
     }
 
     @Override
@@ -3565,6 +3634,9 @@ public class BaseActivity extends FragmentActivity implements
         mClipButton.setBackgroundResource(R.drawable.common_clip_normal_selector);
         showClipToast(R.string.clip_delete_result_message);
         mClipButton.setTag(CLIP_OPACITY_STATUS);
+        sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                getString(R.string.google_analytics_category_action_clip_delete),
+                mClipRequestData == null ? null : mClipRequestData.getTitle(), null);
     }
 
     @Override
@@ -3605,14 +3677,23 @@ public class BaseActivity extends FragmentActivity implements
      * スクリーン・ビューを送る.
      *
      * @param screenName スクリーン名
+     * @param customDimensions カスタム ディメンション
      */
-    protected void sendScreenView(final String screenName) {
+    protected void sendScreenView(final String screenName, final SparseArray<String> customDimensions) {
         DTVTLogger.start("sendScreenName: " + screenName);
 
         TvtApplication app = (TvtApplication) getApplication();
         Tracker tracker = app.getDefaultTracker();
         tracker.setScreenName(screenName);
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        HitBuilders.ScreenViewBuilder builder = new HitBuilders.ScreenViewBuilder();
+        if (customDimensions != null) {
+            for (int i = 0; i < customDimensions.size(); i++) {
+                int key = customDimensions.keyAt(i);
+                String value = customDimensions.get(key);
+                builder.setCustomDimension(key, value);
+            }
+        }
+        tracker.send(builder.build());
 
         DTVTLogger.end();
     }
@@ -3622,19 +3703,31 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param category イベントのカテゴリ
      * @param action イベントのアクション
+     * @param customDimensions カスタム ディメンション
      * @param label ラベル
      */
-    private void sendEvent(final String category, final String action, final String label) {
+    protected void sendEvent(final String category, final String action, final String label, final SparseArray<String> customDimensions) {
         DTVTLogger.start("google sendEvent category: " + category + " action: " + action + " label: " + label);
 
         TvtApplication app = (TvtApplication) getApplication();
         Tracker tracker = app.getDefaultTracker();
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .setLabel(label)
-                .setValue(1)
-                .build());
+        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
+        builder.setCategory(category);
+        builder.setAction(action);
+        if (!TextUtils.isEmpty(label)) {
+            builder.setLabel(label);
+        } else {
+            builder.setLabel("");
+        }
+        builder.setValue(1);
+        if (customDimensions != null) {
+            for (int i = 0; i < customDimensions.size(); i++) {
+                int key = customDimensions.keyAt(i);
+                String value = customDimensions.get(key);
+                builder.setCustomDimension(key, value);
+            }
+        }
+        tracker.send(builder.build());
 
         DTVTLogger.end();
     }

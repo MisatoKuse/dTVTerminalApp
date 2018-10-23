@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -71,7 +73,7 @@ public class VideoTopActivity extends BaseActivity implements
     /**ジャンルIDのIntent KEY.*/
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
     /**ジャンル・トップ・タイトル.*/
-    private static final String VIDEO_GENRE_TOP_TITLE = "ビデオジャンル";
+    private boolean mIsSubGenre = false;
     // endregion variable
     // region Activity LifeCycle
     @Override
@@ -96,12 +98,18 @@ public class VideoTopActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        String title = mTitleTextView.getText().toString();
-
-        if (title.equals(VIDEO_GENRE_TOP_TITLE)) {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_top));
+        if (!mIsSubGenre) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_top),
+                    mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(VideoTopActivity.this) : null);
         } else {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_sub_genre));
+            if (mIsFromBgFlg) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_video_sub_genre),
+                        ContentUtils.getParingAndLoginCustomDimensions(VideoTopActivity.this));
+            } else {
+                SparseArray<String> customDimensions = new SparseArray<>();
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_video_sub_genre), customDimensions);
+            }
         }
     }
 
@@ -172,6 +180,7 @@ public class VideoTopActivity extends BaseActivity implements
                 mShowContentsList = new ArrayList<>();
                 DTVTLogger.debug("mVideoGenreListData is Null");
                 // ジャンル画面のタイトル
+                mIsSubGenre = false;
                 setTitleText(getString(R.string.video_content_top_title));
                 //ジャンル一覧表示データ取得要求開始
                 mVideoGenreProvider.getGenreListDataRequest();
@@ -179,6 +188,7 @@ public class VideoTopActivity extends BaseActivity implements
                 DTVTLogger.debug("Show SubGenreList");
                 showData = mVideoGenreListDataInfo.getVideoGenreListShowData();
                 // サブジャンル画面のタイトル
+                mIsSubGenre = true;
                 setTitleText(showData.getTitle());
                 mShowContentsList = new ArrayList<>();
                 if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {

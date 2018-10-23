@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * アプリケーション情報.
@@ -66,7 +67,8 @@ public class ApplicationInfoActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_info));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_info),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(ApplicationInfoActivity.this) : null);
     }
 
     /**

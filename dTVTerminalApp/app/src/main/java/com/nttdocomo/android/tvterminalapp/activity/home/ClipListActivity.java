@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -31,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.List;
@@ -95,14 +97,6 @@ public class ClipListActivity extends BaseActivity implements
      */
     public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
     /**
-     * タブ名　番組.
-     */
-    public static final String TAB_NAME_TV = "番組";
-    /**
-     * タブ名　ビデオ.
-     */
-    public static final String TAB_NAME_VIDEO = "ビデオ";
-    /**
      *  前回のポジション.
      */
     private static final String TAB_INDEX = "tabIndex";
@@ -162,7 +156,7 @@ public class ClipListActivity extends BaseActivity implements
                 DTVTLogger.debug("ClipListActivity::Clip Status Update");
             }
         }
-        sendScreenViewForPosition(getCurrentPosition());
+        sendScreenViewForPosition(getCurrentPosition(), false);
         DTVTLogger.end();
     }
 
@@ -174,12 +168,22 @@ public class ClipListActivity extends BaseActivity implements
 
     /**
      * 表示中タブの内容によってスクリーン情報を送信する.
+     * @param position ポジション
+     * @param isFromTab true:タブ切り替え false:onResume
      */
-    private void sendScreenViewForPosition(final int position) {
-        if (position == 0) {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_tv));
+    private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
+        String screenName;
+        if (position == CLIP_LIST_PAGE_NO_OF_TV) {
+            screenName = getString(R.string.google_analytics_screen_name_clip_tv);
         } else {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_video));
+            screenName = getString(R.string.google_analytics_screen_name_clip_video);
+        }
+        if (!isFromTab && mIsFromBgFlg) {
+            super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ClipListActivity.this));
+        } else {
+            SparseArray<String> customDimensions  = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            super.sendScreenView(screenName, customDimensions);
         }
     }
 
@@ -636,7 +640,7 @@ public class ClipListActivity extends BaseActivity implements
                 super.onPageSelected(position);
                 DTVTLogger.debug("init view onPageSelected");
                 mTabLayout.setTab(position);
-                sendScreenViewForPosition(position);
+                sendScreenViewForPosition(position, true);
                 //タブ移動時にページリセット
                 resetPaging();
 

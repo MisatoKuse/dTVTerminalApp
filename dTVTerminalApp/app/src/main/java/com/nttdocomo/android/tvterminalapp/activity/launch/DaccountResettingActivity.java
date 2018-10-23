@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 /**
@@ -87,7 +88,8 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
     @Override
     protected void onResume() {
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_resetting));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_resetting),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(DaccountResettingActivity.this) : null);
     }
 
     @Override

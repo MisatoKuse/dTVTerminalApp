@@ -21,6 +21,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 import java.util.ArrayList;
 
@@ -205,7 +206,8 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     @Override
     protected void onResume() {
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu_channel_select));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu_channel_select),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(SelectChannelActivity.this) : null);
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -99,7 +100,14 @@ public class RentalListActivity extends BaseActivity implements
                 DTVTLogger.debug("RentalListActivity::Clip Status Update");
             }
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_rental));
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_rental),
+                    ContentUtils.getParingAndLoginCustomDimensions(RentalListActivity.this));
+        } else {
+            SparseArray<String> customDimensions  = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_rental), customDimensions);
+        }
         DTVTLogger.end();
     }
 

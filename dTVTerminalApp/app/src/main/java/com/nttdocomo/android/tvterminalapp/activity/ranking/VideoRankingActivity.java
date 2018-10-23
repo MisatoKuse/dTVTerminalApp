@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -24,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataC
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -102,7 +104,8 @@ public class VideoRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
             }
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(VideoRankingActivity.this) : null);
         DTVTLogger.end();
     }
 
@@ -425,6 +428,10 @@ public class VideoRankingActivity extends BaseActivity implements
             } else {
                 mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
             }
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_GENRE, mTabNames[mViewPager.getCurrentItem()]);
+            sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking), customDimensions);
         }
     }
     /**

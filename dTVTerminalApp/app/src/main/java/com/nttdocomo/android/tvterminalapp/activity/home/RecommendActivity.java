@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -30,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragm
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -174,7 +176,7 @@ public class RecommendActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        sendScreenViewForPosition(mSelectedTabIndex);
+        sendScreenViewForPosition(mSelectedTabIndex, false);
     }
 
     @Override
@@ -238,7 +240,7 @@ public class RecommendActivity extends BaseActivity implements
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
                 mSelectedTabIndex = position;
-                sendScreenViewForPosition(position);
+                sendScreenViewForPosition(position, true);
                 clearAllFragment();
                 showProgressBar(true);
                 mSearchLastItem = 0;
@@ -250,26 +252,43 @@ public class RecommendActivity extends BaseActivity implements
     /**
      * 表示中タブの内容によってスクリーン情報を送信する.
      * @param position タブポジション
+     * @param isFromTab true:タブ切り替え false:onResume
      */
-    private void sendScreenViewForPosition(final int position) {
+    private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
+        String screenName = null;
+        String serviceName = null;
         switch (position) {
             case TAB_INDEX_TV:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_tv));
+                screenName = getString(R.string.google_analytics_screen_name_recommend_tv);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
                 break;
             case TAB_INDEX_VIDEO:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_video));
+                screenName = getString(R.string.google_analytics_screen_name_recommend_video);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
                 break;
             case TAB_INDEX_DTV:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_dtv));
+                screenName = getString(R.string.google_analytics_screen_name_recommend_dtv);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_dtv);
                 break;
             case TAB_INDEX_DTV_CHANNEL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_dtv_channel));
+                screenName = getString(R.string.google_analytics_screen_name_recommend_dtv_channel);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_dtv_ch);
                 break;
             case TAB_INDEX_DANIME:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_danime));
+                screenName = getString(R.string.google_analytics_screen_name_recommend_danime);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_danime);
                 break;
             default:
                 break;
+        }
+        if (!TextUtils.isEmpty(screenName)) {
+            if (mIsFromBgFlg && !isFromTab) {
+                super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(RecommendActivity.this));
+            } else {
+                SparseArray<String> customDimensions = new SparseArray<>();
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+                super.sendScreenView(screenName, customDimensions);
+            }
         }
     }
 

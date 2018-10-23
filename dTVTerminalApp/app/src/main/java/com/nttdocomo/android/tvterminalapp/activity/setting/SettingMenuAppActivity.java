@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * APP画面.
@@ -62,7 +63,8 @@ public class SettingMenuAppActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_privacy_policy));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_privacy_policy),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(SettingMenuAppActivity.this) : null);
     }
 
     @Override

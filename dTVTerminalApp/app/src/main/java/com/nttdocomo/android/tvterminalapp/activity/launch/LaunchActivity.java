@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 
@@ -89,7 +90,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         //スプラッシュ画面の2秒表示用タイマーをセット
         setFirstTimeOut();
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_splash));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_splash),
+                ContentUtils.getParingAndLoginCustomDimensions(LaunchActivity.this));
 
         DTVTLogger.debug("normal exec setFirstTimeOut");
     }

@@ -30,8 +30,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.activity.setting.SettingMenuTermsOfServiceActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -307,7 +307,8 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         if (mCurPos != PAGE_1) {
             mHandle.postDelayed(mRunnableAnimation, ANIMATION_TIME_WAIT);
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_tutorial));
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_tutorial),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(TutorialActivity.this) : null);
     }
 
     @Override
@@ -321,7 +322,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.tutorial_show_agreement:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_agreement));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_agreement), null);
                 startActivity(LaunchTermsOfServiceActivity.class, null);
                 break;
             case R.id.skipOrFinishTutorialAcivity:

@@ -16,6 +16,7 @@ import android.os.HandlerThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -47,6 +48,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDa
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -211,7 +213,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 mTvProgramListAdapter.notifyDataSetChanged();
             }
         }
-        sendScreenViewForPosition(mTabIndex);
+        sendScreenViewForPosition(mTabIndex, false);
         DTVTLogger.end();
     }
 
@@ -469,7 +471,7 @@ public class TvProgramListActivity extends BaseActivity implements
             mTabIndex = position;
             // NOWバー位置更新
             mNowCurTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
-            sendScreenViewForPosition(position);
+            sendScreenViewForPosition(position, true);
             clearData();
             //dTVチャンネルタブ以外が選択された際、過去日付を表示していたら現在日付に補正する
             if(position != TAB_INDEX_DTVCH) {
@@ -516,20 +518,31 @@ public class TvProgramListActivity extends BaseActivity implements
      * 表示中タブの内容によってスクリーン情報を送信する.
      *
      * @param position ポジション
+     * @param isFromTab true:タブ切り替え
      */
-    private void sendScreenViewForPosition(final int position) {
+    private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
+        String screenName = "";
         switch (position) {
             case TAB_INDEX_MY_PROGRAM:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_mine));
+                screenName = getString(R.string.google_analytics_screen_name_program_list_mine);
                 break;
             case TAB_INDEX_HIKARI:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_h4d));
+                screenName = getString(R.string.google_analytics_screen_name_program_list_h4d);
                 break;
             case TAB_INDEX_DTVCH:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_dtv_channel));
+                screenName = getString(R.string.google_analytics_screen_name_program_list_dtv_channel);
                 break;
             default:
                 break;
+        }
+        if (!TextUtils.isEmpty(screenName)) {
+            if (!isFromTab && mIsFromBgFlg) {
+                super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(TvProgramListActivity.this));
+            } else {
+                SparseArray<String> customDimensions  = new SparseArray<>();
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
+                super.sendScreenView(screenName, customDimensions);
+            }
         }
     }
 
@@ -1371,6 +1384,9 @@ public class TvProgramListActivity extends BaseActivity implements
                 clipButton.setTag(CLIP_ACTIVE_STATUS);
             }
             showClipToast(R.string.clip_regist_result_message);
+            sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                    getString(R.string.google_analytics_category_action_clip_regist),
+                    clipRequestData.getTitle(), null);
         } else {
             // フェールセーフで元処理に戻す
             super.onClipRegistResult();
@@ -1398,6 +1414,9 @@ public class TvProgramListActivity extends BaseActivity implements
                 clipButton.setTag(CLIP_OPACITY_STATUS);
             }
             showClipToast(R.string.clip_delete_result_message);
+            sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
+                    getString(R.string.google_analytics_category_action_clip_delete),
+                    clipRequestData.getTitle(), null);
         } else {
             // フェールセーフで元処理に戻す
             super.onClipDeleteResult();
