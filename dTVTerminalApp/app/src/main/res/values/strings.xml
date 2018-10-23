@@ -560,7 +560,7 @@
 
     <!-- Google Analytics カスタムディメンション名 契約種別 -->
     <string name="google_analytics_custom_dimension_hikari_contract_ing">ひかりTV契約中</string>
-    <string name="google_analytics_custom_dimension_hikari_no_contract_dch_contract_ok">ひかりTV契約無し・dTVチャンネル契約あり</string>
+    <string name="google_analytics_custom_dimension_hikari_no_contract_dch_contract_ok">ひかりTV契約無しdTVチャンネル契約あり</string>
     <string name="google_analytics_custom_dimension_hikari_no_contract_dch_no_contract">ひかりTV・dTVチャンネル契約無し</string>
 
     <!-- Google Analytics カスタムディメンション名 ペアリング -->
