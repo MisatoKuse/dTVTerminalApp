@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<dasho version="8.2.0">
+<dasho version="9.1.0">
     <propertylist>
         <property name="projectname" value="dasho"/>
-        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\26.0.2"/>
+        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\28.0.2"/>
         <property name="apkOutput" value="TVTerminal-obfuscated.apk"/>
         <property name="apkInput" value="..\app\build\outputs\apk\TVTerminal.apk"/>
         <property name="sdk.dir" value="${ANDROID_SDK_DIR}"/>
@@ -30,8 +30,8 @@
         <classes name="com.digion.dixim.android.**"/>
     </globalProcessingExclude>
     <classpath appendrtjar="false">
-        <pathelement location="${sdk.dir}\platforms\android-26\android.jar"/>
-        <pathelement location="${sdk.dir}\platforms\android-26\optional\org.apache.http.legacy.jar"/>
+        <pathelement location="${sdk.dir}\platforms\android-28\android.jar"/>
+        <pathelement location="${sdk.dir}\platforms\android-28\optional\org.apache.http.legacy.jar"/>
     </classpath>
     <entrypoints>
         <android name="com.google.android.gms.common.api.GoogleApiActivity" rename-class="true"/>
@@ -97,6 +97,9 @@
             <method name="&lt;init&gt;" signature="**" modifiers="public"/>
         </classes>
         <classes name="com.nttdocomo.android.tvterminalapp.view.RemoteControllerView">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout">
             <method name="&lt;init&gt;" signature="**" modifiers="public"/>
         </classes>
         <classes name="**" rename="true">
@@ -198,5 +201,5 @@
             <runtime target="android4"/>
         </instrumentation>
     </injection>
-    <signjar option="off">${sdk.dir}\build-tools\26.0.2\apksigner.bat</signjar>
+    <signjar option="off">${sdk.dir}\build-tools\28.0.2\apksigner.bat</signjar>
 </dasho>
