@@ -296,12 +296,16 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     public void onRentalChListJsonParsed(final PurchasedChannelListResponse purchasedChannelListResponse) {
         mPurchasedChannelListResponse = purchasedChannelListResponse;
         if (mPurchasedChannelListResponse != null) {
-            Handler handler = new Handler(); //チャンネル情報更新
-            try {
-                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_CHANNEL_UPDATE);
-                dataBaseThread.start();
-            } catch (RuntimeException e) {
-                DTVTLogger.debug(e);
+            ArrayList<ActiveData> actionData = mPurchasedChannelListResponse.getChActiveData();
+            List<Map<String, String>> channelList = mPurchasedChannelListResponse.getChannelListData().getChannelList();
+            if (actionData != null && actionData.size() > 0 && channelList != null && !channelList.isEmpty()) {
+                Handler handler = new Handler(); //チャンネル情報更新
+                try {
+                    DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_CHANNEL_UPDATE);
+                    dataBaseThread.start();
+                } catch (RuntimeException e) {
+                    DTVTLogger.debug(e);
+                }
             }
             executeRentalChListCallback(purchasedChannelListResponse);
         } else {

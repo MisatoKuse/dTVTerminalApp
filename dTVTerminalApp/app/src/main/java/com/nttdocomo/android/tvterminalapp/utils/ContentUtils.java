@@ -1038,7 +1038,10 @@ public class ContentUtils {
      */
     public static long getRentalChannelValidEndDate(final PurchasedChannelListResponse response, final ChannelInfo channelInfo) {
         ChannelList channelList = response.getChannelListData();
-        Map<String, String> chList = checkChServiceIdListSame(channelList.getChannelList(), channelInfo);
+        Map<String, String> chList = null;
+        if (channelList != null && channelList.getChannelList() != null) {
+            chList = checkChServiceIdListSame(channelList.getChannelList(), channelInfo);
+        }
 
         //最長のvalid_end_dateを格納する
         long vodLimitDate = 0;
