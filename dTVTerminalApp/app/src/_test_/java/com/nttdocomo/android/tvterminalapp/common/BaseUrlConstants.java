@@ -19,7 +19,7 @@ class BaseUrlConstants {
      * レコメンドサーバAPIのベースURL.
      */
     public static final String RECOMMEND_BASE_URL =
-            "https://ve.m.service.smt.docomo.ne.jp/srermd/";
+            "https://ve.m.support2.smt.docomo.ne.jp/srermd/";
 
     /**
      * レコメンドサーバー用のCIRCUS認証URL.

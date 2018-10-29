@@ -25,7 +25,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     /**
      * DBVersion.
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     /**
      * drop table if exists.
      */
@@ -174,6 +174,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
             dropAllTable(sqLiteDatabase);
             createAllTable(sqLiteDatabase);
+            DTVTLogger.debug("DatabaseHelper::onUpgrade completed.");
         }
         DTVTLogger.end();
     }

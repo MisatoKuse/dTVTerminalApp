@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,27 @@ public class RecommendChannelList {
      * おすすめ番組リスト.
      */
     private List<Map<String, String>> mRcList = new ArrayList<>();
+
+    /**
+     * おすすめタブページ番号.
+     */
+    private int mRequestPageNo;
+
+    /**
+     * おすすめタブページ番号取得.
+     * @return おすすめタブページ番号
+     */
+    public int getmRequestPageNo() {
+        return mRequestPageNo;
+    }
+
+    /**
+     * おすすめタブページ番号.
+     * @param mRequestPageNo   おすすめタブページ番号
+     */
+    public void setmRequestPageNo(int mRequestPageNo) {
+        this.mRequestPageNo = mRequestPageNo;
+    }
 
     /**
      * おすすめ番組マップ取得.
