@@ -272,6 +272,7 @@
     <string name="nav_menu_item_dazn">ダ・ゾーン</string>
     <string name="nav_menu_item_premium_video">プレミアムビデオ</string>
     <string name="nav_menu_item_premium_tv_app_start_common">テレビアプリを起動する</string>
+    <string name="nav_menu_item_h4d_guide">ひかりTV for docomoガイド</string>
 
     <!-- 検索画面 -->
     <string name="search_loading">読み込み中...</string>
