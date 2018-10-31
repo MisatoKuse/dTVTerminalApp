@@ -276,6 +276,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
             mActivity.startActivity(intent);
+        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_h4d_guide))) {
+            Uri uri = Uri.parse(UrlConstants.WebUrl.H4D_GUIDE_URL);
+            intent = new Intent(Intent.ACTION_VIEW, uri);
+            mActivity.startActivity(intent);
         } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
             intent.setClass(mActivity, NoticeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -578,6 +582,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
      * お知らせ、設定、dアニメストアのコピーライトは共通のため、このメソッドに統一.
      */
     private void setFooterMenuItem() {
+        //ひかりTV for docomoガイド
+        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_h4d_guide));
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
         //お知らせ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_notice));
         mMenuItemCount.add(INT_NONE_COUNT_STATUS);
