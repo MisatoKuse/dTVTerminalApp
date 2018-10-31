@@ -67,6 +67,11 @@ public class ErrorState {
     private static final String XML_RESULT_STRING = "id";
 
     /**
+     * XMLの結果コードのキーの名前.
+     */
+    private static final String XML_RESULT_KEY_NAME = "Result";
+
+    /**
      * エラーコード.
      */
     private static final String NETWORK_ERROR_CODE = "NW-";
@@ -276,6 +281,13 @@ public class ErrorState {
             while (!endFlg) {
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
+                        if (XML_RESULT_KEY_NAME.equals(parser.getName())) {
+                            parser.next();
+                            if (NORMAL_RESULT_TEXT.equals(parser.getText())) {
+                                return;
+                            }
+                        }
+
                         //開始タグの場合、結果コードかどうかを見る
                         if (XML_RESULT_STRING.equals(parser.getName())) {
                             //結果コードなので、次の値のタイプを取得
