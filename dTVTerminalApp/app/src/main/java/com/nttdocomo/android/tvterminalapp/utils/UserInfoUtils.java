@@ -37,28 +37,6 @@ public class UserInfoUtils {
     public static final String CONTRACT_INFO_H4D = "002";
 
     /**
-     * レコメンドサーバ用に、ユーザ年齢情報を＋3して返却する.
-     *
-     * @param userAge ユーザ情報
-     * @return 検レコ用年齢情報
-     */
-    public static String getRecommendUserAge(final int userAge) {
-        final int RECOMMEND_AGE_MARGIN = 3;
-        //年齢情報最大制限値
-        final int RECOMMEND_PARAMETER_MAX_AGE = 20;
-        if (userAge >= 0) {
-            int destUserAge = userAge + RECOMMEND_AGE_MARGIN;
-            //ユーザ年齢情報が20超の場合は最大制限値に設定する
-            if (destUserAge > RECOMMEND_PARAMETER_MAX_AGE) {
-                destUserAge = RECOMMEND_PARAMETER_MAX_AGE;
-            }
-            return String.valueOf(destUserAge);
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * 契約情報を取得する.
      *
      * @param userInfoList ユーザーデータ
