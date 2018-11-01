@@ -136,6 +136,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             }
             @Override
             public void onDrawerOpened(final View drawerView) {
+                drawerView.setClickable(true);
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
             }
