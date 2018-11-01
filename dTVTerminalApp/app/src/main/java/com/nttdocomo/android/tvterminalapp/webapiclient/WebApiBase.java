@@ -66,12 +66,14 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         mWebApiCallback = callback;
         final WebApiBase webApiBase = this;
         DTVTLogger.debug("”execDaccountGetOTT” getRecommendSearch");
-        mHttpThread = new HttpThread(url, webApiBase, context, "", null);
-        mHttpThread.start();
         //認証画面の表示状況のインスタンスの取得
         final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
         //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
         final DaccountGetOtt getOtt = new DaccountGetOtt();
+        if (getOtt != null) {
+            //通信キャンセル呼び出し
+            getOtt.cancelConnection();
+        }
         getOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
