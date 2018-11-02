@@ -9,6 +9,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
@@ -266,6 +267,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             SearchResultError error = SearchResultError.systemError;
             if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {
                 error = SearchResultError.requestError;
+                ErrorState errorState = getError();
+                errorState.setErrorType(DtvtConstants.ErrorType.SERVER_ERROR);
             }
 
             //if(null!=handler){
