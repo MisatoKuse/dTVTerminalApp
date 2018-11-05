@@ -91,6 +91,16 @@ public class ContentsData {
     private String mReserved4 = null;
     /**reserved5.*/
     private String mReserved5 = null;
+    /**reserved6.*/
+    private String mReserved6 = null;
+    /**reserved7.*/
+    private String mReserved7 = null;
+    /**reserved8.*/
+    private String mReserved8 = null;
+    /**reserved9.*/
+    private String mReserved9 = null;
+    /**reserved10.*/
+    private String mReserved10 = null;
     /**mobileViewingFlg.*/
     private String  mobileViewingFlg = null;
     /**作品種別.*/
@@ -824,6 +834,86 @@ public class ContentsData {
      */
     public void setReserved5(final String mReserved5) {
         this.mReserved5 = mReserved5;
+    }
+
+    /**
+     * reserved6取得.
+     * @return reserved6
+     */
+    public String getReserved6() {
+        return mReserved6;
+    }
+
+    /**
+     * reserved6設定.
+     * @param mReserved6 reserved6
+     */
+    public void setReserved6(final String mReserved6) {
+        this.mReserved6 = mReserved6;
+    }
+
+    /**
+     * reserved7取得.
+     * @return reserved7
+     */
+    public String getReserved7() {
+        return mReserved7;
+    }
+
+    /**
+     * reserved7設定.
+     * @param mReserved7 reserved7
+     */
+    public void setReserved7(final String mReserved7) {
+        this.mReserved7 = mReserved7;
+    }
+
+    /**
+     * reserved8取得.
+     * @return reserved8
+     */
+    public String getReserved8() {
+        return mReserved8;
+    }
+
+    /**
+     * reserved8設定.
+     * @param mReserved8 reserved8
+     */
+    public void setReserved8(final String mReserved8) {
+        this.mReserved8 = mReserved8;
+    }
+
+    /**
+     * reserved9取得.
+     * @return reserved9
+     */
+    public String getReserved9() {
+        return mReserved9;
+    }
+
+    /**
+     * reserved9設定.
+     * @param mReserved9 reserved9
+     */
+    public void setReserved9(final String mReserved9) {
+        this.mReserved9 = mReserved9;
+    }
+
+    /**
+     * reserved10取得.
+     * @return reserved10
+     */
+    public String getReserved10() {
+        return mReserved10;
+    }
+
+    /**
+     * reserved10設定.
+     * @param mReserved10 reserved10
+     */
+    public void setReserved10(final String mReserved10) {
+        this.mReserved10 = mReserved10;
     }
 
     /**

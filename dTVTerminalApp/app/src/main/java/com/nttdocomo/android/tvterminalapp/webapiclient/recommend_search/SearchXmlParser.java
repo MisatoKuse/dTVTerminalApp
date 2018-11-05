@@ -141,17 +141,33 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
      */
     private static final String TITLE_KIND = "titleKind";
     /**
-     * description1.
+     * 商品詳細１.
      */
     private static final String DESCRIPTION1 = "description1";
     /**
-     * description2.
+     * 商品詳細２.
      */
     private static final String DESCRIPTION2 = "description2";
     /**
-     * description3.
+     * 商品詳細３.
      */
     private static final String DESCRIPTION3 = "description3";
+    /**
+     * 制作年.
+     */
+    private static final String PRODUCTIONYEAR = "productionYear";
+    /**
+     * コピーライト.
+     */
+    private static final String COPYRIGHT = "copyright";
+    /**
+     * コンテンツ長.
+     */
+    private static final String CONTENTSLENGTH = "contentsLength";
+    /**
+     * 視聴エリアコード.
+     */
+    private static final String AREA = "area";
     /**
      * reserved1.
      */
@@ -172,6 +188,26 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
      * reserved5.
      */
     private static final String RESERVED5 = "reserved5";
+    /**
+     * reserved6.
+     */
+    private static final String RESERVED6 = "reserved6";
+    /**
+     * reserved7.
+     */
+    private static final String RESERVED7 = "reserved7";
+    /**
+     * reserved8.
+     */
+    private static final String RESERVED8 = "reserved8";
+    /**
+     * reserved9.
+     */
+    private static final String RESERVED9 = "reserved9";
+    /**
+     * reserved10.
+     */
+    private static final String RESERVED10 = "reserved10";
     /**
      * genreName.
      */
@@ -515,6 +551,26 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
                     TotalSearchResponseData.Content contentDescription3 = searchResponse.getContentListIndex(currentDescription3Index);
                     contentDescription3.mDescription3 = value;
                     break;
+                case PRODUCTIONYEAR:
+                    int productionYearIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentProductionYear = searchResponse.getContentListIndex(productionYearIndex);
+                    contentProductionYear.productionYear = value;
+                    break;
+                case COPYRIGHT:
+                    int copyrightIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentCopyright = searchResponse.getContentListIndex(copyrightIndex);
+                    contentCopyright.copyright = value;
+                    break;
+                case CONTENTSLENGTH:
+                    int contentsLengthIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentContentsLength = searchResponse.getContentListIndex(contentsLengthIndex);
+                    contentContentsLength.contentsLength = value;
+                    break;
+                case AREA:
+                    int areaIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentArea = searchResponse.getContentListIndex(areaIndex);
+                    contentArea.area = value;
+                    break;
                 case RESERVED1:
                     int currentReserved1Index = searchResponse.getContentListSize() - 1;
                     TotalSearchResponseData.Content contentReserved1 = searchResponse.getContentListIndex(currentReserved1Index);
@@ -539,6 +595,31 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
                     int currentReserved5Index = searchResponse.getContentListSize() - 1;
                     TotalSearchResponseData.Content contentReserved5 = searchResponse.getContentListIndex(currentReserved5Index);
                     contentReserved5.mReserved5 = value;
+                    break;
+                case RESERVED6:
+                    int currentReserved6Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved6 = searchResponse.getContentListIndex(currentReserved6Index);
+                    contentReserved6.mReserved6 = value;
+                    break;
+                case RESERVED7:
+                    int currentReserved7Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved7 = searchResponse.getContentListIndex(currentReserved7Index);
+                    contentReserved7.mReserved7 = value;
+                    break;
+                case RESERVED8:
+                    int currentReserved8Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved8 = searchResponse.getContentListIndex(currentReserved8Index);
+                    contentReserved8.mReserved8 = value;
+                    break;
+                case RESERVED9:
+                    int currentReserved9Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved9 = searchResponse.getContentListIndex(currentReserved9Index);
+                    contentReserved9.mReserved9 = value;
+                    break;
+                case RESERVED10:
+                    int currentReserved10Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved10 = searchResponse.getContentListIndex(currentReserved10Index);
+                    contentReserved10.mReserved10 = value;
                     break;
                 case GENRE_NAME:
                     int currentGenreNameIndex = searchResponse.getContentListSize() - 1;
