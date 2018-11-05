@@ -7,8 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
-import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
-import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
 
 /**
  * DB定数定義クラス.
@@ -416,6 +415,42 @@ public class DataBaseConstants {
             CLOSE_BRACKETS_TEXT);
 
     /**
+     * ホームのおすすめ番組データ格納用テーブルカラム.
+     */
+    public static final String CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL = " ("
+            + ID_COLUMN + " integer primary key autoincrement, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED6 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED7 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED8 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED9 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED10 + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_GENRE_NAME + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_AREA + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_R_RATED + " text, "
+            + RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_COPYRIGHT + " text "
+            + ")";
+
+    /**
      * ホームのおすすめ番組データ格納用テーブル.
      */
     public static final String RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME = "recommend_home_channel_list";
@@ -423,29 +458,7 @@ public class DataBaseConstants {
      * ホームのおすすめ番組情報テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_HOME_CHANNEL_SQL = ""
-            + "create table " + RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
-            + ")";
+            + "create table " + RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
     /**
      * おすすめチャンネルデータ格納用テーブル.
@@ -455,30 +468,7 @@ public class DataBaseConstants {
      * おすすめチャンネル情報テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_CHANNEL_SQL = ""
-            + "create table " + RECOMMEND_CHANNEL_LIST_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
-            + ")";
-
+            + "create table " + RECOMMEND_CHANNEL_LIST_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
     /**
      * ホームのおすすめビデオデータ格納用テーブル.
@@ -488,29 +478,7 @@ public class DataBaseConstants {
      * ホームのおすすめビデオ情報テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_HOME_VIDEO_SQL = ""
-            + "create table " + RECOMMEND_HOME_VIDEO_LIST_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RECOMMENDORDER + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_SERVICEID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CATEGORYID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CHANNELID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CONTENTSID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL2 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_ENDVIEWING + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED1 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED2 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED3 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED4 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED5 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_AGREEMENT + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_VIEWABLE + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_PAGEID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_GROUPID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RECOMMENDMETHODID + " text "
-            + ")";
+            + "create table " + RECOMMEND_HOME_VIDEO_LIST_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
     /**
      * おすすめビデオデータ格納用テーブル.
@@ -520,29 +488,7 @@ public class DataBaseConstants {
      * おすすめビデオ情報テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_VIDEO_SQL = ""
-            + "create table " + RECOMMEND_VIDEO_LIST_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RECOMMENDORDER + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_SERVICEID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CATEGORYID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CHANNELID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CONTENTSID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL2 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_ENDVIEWING + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED1 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED2 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED3 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED4 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED5 + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_AGREEMENT + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_VIEWABLE + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_PAGEID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_GROUPID + " text, "
-            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RECOMMENDMETHODID + " text "
-            + ")";
+            + "create table " + RECOMMEND_VIDEO_LIST_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
     //ランキングキャッシュデータ格納用テーブル
     /**
@@ -637,29 +583,7 @@ public class DataBaseConstants {
      * レコメンド（dTV）テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_DTV_SQL = ""
-            + "create table " + RECOMMEND_LIST_DTV_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text ,"
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
-            + ")";
+            + "create table " + RECOMMEND_LIST_DTV_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
     /**
      * レコメンド（dチャンネル）データ格納用テーブル.
@@ -669,29 +593,7 @@ public class DataBaseConstants {
      * レコメンド（dチャンネル）テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_DCHANNEL_SQL = ""
-            + "create table " + RECOMMEND_LIST_DCHANNEL_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
-            + ")";
+            + "create table " + RECOMMEND_LIST_DCHANNEL_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
 
     /**
@@ -702,29 +604,7 @@ public class DataBaseConstants {
      * レコメンド（dアニメ）テーブル作成SQL文.
      */
     public static final String CREATE_TABLE_RECOMMEND_DANIME_SQL = ""
-            + "create table " + RECOMMEND_LIST_DANIME_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
-            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
-            + ")";
+            + "create table " + RECOMMEND_LIST_DANIME_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
     // TABLE、録画持ち出しリスト用
     /**

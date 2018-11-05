@@ -620,7 +620,6 @@ public class HttpThread extends Thread {
         DTVTLogger.start();
         if (mHttpUrlConn != null) {
             mHttpUrlConn.disconnect();
-            finishSelect(new StringBuffer(""));
         }
     }
 }

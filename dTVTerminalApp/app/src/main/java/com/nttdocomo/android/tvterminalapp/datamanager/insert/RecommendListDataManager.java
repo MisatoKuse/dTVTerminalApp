@@ -17,7 +17,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -144,21 +144,22 @@ public class RecommendListDataManager {
 
                 //データテーブルに依らずカラム名は同一
                 String[] columns = {
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID,
-                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_TITLE,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_PAGEID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_GROUPID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID,
+                        RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_COPYRIGHT
                 };
                 List<Map<String, String>> resultList
                         = redListDao.findById(columns, tagPageNo);
@@ -172,21 +173,22 @@ public class RecommendListDataManager {
                 for (int i = 0; i <= resultList.size() - 1; i++) {
                     Map<String, String> map = resultList.get(i);
                     ContentsData contentsData = new ContentsData();
-                    contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
-                    contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
-                    contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
-                    contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
-                    contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
-                    contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
-                    contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
-                    contentsData.setReserved1(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
-                    contentsData.setReserved2(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
-                    contentsData.setReserved4(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
-                    contentsData.setChannelId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
-                    contentsData.setRecommendOrder(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
-                    contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
-                    contentsData.setGroupId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
-                    contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
+                    contentsData.setContentsId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
+                    contentsData.setCategoryId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
+                    contentsData.setServiceId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
+                    contentsData.setThumURL(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+                    contentsData.setTitle(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
+                    contentsData.setStartViewing(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
+                    contentsData.setEndViewing(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
+                    contentsData.setReserved1(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
+                    contentsData.setReserved2(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
+                    contentsData.setReserved4(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
+                    contentsData.setChannelId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
+                    contentsData.setRecommendOrder(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
+                    contentsData.setPageId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
+                    contentsData.setGroupId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
+                    contentsData.setRecommendMethodId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
+                    contentsData.setCopyright(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_COPYRIGHT));
                     recommendContentInfoList.add(contentsData);
                 }
             } catch (SQLiteException e) {
