@@ -21,7 +21,7 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendRequestData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -387,7 +387,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getHomeTerebiRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_HOME_PROGRAM);
                 // サーバへリクエストを送信
-                mTvWebClient = new RecommendWebClient(this, mContext);
+                mTvWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV);
                 mTvWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -418,7 +418,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getTerebiRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_HIKARI_PROGRAM);
                 // サーバへリクエストを送信
-                mRecommendWebClient = new RecommendWebClient(this, mContext);
+                mRecommendWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
                 mRecommendWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -449,7 +449,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getHomeVideoRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_HOME_VOD);
                 // サーバへリクエストを送信
-                mVodWebClient = new RecommendWebClient(this, mContext);
+                mVodWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO);
                 mVodWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -478,7 +478,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getVideoRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_HIKARI_VOD);
                 // サーバへリクエストを送信
-                mVodWebClient = new RecommendWebClient(this, mContext);
+                mVodWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
                 mVodWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -507,7 +507,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getDCHRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_DTVCHANNEL);
                 // サーバへリクエストを送信
-                mRecommendWebClient = new RecommendWebClient(this, mContext);
+                mRecommendWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
                 mRecommendWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -537,7 +537,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getDTVRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_DTV);
                 // サーバへリクエストを送信
-                mRecommendWebClient = new RecommendWebClient(this, mContext);
+                mRecommendWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
                 mRecommendWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -566,7 +566,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setServiceCategoryId(getDAnimeRequestSCIdStr());
                 requestData.setPageId(RECOMMEND_PAGE_ID_DANIME);
                 // サーバへリクエストを送信
-                mRecommendWebClient = new RecommendWebClient(this, mContext);
+                mRecommendWebClient = new RecommendWebClient(this, mContext, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
                 mRecommendWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
@@ -623,16 +623,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private void sendRecommendChListData(final RecommendChannelList recChList) {
         List<Map<String, String>> recList = recChList.getmRcList();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
-        RESP_DATA_SERVICE_TYPE respDataServiceType = RESP_DATA_SERVICE_TYPE.UNKNOWN;
+        RESP_DATA_SERVICE_TYPE respDataServiceType = decisionResponseDataType(recChList);
 
         for (Map<String, String> map : recList) {
             ContentsData data;
             data = setContentsData(map);
             recommendContentInfoList.add(data);
-            if (respDataServiceType == RESP_DATA_SERVICE_TYPE.UNKNOWN) {
-                // レスポンスデータのサービスが確定するまで判定を続ける
-                respDataServiceType = decisionResponseDataType(data);
-            }
         }
 
         Handler handler;
@@ -718,21 +714,22 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private ContentsData setContentsData(final Map<String, String> map) {
         ContentsData contentsData = new ContentsData();
 
-        contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
-        contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
-        contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
-        contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
-        contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
-        contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
-        contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
-        contentsData.setReserved1(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
-        contentsData.setReserved2(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
-        contentsData.setReserved4(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
-        contentsData.setChannelId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
-        contentsData.setRecommendOrder(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
-        contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
-        contentsData.setGroupId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
-        contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
+        contentsData.setContentsId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
+        contentsData.setCategoryId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
+        contentsData.setServiceId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
+        contentsData.setThumURL(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+        contentsData.setTitle(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
+        contentsData.setStartViewing(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
+        contentsData.setEndViewing(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
+        contentsData.setReserved1(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
+        contentsData.setReserved2(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
+        contentsData.setReserved4(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
+        contentsData.setChannelId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
+        contentsData.setRecommendOrder(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
+        contentsData.setPageId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
+        contentsData.setGroupId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
+        contentsData.setRecommendMethodId(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
+        contentsData.setCopyright(map.get(RecommendWebXmlParser.RECOMMENDCHANNEL_LIST_COPYRIGHT));
 
         return contentsData;
     }
@@ -920,36 +917,36 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     /**
      * レスポンスデータからサービスの種別を取得する.
-     * @param contentsData レコメンドデータ
+     * @param recChList レコメンドデータ
      * @return サービス種別
      */
-    private RESP_DATA_SERVICE_TYPE decisionResponseDataType(final ContentsData contentsData) {
+    private RESP_DATA_SERVICE_TYPE decisionResponseDataType(final RecommendChannelList recChList) {
         DTVTLogger.start();
-        RESP_DATA_SERVICE_TYPE result = RESP_DATA_SERVICE_TYPE.UNKNOWN;
-        switch (contentsData.getPageId()) {
-            case RECOMMEND_PAGE_ID_HOME_PROGRAM:
+        RESP_DATA_SERVICE_TYPE result;
+        switch (recChList.getmRequestPageNo()) {
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV:
                 result = RESP_DATA_SERVICE_TYPE.HOME_TV;
                 break;
-            case RECOMMEND_PAGE_ID_HOME_VOD:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO:
                 result = RESP_DATA_SERVICE_TYPE.HOME_VOD;
                 break;
-            case RECOMMEND_PAGE_ID_HIKARI_PROGRAM:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
                 result = RESP_DATA_SERVICE_TYPE.HIKARI_TV;
                 break;
-            case RECOMMEND_PAGE_ID_HIKARI_VOD:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
                 result = RESP_DATA_SERVICE_TYPE.HIKARI_VOD;
                 break;
-            case RECOMMEND_PAGE_ID_DTV:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
                 result = RESP_DATA_SERVICE_TYPE.DTV;
                 break;
-            case RECOMMEND_PAGE_ID_DTVCHANNEL:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
                 result = RESP_DATA_SERVICE_TYPE.DCHANNEL;
                 break;
-            case RECOMMEND_PAGE_ID_DANIME:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
                 result = RESP_DATA_SERVICE_TYPE.DANIME;
                 break;
             default:
-                // DAZNの判定を行う予定
+                //TODO: DAZNの判定を行う予定
                 result = RESP_DATA_SERVICE_TYPE.UNKNOWN;
                 break;
         }

@@ -147,6 +147,8 @@ public class ContentsData {
     private String mDescription3 = null;
     /** 購入情報取得フラグ.*/
     private boolean mIsRental = false;
+    /** コピーライト.*/
+    private String mCopyright = null;
 
     /**
      * 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)取得.
@@ -1175,5 +1177,21 @@ public class ContentsData {
      */
     public void setIsRental(final boolean isRental) {
         this.mIsRental = isRental;
+    }
+
+    /**
+     * copyright取得.
+     * @return copyright
+     */
+    public String getCopyright() {
+        return mCopyright;
+    }
+
+    /**
+     * copyright.
+     * @param copyright copyright
+     */
+    public void setCopyright(final String copyright) {
+        this.mCopyright = copyright;
     }
 }

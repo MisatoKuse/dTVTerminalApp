@@ -28,55 +28,79 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
     private final RecommendWebClient.RecommendCallback mRecommendCallback;
     /**レコメンドコンテンツ.*/
-    private static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
+    public static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     /**おすすめ順.*/
-    private static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
+    public static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
     /**サービスID.*/
-    private static final String RECOMMENDCHANNEL_LIST_SERVICEID = "serviceId";
+    public static final String RECOMMENDCHANNEL_LIST_SERVICEID = "serviceId";
     /**カテゴリーID.*/
-    private static final String RECOMMENDCHANNEL_LIST_CATEGORYID = "categoryId";
+    public static final String RECOMMENDCHANNEL_LIST_CATEGORYID = "categoryId";
     /**チャンネルID.*/
-    private static final String RECOMMENDCHANNEL_LIST_CHANNELID = "channelId";
+    public static final String RECOMMENDCHANNEL_LIST_CHANNELID = "channelId";
     /**コンテンツID.*/
-    private static final String RECOMMENDCHANNEL_LIST_CONTENTSID = "contentsId";
+    public static final String RECOMMENDCHANNEL_LIST_CONTENTSID = "contentsId";
     /**タイトル.*/
-    private static final String RECOMMENDCHANNEL_LIST_TITLE = "title";
+    public static final String RECOMMENDCHANNEL_LIST_TITLE = "title";
     /**サムネイル用画像URL１.*/
-    private static final String RECOMMENDCHANNEL_LIST_CTPICURL1 = "ctPicURL1";
+    public static final String RECOMMENDCHANNEL_LIST_CTPICURL1 = "ctPicURL1";
     /**サムネイル用画像URL２.*/
-    private static final String RECOMMENDCHANNEL_LIST_CTPICURL2 = "ctPicURL2";
+    public static final String RECOMMENDCHANNEL_LIST_CTPICURL2 = "ctPicURL2";
     /**視聴可能期間開始日時.*/
-    private static final String RECOMMENDCHANNEL_LIST_STARTVIEWING = "startViewing";
+    public static final String RECOMMENDCHANNEL_LIST_STARTVIEWING = "startViewing";
     /**視聴可能期間終了日時.*/
-    private static final String RECOMMENDCHANNEL_LIST_ENDVIEWING = "endViewing";
+    public static final String RECOMMENDCHANNEL_LIST_ENDVIEWING = "endViewing";
     /**予備1.*/
-    private static final String RECOMMENDCHANNEL_LIST_RESERVED1 = "reserved1";
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED1 = "reserved1";
     /**予備2.*/
-    private static final String RECOMMENDCHANNEL_LIST_RESERVED2 = "reserved2";
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED2 = "reserved2";
     /**予備3.*/
-    private static final String RECOMMENDCHANNEL_LIST_RESERVED3 = "reserved3";
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED3 = "reserved3";
     /**予備4.*/
-    private static final String RECOMMENDCHANNEL_LIST_RESERVED4 = "reserved4";
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED4 = "reserved4";
     /**予備5.*/
-    private static final String RECOMMENDCHANNEL_LIST_RESERVED5 = "reserved5";
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED5 = "reserved5";
+    /**予備6.*/
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED6 = "reserved6";
+    /**予備7.*/
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED7 = "reserved7";
+    /**予備8.*/
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED8 = "reserved8";
+    /**予備9.*/
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED9 = "reserved9";
+    /**予備10.*/
+    public static final String RECOMMENDCHANNEL_LIST_RESERVED10 = "reserved10";
     /**サービス契約有無.*/
-    private static final String RECOMMENDCHANNEL_LIST_AGREEMENT = "agreement";
+    public static final String RECOMMENDCHANNEL_LIST_AGREEMENT = "agreement";
     /**契約なし動画再生可否.*/
-    private static final String RECOMMENDCHANNEL_LIST_VIEWABLE = "viewable";
+    public static final String RECOMMENDCHANNEL_LIST_VIEWABLE = "viewable";
     /**画面ID.*/
-    private static final String RECOMMENDCHANNEL_LIST_PAGEID = "pageId";
+    public static final String RECOMMENDCHANNEL_LIST_PAGEID = "pageId";
     /**ユーザグループID.*/
-    private static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
+    public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     /**レコメンド手法ID.*/
-    private static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
+    public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
+    /**ジャンル名.*/
+    public static final String RECOMMENDCHANNEL_LIST_GENRE_NAME = "genreName";
+    /**視聴エリアコード.*/
+    public static final String RECOMMENDCHANNEL_LIST_AREA = "area";
+    /**視聴年齢制限.*/
+    public static final String RECOMMENDCHANNEL_LIST_R_RATED = "rRated";
+    /**コピーライト.*/
+    public static final String RECOMMENDCHANNEL_LIST_COPYRIGHT = "copyright";
+
+    /**
+     * おすすめタブページ番号.
+     */
+    private int mRequestPageNo;
 
     /**
      * コンテキスト.
      *
      * @param mRecommendCallback コールバック
      */
-    public RecommendWebXmlParser(final RecommendWebClient.RecommendCallback mRecommendCallback) {
+    public RecommendWebXmlParser(final RecommendWebClient.RecommendCallback mRecommendCallback, final int requestPageNo) {
         this.mRecommendCallback = mRecommendCallback;
+        this.mRequestPageNo = requestPageNo;
     }
 
     @Override
@@ -110,6 +134,7 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                 switch (eventType) {
                     case XmlPullParser.START_DOCUMENT:
                         redChContents = new RecommendChannelList();
+                        redChContents.setmRequestPageNo(this.mRequestPageNo);
                         redChContentList = new ArrayList<>();
                         break;
                     case XmlPullParser.START_TAG:
@@ -207,6 +232,36 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                                     redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED5, parser.getText() == null ? "" : parser.getText());
                                 }
                                 break;
+                            case RECOMMENDCHANNEL_LIST_RESERVED6:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED6, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_RESERVED7:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED7, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_RESERVED8:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED8, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_RESERVED9:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED9, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_RESERVED10:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED10, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
                             case RECOMMENDCHANNEL_LIST_AGREEMENT:
                                 parser.next();
                                 if (null != redChHashMap) {
@@ -235,6 +290,30 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                                 parser.next();
                                 if (null != redChHashMap) {
                                     redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_GENRE_NAME:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_GENRE_NAME, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_AREA:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_AREA, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_R_RATED:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_R_RATED, parser.getText() == null ? "" : parser.getText());
+                                }
+                                break;
+                            case RECOMMENDCHANNEL_LIST_COPYRIGHT:
+                                parser.next();
+                                if (null != redChHashMap) {
+                                    redChHashMap.put(RECOMMENDCHANNEL_LIST_COPYRIGHT, parser.getText() == null ? "" : parser.getText());
                                 }
                                 break;
                             default:

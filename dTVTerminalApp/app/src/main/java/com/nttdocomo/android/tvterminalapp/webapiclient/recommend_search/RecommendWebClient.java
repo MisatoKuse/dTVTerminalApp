@@ -76,10 +76,20 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     /**ページID. .*/ //TODO : 現在はダミーの値
     public static final String USE_PAGE_ID = "0";
 
+    /**R指定コンテンツ許可フラグ*/
+    public static final String ALLOW_R_RATED_CONTENTS = "allowRratedContents";
+
+    /**R指定コンテンツ許可フラグ:視聴可能下限年齢がN歳以上のコンテンツの返却を許可*/
+    public static final String ALLOW_R_RATED_CONTENTS_VALUE = "1";
     /**
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
+
+    /**
+     * おすすめタブページ番号.
+     */
+    private int mRequestPageNo;
 
     /**
      * レコメンド用コールバック.
@@ -98,9 +108,9 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      * @param mRecommendCallback コールバックの指定
      * @param context コンテキスト
      */
-    public RecommendWebClient(final RecommendCallback mRecommendCallback, final Context context) {
+    public RecommendWebClient(final RecommendCallback mRecommendCallback, final Context context, final int requestPageNo) {
         this.mRecommendCallback = mRecommendCallback;
-
+        this.mRequestPageNo = requestPageNo;
         //コンテキストの退避
         mContext = context;
     }
@@ -126,6 +136,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         itemAdder(queryItems, START_INDEX, recommendRequestData.getStartIndex());
         itemAdder(queryItems, MAX_RESULT, recommendRequestData.getMaxResult());
         itemAdder(queryItems, PAGE_ID, recommendRequestData.getPageId());
+        itemAdder(queryItems, ALLOW_R_RATED_CONTENTS, ALLOW_R_RATED_CONTENTS_VALUE);
 
         if (!queryItems.isEmpty()) {
             //通信停止中ならば通信処理への遷移は行わない
@@ -186,7 +197,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     @Override
     public void onFinish(final String responseData) {
         //得られたXMLのパースを行って、データを返す
-        new RecommendWebXmlParser(mRecommendCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, responseData);
+        new RecommendWebXmlParser(mRecommendCallback, this.mRequestPageNo).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, responseData);
     }
 
     /**
