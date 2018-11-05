@@ -166,7 +166,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         //エラーコードだけ抜き出してエラー情報に入れる
         mHttpThread.setXmlErrorCode(str);
 
-        if (null != mWebApiCallback && null != str && !str.isEmpty()) {
+        if (null != mWebApiCallback) {
             mWebApiCallback.onFinish(str);
         }
     }
