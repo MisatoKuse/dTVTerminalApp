@@ -187,10 +187,6 @@ public class SearchTopActivity extends BaseActivity
      * 最後に表示した検索キーワード.
      */
     private static final String CHAR_SEQUENCE = "query";
-    /**
-     * フォーカス状態.
-     */
-    private boolean mIsFocus = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -272,7 +268,6 @@ public class SearchTopActivity extends BaseActivity
 
             @Override
             public void onFocusChange(final View view, final boolean isFocus) {
-                mIsFocus = isFocus;
                 if (isFocus) {
                     DTVTLogger.debug("SearchView Focus");
                     setEditTextFocus();
@@ -337,10 +332,6 @@ public class SearchTopActivity extends BaseActivity
                                                         // 文字列に変化があった場合
                                                         DTVTLogger.debug("Start IncrementalSearch:" + inputText);
                                                         initSearchedResultView();
-                                                        if (!mIsFocus && mTimer != null) {
-                                                            mTimer.cancel();
-                                                            mTimer = null;
-                                                        }
                                                         setSearchData(inputText);
                                                         beforeText = inputText;
                                                     } else {

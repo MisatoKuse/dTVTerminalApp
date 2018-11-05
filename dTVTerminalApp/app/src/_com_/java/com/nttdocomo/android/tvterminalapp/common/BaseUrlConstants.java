@@ -13,7 +13,7 @@ class BaseUrlConstants {
      * 検索サーバAPIのURL.
      */
     public static final String TOTAL_SEARCH_URL =
-            "https://service.smt.docomo.ne.jp/srermd/search/index.do";
+            "https://sea2.dtv.dmkt-sp.jp/irengine/search/index.do";
 
     /**
      * レコメンドサーバAPIのベースURL.
