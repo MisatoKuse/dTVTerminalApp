@@ -10,7 +10,6 @@ import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -299,11 +298,6 @@ public class ErrorState {
                                 if (!buffer.equals(NORMAL_RESULT_TEXT)) {
                                     //ゼロ以外ならばエラー値として格納する
                                     mErrorCode = buffer;
-                                    if (SearchConstants.SearchResponseErrorId.requestError.equals(buffer)) { // リクエストエラー
-                                        mErrorType = DtvtConstants.ErrorType.HTTP_ERROR;
-                                    } else if (SearchConstants.SearchResponseErrorId.systemError.equals(buffer)) { // システムエラー
-                                        mErrorType = DtvtConstants.ErrorType.HTTP_ERROR;
-                                    }
                                 }
 
                                 DTVTLogger.debug("Result = " + mErrorCode);

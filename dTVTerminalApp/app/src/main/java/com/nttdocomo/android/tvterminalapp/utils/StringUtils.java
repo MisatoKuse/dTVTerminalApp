@@ -71,8 +71,6 @@ public class StringUtils {
     private static final int VALUE_OF_CHANGE_RVALUE_TO_AGE = 3;
     /**カンマ.*/
     private static final String COMMA_SEPARATOR = ",";
-    /**コロン.*/
-    private static final String COLON_SEPARATOR = ":";
     /**数字以外は置き換える為の正規表現.*/
     private static final String REPLACE_ANYTHING_EXCEPT_NUMBERS = "[^0-9]";
     /**暗号化方法(AES).*/
@@ -334,16 +332,13 @@ public class StringUtils {
      * 文字列リストをカンマ区切りで返す.
      *
      * @param strings 変換対象
-     * @param serviceId サービスId
      * @return 変換文字列
      */
-    public static String setCommaSeparator(final ArrayList<String> strings, final String serviceId) {
+    public static String setCommaSeparator(final ArrayList<String> strings) {
         String result;
         StringBuilder builder = new StringBuilder();
         if (strings != null && strings.size() > 0) {
             for (int i = 0; i < strings.size(); i++) {
-                builder.append(serviceId);
-                builder.append(COLON_SEPARATOR);
                 if (i == strings.size() - 1) {
                     builder.append(strings.get(i));
                     break;

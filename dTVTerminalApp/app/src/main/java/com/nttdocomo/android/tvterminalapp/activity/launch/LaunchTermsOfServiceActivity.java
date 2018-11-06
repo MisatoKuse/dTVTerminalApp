@@ -5,9 +5,14 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.Intent;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,6 +35,10 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
     private TextView mPurposeOfUseText;
     /**第三者提供等の有無TextView.*/
     private TextView mThirdPartyOfferingText;
+    /**STARTポジション.*/
+    private final static int SPAN_START_POSITION = 28;
+    /**ENDポジション.*/
+    private final static int SPAN_END_POSITION = 31;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,14 +73,45 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
         mThirdPartyOfferingText = findViewById(R.id.third_party_offerings_text);
 
         //詳細を確認する
-        TextView detailLink = findViewById(R.id.all_text_detail_confirm_link);
-        detailLink.setPaintFlags(detailLink.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        detailLink.setOnClickListener(this);
+        TextView detailLink = findViewById(R.id.application_privacy_all_text);
+        SpannableString spannableString = new SpannableString(getString(R.string.str_launch_application_privacy_all_text));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(final View widget) {
+                Uri detailUri = Uri.parse(UrlConstants.WebUrl.SETTING_MENU_APP_URL);
+                Intent detailIntent = new Intent(Intent.ACTION_VIEW, detailUri);
+                startActivity(detailIntent);
+            }
+
+            @Override
+            public void updateDrawState(final TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(Color.BLUE);
+            }
+        };
+        spannableString.setSpan(clickableSpan, SPAN_START_POSITION, SPAN_END_POSITION, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        detailLink.setText(spannableString);
+        detailLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         //利用規約を確認する
         TextView confirmLink = findViewById(R.id.confirm_application_terms_of_service_link);
-        confirmLink.setPaintFlags(confirmLink.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        confirmLink.setOnClickListener(this);
+        SpannableString confirmLinkSpannable = new SpannableString(getString(R.string.str_launch_confirm_application_terms_of_service_link));
+        ClickableSpan confirmClickableSpan  = new ClickableSpan() {
+            @Override
+            public void onClick(final View widget) {
+                Uri confirmUri = Uri.parse(UrlConstants.WebUrl.SETTING_MENU_AGREEMENT_HTML);
+                Intent confirmIntent = new Intent(Intent.ACTION_VIEW, confirmUri);
+                startActivity(confirmIntent);
+            }
+            @Override
+            public void updateDrawState(final TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(Color.BLUE);
+            }
+        };
+        confirmLinkSpannable.setSpan(confirmClickableSpan, 0, confirmLinkSpannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        confirmLink.setText(confirmLinkSpannable);
+        confirmLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         DTVTLogger.end();
     }
@@ -116,16 +156,6 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
                     mThirdPartyOfferingText.setVisibility(View.VISIBLE);
                     thirdPartyImageView.setImageResource(R.mipmap.ic_bar_close);
                 }
-                break;
-            case R.id.all_text_detail_confirm_link:
-                Uri detailUri = Uri.parse(UrlConstants.WebUrl.SETTING_MENU_APP_URL);
-                Intent detailIntent = new Intent(Intent.ACTION_VIEW, detailUri);
-                startActivity(detailIntent);
-                break;
-            case R.id.confirm_application_terms_of_service_link:
-                Uri confirmUri = Uri.parse(UrlConstants.WebUrl.SETTING_MENU_AGREEMENT_HTML);
-                Intent confirmIntent = new Intent(Intent.ACTION_VIEW, confirmUri);
-                startActivity(confirmIntent);
                 break;
             default:
                 break;

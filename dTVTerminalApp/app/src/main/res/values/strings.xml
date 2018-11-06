@@ -105,15 +105,11 @@
     <string name="str_launch_purpose_of_use_title">利用目的</string>
     <string name="str_launch_purpose_of_use_text">①本サービス提供の際のお客様識別及び、著作権保護管理のため\n②本アプリケーションの不具合修正、
         および本サービスのUI/UX改善・機能向上、新たなサービス検討のため\n③年齢に合わせたコンテンツ出し分けのため\n④クリップ機能等、
-        本サービスの利便性向上のため\n⑤ひかりTV for docomoの契約情報を取得するため\n⑥宅外からドコモテレビターミナルを通してコンテンツを視聴するため</string>
+        本サービスの利便性向上のため\n⑤ひかりＴＶ for docomoの契約情報を取得するため\n⑥宅外からドコモテレビターミナルを通してコンテンツを視聴するため</string>
     <string name="str_launch_third_party_offerings_title">第三者提供等の有無</string>
-    <string name="str_launch_third_party_offerings_text">①無し\n②有り（提供先：Google Inc. ※）\n③無し\n④無し\n⑤有り（提供先：株式会社NTTぷらら）\n⑥有り（提供先：株式会社デジオン）
-        \n※本アプリケーションは、Google Inc.（以下「Google」といいます）が提供するGoogle Analyticsを使用しているため、本アプリケーションが取得した利用者情報のうち上記に掲げる利用者情報が、
-        以下の通り第三者提供されます。\nお客様が当社によるGoogle Analyticsを用いたお客様の情報の利用を望まない場合には、本アプリケーションをご利用頂けません。
-        なお、Google Analyticsによるデータ使用の詳細は、http://www.google.com/intl/ja/policies/privacy/partners/をご参照ください。</string>
+    <string name="str_launch_third_party_offerings_text">当社は、本アプリケーションの不具合修正、および本サービスのUI/UX改善・機能向上のため、新たなサービス検討のためにお客様のアプリケーションご利用状況をGoogle LLCおよびその完全子会社に送信します。</string>
     <string name="str_launch_agree_to_terms_start_use_button">規約に同意して利用を開始</string>
-    <string name="str_launch_application_privacy_all_text">より詳細なアプリケーション・プライバシーポリシー全文は、\n詳細を確認するリンクにてご確認いただけます。</string>
-    <string name="str_launch_all_text_detail_confirm_link">詳細を確認する</string>
+    <string name="str_launch_application_privacy_all_text">より詳細なアプリケーション・プライバシーポリシー全文は、全体版にてご確認いただけます。</string>
     <string name="str_launch_docomo_terminal_terms_of_service_title">ドコモテレビターミナルアプリ利用規約</string>
     <string name="str_launch_confirm_to_start_use_text">ドコモテレビターミナルアプリのご利用にあたっては、ドコモテレビターミナルアプリ利用規約について\nご確認、ご同意いただいた上、ご利用を開始してください。</string>
     <string name="str_launch_confirm_application_terms_of_service_link">ドコモテレビターミナルアプリ利用規約を確認する</string>

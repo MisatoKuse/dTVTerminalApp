@@ -6,14 +6,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.struct.SearchContentInfo;
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
@@ -38,29 +37,49 @@ import java.util.List;
  */
 public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
-    /** 検索の状態.*/
+    /**
+     * 検索の状態.
+     */
     private SearchState mState = SearchState.inital;
-    /** 検索プロパイダ.*/
+    /**
+     * 検索プロパイダ.
+     */
     private SearchDataProviderListener mSearchDataProviderListener = null;
-    /** 検索用WebAPI.*/
+    /**
+     * 検索用WebAPI.
+     */
     private TotalSearchWebApi mTotalSearchWebApi;
-    /** 通信禁止判定フラグ.*/
+    /**
+     * 通信禁止判定フラグ.
+     */
     private boolean mIsCancel = false;
-    /** テレビtab.*/
+
+    /**
+     * テレビtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
-    /** ビデオtab.*/
+    /**
+     * ビデオtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
-    /** dTVtab.*/
+    /**
+     * dTVtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 2;
-    /** dTVチャンネルtab.*/
+    /**
+     * dTVチャンネルtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 3;
-    /** dアニメtab.*/
+    /**
+     * dアニメtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
-    /** dアニメ作品種別(アニメ（映像）).*/
+    /**
+     * dアニメ作品種別(アニメ（映像）).
+     */
     public static final String D_ANIME_STORE_SONG_CONTENTS = "1";
-    /** contentsId.*/
+
     private static final String CONTENTS_DETAIL_GET_SEARCH_FIELDS = "contentsId";
-    /** getDetail.*/
     private static final String CONTENTS_DETAIL_GET_DISPLAY_ID = "getDetail";
 
     /**
@@ -129,17 +148,14 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             } catch (UnsupportedEncodingException e) {
                 DTVTLogger.debug(e);
             }
-            String serviceId = getCurrentSearchServiceTypeArray(pageIndex);
-            String categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex), serviceId);
-            String serviceCategory = serviceId;
-            if (!TextUtils.isEmpty(categoryId)) {
-                serviceCategory = categoryId;
-            }
-            request.serviceCategory = serviceCategory;
+
+            request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
+            request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
             request.sortKind = sortKind.searchWebSortType().ordinal() + 1;  // サーバAPI上は１～なのでenumのordinal+1
             request.filterTypeList = condition.searchFilterList();
             request.maxResult = SearchConstants.Search.requestMaxResultCount;
             request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
+            request.filterViewableAge = UserInfoUtils.getRecommendUserAge(getUserAgeInfo(context, pageIndex));
 
             mTotalSearchWebApi = new TotalSearchWebApi(context);
             mTotalSearchWebApi.setDelegate(this);
@@ -245,11 +261,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             contentsData.setReserved3(ci.mReserved3);
             contentsData.setReserved4(ci.mReserved4);
             contentsData.setReserved5(ci.mReserved5);
-            contentsData.setReserved6(ci.mReserved6);
-            contentsData.setReserved7(ci.mReserved7);
-            contentsData.setReserved8(ci.mReserved8);
-            contentsData.setReserved9(ci.mReserved9);
-            contentsData.setReserved10(ci.mReserved10);
             contentsData.setCategoryId(ci.mCategoryId);
             contentsData.setDescription1(ci.mDescription1);
             contentsData.setDescription2(ci.mDescription2);
@@ -267,8 +278,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             SearchResultError error = SearchResultError.systemError;
             if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {
                 error = SearchResultError.requestError;
-                ErrorState errorState = getError();
-                errorState.setErrorType(DtvtConstants.ErrorType.SERVER_ERROR);
+            } else if (result.error.id.equals(SearchConstants.SearchResponseErrorId.systemError)) {
+                error = SearchResultError.systemError;
             }
 
             //if(null!=handler){
@@ -325,26 +336,53 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      * @param pageIndex ページ位置
      * @return サービスID
      */
-    private String getCurrentSearchServiceTypeArray(final int pageIndex) {
-        String result = "";
+    private ArrayList<String> getCurrentSearchServiceTypeArray(final int pageIndex) {
+        ArrayList<String> ret = new ArrayList<>();
+
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                result = SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO;
+                ret.add(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO);
                 break;
             case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                result = SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS;
+                ret.add(SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS);
                 break;
             case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
-                result = SearchServiceType.ServiceId.DTV_CONTENTS;
+                ret.add(SearchServiceType.ServiceId.DTV_CONTENTS);
                 break;
             case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                result = SearchServiceType.ServiceId.D_ANIMATION_CONTENTS;
+                ret.add(SearchServiceType.ServiceId.D_ANIMATION_CONTENTS);
                 break;
             default:
                 break;
         }
-        return result;
+        return ret;
+    }
+
+    /**
+     * リクエスト用ユーザ年齢情報を設定する.
+     *
+     * @param context   コンテクストファイル
+     * @param pageIndex ページ番号
+     * @return 年齢情報
+     */
+    private int getUserAgeInfo(final Context context, final int pageIndex) {
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(context);
+        int userAge = -1;
+
+        switch (pageIndex) {
+            case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
+            case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
+            case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
+                userAge = userInfoDataProvider.getUserAge();
+                break;
+            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
+            case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
+                break;
+            default:
+                break;
+        }
+        return userAge;
     }
 
     /**

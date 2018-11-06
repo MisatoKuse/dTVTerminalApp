@@ -19,8 +19,10 @@ class SearchRequestKey {
     public static final String kSortKind = "&sortKind";
     /**&serviceId.*/
     public static final String kServiceId = "&serviceId";
-    /**serviceCategory.*/
-    public static final String kServiceCategory = "&serviceCategory";
+    /**&filterCategoryId.*/
+    public static final String kCategoryId = "&filterCategoryId";
+    /**&filterViewableAge.*/
+    public static final String kFilterViewableAge = "&filterViewableAge";
     /**&displayId.*/
     public static final String kDisplayId = "&displayId";
     /**&searchFields.*/
