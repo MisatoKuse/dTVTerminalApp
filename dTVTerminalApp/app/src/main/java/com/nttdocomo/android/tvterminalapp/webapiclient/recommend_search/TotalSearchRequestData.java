@@ -42,8 +42,8 @@ public class TotalSearchRequestData {
     /**検索絞込み用カテゴリーID.*/
     public String categoryId = null;
 
-    /**ユーザ年齢フィルタリング情報.*/
-    public String filterViewableAge = null;
+    /**検索絞込み用カテゴリーID.*/
+    public String serviceCategory = null;
 
     /**検索対象項目.*/
     public String searchFields = null;

@@ -9,6 +9,7 @@ import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
@@ -36,21 +37,53 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     /**
      * 情報通信処理（ワンタイムパスワード認証等が不要の場合）.
      *
-     * @param urlString  URL
      * @param queryItems 通信パラメータ
      * @param callback   終了コールバック
      * @param context    コンテキスト
      */
-    protected void getNoPassword(final String urlString, final LinkedHashMap<String, String> queryItems,
+    protected void getNoPassword(final LinkedHashMap<String, String> queryItems,
                               final WebApiCallback callback, final Context context) {
         final Handler handler = new Handler();
-        final String url = createUrlComponents(urlString, queryItems);
+        final String url = createUrlComponents(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems);
         mWebApiCallback = callback;
         final WebApiBase webApiBase = this;
 
         //ワンタイムパスワード無しで呼び出す
         mHttpThread = new HttpThread(url, handler, webApiBase, context, "", null);
         mHttpThread.start();
+    }
+
+    /**
+     * 検レコ情報通信処理.TODO　一時実装 将来的はおすすめ番組・ビデオと同じ関数で使うようにする
+     *
+     * @param queryItems 通信パラメータ
+     * @param callback   終了コールバック
+     * @param context    コンテキスト
+     */
+    protected void getRecommendSearch(final LinkedHashMap<String, String> queryItems,
+                                 final WebApiCallback callback, final Context context) {
+        final String url = createUrlComponents(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems);
+        mWebApiCallback = callback;
+        final WebApiBase webApiBase = this;
+        DTVTLogger.debug("”execDaccountGetOTT” getRecommendSearch");
+        //認証画面の表示状況のインスタンスの取得
+        final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+        //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
+        final DaccountGetOtt getOtt = new DaccountGetOtt();
+        if (getOtt != null) {
+            //通信キャンセル呼び出し
+            getOtt.cancelConnection();
+        }
+        getOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
+            @Override
+            public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
+                //ワンタイムパスワードの取得後に呼び出す
+                DTVTLogger.debug("”execDaccountGetOTT” getRecommendSearch getOttCallBack");
+                //TODO CiRCUS経由で検レコサーバへの接続する際に、OTTを使用したサーバ連携については現在申請中のため、OTTを付与した状態での確認は別BLとする
+                mHttpThread = new HttpThread(url, webApiBase, context, "", null);
+                mHttpThread.start();
+            }
+        });
     }
 
     /**
@@ -86,6 +119,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
                 } else if (result == IDimDefines.RESULT_INTERNAL_ERROR) {
                     callback.onFinish("");
                 } else {
+                    DTVTLogger.debug("”execDaccountGetOTT” getRecomendInfo getOttCallBack");
                     //ワンタイムパスワードの取得後に呼び出す
                     mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword, getOtt);
                     mHttpThread.start();
