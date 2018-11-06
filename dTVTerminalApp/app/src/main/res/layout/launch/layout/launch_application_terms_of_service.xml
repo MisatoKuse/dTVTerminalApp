@@ -5,6 +5,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/basic_text_color_white">
 
     <LinearLayout
@@ -280,28 +281,13 @@
                 android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
                 android:layout_marginTop="@dimen/launch_text_left_padding"
                 android:gravity="center|start"
-                android:text="@string/str_launch_application_privacy_all_text"
                 android:textColor="@color/basic_text_color_black"
                 android:textSize="@dimen/launch_terms_of_service_text" />
-
-            <TextView
-                android:id="@+id/all_text_detail_confirm_link"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/application_privacy_all_text"
-                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
-                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
-                android:layout_marginTop="@dimen/launch_text_left_padding"
-                android:gravity="center|start"
-                android:text="@string/str_launch_all_text_detail_confirm_link"
-                android:textColor="@color/basic_text_color_black"
-                android:textSize="@dimen/launch_terms_of_service_text" />
-
             <TextView
                 android:id="@+id/text_divider_line2"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_divider_height"
-                android:layout_below="@id/all_text_detail_confirm_link"
+                android:layout_below="@id/application_privacy_all_text"
                 android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
                 android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
                 android:layout_marginTop="@dimen/launch_terms_of_service_title_margin"
