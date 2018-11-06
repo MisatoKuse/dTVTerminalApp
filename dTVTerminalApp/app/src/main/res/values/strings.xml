@@ -105,7 +105,7 @@
     <string name="str_launch_purpose_of_use_title">利用目的</string>
     <string name="str_launch_purpose_of_use_text">①本サービス提供の際のお客様識別及び、著作権保護管理のため\n②本アプリケーションの不具合修正、
         および本サービスのUI/UX改善・機能向上、新たなサービス検討のため\n③年齢に合わせたコンテンツ出し分けのため\n④クリップ機能等、
-        本サービスの利便性向上のため\n⑤ひかりTV for docomoの契約情報を取得するため\n⑥宅外からドコモテレビターミナルを通してコンテンツを視聴するため</string>
+        本サービスの利便性向上のため\n⑤ひかりＴＶ for docomoの契約情報を取得するため\n⑥宅外からドコモテレビターミナルを通してコンテンツを視聴するため</string>
     <string name="str_launch_third_party_offerings_title">第三者提供等の有無</string>
     <string name="str_launch_third_party_offerings_text">当社は、本アプリケーションの不具合修正、および本サービスのUI/UX改善・機能向上のため、新たなサービス検討のためにお客様のアプリケーションご利用状況をGoogle LLCおよびその完全子会社に送信します。</string>
     <string name="str_launch_agree_to_terms_start_use_button">規約に同意して利用を開始</string>
