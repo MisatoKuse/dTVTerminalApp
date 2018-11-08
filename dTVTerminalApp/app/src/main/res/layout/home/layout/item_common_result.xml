@@ -152,6 +152,7 @@
                 android:gravity="center|start"
                 android:paddingTop="@dimen/watch_listen_result_content_text_padding_top"
                 android:maxLines="2"
+                android:textStyle="bold"
                 android:textColor="@color/white_text"
                 android:textSize="@dimen/watch_listen_result_content_title" />
 
