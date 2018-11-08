@@ -1472,6 +1472,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
+    @Override
+    public void recommendDAZNCallback(final List<ContentsData> recommendContentInfoList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
     /**
      * レコメンドのdアニメ情報のコールバック.
      *

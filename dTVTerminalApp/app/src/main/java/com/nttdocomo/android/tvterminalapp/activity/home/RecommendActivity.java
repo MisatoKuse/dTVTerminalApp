@@ -108,9 +108,13 @@ public class RecommendActivity extends BaseActivity implements
      */
     private static final int TAB_INDEX_DTV_CHANNEL = 3;
     /**
+     * タブインデックス　DAZN.
+     */
+    private static final int TAB_INDEX_DAZN = 4;
+    /**
      * タブインデックス　dアニメストア.
      */
-    private static final int TAB_INDEX_DANIME = 4;
+    private static final int TAB_INDEX_DANIME = 5;
     /**
      * 表示中タブのインデックス.
      */
@@ -638,6 +642,31 @@ public class RecommendActivity extends BaseActivity implements
                     DTVTLogger.debug("dCH Callback DataSize:"
                             + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
                     if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {
+                        recommendDataProviderSuccess(recommendContentInfoList);
+                    }
+                } else {
+                    if (mRecommendViewPager != null) {
+                        RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                        if (fragment != null) {
+                            fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                        }
+                    }
+                    showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void recommendDAZNCallback(final List<ContentsData> recommendContentInfoList) {
+        //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mRecommendViewPager != null && recommendContentInfoList != null) {
+                    DTVTLogger.debug("ani Callback DataSize:" + recommendContentInfoList.size()
+                            + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
+                    if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DAZN) {
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {

@@ -171,6 +171,7 @@
     <dimen name="contents_detail_channel_sub_title_txt_size">15dp</dimen>
     <dimen name="contents_detail_service_icon_label_margin">8dp</dimen>
     <dimen name="contents_detail_service_icon_label_height">20dp</dimen>
+    <dimen name="contents_detail_service_icon_label_dazn_width_height">25dp</dimen>
 
     <!--リモコン -->
     <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>

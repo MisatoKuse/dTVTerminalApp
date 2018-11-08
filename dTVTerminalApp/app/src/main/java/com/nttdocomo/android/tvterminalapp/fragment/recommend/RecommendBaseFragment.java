@@ -93,9 +93,13 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     private static final int POSITION_D_CHANNEL = POSITION_TV + 3;
     /**
+     * DAZN（タブインデックス）.
+     */
+    private static final int POSITION_DAZN = POSITION_TV + 4;
+    /**
      * dアニメ（タブインデックス）.
      */
-    private static final int POSITION_D_ANIMATION = POSITION_TV + 4;
+    private static final int POSITION_D_ANIMATION = POSITION_TV + 5;
 
 
     /**
@@ -227,6 +231,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
                     break;
                 case POSITION_VIDEO:
                     mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_VIDEO);
+                    break;
+                case POSITION_DAZN:
+                    mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_DAZN);
                     break;
                 default:
                     break;

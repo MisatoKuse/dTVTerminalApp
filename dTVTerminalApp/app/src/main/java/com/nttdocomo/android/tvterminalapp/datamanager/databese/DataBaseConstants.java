@@ -606,6 +606,16 @@ public class DataBaseConstants {
     public static final String CREATE_TABLE_RECOMMEND_DANIME_SQL = ""
             + "create table " + RECOMMEND_LIST_DANIME_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
 
+    /**
+     * レコメンド（DAZN）データ格納用テーブル.
+     */
+    public static final String RECOMMEND_LIST_DAZN_TABLE_NAME = "recommend_dazn_list";
+    /**
+     * レコメンド（dアニメ）テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RECOMMEND_DAZN_SQL = ""
+            + "create table " + RECOMMEND_LIST_DAZN_TABLE_NAME + CREATE_TABLE_RECOMMEND_DATA_COLUMN_SQL;
+
     // TABLE、録画持ち出しリスト用
     /**
      * item id.
