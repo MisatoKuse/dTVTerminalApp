@@ -166,7 +166,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         /**dアニメストア.*/
         DANIME("17", "01"),
         /**DAZN.*/
-        DAZN("35", "01"),
+        DAZN("35", "02"),
         /**dTVチャンネル　放送.*/
         DTVCHANNEL_BLOADCAST("43", "01"),
         /**dTVチャンネル　VOD（見逃し）.*/

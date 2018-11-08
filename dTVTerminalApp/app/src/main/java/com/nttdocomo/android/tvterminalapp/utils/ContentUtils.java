@@ -300,7 +300,7 @@ public class ContentUtils {
                 break;
             //DAZN
             case DAZN_CONTENTS_SERVICE_ID:
-                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
+                if (RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)) {
                     cType = ContentsType.TV;
                 }
                 break;
