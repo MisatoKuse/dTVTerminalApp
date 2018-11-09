@@ -156,7 +156,6 @@ public class MenuListAdapter extends BaseAdapter {
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_home))
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
                     || title.equals(mContext.getString(R.string.nav_menu_item_keyword_search))
-                    || title.equals(mContext.getString(R.string.nav_menu_item_h4d_guide))
                     || title.equals(mContext.getString(R.string.nav_menu_item_notice))
                     || title.equals(mContext.getString(R.string.nav_menu_item_setting))
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_anime_copyright))) {
@@ -199,7 +198,6 @@ public class MenuListAdapter extends BaseAdapter {
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_home))
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
                     || title.equals(mContext.getString(R.string.nav_menu_item_keyword_search))
-                    || title.equals(mContext.getString(R.string.nav_menu_item_h4d_guide))
                     || title.equals(mContext.getString(R.string.nav_menu_item_notice))
                     || title.equals(mContext.getString(R.string.nav_menu_item_setting))
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_anime_copyright))) {
