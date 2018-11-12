@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
@@ -318,6 +319,10 @@ public class HttpThread extends Thread {
                     StandardCharsets.UTF_8.name());
             mHttpUrlConn.setRequestProperty(DtvtConstants.CONTENT_TYPE,
                     StandardCharsets.UTF_8.name());
+            // UserAgentを設定
+            mHttpUrlConn.setRequestProperty(DtvtConstants.USER_AGENT,
+                    UserAgentUtils.getCustomUserAgent());
+            DTVTLogger.debug("Set UserAgent:" + UserAgentUtils.getCustomUserAgent());
 
             //クッキー情報の有無を検査
             if (mCookies != null) {

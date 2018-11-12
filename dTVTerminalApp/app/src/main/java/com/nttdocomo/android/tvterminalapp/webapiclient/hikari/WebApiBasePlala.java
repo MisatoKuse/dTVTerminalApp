@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
@@ -363,12 +364,16 @@ public class WebApiBasePlala {
      */
     private static final String ONE_TIME_TOKEN_KEY = "x-service-token";
 
-
     /**
      * ワンタイムトークン設定の取得時のコンテントタイプ指定.
      */
     private static final String ONE_TIME_TOKEN_GET_CONTENT_TYPE =
             "application/x-www-form-urlencoded";
+
+    /**
+     * UserAgent.
+     */
+    private static final String USER_AGENT_KEY = "User-Agent";
 
     /**
      * 戻り値用構造体.
@@ -1355,6 +1360,10 @@ public class WebApiBasePlala {
             //コンテントタイプを指定する
             urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT, CONTENT_TYPE_TEXT);
 
+            // UserAgentを設定
+            urlConnection.setRequestProperty(USER_AGENT_KEY, UserAgentUtils.getCustomUserAgent());
+            DTVTLogger.debug("Set UserAgent:" + UserAgentUtils.getCustomUserAgent());
+
             //ジャンルID、ロールIDはファイルDLのためGETメソッドリクエストする
             //POSTでJSONを送ることを宣言
             urlConnection.setRequestMethod(mRequestMethod);
@@ -1566,18 +1575,20 @@ public class WebApiBasePlala {
          * @throws ProtocolException プロトコルエクセプション
          */
         void setParametersRedirect(final HttpURLConnection urlConnection) throws ProtocolException {
+            //コンテントタイプを指定する
+            urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
+                    ONE_TIME_TOKEN_GET_CONTENT_TYPE);
+            //UserAgentを設定する
+            urlConnection.setRequestProperty(USER_AGENT_KEY, UserAgentUtils.getCustomUserAgent());
+            DTVTLogger.debug("Set UserAgent:" + UserAgentUtils.getCustomUserAgent());
+
             if (TextUtils.isEmpty(mSendParameter)) {
                 //パラメータをgetで送る
                 urlConnection.setRequestMethod(REQUEST_METHOD_GET);
 
-                //コンテントタイプを指定する
-                urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
-                        ONE_TIME_TOKEN_GET_CONTENT_TYPE);
             } else {
+                //パラメータをpostで送る
                 urlConnection.setRequestMethod(REQUEST_METHOD_POST);
-                //コンテントタイプを指定する
-                urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
-                        ONE_TIME_TOKEN_GET_CONTENT_TYPE);
 
                 //送る文字列長の算出
                 byte[] sendParameterByte = mSendParameter.getBytes(StandardCharsets.UTF_8);

@@ -54,6 +54,10 @@ public class DtvtConstants {
      */
     public static final String CONTENT_TYPE = "contentType";
     /**
+     * UserAgent.
+     */
+    public static final String USER_AGENT = "User-Agent";
+    /**
      * ロケーションキー.
      */
     public static final String LOCATION_KEY = "Location";

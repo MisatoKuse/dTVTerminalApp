@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * お知らせ画面.
@@ -47,6 +48,7 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
         webSettings.setAllowUniversalAccessFromFileURLs(false);
         webSettings.setAllowFileAccessFromFileURLs(false);
         webSettings.setTextZoom(100);
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         mNoticeWebView.loadUrl(UrlConstants.WebUrl.NOTICE_URL);
 
         //Headerの設定

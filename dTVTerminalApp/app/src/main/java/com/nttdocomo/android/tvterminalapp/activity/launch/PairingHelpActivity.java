@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * 初回起動ペアリング(ヘルプページ) 画面.
@@ -60,6 +61,7 @@ public class PairingHelpActivity extends BaseActivity {
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
             setTitleText(getString(R.string.str_app_title));
             firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);

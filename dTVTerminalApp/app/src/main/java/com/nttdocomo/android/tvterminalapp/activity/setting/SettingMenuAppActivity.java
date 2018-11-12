@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * APP画面.
@@ -47,6 +48,7 @@ public class SettingMenuAppActivity extends BaseActivity {
         webSettings.setAllowUniversalAccessFromFileURLs(false);
         webSettings.setAllowFileAccessFromFileURLs(false);
         webSettings.setTextZoom(100);
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         mAppWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_APP_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
