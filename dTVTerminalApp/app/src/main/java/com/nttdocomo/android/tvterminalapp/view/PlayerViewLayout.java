@@ -683,6 +683,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mPlayStartPosition = 0;
                 playButton(false);
                 showPlayingProgress(false);
+                if (!mIsVideoBroadcast) {
+                    showRecordContentsControlView();
+                }
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
@@ -694,6 +697,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
+                if (!mIsVideoBroadcast && getCurrentPosition() == 0) {
+                    showRecordContentsControlView();
+                }
                 break;
             default:
                 break;
@@ -1300,6 +1306,29 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     /**
+     * 録画コンテンツ再生開始時と終了の動作.
+     */
+    private void showRecordContentsControlView() {
+        hideCtrlViewAfterOperate();
+        showControlView();
+    }
+
+    /**
+     * show ctrl view.
+     */
+    private void showControlView() {
+        if (!mIsVideoBroadcast) {
+            mVideoPlayPause.setVisibility(View.VISIBLE);
+            mVideoRewind10.setVisibility(View.VISIBLE);
+            mVideoFast30.setVisibility(View.VISIBLE);
+            mProgressLayout.setVisibility(View.VISIBLE);
+            mVideoTotalTime.setVisibility(View.VISIBLE);
+            mVideoCurTime.setVisibility(View.VISIBLE);
+        }
+        mVideoCtrlBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
      * set player event.
      */
     public void setPlayerEvent() {
@@ -1387,15 +1416,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                             }
                         }
                     } else {
-                        if (!mIsVideoBroadcast) {
-                            mVideoPlayPause.setVisibility(View.VISIBLE);
-                            mVideoRewind10.setVisibility(View.VISIBLE);
-                            mVideoFast30.setVisibility(View.VISIBLE);
-                            mProgressLayout.setVisibility(View.VISIBLE);
-                            mVideoTotalTime.setVisibility(View.VISIBLE);
-                            mVideoCurTime.setVisibility(View.VISIBLE);
-                        }
-                        mVideoCtrlBar.setVisibility(View.VISIBLE);
+                        showControlView();
                         if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                             showLiveLayout(true);
                         } else {
