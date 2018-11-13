@@ -1989,14 +1989,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 ScheduleInfo scheduleInfo = scheduleInfos.get(i);
                                 String endTime = scheduleInfo.getEndTime();
                                 String startTime = scheduleInfo.getStartTime();
-                                String start = startTime.substring(0, 10) + startTime.substring(11, 19);
-                                String end = endTime.substring(0, 10) + endTime.substring(11, 19);
-                                if (!isLastDate(end)) {
+                                if (!ContentUtils.checkScheduleDate(startTime, endTime)) {
+                                    continue;
+                                }
+                                if (!ContentUtils.isLastDate(endTime)) {
                                     if (mDateList != null) {
                                         ContentsData contentsData = new ContentsData();
                                         if (!isFirst) {
                                             if (mDateIndex == 1) {
-                                                if (isNowOnAir(start, end)) {
+                                                if (ContentUtils.isNowOnAir(startTime, endTime)) {
                                                     //NOW ON AIR の判断
                                                     contentsData.setChannelName(getString(R.string.home_label_now_on_air));
                                                 }
@@ -2073,49 +2074,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         return subTitle;
-    }
-
-    /**
-     * NowOnAir判定.
-     *
-     * @param startTime 開始時刻
-     * @param endTime 終了時刻
-     * @return 現在放送しているかどうか
-     */
-    private boolean isNowOnAir(final String startTime, final String endTime) {
-        Date startDate = new Date();
-        Date endDate = new Date();
-        Date nowDate = new Date();
-        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-        Calendar c = Calendar.getInstance();
-        try {
-            startDate = format.parse(startTime);
-            endDate = format.parse(endTime);
-            nowDate = c.getTime();
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        return (nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) != 1);
-    }
-
-    /**
-     * ソートを行う.
-     *
-     *  @param endTime 終了時刻
-     *  @return 過去の番組
-     */
-    private boolean isLastDate(final String endTime) {
-        Date endDate = new Date();
-        Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-        Calendar c = Calendar.getInstance();
-        try {
-            endDate = sdf.parse(endTime);
-            now = c.getTime();
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        return (endDate.compareTo(now) == -1);
     }
 
     /**
