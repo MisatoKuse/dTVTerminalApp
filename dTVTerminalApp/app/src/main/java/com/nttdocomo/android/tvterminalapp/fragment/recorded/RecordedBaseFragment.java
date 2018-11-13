@@ -304,8 +304,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                         showErrorDialog(getString(R.string.common_empty_data_message), R.string.common_text_close);
                         return;
                     }
+                } else {
+                    detailData.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
                 }
-                detailData.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
                 intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, detailData);
