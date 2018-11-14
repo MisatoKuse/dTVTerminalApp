@@ -3138,8 +3138,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case ENABLE_WATCH_LIMIT_THIRTY:
             case ENABLE_WATCH_LIMIT_THIRTY_001:
                 //期限まで30日以内表示内容設定
-                mEndDate = mDetailFullData.getPublish_end_date();
-                displayLimitDate();
+                if(mEndDate == 0L) {
+                    mEndDate = mDetailFullData.getPublish_end_date();
+                    displayLimitDate();
+                }
                 break;
             default:
                 break;
@@ -3160,6 +3162,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mPurchasedVodListResponse = response;
                 ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
                 mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
+                mVodEndDate = mDetailFullData.getAvail_end_date();
                 displayLimitDate();
                 DTVTLogger.debug("get rental vod end date:" + mEndDate);
                 mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
@@ -3186,6 +3189,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
 
                 mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
+                mVodEndDate = mDetailFullData.getAvail_end_date();
                 displayLimitDate();
                 DTVTLogger.debug("get rental vod end date:" + mEndDate);
                 mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
