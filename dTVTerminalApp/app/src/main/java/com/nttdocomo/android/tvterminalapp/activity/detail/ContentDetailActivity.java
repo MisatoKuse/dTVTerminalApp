@@ -3934,7 +3934,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onOKCallback(final boolean isOK) {
                 //ブラウザを起動
-                Uri uri = Uri.parse("CONTRACT_URL");
+                Uri uri = Uri.parse(UrlConstants.WebUrl.CONTRACT_URL);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
