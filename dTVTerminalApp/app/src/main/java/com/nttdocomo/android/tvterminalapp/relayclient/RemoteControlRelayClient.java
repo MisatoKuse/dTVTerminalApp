@@ -1446,7 +1446,6 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
-            requestJson.put(RELAY_COMMAND_HIKARITV_VERSION_CODE, HIKARITV_VALID_VERSION);
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
