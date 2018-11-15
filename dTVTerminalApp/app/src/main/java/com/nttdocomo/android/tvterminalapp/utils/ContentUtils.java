@@ -129,7 +129,7 @@ public class ContentUtils {
     /** コンテンツ種別2.*/
     public static final int CUSTOMDIMENSION_CONTENTSTYPE2 = 6;
     /** コンテンツ名.*/
-    public static final int CUSTOMDIMENSION_CONTENTNAME = 7;
+    private static final int CUSTOMDIMENSION_CONTENTNAME = 7;
     /** 検索キーワード.*/
     public static final int CUSTOMDIMENSION_KEYWORD = 8;
     /** ジャンル.*/
@@ -1691,17 +1691,23 @@ public class ContentUtils {
      * @return 現在放送しているかどうか
      */
     public static boolean isNowOnAir(final String startTime, final String endTime) {
-        Date startDate = new Date();
-        Date endDate = new Date();
-        Date nowDate = new Date();
+        if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+            return false;
+        }
+        Date startDate;
+        Date endDate;
+        Date nowDate;
+        String start = startTime.trim().replaceAll(STR_SPACE, STR_BLANK);
+        String end = endTime.trim().replaceAll(STR_SPACE, STR_BLANK);
         SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         Calendar c = Calendar.getInstance();
         try {
-            startDate = format.parse(startTime);
-            endDate = format.parse(endTime);
+            startDate = format.parse(start);
+            endDate = format.parse(end);
             nowDate = c.getTime();
         } catch (ParseException e) {
             DTVTLogger.debug(e);
+            return false;
         }
         return (nowDate.getTime() >= startDate.getTime() && nowDate.getTime() <= endDate.getTime());
     }
@@ -1761,5 +1767,28 @@ public class ContentUtils {
             DTVTLogger.debug(e);
         }
         return endDate.getTime() < now.getTime();
+    }
+
+    /**
+     * カスタムディメンション情報設定.
+     *
+     *  @param loginStatus ログイン
+     *  @param serviceName サービス
+     *  @param contentsType1 コンテンツ種別1
+     *  @param contentsType2 コンテンツ種別2
+     *  @param contentsName コンテンツ名
+     *  @return カスタムディメンション情報
+     */
+    public static SparseArray<String> getCustomDimensions(final String loginStatus, final String serviceName,
+                                                          final String contentsType1, final String contentsType2, final String contentsName) {
+        SparseArray<String> customDimensions = new SparseArray<>();
+        if (loginStatus != null) {
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
+        }
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, contentsName);
+        return customDimensions;
     }
 }

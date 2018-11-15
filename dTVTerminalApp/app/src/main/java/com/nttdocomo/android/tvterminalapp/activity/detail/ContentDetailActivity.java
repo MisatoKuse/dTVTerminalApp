@@ -746,12 +746,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
             String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
             String contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
-            SparseArray<String> customDimensions = new SparseArray<>();
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_player), customDimensions);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
+                    ContentUtils.getCustomDimensions(null, serviceName, contentsType1, contentsType2, playerData.getTitle()));
         }
         //ヘッダーの設定
         String sourceClass = mIntent.getStringExtra(DtvtConstants.SOURCE_SCREEN);
@@ -1391,23 +1387,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         SparseArray<String> customDimensions = null;
         if (!TextUtils.isEmpty(contentsType1) && !TextUtils.isEmpty(contentsType2)) {
-            customDimensions  = new SparseArray<>();
+            String loginStatus = null;
             if (!mIsOtherService) {
-                String loginStatus;
                 UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
                 if (UserState.LOGIN_NG.equals(userState)) {
                     loginStatus = getString(R.string.google_analytics_custom_dimension_login_ng);
                 } else {
                     loginStatus = getString(R.string.google_analytics_custom_dimension_login_ok);
                 }
-                customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
             }
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+            String contentName = getTitleText().toString();
+            if (TextUtils.isEmpty(contentName) && mDetailFullData != null) {
+                contentName = mDetailFullData.getTitle();
+            }
+            customDimensions = ContentUtils.getCustomDimensions(loginStatus, serviceName, contentsType1, contentsType2, contentName);
         }
-
         super.sendScreenView(screenName, customDimensions);
     }
 
@@ -1610,13 +1604,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mHikariType = ContentUtils.getHikariType(mDetailFullData);
                     String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
                     String contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mHikariType);
-                    SparseArray<String> customDimensions = new SparseArray<>();
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-                    ContentDetailActivity.super.sendScreenView(screenName, customDimensions);
+                    ContentDetailActivity.super.sendScreenView(screenName,
+                            ContentUtils.getCustomDimensions(loginStatus, serviceName, contentsType1, contentsType2, mDetailFullData.getTitle()));
 
                     String dispType = mDetailFullData.getDisp_type();
                     String searchOk = mDetailFullData.getmSearch_ok();
@@ -3652,12 +3641,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         String screenName = getString(R.string.google_analytics_screen_name_player);
         String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
         String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
-        SparseArray<String> customDimensions = new SparseArray<>();
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-        super.sendScreenView(screenName, customDimensions);
+        String contentName = getTitleText().toString();
+        if (TextUtils.isEmpty(contentName) && mDetailFullData != null) {
+            contentName = mDetailFullData.getTitle();
+        }
+        super.sendScreenView(screenName, ContentUtils.getCustomDimensions(null, serviceName, contentsType1, contentsType2, contentName));
     }
 
     /**
