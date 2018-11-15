@@ -463,12 +463,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     if (mPlayerData.isIsLive()) {
                         if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                            showPlayIcon(false);
-                            mContractLeadingView.setVisibility(View.GONE);
-                            mThumbnail.setVisibility(View.GONE);
-                            mPlayerViewLayout.setPlayerEvent();
-                            mPlayerViewLayout.setUserAgeInfo();
-                            mThumbnailBtn.setVisibility(View.GONE);
+                            showPlayerView();
                         }
                     } else {
                         setRemotePlayArrow(mPlayerData);
@@ -476,15 +471,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             } else {
                 if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                    showPlayIcon(false);
-                    mContractLeadingView.setVisibility(View.GONE);
-                    mThumbnail.setVisibility(View.GONE);
-                    mPlayerViewLayout.setPlayerEvent();
-                    mPlayerViewLayout.setUserAgeInfo();
-                    mThumbnailBtn.setVisibility(View.GONE);
+                    showPlayerView();
                 }
             }
         }
+    }
+
+    /**
+     * プレイヤービュー表示.
+     */
+    private void showPlayerView() {
+        showPlayIcon(false);
+        mContractLeadingView.setVisibility(View.GONE);
+        mThumbnail.setVisibility(View.GONE);
+        mPlayerViewLayout.setPlayerEvent();
+        mPlayerViewLayout.setUserAgeInfo();
+        mThumbnailBtn.setVisibility(View.GONE);
     }
 
     /**
@@ -3207,9 +3209,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (!isInit) {
             mPlayerViewLayout.showPlayingProgress(false);
-            if (mPlayerData == null || mPlayerData.isIsLive()) {
-                mPlayerViewLayout.hideCtrlView();
-            }
+            mPlayerViewLayout.hideCtrlView(mPlayerViewLayout.mIsShowControl);
         }
     }
 
