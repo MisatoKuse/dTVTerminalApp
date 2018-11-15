@@ -3917,13 +3917,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void leadingContract() {
         //契約誘導ダイアログを表示
         CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-        customDialog.setContent(getString(R.string.contents_detail_contract_text));
+        customDialog.setContent(getString(R.string.contents_detail_no_agreement));
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
                 //ブラウザを起動
-                //TODO URLは現在未定
-                Uri uri = Uri.parse("https://www.nttdocomo.co.jp/");
+                Uri uri = Uri.parse(UrlConstants.WebUrl.CONTRACT_URL);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
