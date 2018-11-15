@@ -47,7 +47,7 @@
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_dtv_channel__application_uninstall_error">ドコモテレビターミナルにdTVチャンネルアプリがインストールされていないため、起動に失敗しました</string>
-    <string name="common_start_hikari_application_uninstall_error">ドコモテレビターミナルにひかりTV for docomoアプリがインストールされていないため、起動に失敗しました</string>
+    <string name="common_start_hikari_application_uninstall_error">ドコモテレビターミナルにひかりＴＶ for docomoアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_dazn_application_uninstall_error">ドコモテレビターミナルにDAZN for docomoアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_request_acceptance_failure_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-11）</string>
     <string name="common_different_user_switch_successfully_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-12）</string>
@@ -59,7 +59,7 @@
     <string name="common_switch_user_account_server_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-18）</string>
     <string name="common_switch_user_account_internal_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-19）</string>
     <string name="common_my_channel">マイ番組表</string>
-    <string name="common_hikari_tv_for_docomo">ひかりTV for docomo</string>
+    <string name="common_hikari_tv_for_docomo">ひかりＴＶ for docomo</string>
     <string name="common_dtv_channel">dTVチャンネル</string>
     <string name="common_contents_front_bracket">" ("</string>
     <string name="common_contents_end_bracket">") "</string>
@@ -133,9 +133,9 @@
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
     <string name="recording_reservation_list_update_time">現在</string>
     <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
-    <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました</string>
+    <string name="get_user_info_error_message">ひかりＴＶ for docomoの契約情報取得に失敗しました</string>
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく経ってから再度お試しください。</string>
-    <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません</string>
+    <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりＴＶ for docomoの契約がありません</string>
     <string name="home_no_login_info_text">dアカウントでログインしてください</string>
     <string name="home_contract_button_text">契約する</string>
     <string name="home_contents_pipe">" | "</string>
@@ -163,7 +163,7 @@
 
     <!-- チャンネルリスト -->
     <string-array name="channel_list_tab_names">
-        <item>ひかりTV for docomo</item>
+        <item>ひかりＴＶ for docomo</item>
         <item>地上波</item>
         <item>BS</item>
         <item>dTVチャンネル</item>
@@ -171,7 +171,7 @@
 
     <!-- チャンネルリスト STB未接続時 -->
     <string-array name="channel_list_tab_names_no_paring">
-        <item>ひかりTV for docomo</item>
+        <item>ひかりＴＶ for docomo</item>
         <item>dTVチャンネル</item>
     </string-array>
 
@@ -269,7 +269,7 @@
     <string name="nav_menu_item_dazn">ダ・ゾーン</string>
     <string name="nav_menu_item_premium_video">プレミアムビデオ</string>
     <string name="nav_menu_item_premium_tv_app_start_common">テレビアプリを起動する</string>
-    <string name="nav_menu_item_h4d_guide">ひかりTV for docomoガイド</string>
+    <string name="nav_menu_item_h4d_guide">ひかりＴＶ for docomoガイド</string>
 
     <!-- 検索画面 -->
     <string name="search_loading">読み込み中...</string>
@@ -285,7 +285,7 @@
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing">見逃し</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing_separation">"見逃し | "</string>
-    <string name="contents_detail_contract_text">ひかりTV for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
+    <string name="contents_detail_contract_text">ひかりＴＶ for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
     <string name="dtv_content_service_start_dialog">dTVを起動します</string>
     <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です</string>
@@ -379,16 +379,16 @@
     <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリを最新バージョンにアップデートしてください</string>
-    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTV for docomoアプリを最新バージョンにアップデートしてください</string>
+    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりＴＶ for docomoアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZN for docomoアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_connect_error_message">ドコモテレビターミナルとの通信に失敗しました</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
     <string name="main_setting_logon_request_error_message">ログインしてください</string>
-    <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません</string>
+    <string name="main_setting_h4d_not_signed_message">ひかりＴＶ for docomoの契約状態が確認できないため\nご利用になれません</string>
     <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルが接続されているWi-Fiに接続した状態で再度実施してください</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
-    <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？\n\n有効にする場合は、「OK」を押下する前に、テレビでひかりTV for docomoを起動し、「設定・お知らせ＞ホームサーバ設定＞ホームサーバ機能設定」で「自宅内/外出先で有効」を選択してください。</string>
-    <string name="main_setting_remote_confirm_message_first_start">外出先でも視聴できるリモート視聴設定を有効にしますか？\n\n有効にする場合は、「OK」を押下する前に、テレビでひかりTV for docomoを起動し、「設定・お知らせ＞ホームサーバ設定＞ホームサーバ機能設定」で「自宅内/外出先で有効」を選択してください。\n\nあとから設定する場合は、「設定＞FAQ」をご確認ください。</string>
+    <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？\n\n有効にする場合は、「OK」を押下する前に、テレビでひかりＴＶ for docomoを起動し、「設定・お知らせ＞ホームサーバ設定＞ホームサーバ機能設定」で「自宅内/外出先で有効」を選択してください。</string>
+    <string name="main_setting_remote_confirm_message_first_start">外出先でも視聴できるリモート視聴設定を有効にしますか？\n\n有効にする場合は、「OK」を押下する前に、テレビでひかりＴＶ for docomoを起動し、「設定・お知らせ＞ホームサーバ設定＞ホームサーバ機能設定」で「自宅内/外出先で有効」を選択してください。\n\nあとから設定する場合は、「設定＞FAQ」をご確認ください。</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
     <string name="main_setting_menu_title_app">アプリケーション・プライバシーポリシー</string>
