@@ -842,6 +842,19 @@ public class SharedPreferencesUtils {
     }
 
     /**
+     * ユーザー情報のキャッシュキーの削除を行う.
+     *
+     * @param context コンテキスト
+     */
+    public static void deleteUserInfoDate(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
+        data.edit().clear().apply();
+        DTVTLogger.end();
+    }
+
+    /**
      * ユーザ情報永続化.
      *
      * @param context                     コンテキスト
