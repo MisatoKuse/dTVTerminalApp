@@ -91,8 +91,8 @@ public class RentalListInsertDataManager {
                         if (item.equals(JsonConstants.META_RESPONSE_LIINF_ARRAY)) {
                             StringBuilder stringBuffer = new StringBuilder();
                             String[] strings = vodMetaFullData.getmLiinf_array();
-                            for(int j= 0; j < strings.length;j++){
-                                if(j>0) {
+                            for (int j = 0; j < strings.length; j++) {
+                                if (j > 0) {
                                     stringBuffer.append(COMMA);
                                 }
                                 stringBuffer.append(strings[j]);
