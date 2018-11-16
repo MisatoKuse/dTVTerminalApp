@@ -139,21 +139,12 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         //今設定されている最終更新日時を控えておく
         mBeforeDate = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
-        //通信状況の取得
-        if (!isOnline(mContext)) {
-            DTVTLogger.debug("OffLine");
+        //通信不可とキャッシュ有効期限内
+        if (!isOnline(mContext) || !isUserInfoTimeOut()) {
+            DTVTLogger.debug("OffLine or Use cache");
 
-            //通信不能なので、ヌルを指定して、前回の値をそのまま使用する。
-            afterProcess(null);
-            return;
-        }
-
-        //通信日時の確認
-        if (!isUserInfoTimeOut()) {
-            DTVTLogger.debug("Less than 1 hour");
-
-            //まだ取得後1時間が経過していないので、ヌルを指定して前回の値をそのまま使用する。
-            afterProcess(null);
+            mUserDataProviderCallback.userInfoListCallback(false, SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext)
+                    ,false);
             return;
         }
 
