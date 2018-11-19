@@ -201,7 +201,7 @@
     <string name="record_download_delete_title">削除しますか？</string>
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
-    <string name="record_download_notification">録画番組をダウンロード中</string>
+    <string name="record_download_notification">録画番組をダウンロード中&#8230;</string>
     <string name="record_download_notification_channel_name">ダウンロード状況</string>
     <string name="record_download_not_completed_msg">録画コンテンツのダウンロードに失敗しました。\n再度録画一覧よりダウンロードを行ってください。</string>
     <string name="record_download_low_storage_space_msg">端末の容量が不足しているため、ダウンロードできません</string>
@@ -272,7 +272,7 @@
     <string name="nav_menu_item_h4d_guide">ひかりＴＶ for docomoガイド</string>
 
     <!-- 検索画面 -->
-    <string name="search_loading">読み込み中...</string>
+    <string name="search_loading">読み込み中&#8230;</string>
 
     <!-- レンタル -->
     <string name="rental_title">レンタルビデオ</string>
@@ -285,7 +285,6 @@
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing">見逃し</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing_separation">"見逃し | "</string>
-    <string name="contents_detail_contract_text">ひかりＴＶ for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
     <string name="dtv_content_service_start_dialog">dTVを起動します</string>
     <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です</string>
@@ -303,7 +302,7 @@
     <string name="dtv_channel_service_update_dialog">dTVチャンネルアプリのアップデートが必要です</string>
     <string name="dtv_channel_service_application_not_install_dialog">dTVチャンネルアプリがインストールされていません。\nインストールしますか？</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルアプリのアップデートが必要です</string>
-    <string name="stb_application_version_update">ご利用のドコモテレビターミナルでアプリのアップデートが必要です。\nドコモテレビターミナルを起動し、設定＞ドコモサービス設定＞ドコモアプリ管理　から「ドコモテレビターミナルアプリ用アプリ」をアップデートしてください。</string>
+    <string name="stb_application_version_update">ご利用のドコモテレビターミナルでアプリのアップデートが必要です。\nドコモテレビターミナルを起動し、設定＞ドコモサービス設定＞ドコモアプリ管理から「ドコモテレビターミナル中継アプリ」をアップデートしてください。</string>
     <string name="contents_detail_thumbnail_text_no_pair">ドコモテレビターミナルに接続してください</string>
     <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
     <string name="contents_detail_thumbnail_text_unable_viewing">お使いの端末では視聴できません</string>

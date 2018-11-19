@@ -38,6 +38,9 @@ public class RentalListInsertDataManager {
      */
     private  final Context mContext;
 
+    /** コンマ.*/
+    private static final String COMMA = ",";
+
     /**
      * コンストラクタ.
      *
@@ -84,9 +87,23 @@ public class RentalListInsertDataManager {
                     VodMetaFullData vodMetaFullData = vodMetaFullDataList.get(i);
 
                     for (String item : vodMetaFullData.getRootPara()) {
-                        //データがString型だけではなくなったので、変換を行ってから蓄積する
-                        String valName = StringUtils.changeObject2String(vodMetaFullData.getMember(item));
-                        values.put(DataBaseUtils.fourKFlgConversion(item), valName);
+                        //ラインセンスリスト情報は配列型なので、ここで保存する
+                        if (item.equals(JsonConstants.META_RESPONSE_LIINF_ARRAY)) {
+                            StringBuilder stringBuffer = new StringBuilder();
+                            String[] strings = vodMetaFullData.getmLiinf_array();
+                            for (int j = 0; j < strings.length; j++) {
+                                if (j > 0) {
+                                    stringBuffer.append(COMMA);
+                                }
+                                stringBuffer.append(strings[j]);
+                            }
+                            String liinfString = stringBuffer.toString();
+                            values.put(item, liinfString);
+                        } else {
+                            //データがString型だけではなくなったので、変換を行ってから蓄積する
+                            String valName = StringUtils.changeObject2String(vodMetaFullData.getMember(item));
+                            values.put(DataBaseUtils.fourKFlgConversion(item), valName);
+                        }
                     }
                     rentalListDao.insert(values);
                 }

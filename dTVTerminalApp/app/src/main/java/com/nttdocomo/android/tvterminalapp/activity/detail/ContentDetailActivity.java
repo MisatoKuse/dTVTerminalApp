@@ -469,12 +469,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     if (mPlayerData.isIsLive()) {
                         if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                            showPlayIcon(false);
-                            mContractLeadingView.setVisibility(View.GONE);
-                            mThumbnail.setVisibility(View.GONE);
-                            mPlayerViewLayout.setPlayerEvent();
-                            mPlayerViewLayout.setUserAgeInfo();
-                            mThumbnailBtn.setVisibility(View.GONE);
+                            showPlayerView();
                         }
                     } else {
                         setRemotePlayArrow(mPlayerData);
@@ -482,15 +477,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             } else {
                 if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                    showPlayIcon(false);
-                    mContractLeadingView.setVisibility(View.GONE);
-                    mThumbnail.setVisibility(View.GONE);
-                    mPlayerViewLayout.setPlayerEvent();
-                    mPlayerViewLayout.setUserAgeInfo();
-                    mThumbnailBtn.setVisibility(View.GONE);
+                    showPlayerView();
                 }
             }
         }
+    }
+
+    /**
+     * プレイヤービュー表示.
+     */
+    private void showPlayerView() {
+        showPlayIcon(false);
+        mContractLeadingView.setVisibility(View.GONE);
+        mThumbnail.setVisibility(View.GONE);
+        mPlayerViewLayout.setPlayerEvent();
+        mPlayerViewLayout.setUserAgeInfo();
+        mThumbnailBtn.setVisibility(View.GONE);
     }
 
     /**
@@ -752,12 +754,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
             String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
             String contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
-            SparseArray<String> customDimensions = new SparseArray<>();
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_player), customDimensions);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
+                    ContentUtils.getCustomDimensions(null, serviceName, contentsType1, contentsType2, playerData.getTitle()));
         }
         //ヘッダーの設定
         String sourceClass = mIntent.getStringExtra(DtvtConstants.SOURCE_SCREEN);
@@ -1419,23 +1417,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         SparseArray<String> customDimensions = null;
         if (!TextUtils.isEmpty(contentsType1) && !TextUtils.isEmpty(contentsType2)) {
-            customDimensions  = new SparseArray<>();
+            String loginStatus = null;
             if (!mIsOtherService) {
-                String loginStatus;
                 UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
                 if (UserState.LOGIN_NG.equals(userState)) {
                     loginStatus = getString(R.string.google_analytics_custom_dimension_login_ng);
                 } else {
                     loginStatus = getString(R.string.google_analytics_custom_dimension_login_ok);
                 }
-                customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
             }
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
+            String contentName = getTitleText().toString();
+            if (TextUtils.isEmpty(contentName) && mDetailFullData != null) {
+                contentName = mDetailFullData.getTitle();
+            }
+            customDimensions = ContentUtils.getCustomDimensions(loginStatus, serviceName, contentsType1, contentsType2, contentName);
         }
-
         super.sendScreenView(screenName, customDimensions);
     }
 
@@ -1638,13 +1634,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mHikariType = ContentUtils.getHikariType(mDetailFullData);
                     String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
                     String contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mHikariType);
-                    SparseArray<String> customDimensions = new SparseArray<>();
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-                    ContentDetailActivity.super.sendScreenView(screenName, customDimensions);
+                    ContentDetailActivity.super.sendScreenView(screenName,
+                            ContentUtils.getCustomDimensions(loginStatus, serviceName, contentsType1, contentsType2, mDetailFullData.getTitle()));
 
                     String dispType = mDetailFullData.getDisp_type();
                     String searchOk = mDetailFullData.getmSearch_ok();
@@ -2017,14 +2008,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 ScheduleInfo scheduleInfo = scheduleInfos.get(i);
                                 String endTime = scheduleInfo.getEndTime();
                                 String startTime = scheduleInfo.getStartTime();
-                                String start = startTime.substring(0, 10) + startTime.substring(11, 19);
-                                String end = endTime.substring(0, 10) + endTime.substring(11, 19);
-                                if (!isLastDate(end)) {
+                                if (!ContentUtils.checkScheduleDate(startTime, endTime)) {
+                                    continue;
+                                }
+                                if (!ContentUtils.isLastDate(endTime)) {
                                     if (mDateList != null) {
                                         ContentsData contentsData = new ContentsData();
                                         if (!isFirst) {
                                             if (mDateIndex == 1) {
-                                                if (isNowOnAir(start, end)) {
+                                                if (ContentUtils.isNowOnAir(startTime, endTime)) {
                                                     //NOW ON AIR の判断
                                                     contentsData.setChannelName(getString(R.string.home_label_now_on_air));
                                                 }
@@ -2101,49 +2093,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         return subTitle;
-    }
-
-    /**
-     * NowOnAir判定.
-     *
-     * @param startTime 開始時刻
-     * @param endTime 終了時刻
-     * @return 現在放送しているかどうか
-     */
-    private boolean isNowOnAir(final String startTime, final String endTime) {
-        Date startDate = new Date();
-        Date endDate = new Date();
-        Date nowDate = new Date();
-        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-        Calendar c = Calendar.getInstance();
-        try {
-            startDate = format.parse(startTime);
-            endDate = format.parse(endTime);
-            nowDate = c.getTime();
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        return (nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) != 1);
-    }
-
-    /**
-     * ソートを行う.
-     *
-     *  @param endTime 終了時刻
-     *  @return 過去の番組
-     */
-    private boolean isLastDate(final String endTime) {
-        Date endDate = new Date();
-        Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-        Calendar c = Calendar.getInstance();
-        try {
-            endDate = sdf.parse(endTime);
-            now = c.getTime();
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        return (endDate.compareTo(now) == -1);
     }
 
     /**
@@ -3229,8 +3178,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case ENABLE_WATCH_LIMIT_THIRTY:
             case ENABLE_WATCH_LIMIT_THIRTY_001:
                 //期限まで30日以内表示内容設定
-                mEndDate = mDetailFullData.getPublish_end_date();
-                displayLimitDate();
+                if(mEndDate == 0L) {
+                    mEndDate = mDetailFullData.getPublish_end_date();
+                    displayLimitDate();
+                }
                 break;
             default:
                 break;
@@ -3251,6 +3202,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mPurchasedVodListResponse = response;
                 ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
                 mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
+                mVodEndDate = mDetailFullData.getAvail_end_date();
                 displayLimitDate();
                 DTVTLogger.debug("get rental vod end date:" + mEndDate);
                 mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
@@ -3277,6 +3229,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
 
                 mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
+                mVodEndDate = mDetailFullData.getAvail_end_date();
                 displayLimitDate();
                 DTVTLogger.debug("get rental vod end date:" + mEndDate);
                 mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
@@ -3351,7 +3304,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (!isInit) {
             mPlayerViewLayout.showPlayingProgress(false);
-            mPlayerViewLayout.hideCtrlView();
+            mPlayerViewLayout.hideCtrlView(mPlayerViewLayout.mIsShowControl);
         }
     }
 
@@ -3783,12 +3736,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         String screenName = getString(R.string.google_analytics_screen_name_player);
         String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
         String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
-        SparseArray<String> customDimensions = new SparseArray<>();
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, getTitleText().toString());
-        super.sendScreenView(screenName, customDimensions);
+        String contentName = getTitleText().toString();
+        if (TextUtils.isEmpty(contentName) && mDetailFullData != null) {
+            contentName = mDetailFullData.getTitle();
+        }
+        super.sendScreenView(screenName, ContentUtils.getCustomDimensions(null, serviceName, contentsType1, contentsType2, contentName));
     }
 
     /**
@@ -4060,13 +4012,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void leadingContract() {
         //契約誘導ダイアログを表示
         CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-        customDialog.setContent(getString(R.string.contents_detail_contract_text));
+        customDialog.setContent(getString(R.string.contents_detail_no_agreement));
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
                 //ブラウザを起動
-                //TODO URLは現在未定
-                Uri uri = Uri.parse("https://www.nttdocomo.co.jp/");
+                Uri uri = Uri.parse(UrlConstants.WebUrl.CONTRACT_URL);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }

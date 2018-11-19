@@ -169,6 +169,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mIsCompleted = false;
     /**seek bar by user.*/
     private boolean mIsSeekBarFromUser = false;
+    /**ShowStartControl.*/
+    public boolean mIsShowControl = false;
     /** 外部出力制御.*/
     private ExternalDisplayHelper mExternalDisplayHelper;
     /** 外部出力制御判定フラグ.*/
@@ -243,6 +245,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             if (!mExternalDisplayFlg) {
                 hideCtrlViewIfVisible();
             }
+            mIsShowControl = false;
             DTVTLogger.end();
         }
     };
@@ -413,7 +416,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     mExternalDisplayFlg = true;
                     mPlayerStateListener.onErrorCallBack(PlayerErrorType.EXTERNAL);
                     mRecordCtrlView.setOnTouchListener(null);
-                    hideCtrlView();
+                    hideCtrlView(false);
                     playPause();
                     mVideoPlayPause.setVisibility(View.VISIBLE);
                 }
@@ -683,6 +686,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mPlayStartPosition = 0;
                 playButton(false);
                 showPlayingProgress(false);
+                if (!mIsVideoBroadcast) {
+                    showRecordContentsControlView();
+                }
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
@@ -694,6 +700,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
+                if (!mIsVideoBroadcast && getCurrentPosition() == 0) {
+                    showRecordContentsControlView();
+                }
                 break;
             default:
                 break;
@@ -844,7 +853,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         this.addView(mRecordCtrlView);
         //初期化の時点から、handlerにmsgを送る
         viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
-        hideCtrlView();
+        hideCtrlView(false);
         if (mPlayerController != null) {
             if (mPlayerController.isPlaying()) {
                 mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
@@ -888,22 +897,26 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mIsSeekBarFromUser = false;
         DTVTLogger.end();
     }
+
     /**
      * hide video ctrl mView.
+     * @param isFromActivity Activity
      */
-    public void hideCtrlView() {
+    public void hideCtrlView(final boolean isFromActivity) {
         DTVTLogger.start();
         if (mSecureVideoPlayer == null || mIsSeekBarFromUser) {
             //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
             DTVTLogger.end("mSecureVideoPlayer is null");
             return;
         }
-        mVideoPlayPause.setVisibility(View.INVISIBLE);
-        mVideoRewind10.setVisibility(View.INVISIBLE);
-        mVideoFast30.setVisibility(View.INVISIBLE);
-        mVideoCtrlBar.setVisibility(View.INVISIBLE);
-        mPortraitLayout.setVisibility(INVISIBLE);
-        mLandscapeLayout.setVisibility(INVISIBLE);
+        if (!isFromActivity) {
+            mVideoPlayPause.setVisibility(View.INVISIBLE);
+            mVideoRewind10.setVisibility(View.INVISIBLE);
+            mVideoFast30.setVisibility(View.INVISIBLE);
+            mVideoCtrlBar.setVisibility(View.INVISIBLE);
+            mPortraitLayout.setVisibility(INVISIBLE);
+            mLandscapeLayout.setVisibility(INVISIBLE);
+        }
         mSecureVideoPlayer.setBackgroundResource(0);
         mIsOperateActivated = false;
         DTVTLogger.end();
@@ -1300,6 +1313,32 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     /**
+     * 録画コンテンツ再生開始時と終了の動作.
+     */
+    private void showRecordContentsControlView() {
+        hideCtrlViewAfterOperate();
+        showControlView();
+        mIsShowControl = true;
+    }
+
+    /**
+     * show ctrl view.
+     */
+    private void showControlView() {
+        DTVTLogger.start();
+        if (!mIsVideoBroadcast) {
+            mVideoPlayPause.setVisibility(View.VISIBLE);
+            mVideoRewind10.setVisibility(View.VISIBLE);
+            mVideoFast30.setVisibility(View.VISIBLE);
+            mProgressLayout.setVisibility(View.VISIBLE);
+            mVideoTotalTime.setVisibility(View.VISIBLE);
+            mVideoCurTime.setVisibility(View.VISIBLE);
+        }
+        mVideoCtrlBar.setVisibility(View.VISIBLE);
+        DTVTLogger.end();
+    }
+
+    /**
      * set player event.
      */
     public void setPlayerEvent() {
@@ -1318,7 +1357,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
                         if (mIsHideOperate) {
-                            hideCtrlView();
+                            hideCtrlView(false);
                         }
                         if (!mIsVideoBroadcast) {
                             PlayerControlType controlType = getPlayerControlType(motionEvent);
@@ -1387,15 +1426,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                             }
                         }
                     } else {
-                        if (!mIsVideoBroadcast) {
-                            mVideoPlayPause.setVisibility(View.VISIBLE);
-                            mVideoRewind10.setVisibility(View.VISIBLE);
-                            mVideoFast30.setVisibility(View.VISIBLE);
-                            mProgressLayout.setVisibility(View.VISIBLE);
-                            mVideoTotalTime.setVisibility(View.VISIBLE);
-                            mVideoCurTime.setVisibility(View.VISIBLE);
-                        }
-                        mVideoCtrlBar.setVisibility(View.VISIBLE);
+                        showControlView();
                         if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                             showLiveLayout(true);
                         } else {

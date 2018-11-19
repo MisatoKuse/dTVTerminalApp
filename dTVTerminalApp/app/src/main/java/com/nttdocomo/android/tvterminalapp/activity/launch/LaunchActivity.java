@@ -67,6 +67,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
+        // TODO: 暫定対応、削除必要する必要かも
+        SharedPreferencesUtils.deleteUserInfoDate(getApplicationContext());
 
         StbConnectionManager.shared().launch(getApplicationContext());
         StbConnectionManager.shared().initializeState();

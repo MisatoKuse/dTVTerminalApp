@@ -1170,7 +1170,7 @@ public class VodMetaFullData implements Serializable {
             JsonConstants.META_RESPONSE_PU_END_DATE, //JsonConstants.META_RESPONSE_CREDIT_ARRAY,
             JsonConstants.META_RESPONSE_RATING, JsonConstants.META_RESPONSE_DTV,
             JsonConstants.META_RESPONSE_CHSVOD, JsonConstants.META_RESPONSE_SEARCH_OK,
-            //JsonConstants.META_RESPONSE_LIINF_ARRAY,JsonConstants.META_RESPONSE_PUINF,
+            JsonConstants.META_RESPONSE_LIINF_ARRAY,//JsonConstants.META_RESPONSE_PUINF,
             JsonConstants.META_RESPONSE_CAPL, JsonConstants.META_RESPONSE_BILINGAL,
             JsonConstants.META_RESPONSE_TV_CID, JsonConstants.META_RESPONSE_SERVICE_ID,
             JsonConstants.META_RESPONSE_EVENT_ID, JsonConstants.META_RESPONSE_CHNO,

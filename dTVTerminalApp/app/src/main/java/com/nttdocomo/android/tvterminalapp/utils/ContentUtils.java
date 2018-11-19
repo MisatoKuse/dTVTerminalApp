@@ -29,10 +29,13 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -128,11 +131,17 @@ public class ContentUtils {
     /** コンテンツ種別2.*/
     public static final int CUSTOMDIMENSION_CONTENTSTYPE2 = 6;
     /** コンテンツ名.*/
-    public static final int CUSTOMDIMENSION_CONTENTNAME = 7;
+    private static final int CUSTOMDIMENSION_CONTENTNAME = 7;
     /** 検索キーワード.*/
     public static final int CUSTOMDIMENSION_KEYWORD = 8;
     /** ジャンル.*/
     public static final int CUSTOMDIMENSION_GENRE = 10;
+    /** スペース.*/
+    private static final String STR_SPACE = " ";
+    /** 空白.*/
+    private static final String STR_BLANK = "";
+    /** サイズ.*/
+    private static final int SCHEDULE_FORMAT_SIZE = 10;
     //endregion
 
     /**
@@ -1699,5 +1708,114 @@ public class ContentUtils {
             default:
                 return false;
         }
+    }
+
+    /**
+     * NowOnAir判定.
+     *
+     * @param startTime 開始時刻
+     * @param endTime 終了時刻
+     * @return 現在放送しているかどうか
+     */
+    public static boolean isNowOnAir(final String startTime, final String endTime) {
+        if (TextUtils.isEmpty(startTime) || TextUtils.isEmpty(endTime)) {
+            return false;
+        }
+        Date startDate;
+        Date endDate;
+        Date nowDate;
+        String start = startTime.trim().replaceAll(STR_SPACE, STR_BLANK);
+        String end = endTime.trim().replaceAll(STR_SPACE, STR_BLANK);
+        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+        Calendar c = Calendar.getInstance();
+        try {
+            startDate = format.parse(start);
+            endDate = format.parse(end);
+            nowDate = c.getTime();
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+            return false;
+        }
+        return (nowDate.getTime() >= startDate.getTime() && nowDate.getTime() <= endDate.getTime());
+    }
+
+    /**
+     * 番組日付をチェック.
+     *
+     *  @param startTime 開始時刻
+     *  @param endTime 終了時刻
+     *  @return true:正　false:不正
+     */
+    public static boolean checkScheduleDate(final String startTime, final String endTime) {
+        //NULL
+        if (startTime == null || endTime == null) {
+           return false;
+        }
+        //空文字
+        if (startTime.length() == 0 || endTime.length() == 0) {
+            return false;
+        }
+        //時分秒
+        if (startTime.trim().length() <= SCHEDULE_FORMAT_SIZE || endTime.trim().length() <= SCHEDULE_FORMAT_SIZE) {
+            return false;
+        }
+        String start = startTime.trim().replaceAll(STR_SPACE, STR_BLANK);
+        String end = endTime.trim().replaceAll(STR_SPACE, STR_BLANK);
+        Date startDate;
+        Date endDate;
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+        try {
+            startDate = sdf.parse(start);
+            endDate = sdf.parse(end);
+        } catch (ParseException e) {
+            return false;
+        }
+        if (startDate == null || endDate == null) {
+            return false;
+        }
+        return endDate.getTime() > startDate.getTime();
+    }
+
+    /**
+     * 過去の番組であるかどうか.
+     *
+     *  @param endTime 終了時刻
+     *  @return 過去の番組
+     */
+    public static boolean isLastDate(final String endTime) {
+        Date endDate = new Date();
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+        Calendar c = Calendar.getInstance();
+        try {
+            endDate = sdf.parse(endTime);
+            now = c.getTime();
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        return endDate.getTime() < now.getTime();
+    }
+
+    /**
+     * カスタムディメンション情報設定.
+     *
+     *  @param loginStatus ログイン
+     *  @param serviceName サービス
+     *  @param contentsType1 コンテンツ種別1
+     *  @param contentsType2 コンテンツ種別2
+     *  @param contentsName コンテンツ名
+     *  @return カスタムディメンション情報
+     */
+    public static SparseArray<String> getCustomDimensions(final String loginStatus, final String serviceName,
+                                                          final String contentsType1, final String contentsType2, final String contentsName) {
+        SparseArray<String> customDimensions = new SparseArray<>();
+        if (loginStatus != null) {
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
+        }
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, serviceName);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, contentsName);
+        return customDimensions;
     }
 }
