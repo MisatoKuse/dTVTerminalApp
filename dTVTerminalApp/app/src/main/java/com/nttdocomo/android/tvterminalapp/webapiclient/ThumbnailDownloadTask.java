@@ -16,8 +16,10 @@ import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.utils.BitmapDecodeUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -105,6 +107,10 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 }
                 URL url = new URL(mImageUrl);
                 urlConnection = (HttpURLConnection) url.openConnection();
+
+                // UserAgentを設定
+                urlConnection.setRequestProperty(DtvtConstants.USER_AGENT, UserAgentUtils.getCustomUserAgent());
+                DTVTLogger.debug("Set UserAgent:" + UserAgentUtils.getCustomUserAgent());
 
                 //コンテキストがあればSSL証明書失効チェックを行う
                 if (mContext != null) {

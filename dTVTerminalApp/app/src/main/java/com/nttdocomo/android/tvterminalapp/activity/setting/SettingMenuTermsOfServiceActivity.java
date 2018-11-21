@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * 利用規約.
@@ -40,6 +41,7 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         mTermsOfServiceWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_AGREEMENT_HTML);
 
         //テレビアイコンをタップされたらリモコンを起動する

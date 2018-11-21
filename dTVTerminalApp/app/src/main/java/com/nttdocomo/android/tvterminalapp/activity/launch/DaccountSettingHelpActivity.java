@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * ドコモテレビターミナルにdアカウントを登録するには 画面.
@@ -42,6 +43,7 @@ public class DaccountSettingHelpActivity extends BaseActivity {
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         dAccountHelpPageWebView.loadUrl(UrlConstants.WebUrl.STB_REGIST_D_ACCOUNT_URL);
 
 

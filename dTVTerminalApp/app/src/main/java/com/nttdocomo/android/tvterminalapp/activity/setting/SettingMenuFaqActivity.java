@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * FAQ画面.
@@ -41,9 +42,11 @@ public class SettingMenuFaqActivity extends BaseActivity {
 
         mFaqWebView = findViewById(R.id.setting_menu_main_webview);
         mFaqWebView.setWebViewClient(new WebViewClient());
-        mFaqWebView.getSettings().setJavaScriptEnabled(false);
-        mFaqWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        mFaqWebView.getSettings().setTextZoom(100);
+        WebSettings webSettings = mFaqWebView.getSettings();
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setTextZoom(100);
         mFaqWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_FAQ_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する

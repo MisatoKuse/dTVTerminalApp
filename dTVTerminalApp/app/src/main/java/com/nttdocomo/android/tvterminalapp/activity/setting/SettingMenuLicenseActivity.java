@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
  * ライセンス.
@@ -37,11 +38,12 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         mLicenseWebView = findViewById(R.id.setting_menu_main_webview);
         mLicenseWebView.setWebViewClient(new WebViewClient());
         mLicenseWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mLicenseWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_LICENSE_URL);
         WebSettings webSettings = mLicenseWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
+        webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
+        mLicenseWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_LICENSE_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
