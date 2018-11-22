@@ -55,7 +55,6 @@ public class ApplicationInfoActivity extends BaseActivity {
         setTitleText(getString(R.string.main_setting_application_info_header));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 

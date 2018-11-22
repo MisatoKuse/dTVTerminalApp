@@ -134,7 +134,6 @@ public class WatchingVideoListActivity extends BaseActivity implements
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         resetPaging();
 

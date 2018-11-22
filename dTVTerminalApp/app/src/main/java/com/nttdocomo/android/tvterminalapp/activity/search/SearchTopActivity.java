@@ -205,7 +205,6 @@ public class SearchTopActivity extends BaseActivity
             enableHeaderBackIcon(true);
         }
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         initData();
         initView();

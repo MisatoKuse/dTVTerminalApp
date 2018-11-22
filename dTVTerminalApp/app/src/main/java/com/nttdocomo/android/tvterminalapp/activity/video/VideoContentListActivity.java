@@ -104,7 +104,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         menuImageView.setVisibility(View.VISIBLE);
         menuImageView.setOnClickListener(this);
         enableHeaderBackIcon(true);
-        setStatusBarColor(true);
 
         // コンテンツツリー画面からのデータ受け取り
         VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);

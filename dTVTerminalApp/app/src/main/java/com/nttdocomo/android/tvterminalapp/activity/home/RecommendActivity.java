@@ -152,7 +152,6 @@ public class RecommendActivity extends BaseActivity implements
         }
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         initData();
         initRecommendListView();

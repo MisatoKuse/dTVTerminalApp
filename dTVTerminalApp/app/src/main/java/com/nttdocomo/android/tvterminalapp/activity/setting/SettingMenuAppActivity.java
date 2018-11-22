@@ -56,7 +56,6 @@ public class SettingMenuAppActivity extends BaseActivity {
         setTitleText(getString(R.string.main_setting_menu_title_app));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
     }
 
     @Override

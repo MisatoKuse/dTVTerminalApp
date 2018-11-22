@@ -84,7 +84,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         setTitleText(getString(R.string.daily_tv_ranking_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
         resetPaging();
 
         initView();

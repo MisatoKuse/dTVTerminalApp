@@ -32,9 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -325,54 +323,6 @@ public class BaseActivity extends FragmentActivity implements
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mGlobalMenuListView = findViewById(R.id.menu_list);
         DTVTLogger.end();
-    }
-
-    /**
-     * 機能：ステータスバー色を変更する(Android4.4用).
-     *
-     * @param isColorRed true:ステータスバー色 = 赤 false:ステータスバー色 = 黒
-     */
-    protected void setStatusBarColor(final Boolean isColorRed) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            int statusBarHeight = getStatusBarHeight(this);
-
-            View view = new View(getApplicationContext());
-            view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            view.getLayoutParams().height = statusBarHeight;
-            ((ViewGroup) window.getDecorView()).addView(view, 0);
-            if (isColorRed) {
-                view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.header_background_color_red));
-            } else {
-                view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.header_background_color_black));
-            }
-
-            CustomDrawerLayout customDrawerLayout = findViewById(R.id.baseCustomDrawerLayout);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) customDrawerLayout.getLayoutParams();
-            layoutParams.setMargins(0, statusBarHeight, 0, 0);
-            customDrawerLayout.setLayoutParams(layoutParams);
-        }
-    }
-
-    /**
-     * ステータスバーの高さを取得する.
-     *
-     * @param activity アクティビティ
-     * @return ステータスバーの高さ
-     */
-    public static int getStatusBarHeight(final Activity activity) {
-        int result = 0;
-        Resources res = activity.getResources();
-        int resourceId = res.getIdentifier(
-                activity.getString(R.string.status_bar_height_name),
-                activity.getString(R.string.status_bar_height_deftype),
-                activity.getString(R.string.status_bar_height_defpackage));
-        if (resourceId > 0) {
-            result = res.getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     /**

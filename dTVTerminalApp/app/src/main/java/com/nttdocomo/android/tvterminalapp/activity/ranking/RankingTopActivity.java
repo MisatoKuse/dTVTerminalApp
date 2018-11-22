@@ -129,7 +129,6 @@ public class RankingTopActivity extends BaseActivity
             enableHeaderBackIcon(true);
         }
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         //ビューの初期化処理
         initView();

@@ -80,7 +80,6 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
         }
         enableHeaderBackIcon(false);
         enableGlobalMenuIcon(false);
-        setStatusBarColor(true);
 
         setContents();
     }

@@ -10,7 +10,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,7 +21,6 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,8 +37,6 @@ import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.ExternalDisplayHelper;
 import com.digion.dixim.android.util.SafetyRunnable;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -392,13 +388,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * 外部出力Helperの作成.
      */
     public void createExternalDisplayHelper() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mExternalDisplayHelper = ExternalDisplayHelper.create(mContext, DISPLAY_EVENT_LISTENER,
-                    createPresentationEventListener());
-        } else {
-            mExternalDisplayHelper = ExternalDisplayHelper
-                    .createForCompat(mContext, DISPLAY_EVENT_LISTENER);
-        }
+        mExternalDisplayHelper = ExternalDisplayHelper.create(mContext, DISPLAY_EVENT_LISTENER,
+                createPresentationEventListener());
     }
 
     /**
@@ -951,7 +942,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     private void setScreenSize(final boolean mIsLandscape, final LinearLayout.LayoutParams playerParams) {
         DTVTLogger.start();
-        setStatusBar(mIsLandscape);
         if (mIsLandscape) {
             mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -1024,25 +1014,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         }
         mThumbnailRelativeLayout.setLayoutParams(playerParams);
         DTVTLogger.end();
-    }
-
-    /**
-     * 機能：ステータスバー設定(Android4.4用).
-     *
-     * @param mIsLandscape true:横画面 false:縦画面
-     */
-    private void setStatusBar(final boolean mIsLandscape) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            int statusBarHeight = BaseActivity.getStatusBarHeight(mActivity);
-            if (mIsLandscape) {
-                statusBarHeight = 0;
-            }
-            ViewGroup contentView = (ViewGroup) mActivity.getWindow().getDecorView();
-            CustomDrawerLayout customDrawerLayout = contentView.findViewById(R.id.baseCustomDrawerLayout);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) customDrawerLayout.getLayoutParams();
-            layoutParams.setMargins(0, statusBarHeight, 0, 0);
-            customDrawerLayout.setLayoutParams(layoutParams);
-        }
     }
 
     /**

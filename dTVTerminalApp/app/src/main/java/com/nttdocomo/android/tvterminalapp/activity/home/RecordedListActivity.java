@@ -136,7 +136,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
         registReceiver();
         initView();
         initTabView();
