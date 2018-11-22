@@ -78,10 +78,12 @@ public class TvProgramIntentService extends IntentService {
             mChannelWebClientSync.enableConnect();
             List<ChannelList> channelLists = mChannelWebClientSync.getChannelApi(getApplicationContext(), 0, 0, "", "");
             //チャンネルリスト(全件)から取得対象のチャンネルを抽出する
-            if (channelLists != null) {
+            if (channelLists != null && channelLists.size() > 0) {
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(getApplicationContext());
                 channelInsertDataManager.insertChannelInsertList(channelLists.get(0));
-                channelMap = getBeforeStorageChanelList(channelLists.get(0).getChannelList());
+                if (channelLists.get(0).getChannelList() != null) {
+                    channelMap = getBeforeStorageChanelList(channelLists.get(0).getChannelList());
+                }
             }
         } else {
             ProgramDataManager channelDataManager = new ProgramDataManager(TvProgramIntentService.this);
