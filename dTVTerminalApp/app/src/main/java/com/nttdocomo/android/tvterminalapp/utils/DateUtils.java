@@ -101,7 +101,7 @@ public class DateUtils {
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 
     /** SharedPreferences用データ. */
-    private static final String DATA_SAVE = "DataSave";
+    public static final String DATA_SAVE = "DataSave";
 
     /** 日付フォーマット. */
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";

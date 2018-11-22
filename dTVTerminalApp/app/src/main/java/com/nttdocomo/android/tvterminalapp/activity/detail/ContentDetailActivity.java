@@ -3087,7 +3087,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case ENABLE_WATCH_LIMIT_THIRTY:
             case ENABLE_WATCH_LIMIT_THIRTY_001:
                 //期限まで30日以内表示内容設定
-                if(mEndDate == 0L) {
+                if (mEndDate == 0L) {
                     mEndDate = mDetailFullData.getPublish_end_date();
                     displayLimitDate();
                 }
@@ -3112,7 +3112,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
                 mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
                 mVodEndDate = mDetailFullData.getAvail_end_date();
-                displayLimitDate();
+                displayRentalContentsDate(mEndDate, mVodEndDate);
                 DTVTLogger.debug("get rental vod end date:" + mEndDate);
                 mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
                 DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
@@ -3121,6 +3121,27 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 DTVTLogger.end();
             }
         });
+        DTVTLogger.end();
+    }
+
+    /**
+     * 購入済みコンテンツ視聴期限表示.
+     * @param mEndDate　視聴可能期限
+     * @param mVodEndDate　Vod視聴可能期限
+     */
+    private void displayRentalContentsDate(final long mEndDate, final long mVodEndDate) {
+        DTVTLogger.start();
+        DtvContentsDetailFragment detailFragment = getDetailFragment();
+        if (mEndDate != 0L && mEndDate < mVodEndDate) {
+            String date = DateUtils.formatEpochToDateString(mEndDate);
+            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
+
+            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+            if (detailData != null) {
+                detailData.setChannelDate(untilDate);
+                detailFragment.setOtherContentsDetailData(detailData);
+            }
+        }
         DTVTLogger.end();
     }
 
@@ -3139,7 +3160,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                 mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
                 mVodEndDate = mDetailFullData.getAvail_end_date();
-                displayLimitDate();
+                displayRentalContentsDate(mEndDate, mVodEndDate);
                 DTVTLogger.debug("get rental vod end date:" + mEndDate);
                 mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
                 DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
