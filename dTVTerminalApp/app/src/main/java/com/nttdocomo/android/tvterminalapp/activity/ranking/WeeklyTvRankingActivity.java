@@ -86,7 +86,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         setTitleText(getString(R.string.weekly_tv_ranking_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         initView();
         resetPaging(mViewPager, mRankingFragmentFactory);

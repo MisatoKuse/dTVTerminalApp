@@ -55,7 +55,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.launch_main_layout);
         setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
-        setStatusBarColor(true);
         setTheme(R.style.AppThemeBlack);
         setStatusBarColor(R.color.contents_header_background);
         setTitleVisibility(false);

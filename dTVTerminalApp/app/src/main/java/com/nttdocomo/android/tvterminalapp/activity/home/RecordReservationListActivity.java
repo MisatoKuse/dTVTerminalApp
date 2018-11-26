@@ -89,7 +89,6 @@ public class RecordReservationListActivity extends BaseActivity
             enableHeaderBackIcon(true);
         }
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         mContentsList = new ArrayList<>();
         initView();

@@ -100,7 +100,6 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         setTitleText(getString(R.string.my_channel_list_setting));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
         initView();
         getOk = true;
         loadData();

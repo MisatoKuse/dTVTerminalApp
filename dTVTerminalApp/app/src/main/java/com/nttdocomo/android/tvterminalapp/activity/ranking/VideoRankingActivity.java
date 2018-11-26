@@ -77,7 +77,6 @@ public class VideoRankingActivity extends BaseActivity implements
         setTitleText(getString(R.string.video_ranking_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         initView();
         if (savedInstanceState != null) {

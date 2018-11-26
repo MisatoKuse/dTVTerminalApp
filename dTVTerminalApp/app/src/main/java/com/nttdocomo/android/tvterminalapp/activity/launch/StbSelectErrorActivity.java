@@ -63,7 +63,6 @@ public class StbSelectErrorActivity extends BaseActivity {
         } else if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             setTitleText(getString(R.string.str_stb_paring_setting_title));
         }
-        setStatusBarColor(true);
         mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
         mParingHelp = findViewById(R.id.stb_paring_failed_help);
         mErrorCheckBox = findViewById(R.id.stb_select_error_checkBox);

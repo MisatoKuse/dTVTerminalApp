@@ -131,7 +131,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         setTitleText(getString(R.string.nav_menu_item_setting));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
         setHeaderColor(true);
 
         //テレビアイコンをタップされたらリモコンを起動する

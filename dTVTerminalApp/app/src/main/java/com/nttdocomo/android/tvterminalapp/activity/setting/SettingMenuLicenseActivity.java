@@ -50,7 +50,6 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         setTitleText(getString(R.string.main_setting_menu_title_license));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
     }
 
     @Override

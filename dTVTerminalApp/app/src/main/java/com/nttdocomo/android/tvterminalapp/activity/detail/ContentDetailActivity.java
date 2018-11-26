@@ -764,7 +764,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         setHeaderColor(false);
         enableGlobalMenuIcon(true);
         changeGlobalMenuIcon(false);
-        setStatusBarColor(false);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         initContentsView();
@@ -1226,21 +1225,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @return true:表示されている false:表示されていない
      */
     private boolean isNavigationBarShow(final boolean isHeight) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            Point realSize = new Point();
-            display.getSize(size);
-            display.getRealSize(realSize);
-            if (isHeight) {
-                return realSize.y != size.y;
-            } else {
-                return realSize.x != size.x;
-            }
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        Point realSize = new Point();
+        display.getSize(size);
+        display.getRealSize(realSize);
+        if (isHeight) {
+            return realSize.y != size.y;
         } else {
-            boolean menu = ViewConfiguration.get(this).hasPermanentMenuKey();
-            boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-            return !(menu || back);
+            return realSize.x != size.x;
         }
     }
 

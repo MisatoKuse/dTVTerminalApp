@@ -178,7 +178,6 @@ public class TvProgramListActivity extends BaseActivity implements
             enableHeaderBackIcon(true);
         }
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
         initView();
         syncScroll(mChannelRecyclerView, mProgramRecyclerView);
         //タイトル矢印表示

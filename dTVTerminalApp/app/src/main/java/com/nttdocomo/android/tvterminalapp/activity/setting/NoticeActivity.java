@@ -53,7 +53,6 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
         setTitleText(getString(R.string.information_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
