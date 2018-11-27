@@ -271,6 +271,11 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             contractAnswer = true;
         }
 
+        if (tmpUserInfoLists != null) {
+            //常に最新のエリアコードを保存する
+            SharedPreferencesUtils.setSharedKeyPreferencesAreaCode(mContext, tmpUserInfoLists.get(0).getLoggedinAccount().get(0).getAreaCode());
+        }
+
         //結果を返すコールバックを呼ぶ(userInfoListsはfinal付与の余波でヌルのままになる場合があるので、ここはtmpUserInfoListsを指定)
         mUserDataProviderCallback.userInfoListCallback(isChangeAge, tmpUserInfoLists
                 , contractAnswer);
@@ -292,6 +297,10 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         userAgeReq = UserInfoUtils.getUserAgeInfoWrapper(userInfoList);
 
         return userAgeReq;
+    }
+
+    public String getAreaCode() {
+        return SharedPreferencesUtils.getSharedKeyPreferencesAreaCode(mContext);
     }
 
     /**

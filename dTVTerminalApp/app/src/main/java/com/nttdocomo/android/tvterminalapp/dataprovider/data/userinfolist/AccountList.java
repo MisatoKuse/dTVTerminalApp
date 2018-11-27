@@ -27,6 +27,10 @@ public class AccountList implements Serializable {
      * ひかりTVfordocomo視聴年齢値.
      */
     private String mH4dAgeReq;
+    /**
+     * エリアコード.
+     */
+    private String mAreaCode;
 
     /**
      * 初期化用コンストラクタ.
@@ -35,6 +39,7 @@ public class AccountList implements Serializable {
         this.mContractStatus = "";
         this.mDchAgeReq = "";
         this.mH4dAgeReq = "";
+        this.mAreaCode = "";
     }
 
     /**
@@ -86,6 +91,22 @@ public class AccountList implements Serializable {
     public void setH4dAgeReq(final String h4dAgeReq) {
         if (h4dAgeReq != null) {
             this.mH4dAgeReq = h4dAgeReq;
+        }
+    }
+
+    /**
+     * エリアコードを取得する.
+     * @return エリアコード
+     */
+    public String getAreaCode() { return mAreaCode; }
+
+    /**
+     * エリアコードを設定する.
+     * @param areaCode エリアコード
+     */
+    public void setAreaCode(final String areaCode) {
+        if (areaCode != null) {
+            this.mAreaCode = areaCode;
         }
     }
 }
