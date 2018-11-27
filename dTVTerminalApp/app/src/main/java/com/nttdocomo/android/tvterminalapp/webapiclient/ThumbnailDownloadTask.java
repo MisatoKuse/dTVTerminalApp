@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.utils.BitmapDecodeUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 import java.io.BufferedInputStream;
@@ -101,6 +102,14 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
                 return bitmap;
             }
+
+            //圏外等の判定
+            if ((mContext != null && !NetWorkUtils.isOnline(mContext))
+                    || mContext == null) {
+
+                return null;
+            }
+
             synchronized (this) {
                 if (isCancelled() || mIsStop) {
                     return null;
@@ -112,16 +121,12 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 urlConnection.setRequestProperty(DtvtConstants.USER_AGENT, UserAgentUtils.getCustomUserAgent());
                 DTVTLogger.debug("Set UserAgent:" + UserAgentUtils.getCustomUserAgent());
 
-                //コンテキストがあればSSL証明書失効チェックを行う
-                if (mContext != null) {
+                //SSL証明書失効チェックライブラリの初期化を行う
+                OcspUtil.init(mContext);
 
-                    //SSL証明書失効チェックライブラリの初期化を行う
-                    OcspUtil.init(mContext);
-
-                    //SSL証明書失効チェックを行う
-                    OcspURLConnection ocspURLConnection = new OcspURLConnection(urlConnection);
-                    ocspURLConnection.connect();
-                }
+                //SSL証明書失効チェックを行う
+                OcspURLConnection ocspURLConnection = new OcspURLConnection(urlConnection);
+                ocspURLConnection.connect();
 
                 int statusCode = urlConnection.getResponseCode();
                 if (statusCode == HttpURLConnection.HTTP_OK) {
@@ -130,26 +135,22 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 }
 
                 in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
-                if (mContext != null) {
-                    if (mImageSizeType == ImageSizeType.TV_PROGRAM_LIST) {
-                        bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.TV_PROGRAM_LIST);
-                    } else if (mImageSizeType == ImageSizeType.CONTENT_DETAIL) {
-                        bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
-                    } else {
-                        bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.HOME_LIST);
-                    }
+                if (mImageSizeType == ImageSizeType.TV_PROGRAM_LIST) {
+                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.TV_PROGRAM_LIST);
+                } else if (mImageSizeType == ImageSizeType.CONTENT_DETAIL) {
+                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
                 } else {
-                    bitmap = BitmapFactory.decodeStream(in);
+                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.HOME_LIST);
                 }
+
                 if (bitmap != null) {
                     if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
                         // ディスクにプッシュする（詳細画面除外）
                         if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
                             mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
                         }
-                        if (mContext != null) {
-                            bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
-                        }
+
+                        bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
                     }
                     // メモリにプッシュする（詳細画面除外）
                     if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
