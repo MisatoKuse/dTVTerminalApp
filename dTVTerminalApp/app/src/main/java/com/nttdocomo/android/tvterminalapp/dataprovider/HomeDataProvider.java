@@ -310,7 +310,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, int[] chnos) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final String[] serviceIdUniqs) {
         DTVTLogger.start();
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
@@ -907,36 +907,33 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             channelInfoList = channelList.getChannelList();
         }
 
-        List<String> chNoList = new ArrayList<>();
+        List<String> serviceIdUniqList = new ArrayList<>();
         for (Map<String, String> hashMap : channelInfoList) {
-            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
-            if (!TextUtils.isEmpty(chNo)) {
-                chNoList.add(chNo);
+            String serviceIdUniq = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
+            if (!TextUtils.isEmpty(serviceIdUniq)) {
+                serviceIdUniqList.add(serviceIdUniq);
             }
         }
-        String[] chNos = new String[chNoList.size()];
-        for (int i = 0; i < chNoList.size(); i++) {
-            chNos[i] = chNoList.get(i);
+        String[] serviceIdUniqs = new String[serviceIdUniqList.size()];
+        for (int i = 0; i < serviceIdUniqList.size(); i++) {
+            serviceIdUniqs[i] = serviceIdUniqList.get(i);
         }
-        getTvScheduleListData(chNos);
+        getTvScheduleListData(serviceIdUniqs);
     }
 
     /**
      * NOW ON AIR 情報取得.
-     * @param chNo チャンネル番号 dbからとる場合は同じチャンネルリストAPIから取ってキャッシュされてる
+     * @param serviceIdUniqs サービスユニーク dbからとる場合は同じチャンネルリストAPIから取ってキャッシュされてる
      */
-    private void getTvScheduleListData(final String[] chNo) {
+    private void getTvScheduleListData(final String[] serviceIdUniqs) {
         DTVTLogger.start();
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-            int[] chNos = new int[chNo.length];
-            for (int i = 0; i < chNo.length; i++) {
-                chNos[i] = Integer.parseInt(chNo[i]);
-            }
             String[] channelInfoDate = new String[]{WebApiBasePlala.DATE_NOW};
             String lowerPageLimit = "";
-            mTvScheduleWebClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
+            String areaCode = UserInfoUtils.getAreaCode(mContext);
+            mTvScheduleWebClient.getTvScheduleApi(serviceIdUniqs, channelInfoDate, lowerPageLimit, areaCode, this);
         } else {
             DTVTLogger.error("TvScheduleWebClient is stopping connect");
         }

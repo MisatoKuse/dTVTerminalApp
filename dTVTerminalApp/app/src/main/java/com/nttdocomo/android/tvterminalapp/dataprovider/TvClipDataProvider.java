@@ -111,7 +111,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final String[] serviceIdUniq) {
         //NOP
     }
 

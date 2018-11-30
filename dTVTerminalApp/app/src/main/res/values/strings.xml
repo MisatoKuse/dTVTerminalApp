@@ -61,6 +61,8 @@
     <string name="common_my_channel">マイ番組表</string>
     <string name="common_hikari_tv_for_docomo">ひかりＴＶ for docomo</string>
     <string name="common_dtv_channel">dTVチャンネル</string>
+    <string name="common_dtb_channel">地デジ</string>
+    <string name="common_bs_channel">BS</string>
     <string name="common_contents_front_bracket">" ("</string>
     <string name="common_contents_end_bracket">") "</string>
     <string name="common_contents_min">分</string>
@@ -182,12 +184,51 @@
     <!-- TvProgram -->
     <string-array name="tv_program_list_no_login_tab_names">
         <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_bs_channel</item>
         <item>@string/common_dtv_channel</item>
     </string-array>
-    <string-array name="tv_program_list_tab_names">
+    <string-array name="tv_program_list_no_area_code_tab_names">
         <item>@string/common_my_channel</item>
         <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_bs_channel</item>
         <item>@string/common_dtv_channel</item>
+    </string-array>
+    <string-array name="tv_program_list_area_code_tab_names">
+        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_dtb_channel</item>
+        <item>@string/common_bs_channel</item>
+        <item>@string/common_dtv_channel</item>
+    </string-array>
+    <string-array name="tv_program_list_all_tab_names">
+        <item>@string/common_my_channel</item>
+        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_dtb_channel</item>
+        <item>@string/common_bs_channel</item>
+        <item>@string/common_dtv_channel</item>
+    </string-array>
+    <string-array name="tv_program_list_no_login_ga_names">
+        <item>@string/google_analytics_screen_name_program_list_h4d</item>
+        <item>@string/google_analytics_screen_name_program_list_bs_channel</item>
+        <item>@string/google_analytics_screen_name_program_list_dtv_channel</item>
+    </string-array>
+    <string-array name="tv_program_list_no_area_code_ga_names">
+        <item>@string/google_analytics_screen_name_program_list_mine</item>
+        <item>@string/google_analytics_screen_name_program_list_h4d</item>
+        <item>@string/google_analytics_screen_name_program_list_bs_channel</item>
+        <item>@string/google_analytics_screen_name_program_list_dtv_channel</item>
+    </string-array>
+    <string-array name="tv_program_list_area_code_ga_names">
+        <item>@string/google_analytics_screen_name_program_list_h4d</item>
+        <item>@string/google_analytics_screen_name_program_list_ttb_channel</item>
+        <item>@string/google_analytics_screen_name_program_list_bs_channel</item>
+        <item>@string/google_analytics_screen_name_program_list_dtv_channel</item>
+    </string-array>
+    <string-array name="tv_program_list_all_ga_names">
+        <item>@string/google_analytics_screen_name_program_list_mine</item>
+        <item>@string/google_analytics_screen_name_program_list_h4d</item>
+        <item>@string/google_analytics_screen_name_program_list_ttb_channel</item>
+        <item>@string/google_analytics_screen_name_program_list_bs_channel</item>
+        <item>@string/google_analytics_screen_name_program_list_dtv_channel</item>
     </string-array>
     <string name="tv_program_tip">マイ番組が設定されていません</string>
 
@@ -480,6 +521,8 @@
     <string name="google_analytics_screen_name_clip_key_word">クリップ_キーワード</string>
     <string name="google_analytics_screen_name_program_list_mine">番組表_マイ番組表</string>
     <string name="google_analytics_screen_name_program_list_h4d">番組表_ひかりTV</string>
+    <string name="google_analytics_screen_name_program_list_ttb_channel">番組表_地テジ</string>
+    <string name="google_analytics_screen_name_program_list_bs_channel">番組表_BS</string>
     <string name="google_analytics_screen_name_program_list_dtv_channel">番組表_dTVチャンネル</string>
     <string name="google_analytics_screen_name_channel_detail">チャンネル詳細</string>
     <string name="google_analytics_screen_name_channel_edit_menu">番組表編集メニュー</string>

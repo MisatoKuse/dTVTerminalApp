@@ -35,7 +35,44 @@ public class JsonConstants {
             JsonConstants.META_RESPONSE_QUNIT, JsonConstants.META_RESPONSE_PU_START_DATE,
             JsonConstants.META_RESPONSE_PU_END_DATE, JsonConstants.META_RESPONSE_CHPACK,
             JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_DTV,
-            JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CONTENT_TYPE};
+            JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CONTENT_TYPE,
+            JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ};
+
+    /**
+     * 番組表（縮小版）.
+     */
+    public static final String[] PROGRAM_LIST_PARA = {JsonConstants.META_RESPONSE_CRID,
+            JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_TITLE_ID,
+            JsonConstants.META_RESPONSE_EPISODE_ID, JsonConstants.META_RESPONSE_TITLE,
+            JsonConstants.META_RESPONSE_EPITITLE, JsonConstants.META_RESPONSE_TITLERUBY,
+            JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_DISPLAY_START_DATE,
+            JsonConstants.META_RESPONSE_DISPLAY_END_DATE, JsonConstants.META_RESPONSE_AVAIL_START_DATE,
+            JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_PUBLISH_START_DATE,
+            JsonConstants.META_RESPONSE_PUBLISH_END_DATE, JsonConstants.META_RESPONSE_NEWA_START_DATE,
+            JsonConstants.META_RESPONSE_NEWA_END_DATE, JsonConstants.META_RESPONSE_THUMB_640,
+            JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_DTV_THUMB_640,
+            JsonConstants.META_RESPONSE_DTV_THUMB_448, JsonConstants.META_RESPONSE_COPYRIGHT,
+            JsonConstants.META_RESPONSE_DUR, JsonConstants.META_RESPONSE_DEMONG,
+            JsonConstants.META_RESPONSE_BVFLG, JsonConstants.META_RESPONSE_4KFLG,
+            JsonConstants.META_RESPONSE_HDRFLG, JsonConstants.META_RESPONSE_DELIVERY,
+            JsonConstants.META_RESPONSE_R_VALUE, JsonConstants.META_RESPONSE_ADULT,
+            JsonConstants.META_RESPONSE_GENRE_ARRAY, JsonConstants.META_RESPONSE_SYNOP,
+            JsonConstants.META_RESPONSE_SYNOP_SHORT, JsonConstants.META_RESPONSE_PUID,
+            JsonConstants.META_RESPONSE_PRICE, JsonConstants.META_RESPONSE_QRANGE,
+            JsonConstants.META_RESPONSE_QUNIT, JsonConstants.META_RESPONSE_PU_START_DATE,
+            JsonConstants.META_RESPONSE_PU_END_DATE, JsonConstants.META_RESPONSE_CREDIT_ARRAY,
+            JsonConstants.META_RESPONSE_RATING, JsonConstants.META_RESPONSE_DTV,
+            JsonConstants.META_RESPONSE_CHSVOD, JsonConstants.META_RESPONSE_SEARCH_OK,
+            JsonConstants.META_RESPONSE_LIINF_ARRAY, JsonConstants.META_RESPONSE_PUINF,
+            JsonConstants.META_RESPONSE_CAPL, JsonConstants.META_RESPONSE_BILINGAL,
+            JsonConstants.META_RESPONSE_TV_CID, JsonConstants.META_RESPONSE_SERVICE_ID,
+            JsonConstants.META_RESPONSE_EVENT_ID, JsonConstants.META_RESPONSE_CHNO,
+            JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
+            JsonConstants.META_RESPONSE_VOD_START_DATE, JsonConstants.META_RESPONSE_VOD_END_DATE,
+            JsonConstants.META_RESPONSE_MAIN_GENRE, JsonConstants.META_RESPONSE_SECOND_GENRE_ARRAY,
+            JsonConstants.META_RESPONSE_COPY, JsonConstants.META_RESPONSE_ADINFO_ARRAY,
+            JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, JsonConstants.META_RESPONSE_DTV_TYPE,
+            JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ};
 
     /**
      * チャンネルメタレスポンス（フル版）.
@@ -143,6 +180,10 @@ public class JsonConstants {
      */
     public static final String META_RESPONSE_CH_LIST = "ch_list";
     /**
+     * area_code.
+     */
+    public static final String META_RESPONSE_AREA_CODE = "area_code";
+    /**
      * date_list.
      */
     public static final String META_RESPONSE_DATE_LIST = "date_list";
@@ -230,6 +271,10 @@ public class JsonConstants {
      * サービスID.
      */
     public static final String META_RESPONSE_SERVICE_ID = "service_id";
+    /**
+     * サービスIDユニーク.
+     */
+    public static final String META_RESPONSE_SERVICE_ID_UNIQ = "service_id_uniq";
     /**
      * チャンネル番号.
      */
@@ -580,6 +625,14 @@ public class JsonConstants {
      * チャンネル一覧取得タイプindex(dCh).
      */
     public static final int CH_SERVICE_TYPE_INDEX_DCH = 2;
+    /**
+     * チャンネル一覧取得タイプindex(地テジ).
+     */
+    public static final int CH_SERVICE_TYPE_INDEX_TTB = 3;
+    /**
+     * チャンネル一覧取得タイプindex(BS).
+     */
+    public static final int CH_SERVICE_TYPE_INDEX_BS = 4;
     /**
      * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
      * play_count_desc：人気順（前日の視聴回数数降順）

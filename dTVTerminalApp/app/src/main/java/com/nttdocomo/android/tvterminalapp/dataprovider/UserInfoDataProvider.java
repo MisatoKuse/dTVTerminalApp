@@ -299,10 +299,6 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         return userAgeReq;
     }
 
-    public String getAreaCode() {
-        return SharedPreferencesUtils.getSharedKeyPreferencesAreaCode(mContext);
-    }
-
     /**
      * 取得したユーザが h4dユーザかを返却.
      * h4dユーザ = "contract_status"の値が "002：ひかりTVfordocomo契約中".

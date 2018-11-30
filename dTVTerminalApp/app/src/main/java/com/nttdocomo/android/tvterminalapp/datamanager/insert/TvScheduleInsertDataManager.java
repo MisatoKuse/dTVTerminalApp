@@ -150,8 +150,8 @@ public class TvScheduleInsertDataManager {
         synchronized (channelInformation) {
             for (ChannelInfo channelInfo : channelInformation) {
                 //DB名としてチャンネル番号を取得.
-                String chNo = String.valueOf(channelInfo.getChannelNo());
-                DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, chNo);
+                String serviceIdUniq = channelInfo.getServiceIdUniq();
+                DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, serviceIdUniq);
                 DataBaseManager.clearChInfo();
                 DataBaseManager.initializeInstance(tvScheduleListDBHelper);
                 DataBaseManager databaseManager = DataBaseManager.getChInstance();
@@ -182,9 +182,9 @@ public class TvScheduleInsertDataManager {
                     }
                 }
                 //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
-                String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
+                String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", serviceIdUniq);
                 File channelFile = new File(channelFilePath);
-                File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
+                File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", serviceIdUniq));
                 if (channelFile.isFile()) {
                     try {
                         if (!channelFile.renameTo(movedFile)) {
@@ -200,9 +200,9 @@ public class TvScheduleInsertDataManager {
                 }
 
                 //journalファイルも同じ場所へ移動させる.
-                String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
+                String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", serviceIdUniq, "-journal");
                 File journalFile = new File(journalFilePath);
-                File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
+                File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", serviceIdUniq, "-journal"));
                 if (journalFile.isFile()) {
                     try {
                         if (!journalFile.renameTo(movedJournalFile)) {
@@ -299,6 +299,7 @@ public class TvScheduleInsertDataManager {
         values.put(JsonConstants.META_RESPONSE_SEARCH_OK, scheduleInfo.getSearchOk());
         values.put(JsonConstants.META_RESPONSE_CRID, scheduleInfo.getCrId());
         values.put(JsonConstants.META_RESPONSE_SERVICE_ID, scheduleInfo.getServiceId());
+        values.put(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ, scheduleInfo.getServiceIdUniq());
         values.put(JsonConstants.META_RESPONSE_EVENT_ID, scheduleInfo.getEventId());
         values.put(JsonConstants.META_RESPONSE_TITLE_ID, scheduleInfo.getTitleId());
         values.put(JsonConstants.META_RESPONSE_R_VALUE, scheduleInfo.getRValue());

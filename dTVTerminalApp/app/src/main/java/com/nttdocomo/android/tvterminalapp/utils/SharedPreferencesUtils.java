@@ -757,10 +757,10 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 取得したエリアコードを保存
+     * 取得したエリアコードを保存.
      *
      * @param context コンテキスト
-     * @param areaCode　保存するエリアコード
+     * @param areaCode 保存するエリアコード
      */
     public static void setSharedKeyPreferencesAreaCode(final Context context, final String areaCode) {
         DTVTLogger.start();
@@ -778,7 +778,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @return エリアコード
      */
-    public static String getSharedKeyPreferencesAreaCode(final Context context) {
+    static String getSharedKeyPreferencesAreaCode(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 USER_AREA_CODE_SHARED_KEY, Context.MODE_PRIVATE);

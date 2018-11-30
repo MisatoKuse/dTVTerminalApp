@@ -28,30 +28,27 @@ import java.util.Map;
  * 番組表情報用JsonParserクラス.
  */
 public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
-    /**
-     * パース結果を伝えるコールバック.
-     */
+    /** パース結果を伝えるコールバック.*/
     private final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
-    /**
-     * オブジェクトクラスの定義.
-     */
+    /** オブジェクトクラスの定義.*/
     private TvScheduleList mTvScheduleList;
-    private int[] mChannelNoList;
+    /** サービスユニーク.*/
+    private String[] mServiceIdUniqist;
 
     /**
      * コンストラクタ.
-     *
      * @param mTvScheduleJsonParserCallback コールバック
+     * @param mServiceIdUniqist サービスユニーク
      */
-    public TvScheduleJsonParser(final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback, int[] chNo) {
+    public TvScheduleJsonParser(final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback, final String[] mServiceIdUniqist) {
         this.mTvScheduleJsonParserCallback = mTvScheduleJsonParserCallback;
-        mChannelNoList = chNo;
+        this.mServiceIdUniqist = mServiceIdUniqist;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected void onPostExecute(final Object s) {
-        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>) s, mChannelNoList);
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>) s, mServiceIdUniqist);
     }
 
     @Override
@@ -118,7 +115,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
             for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> tsListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);
-                for (String listBuffer : JsonConstants.LIST_PARA) {
+                for (String listBuffer : JsonConstants.PROGRAM_LIST_PARA) {
                     if (!jsonObject.isNull(listBuffer)) {
                         if (listBuffer.equals(JsonConstants.META_RESPONSE_PUINF)) {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);

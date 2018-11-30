@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClientSync;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClientSync;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -76,9 +77,10 @@ public class TvProgramIntentService extends IntentService {
             //非同期処理のチャンネルリスト取得を、同期処理として実行する
             mChannelWebClientSync = new ChannelWebClientSync();
             mChannelWebClientSync.enableConnect();
-            List<ChannelList> channelLists = mChannelWebClientSync.getChannelApi(getApplicationContext(), 0, 0, "", "");
+            String areaCode = UserInfoUtils.getAreaCode(getApplicationContext());
+            List<ChannelList> channelLists = mChannelWebClientSync.getChannelApi(getApplicationContext(), 0, 0, "", "", areaCode);
             //チャンネルリスト(全件)から取得対象のチャンネルを抽出する
-            if (channelLists != null) {
+            if (channelLists != null && channelLists.size() > 0) {
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(getApplicationContext());
                 channelInsertDataManager.insertChannelInsertList(channelLists.get(0));
                 channelMap = getBeforeStorageChanelList(channelLists.get(0).getChannelList());
@@ -104,24 +106,48 @@ public class TvProgramIntentService extends IntentService {
     private List<Map<String, String>> getBeforeStorageChanelList(final List<Map<String, String>> hashMapList) {
         List<Map<String, String>> channelMap = new ArrayList<>();
         List<Map<String, String>> dTvChannelMap = new ArrayList<>();
+        List<Map<String, String>> ttbChannelMap = new ArrayList<>();
+        List<Map<String, String>> bsChannelMap = new ArrayList<>();
         for (int i = 0; i < hashMapList.size(); i++) {
-            if (hashMapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE).equals(ProgramDataManager.CH_SERVICE_HIKARI)) {
-                //h4dチャンネルを10件取得
-                if (channelMap.size() < 10) {
-                    channelMap.add(hashMapList.get(i));
-                }
-            } else if (hashMapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE).equals(ProgramDataManager.CH_SERVICE_DCH)) {
-                //dTvチャンネルを10件取得
-                if (dTvChannelMap.size() < 10) {
-                    dTvChannelMap.add(hashMapList.get(i));
+            String service = hashMapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE);
+            if (service != null) {
+                switch (service) {
+                    case ProgramDataManager.CH_SERVICE_HIKARI:
+                        //h4dチャンネルを10件取得
+                        if (channelMap.size() < 10) {
+                            channelMap.add(hashMapList.get(i));
+                        }
+                        break;
+                    case ProgramDataManager.CH_SERVICE_DCH:
+                        //dTvチャンネルを10件取得
+                        if (dTvChannelMap.size() < 10) {
+                            dTvChannelMap.add(hashMapList.get(i));
+                        }
+                        break;
+                    case ProgramDataManager.CH_SERVICE_TTB:
+                        //地テジを10件取得
+                        if (ttbChannelMap.size() < 10) {
+                            ttbChannelMap.add(hashMapList.get(i));
+                        }
+                        break;
+                    case ProgramDataManager.CH_SERVICE_BS:
+                        //BSを10件取得
+                        if (bsChannelMap.size() < 10) {
+                            bsChannelMap.add(hashMapList.get(i));
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
             //h4d、dTvチャンネルが両方10件取得出来たらループを抜ける
-            if (channelMap.size() > 9 && dTvChannelMap.size() > 9) {
+            if (channelMap.size() > 9 && dTvChannelMap.size() > 9 && ttbChannelMap.size() > 9 && bsChannelMap.size() > 9) {
                 break;
             }
         }
         channelMap.addAll(dTvChannelMap);
+        channelMap.addAll(ttbChannelMap);
+        channelMap.addAll(bsChannelMap);
         return channelMap;
     }
 
@@ -132,40 +158,41 @@ public class TvProgramIntentService extends IntentService {
      */
     private void getTvSchedule(final List<Map<String, String>> getChannelList) {
         DTVTLogger.start();
-        List<String> chNoList = new ArrayList<>();
+        List<String> serviceIdUniqList = new ArrayList<>();
         //チャンネル一覧からチャンネル番号のみを取得
         for (Map<String, String> hashMap : getChannelList) {
-            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
-            if (!TextUtils.isEmpty(chNo)) {
-                chNoList.add(chNo);
+            String serviceIdUniq = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
+            if (!TextUtils.isEmpty(serviceIdUniq)) {
+                serviceIdUniqList.add(serviceIdUniq);
             }
         }
-        int[] chNos = new int[chNoList.size()];
-        for (int i = 0; i < chNoList.size(); i++) {
-            chNos[i] = Integer.parseInt(chNoList.get(i));
+        String[] serviceIdUniqs = new String[serviceIdUniqList.size()];
+        for (int i = 0; i < serviceIdUniqList.size(); i++) {
+            serviceIdUniqs[i] = serviceIdUniqList.get(i);
         }
         //前回のデータ取得日時を取得
         DateUtils dateUtils = new DateUtils(TvProgramIntentService.this);
-        String[] lastDate = dateUtils.getChLastDate(chNos, DateUtils.getStringNowDate());
+        String[] lastDate = dateUtils.getChLastDate(serviceIdUniqs, DateUtils.getStringNowDate());
         //キャッシュ有効期限外のチャンネル番号を抽出する.
-        List<Integer> fromWebAPI = new ArrayList<>();
+        List<String> fromWebAPI = new ArrayList<>();
 
         for (int i = 0; i < lastDate.length; i++) {
             if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
-                fromWebAPI.add(chNos[i]);
+                fromWebAPI.add(serviceIdUniqs[i]);
             }
         }
-        int[] fromWebAPIChNos = new int[fromWebAPI.size()];
+        String[] fromWebAPIServiceIdUniqs = new String[fromWebAPI.size()];
         for (int i = 0; i < fromWebAPI.size(); i++) {
-            fromWebAPIChNos[i] = fromWebAPI.get(i);
+            fromWebAPIServiceIdUniqs[i] = fromWebAPI.get(i);
         }
 
-        if (fromWebAPIChNos.length > 0) {
+        if (fromWebAPIServiceIdUniqs.length > 0) {
             //アプリ起動時の取得日付は当日固定
             String[] dateList = new String[]{DateUtils.getStringNowDate()};
             mTvScheduleWebClientSync = new TvScheduleWebClientSync(TvProgramIntentService.this);
             mTvScheduleWebClientSync.enableConnect();
-            ChannelInfoList channelInfoList = mTvScheduleWebClientSync.getTvScheduleApi(getApplicationContext(), fromWebAPIChNos, dateList, "");
+            String areaCode = UserInfoUtils.getAreaCode(getApplicationContext());
+            ChannelInfoList channelInfoList = mTvScheduleWebClientSync.getTvScheduleApi(getApplicationContext(), fromWebAPIServiceIdUniqs, dateList, "", areaCode);
             //サービス中断時に channelInfoList が null で返却される可能性があるためチェックを入れる
             if (channelInfoList != null && channelInfoList.getChannels() != null) {
                 //最終日付チェックした後に取得

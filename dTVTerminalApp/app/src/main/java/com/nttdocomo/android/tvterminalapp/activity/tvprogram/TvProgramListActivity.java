@@ -87,8 +87,6 @@ public class TvProgramListActivity extends BaseActivity implements
     private ProgramScrollView mProgramScrollViewParent = null;
     /** メニュー起動. */
     private Boolean mIsMenuLaunch = false;
-    /** マイ番組表非表示フラグ(未ログイン又は未契約状態). */
-    private boolean mIsDisableMyChannel = false;
     /** 左側タイムスクロール. */
     private ProgramScrollView mTimeScrollView = null;
     /** チャンネルリサイクルビュー. */
@@ -143,12 +141,6 @@ public class TvProgramListActivity extends BaseActivity implements
     private static final String DAY_PRE0 = "0";
     /** DATE_LINE. */
     private static final String DATE_LINE = "-";
-    /** タブインデックス　マイ番組表. */
-    private static final int TAB_INDEX_MY_PROGRAM = 0;
-    /** タブインデックス　ひかりTV for docomo. */
-    private static final int TAB_INDEX_HIKARI = 1;
-    /** タブインデックス　dTVチャンネル. */
-    private static final int TAB_INDEX_DTVCH = 2;
     /** マイ番組表データプロバイダー. */
     private MyChannelDataProvider mMyChannelDataProvider;
     /** 番組表データプロバイダー. */
@@ -165,6 +157,10 @@ public class TvProgramListActivity extends BaseActivity implements
     private String mNowCurTime = null;
     /** スクロール終了待ちスレッド. */
     private HandlerThread mStopScrollHandler = null;
+    /** タブ表示コントローラー. */
+    private ContentUtils.TvProgramType tvProgramType = null;
+    /** エリアコード. */
+    private String mAreaCode = "";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -426,12 +422,25 @@ public class TvProgramListActivity extends BaseActivity implements
     private void setTabView() {
         DTVTLogger.start();
         UserState userState = UserInfoUtils.getUserState(getApplicationContext());
-        mIsDisableMyChannel = userState.equals(UserState.LOGIN_NG) || userState.equals(UserState.LOGIN_OK_CONTRACT_NG);
+        mAreaCode = UserInfoUtils.getAreaCode(getApplicationContext());
+        boolean isDisableMyChannel = userState.equals(UserState.LOGIN_NG) || userState.equals(UserState.LOGIN_OK_CONTRACT_NG);
         //未ログイン状態ではマイ番組表タブを表示しない
-        if (mIsDisableMyChannel) {
-            mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_no_login_tab_names);
+        if (isDisableMyChannel) {
+            if (TextUtils.isEmpty(mAreaCode)) {
+                tvProgramType = ContentUtils.TvProgramType.NO_LOGIN;
+                mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_no_login_tab_names);
+            } else {
+                tvProgramType = ContentUtils.TvProgramType.NO_CONTRACT_LOGIN_OK_AREA_OK;
+                mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_area_code_tab_names);
+            }
         } else {
-            mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
+            if (TextUtils.isEmpty(mAreaCode)) {
+                tvProgramType = ContentUtils.TvProgramType.CONTRACT_LOGIN_OK_AREA_NG;
+                mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_no_area_code_tab_names);
+            } else {
+                tvProgramType = ContentUtils.TvProgramType.CONTRACT_LOGIN_OK_AREA_OK;
+                mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_all_tab_names);
+            }
         }
         //マイ番組表タブ位置取得
         mMyChannelTabNo = getMyChannelTabNo(mProgramTabNames);
@@ -474,7 +483,7 @@ public class TvProgramListActivity extends BaseActivity implements
             sendScreenViewForPosition(position, true);
             clearData();
             //dTVチャンネルタブ以外が選択された際、過去日付を表示していたら現在日付に補正する
-            if(position != TAB_INDEX_DTVCH) {
+            if (position != mProgramTabNames.length - 1) {
                 if (compareNowDate(mSelectDate) < 0) {
                     //タイトル再設定
                     setTitle();
@@ -522,18 +531,28 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private void sendScreenViewForPosition(final int position, final boolean isFromTab) {
         String screenName = "";
-        switch (position) {
-            case TAB_INDEX_MY_PROGRAM:
-                screenName = getString(R.string.google_analytics_screen_name_program_list_mine);
-                break;
-            case TAB_INDEX_HIKARI:
-                screenName = getString(R.string.google_analytics_screen_name_program_list_h4d);
-                break;
-            case TAB_INDEX_DTVCH:
-                screenName = getString(R.string.google_analytics_screen_name_program_list_dtv_channel);
-                break;
-            default:
-                break;
+        String[] gaScreenNames = null;
+        if (tvProgramType != null) {
+            switch (tvProgramType) {
+                case NO_LOGIN:
+                case NO_CONTRACT_LOGIN_OK_AREA_NG:
+                    gaScreenNames = getResources().getStringArray(R.array.tv_program_list_no_login_tab_names);
+                    break;
+                case NO_CONTRACT_LOGIN_OK_AREA_OK:
+                    gaScreenNames = getResources().getStringArray(R.array.tv_program_list_area_code_ga_names);
+                    break;
+                case CONTRACT_LOGIN_OK_AREA_NG:
+                    gaScreenNames = getResources().getStringArray(R.array.tv_program_list_no_area_code_ga_names);
+                    break;
+                case CONTRACT_LOGIN_OK_AREA_OK:
+                    gaScreenNames = getResources().getStringArray(R.array.tv_program_list_all_ga_names);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (gaScreenNames != null) {
+            screenName = gaScreenNames[position];
         }
         if (!TextUtils.isEmpty(screenName)) {
             if (!isFromTab && mIsFromBgFlg) {
@@ -588,7 +607,7 @@ public class TvProgramListActivity extends BaseActivity implements
     }
     /**
      * 番組表データを画面に反映する.
-     * @param newState　スクロール終わった状態
+     * @param newState スクロール終わった状態
      */
     private void setProgramData(final int newState) {
         DTVTLogger.start("ScroolState:" + newState);
@@ -597,9 +616,9 @@ public class TvProgramListActivity extends BaseActivity implements
                 if (mTvProgramListAdapter != null) {
                     String dateStr = mSelectDateStr.replace("-", "");
                     String[] dateList = {dateStr};
-                    int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
-                    if (chList != null && chList.length > 0) {
-                        mScaledDownProgramListDataProvider.getProgram(chList, dateList, true);
+                    String[] serviceIdUniqs = mTvProgramListAdapter.getNeedProgramChannels();
+                    if (serviceIdUniqs != null && serviceIdUniqs.length > 0) {
+                        getProgramData(serviceIdUniqs, dateList);
                     }
                 }
                 break;
@@ -718,6 +737,7 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.start();
         if (mTabIndex != mMyChannelTabNo) { //ひかり、dTVチャンネル
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+            mScaledDownProgramListDataProvider.setAreaCode(mAreaCode);
             mScaledDownProgramListDataProvider.getChannelList(0, 0, "", typeConverter(mTabIndex));
         } else { //MY番組表
             mMyChannelDataProvider = new MyChannelDataProvider(this);
@@ -735,9 +755,19 @@ public class TvProgramListActivity extends BaseActivity implements
     private int typeConverter(final int tabIndex) {
         DTVTLogger.start();
         int index = tabIndex;
-        UserState userState = UserInfoUtils.getUserState(getApplicationContext());
-        if (mIsDisableMyChannel) {
-            index++;
+        String tabName = mProgramTabNames[tabIndex];
+        if (tabName != null) {
+            if (tabName.equals(getString(R.string.common_my_channel))) {
+                index = JsonConstants.CH_SERVICE_TYPE_INDEX_ALL;
+            } else if (tabName.equals(getString(R.string.common_hikari_tv_for_docomo))) {
+                index = JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI;
+            } else if (tabName.equals(getString(R.string.common_dtv_channel))) {
+                index = JsonConstants.CH_SERVICE_TYPE_INDEX_DCH;
+            } else if (tabName.equals(getString(R.string.common_dtb_channel))) {
+                index = JsonConstants.CH_SERVICE_TYPE_INDEX_TTB;
+            } else if (tabName.equals(getString(R.string.common_bs_channel))) {
+                index = JsonConstants.CH_SERVICE_TYPE_INDEX_BS;
+            }
         }
         return index;
     }
@@ -809,15 +839,22 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     public class PreLoadLayoutManager extends LinearLayoutManager {
 
+        /**
+         * 幅さ.
+         */
         private final int mDisplayWidth;
 
-        public PreLoadLayoutManager(Context context) {
+        /**
+         * コントラクター.
+         * @param context コンテキスト
+         */
+        PreLoadLayoutManager(final Context context) {
             super(context);
             mDisplayWidth = (int) (context.getResources().getDisplayMetrics().widthPixels * PROGRAM_RECYCLER_EXTRA_WIDTH);
         }
 
         @Override
-        protected int getExtraLayoutSpace(RecyclerView.State state) {
+        protected int getExtraLayoutSpace(final RecyclerView.State state) {
             return mDisplayWidth;
         }
     }
@@ -915,7 +952,7 @@ public class TvProgramListActivity extends BaseActivity implements
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final String[] serviceIdUniq) {
         //ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
         //★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
         //★生成されているAdaptorへ番組データを渡す処理にする。
@@ -930,15 +967,15 @@ public class TvProgramListActivity extends BaseActivity implements
                     setProgramRecyclerView(channels);
                 } else {
                     //Nullの時のダミーデータ生成
-                    if (chNo.length > 0) {
+                    if (serviceIdUniq != null && serviceIdUniq.length > 0) {
                         ChannelInfoList channelsInfoList = new ChannelInfoList();
-                        for (int aChNo : chNo) {
+                        for (String mServiceIdUniq : serviceIdUniq) {
                             ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
                             ChannelInfo channel = new ChannelInfo();
                             //チャンネル番号がある時のみデータを生成する
-                            ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(getApplicationContext(), String.valueOf(aChNo), true), null);
+                            ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(getApplicationContext(), mServiceIdUniq, true), null);
                             scheduleInfoList.add(mSchedule);
-                            channel.setChannelNo(aChNo);
+                            channel.setServiceIdUniq(mServiceIdUniq);
                             channel.setTitle(mSchedule.getTitle());
                             channel.setSchedules(scheduleInfoList);
                             channelsInfoList.addChannel(channel);
@@ -982,18 +1019,18 @@ public class TvProgramListActivity extends BaseActivity implements
                     mScaledDownProgramListDataProvider
                             = new ScaledDownProgramListDataProvider(this);
                 }
-                int[] channelNos = new int[FIRST_GET_CHANNEL_NUM];
+                String[] serviceIdUniq = new String[FIRST_GET_CHANNEL_NUM];
                 int channelNum = FIRST_GET_CHANNEL_NUM;
                 if (channels.size() < FIRST_GET_CHANNEL_NUM) {
                     channelNum = channels.size();
                 }
                 for (int i = 0; i < channelNum; i++) {
-                    channelNos[i] = channels.get(i).getChannelNo();
-                    DTVTLogger.debug("###set channelList ChNo:" + channels.get(i).getChannelNo() + " ChName:" + channels.get(i).getTitle());
+                    serviceIdUniq[i] = channels.get(i).getServiceIdUniq();
+                    DTVTLogger.debug("###set channelList serviceIdUniq:" + channels.get(i).getServiceIdUniq() + " ChName:" + channels.get(i).getTitle());
                 }
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
-                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, true);
+                getProgramData(serviceIdUniq, dateList);
                 //明示的にコンテンツ取得失敗メッセージを非表示にする
                 mNoDataMessage.setVisibility(View.GONE);
             } else {
@@ -1024,6 +1061,15 @@ public class TvProgramListActivity extends BaseActivity implements
     }
 
     /**
+     * 番組表データ取得.
+     * @param serviceIdUniqs サービスIDユニーク
+     * @param dateList 日付
+     */
+    private void getProgramData(final String[] serviceIdUniqs, final String[] dateList) {
+        mScaledDownProgramListDataProvider.getProgram(serviceIdUniqs, dateList);
+    }
+
+    /**
      * My番組表ロード.
      * @param channelList チャンネルリスト
      */
@@ -1033,17 +1079,17 @@ public class TvProgramListActivity extends BaseActivity implements
             mScaledDownProgramListDataProvider =
                     new ScaledDownProgramListDataProvider(this);
         }
-        int[] channelNos = new int[channelList.size()];
+        String[] serviceIdUniq = new String[channelList.size()];
         for (int i = 0; i < channelList.size(); i++) {
-            channelNos[i] = channelList.get(i).getChannelNo();
+            serviceIdUniq[i] = channelList.get(i).getServiceIdUniq();
         }
         //TODO 作業(https://agile.apccloud.jp/jira/browse/DREM-2508)
         //TODO 期限見てDBからデータ取得処理
-        if (channelNos.length != 0) {
+        if (serviceIdUniq.length != 0) {
             //マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
-            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, true);
+            getProgramData(serviceIdUniq, dateList);
         }
         DTVTLogger.end();
     }
@@ -1126,7 +1172,7 @@ public class TvProgramListActivity extends BaseActivity implements
         if (startTime > nowTime) {
             //現在日より未来の日付なら差分（プラス値）
             return (startTime - nowTime);
-        } else if ( endTime < nowTime) {
+        } else if (endTime < nowTime) {
             //現在日より過去の日付なら差分（マイナス値）
             return (endTime - nowTime);
         } else {
@@ -1153,7 +1199,7 @@ public class TvProgramListActivity extends BaseActivity implements
                     for (int j = 0; j < myChannelMetaData.size(); j++) {
                         String index = myChannelMetaData.get(j).getIndex();
                         if (index != null && !index.isEmpty()) {
-                            int indexNum = 0;
+                            int indexNum;
                             try {
                                 indexNum = Integer.parseInt(index);
                             } catch (NumberFormatException e) {
@@ -1240,7 +1286,7 @@ public class TvProgramListActivity extends BaseActivity implements
 //            DTVTLogger.debug("onScrollOffset timeLinePosition:" + timeLinePosition + " mNowImage.getHeight():" + mNowImage.getHeight() + " offset:" + offset);
             mTimeLine.setY(timeLinePosition - offset);
         }
-        if(mTvProgramListAdapter != null) {
+        if (mTvProgramListAdapter != null) {
             mTvProgramListAdapter.setProgramScrollY(mProgramScrollViewParent.getScrollY());
             //スクロール中は横スクロールView (ProgramRecyclerView) にフォーカスが奪われるため、コンテンツタップを無効にする
             mTvProgramListAdapter.setIsScheduleClickEnable(false);
@@ -1269,7 +1315,7 @@ public class TvProgramListActivity extends BaseActivity implements
      *
      * @param date NOWを描画したい時刻
      */
-    private float calcTimeLinePosition(String date) {
+    private float calcTimeLinePosition(final String date) {
         int curClock = Integer.parseInt(date.substring(0, 2));
         int curMin = Integer.parseInt(date.substring(2, 4));
         int curSec = Integer.parseInt(date.substring(4, 6));

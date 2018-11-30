@@ -67,14 +67,15 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
      * @param pagerOffset 取得位置(値は1以上)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param type dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param areaCode エリアコード
      * @return チャンネル一覧情報
      */
     public List<ChannelList> getChannelApi(final Context context, final int pagetLimit, final int pagerOffset,
-                         final String filter, final String type) {
+                         final String filter, final String type, final String areaCode) {
         DTVTLogger.start();
 
         mChannelWebClient = new ChannelWebClient(context);
-        boolean answer = mChannelWebClient.getChannelApi(pagetLimit, pagerOffset, filter, type, this);
+        boolean answer = mChannelWebClient.getChannelApi(pagetLimit, pagerOffset, filter, type, areaCode, this);
 
         if (!answer) {
             //パラメータエラーだったので、そのまま帰る

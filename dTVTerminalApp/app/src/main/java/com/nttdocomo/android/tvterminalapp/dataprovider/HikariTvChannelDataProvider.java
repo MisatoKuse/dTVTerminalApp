@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
@@ -66,15 +67,16 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
 
     /**
      * NOW　ON AIR　番組情報を取得.
-     * @param chno チャンネルナンバー
+     * @param serviceIdUniq サービスユニーク
      */
-    public void getNowOnAirProgram(final int chno) {
+    public void getNowOnAirProgram(final String serviceIdUniq) {
         mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-        mTvScheduleWebClient.getTvScheduleApi(new int[]{chno}, new String[]{WebApiBasePlala.DATE_NOW}, "", this);
+        String areaCode = UserInfoUtils.getAreaCode(mContext);
+        mTvScheduleWebClient.getTvScheduleApi(new String[]{serviceIdUniq}, new String[]{WebApiBasePlala.DATE_NOW}, "", areaCode, this);
     }
 
     @Override
-    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, int[] chNos) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final String[] serviceIdUniqs) {
         if (tvScheduleList == null) { //networkエラー
             if (mTvScheduleWebClient != null) {
                 mErrorState = mTvScheduleWebClient.getError();

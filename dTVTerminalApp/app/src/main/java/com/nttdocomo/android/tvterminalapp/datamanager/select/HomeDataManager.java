@@ -111,7 +111,8 @@ public class HomeDataManager {
         String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_THUMB_448,
                 JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_AVAIL_START_DATE,
                 JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
-                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_CID};
+                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_CID,
+                JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ};
 
         //Daoクラス使用準備
         DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
@@ -212,7 +213,8 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_CHNO,
                 JsonConstants.META_RESPONSE_CRID, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_R_VALUE, JsonConstants.META_RESPONSE_RATING,
-                JsonConstants.META_RESPONSE_SYNOP, JsonConstants.META_RESPONSE_EVENT_ID};
+                JsonConstants.META_RESPONSE_SYNOP, JsonConstants.META_RESPONSE_EVENT_ID,
+                JsonConstants.META_RESPONSE_SERVICE_ID};
 
         //Daoクラス使用準備
         DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);

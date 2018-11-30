@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch;
 public class TvScheduleWebClientSync implements TvScheduleWebClient.TvScheduleJsonParserCallback {
 
     /** コンテキスト. */
-    private Context mContext = null;
+    private Context mContext;
     /** チャンネル情報ウェブクライアント. */
     private TvScheduleWebClient mTvScheduleWebClient = null;
 
@@ -50,30 +50,32 @@ public class TvScheduleWebClientSync implements TvScheduleWebClient.TvScheduleJs
     }
 
     @Override
-    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final int[] chnos) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final String[] serviceIdUniqs) {
         DTVTLogger.start();
 
         //コールバックが返ってきた
         if (tvScheduleList != null) {
             List<Map<String, String>> tvList = tvScheduleList.get(0).geTvsList();
-
             mChannelInfoList = new ChannelInfoList();
-            for (int chno : chnos) {
-                ChannelInfo channelInfo = new ChannelInfo();
-                channelInfo.setChannelNo(chno);
-                ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
-                String ch = String.valueOf(chno);
-                for (int j = 0; j < tvList.size(); j++) {
-                    if (ch.equals(tvList.get(j).get(JsonConstants.META_RESPONSE_CHNO))) {
-                        ScheduleInfo scheduleInfo = DataConverter.convertScheduleInfo(tvList.get(j), null);
-                        scheduleInfoList.add(scheduleInfo);
+            if (serviceIdUniqs != null) {
+                for (String serviceIdUniq : serviceIdUniqs) {
+                    if (serviceIdUniq != null) {
+                        ChannelInfo channelInfo = new ChannelInfo();
+                        channelInfo.setServiceIdUniq(serviceIdUniq);
+                        ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+                        for (int j = 0; j < tvList.size(); j++) {
+                            if (serviceIdUniq.equals(tvList.get(j).get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ))) {
+                                ScheduleInfo scheduleInfo = DataConverter.convertScheduleInfo(tvList.get(j), null);
+                                scheduleInfoList.add(scheduleInfo);
+                            }
+                        }
+                        if (scheduleInfoList.size() < 1) {
+                            scheduleInfoList.add(DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(mContext, serviceIdUniq, false), null));
+                        }
+                        channelInfo.setSchedules(scheduleInfoList);
+                        mChannelInfoList.addChannel(channelInfo);
                     }
                 }
-                if (scheduleInfoList.size() < 1) {
-                    scheduleInfoList.add(DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(mContext, ch, false), null));
-                }
-                channelInfo.setSchedules(scheduleInfoList);
-                mChannelInfoList.addChannel(channelInfo);
             }
         } else {
             //ヌルだったので、エラーを蓄積する
@@ -98,15 +100,16 @@ public class TvScheduleWebClientSync implements TvScheduleWebClient.TvScheduleJs
      * チャンネル毎番組一覧取得.
      *
      * @param context  コンテキスト
-     * @param chno   チャンネル番号
+     * @param serviceIdUniqs   サービスユニーク
      * @param date   日付（"now"を指定した場合、現在放送中番組を返却)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param areaCode エリアコード
      * @return パラメータエラーならばfalse
      */
-    public ChannelInfoList getTvScheduleApi(final Context context, final int[] chno, final String[] date, final String filter) {
+    public ChannelInfoList getTvScheduleApi(final Context context, final String[] serviceIdUniqs, final String[] date, final String filter, final String areaCode) {
         DTVTLogger.start();
         mTvScheduleWebClient = new TvScheduleWebClient(context);
-        boolean answer = mTvScheduleWebClient.getTvScheduleApi(chno, date, filter, this);
+        boolean answer = mTvScheduleWebClient.getTvScheduleApi(serviceIdUniqs, date, filter, areaCode,  this);
 
         if (!answer) {
             //パラメータエラーだったので、そのまま帰る
