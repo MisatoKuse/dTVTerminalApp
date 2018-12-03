@@ -1178,6 +1178,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void userInfoListCallback(final boolean isDataChange,
         final List<UserInfoList> userList, final boolean isContractChange) {
+        startTvProgramIntentService();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

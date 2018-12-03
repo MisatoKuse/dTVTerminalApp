@@ -798,7 +798,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * アプリ起動時に番組表データ(先頭10件)取得.
      */
-    private void startTvProgramIntentService() {
+    protected void startTvProgramIntentService() {
         //番組表画面では別の番組表データ取得処理が実行されるのでサービスを実行しない
         if (this instanceof TvProgramListActivity) {
             return;
@@ -2949,6 +2949,7 @@ public class BaseActivity extends FragmentActivity implements
                     @Override
                     public void userInfoListCallback(final boolean isDataChange,
                                                      final List<UserInfoList> list, final boolean isContractChange) {
+                        startTvProgramIntentService();
                         //契約変化を見るコールバック
                         checkUserInfoChangeResult(isContractChange);
                         String contractType = ContentUtils.getContractType(BaseActivity.this);
