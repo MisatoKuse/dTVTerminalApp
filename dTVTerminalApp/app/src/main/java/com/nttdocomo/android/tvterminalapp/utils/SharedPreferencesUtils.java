@@ -111,6 +111,10 @@ public class SharedPreferencesUtils {
      */
     private static final String USER_AGE_REQ_SHARED_KEY = "USER_AGE_REQ_SHARED_KEY";
     /**
+     * ユーザエリアコードキー.
+     */
+    private static final String USER_AREA_CODE_SHARED_KEY = "USER_AREA_CODE_SHARED_KEY";
+    /**
      * ユーザー情報取得日時.
      */
     private static final String LAST_USER_INFO_DATE = "LAST_USER_INFO_DATE";
@@ -219,6 +223,8 @@ public class SharedPreferencesUtils {
             USER_CONTRACT_INFO_SHARED_KEY,
             //ユーザ年齢情報キー
             USER_AGE_REQ_SHARED_KEY,
+            //ユーザエリアコードキー
+            USER_AREA_CODE_SHARED_KEY,
             //ユーザー情報取得日時
             LAST_USER_INFO_DATE,
             //ビデオジャンル一覧データ
@@ -748,6 +754,36 @@ public class SharedPreferencesUtils {
 
         //保存した年齢情報がない場合はPG12を返却
         return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtils.USER_AGE_REQ_PG12);
+    }
+
+    /**
+     * 取得したエリアコードを保存.
+     *
+     * @param context コンテキスト
+     * @param areaCode 保存するエリアコード
+     */
+    public static void setSharedKeyPreferencesAreaCode(final Context context, final String areaCode) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_AREA_CODE_SHARED_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(USER_AREA_CODE_SHARED_KEY, areaCode);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 最後に保存したエリアコードを取得.
+     *
+     * @param context コンテキスト
+     * @return エリアコード
+     */
+    static String getSharedKeyPreferencesAreaCode(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_AREA_CODE_SHARED_KEY, Context.MODE_PRIVATE);
+        //保存したエリアコードがない場合は空文字を返却
+        return data.getString(USER_AREA_CODE_SHARED_KEY, "");
     }
 
     /**

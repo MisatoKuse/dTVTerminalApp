@@ -299,16 +299,16 @@ public class DateUtils {
     /**
      * chNoの対象日付データの前回取得日時をエポック秒で返す.
      *
-     * @param chNos ChNo
+     * @param serviceIdUniqs サービスユニーク
      * @param date 取得対象の日付
      * @return 前回取得日時
      */
-    public String[] getChLastDate(final int[] chNos, final String date) {
+    public String[] getChLastDate(final String[] serviceIdUniqs, final String date) {
         DTVTLogger.start();
         String chDate = date.replace("-", "");
-        String[] chLastDates = new String[chNos.length];
+        String[] chLastDates = new String[serviceIdUniqs.length];
         //引数データが不正であれば帰る
-        if (chNos.length == 0 || TextUtils.isEmpty(chDate)) {
+        if (serviceIdUniqs.length == 0 || TextUtils.isEmpty(chDate)) {
             return chLastDates;
         }
 
@@ -325,8 +325,8 @@ public class DateUtils {
         }
 
         //チャンネル番号のチャンネル情報(DB)が作成されているか確認する.
-        for (int i = 0; i < chNos.length; i++) {
-            File dbFile = new File(StringUtils.getConnectStrings(dbDir, "/", String.valueOf(chNos[i])));
+        for (int i = 0; i < serviceIdUniqs.length; i++) {
+            File dbFile = new File(StringUtils.getConnectStrings(dbDir, "/", serviceIdUniqs[i]));
             if (dbFile.isFile()) {
                 //DBファイルが存在するので最終更新日時(DBファイルのタイムスタンプ)を取得する.
                 Long lastModified = dbFile.lastModified() / 1000L;

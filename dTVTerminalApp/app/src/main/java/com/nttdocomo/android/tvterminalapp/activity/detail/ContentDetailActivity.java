@@ -844,7 +844,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
-        int[] channelNos = new int[]{mChannel.getChannelNo()};
+        String[] serviceIdUniqs = new String[]{mChannel.getServiceIdUniq()};
         mDateList = null;
         if (mDateIndex <= 6) { //一週間以内
             mDateList = new String[1];
@@ -874,12 +874,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 channelLoadCompleted();
                 DTVTLogger.debug(e);
             }
-            if (channelNos.length == 0 || channelNos[0] == -1) {
+            if (serviceIdUniqs[0] == null) {
                 DTVTLogger.error("No channel number");
                 channelLoadCompleted();
                 return;
             }
-            mScaledDownProgramListDataProvider.getProgram(channelNos, mDateList, false);
+            mScaledDownProgramListDataProvider.getProgram(serviceIdUniqs, mDateList);
         } else {
             channelLoadCompleted();
         }
@@ -1985,7 +1985,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final String[] serviceIdUniq) {
         DTVTLogger.start();
         runOnUiThread(new Runnable() {
             @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})

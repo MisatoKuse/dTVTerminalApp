@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -269,6 +270,18 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         if (!newContractInfo.equals(oldContractInfo)) {
             //新旧の契約情報が違うので、trueにする
             contractAnswer = true;
+        }
+
+        if (tmpUserInfoLists != null) {
+            //常に最新のエリアコードを保存する
+            String areaCode = tmpUserInfoLists.get(0).getLoggedinAccount().get(0).getAreaCode();
+            String oldAreaCode = UserInfoUtils.getAreaCode(mContext);
+            if (!TextUtils.isEmpty(oldAreaCode) && TextUtils.isEmpty(areaCode)) {
+                DateUtils.clearLastProgramDate(mContext, DateUtils.CHANNEL_LAST_UPDATE);
+            } else if (!TextUtils.isEmpty(areaCode) && (!areaCode.equals(oldAreaCode))) {
+                DateUtils.clearLastProgramDate(mContext, DateUtils.CHANNEL_LAST_UPDATE);
+            }
+            SharedPreferencesUtils.setSharedKeyPreferencesAreaCode(mContext, areaCode);
         }
 
         //結果を返すコールバックを呼ぶ(userInfoListsはfinal付与の余波でヌルのままになる場合があるので、ここはtmpUserInfoListsを指定)

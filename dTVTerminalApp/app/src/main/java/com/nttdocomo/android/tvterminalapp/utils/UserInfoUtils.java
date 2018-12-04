@@ -229,6 +229,16 @@ public class UserInfoUtils {
     }
 
     /**
+     * エリアコード取得.
+     *
+     * @param context コンテキスト
+     * @return エリアコード
+     */
+    public static String getAreaCode(final Context context) {
+        return SharedPreferencesUtils.getSharedKeyPreferencesAreaCode(context);
+    }
+
+    /**
      * 契約有無を返却.
      *
      * @param context コンテキストファイル

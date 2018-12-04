@@ -36,6 +36,10 @@ public class ChannelInfo implements Parcelable {
      */
     private String mServiceId;
     /**
+     * サービスIDユニーク.
+     */
+    private String mServiceIdUniq;
+    /**
      * チャンネルの開始時間.
      */
     private String mStartDate;
@@ -132,6 +136,22 @@ public class ChannelInfo implements Parcelable {
      */
     public void setServiceId(final String serviceId) {
         this.mServiceId = serviceId;
+    }
+
+    /**
+     * serviceIdUniqを取得.
+     * @return serviceIdUniq
+     */
+    public String getServiceIdUniq() {
+        return mServiceIdUniq;
+    }
+
+    /**
+     * serviceIdUniqを設定.
+     * @param serviceIdUniq サービスIDユニーク
+     */
+    public void setServiceIdUniq(final String serviceIdUniq) {
+        this.mServiceIdUniq = serviceIdUniq;
     }
 
     /**
@@ -298,6 +318,7 @@ public class ChannelInfo implements Parcelable {
         dest.writeString(this.mTitle);
         dest.writeInt(this.mChannelNo);
         dest.writeString(this.mServiceId);
+        dest.writeString(this.mServiceIdUniq);
         dest.writeString(this.mStartDate);
         dest.writeString(this.mEndDate);
         dest.writeString(this.mThumbnail);
@@ -313,11 +334,12 @@ public class ChannelInfo implements Parcelable {
     }
 
     private ChannelInfo(final Parcel in) {
-        this.mSchedules = new ArrayList<ScheduleInfo>();
+        this.mSchedules = new ArrayList<>();
         in.readList(this.mSchedules, ScheduleInfo.class.getClassLoader());
         this.mTitle = in.readString();
         this.mChannelNo = in.readInt();
         this.mServiceId = in.readString();
+        this.mServiceIdUniq = in.readString();
         this.mStartDate = in.readString();
         this.mEndDate = in.readString();
         this.mThumbnail = in.readString();

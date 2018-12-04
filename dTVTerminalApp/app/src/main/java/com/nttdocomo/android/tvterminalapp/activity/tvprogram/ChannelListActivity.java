@@ -632,7 +632,7 @@ public class ChannelListActivity extends BaseActivity implements
                     }
                     if (NetWorkUtils.isOnline(ChannelListActivity.this)) {
                         channelInfo = mHikariTvChannelList.get(pos);
-                        mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
+                        mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getServiceIdUniq());
                     } else {
                         showErrorDialog(getString(R.string.network_nw_error_message_dialog));
                     }
@@ -644,7 +644,7 @@ public class ChannelListActivity extends BaseActivity implements
                     }
                     if (NetWorkUtils.isOnline(ChannelListActivity.this)) {
                         channelInfo = mdTvChannelList.get(pos);
-                        mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
+                        mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getServiceIdUniq());
                     } else {
                         showErrorDialog(getString(R.string.network_nw_error_message_dialog));
                     }
@@ -765,7 +765,7 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final String[] serviceIdUniqs) {
         DTVTLogger.error(" >>>");
     }
 

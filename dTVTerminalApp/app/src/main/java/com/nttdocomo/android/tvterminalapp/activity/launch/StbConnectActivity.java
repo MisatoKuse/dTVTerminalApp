@@ -137,6 +137,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     @Override
     public void userInfoListCallback(final boolean isDataChange,
              final List<UserInfoList> userList, final boolean isUserContract) {
+        startTvProgramIntentService();
         //契約情報確認、契約情報再取得不要
         checkContractInfo(false);
         String contractType = ContentUtils.getContractType(StbConnectActivity.this);

@@ -235,12 +235,12 @@ public class DataBaseUtils {
      *
      * @param context コンテキスト
      * @param tableName テーブル名
-     * @param chNo チャンネル番号
+     * @param serviceIdUniq サービスユニーク
      * @return データ存在チェック結果
      */
     public static synchronized boolean isChCachingRecord(final Context context, final String tableName,
-                                                         final String chNo) {
-        DataBaseHelperChannel dataBaseHelperChannel = new DataBaseHelperChannel(context, chNo);
+                                                         final String serviceIdUniq) {
+        DataBaseHelperChannel dataBaseHelperChannel = new DataBaseHelperChannel(context, serviceIdUniq);
         SQLiteDatabase database = dataBaseHelperChannel.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         database.close();

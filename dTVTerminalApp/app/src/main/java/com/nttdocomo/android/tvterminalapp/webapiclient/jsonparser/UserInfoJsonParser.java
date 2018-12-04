@@ -37,6 +37,8 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
     /**ユーザー情報更新タイム.*/
     public static final String USER_INFO_LIST_UPDATE_TIME = "update_time";
+    /**エリアコード.*/
+    public static final String USER_INFO_LIST_AREA_CODE = "area_code";
     /**bracket_left.*/
     private static final String BRACKET_LEFT = "[";
     /**bracket_right.*/
@@ -194,6 +196,16 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                     //省略された場合は空文字
                     tempList.setH4dAgeReq("");
                 }
+
+                //エリアコードは返却されない場合がある
+                if (loggedinObj.has(USER_INFO_LIST_AREA_CODE)) {
+                    temp = loggedinObj.getString(USER_INFO_LIST_AREA_CODE);
+                    tempList.setAreaCode(temp);
+                } else {
+                    //返却されない場合は空文字
+                    tempList.setAreaCode("");
+                }
+
                 loggedinAccount.add(tempList);
             } catch (JSONException e) {
                 //パースに失敗した場合は次のデータに行くので何もしない

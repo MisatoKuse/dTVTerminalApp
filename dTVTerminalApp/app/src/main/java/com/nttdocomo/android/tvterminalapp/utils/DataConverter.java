@@ -182,6 +182,7 @@ public class DataConverter {
         String serviceId = map.get(JsonConstants.META_RESPONSE_SERVICE_ID);
         String titleId = map.get(JsonConstants.META_RESPONSE_TITLE_ID);
         String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
+        String serviceIdUniq = map.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
         mSchedule.setStartTime(startDate);
         mSchedule.setEndTime(endDate);
         mSchedule.setImageUrl(thumb);
@@ -202,6 +203,7 @@ public class DataConverter {
         mSchedule.setClipRequestData(ScaledDownProgramListDataProvider.setClipData(map));
         mSchedule.setEventId(eventId);
         mSchedule.setServiceId(serviceId);
+        mSchedule.setServiceIdUniq(serviceIdUniq);
         mSchedule.setContentType(contentType);
         mSchedule.setTitleId(titleId);
         mSchedule.setTvService(tvService);
@@ -213,13 +215,12 @@ public class DataConverter {
      * コンテンツがないときのダミーデータを作成する().
      *
      * @param context コンテキスト
-     * @param chNo チャンネル番号
+     * @param serviceIdUniq サービスユニーク
      * @param isNullResponse nullレスポンスフラグ
      * @return ダミーデータ
      */
-    public static Map<String, String> getDummyContentMap(final Context context, final String chNo, final boolean isNullResponse) {
+    public static Map<String, String> getDummyContentMap(final Context context, final String serviceIdUniq, final boolean isNullResponse) {
         Map<String, String> map = new HashMap<>();
-        List<Map<String, String>> mapList = new ArrayList<>();
         map.put(JsonConstants.META_RESPONSE_CRID, "");
         map.put(JsonConstants.META_RESPONSE_CID, "");
         if (isNullResponse) {
@@ -238,7 +239,8 @@ public class DataConverter {
         map.put(JsonConstants.META_RESPONSE_RATING, "");
         map.put(JsonConstants.META_RESPONSE_SERVICE_ID, "");
         map.put(JsonConstants.META_RESPONSE_EVENT_ID, "");
-        map.put(JsonConstants.META_RESPONSE_CHNO, chNo);
+        map.put(JsonConstants.META_RESPONSE_CHNO, "");
+        map.put(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ, serviceIdUniq);
         return map;
     }
 }

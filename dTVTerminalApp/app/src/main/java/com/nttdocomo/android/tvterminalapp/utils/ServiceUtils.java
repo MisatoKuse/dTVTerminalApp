@@ -23,7 +23,7 @@ public class ServiceUtils {
      */
     @SuppressWarnings("deprecation")
     public static boolean isRunningService(final Context context, final String serviceName) {
-        ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> listServiceInfo = am.getRunningServices(Integer.MAX_VALUE);
         boolean found = false;
         for (ActivityManager.RunningServiceInfo curr : listServiceInfo) {

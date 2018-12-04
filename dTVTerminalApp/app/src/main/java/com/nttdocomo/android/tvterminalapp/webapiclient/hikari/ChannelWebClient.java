@@ -119,6 +119,50 @@ public class ChannelWebClient
     }
 
     /**
+     * チャンネル一覧取得.
+     *
+     * @param pagetLimit                取得する最大件数(値は1以上)
+     * @param pagerOffset               取得位置(値は1以上)
+     * @param filter                    フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type                      タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param areaCode                  エリアコード
+     * @param channelJsonParserCallback コールバック
+     * @return パラメータエラー等が発生した場合はfalse
+     */
+    public boolean getChannelApi(final int pagetLimit, final int pagerOffset,
+                                 final String filter, final String type, final String areaCode,
+                                 final ChannelJsonParserCallback channelJsonParserCallback) {
+
+        if (mIsCancel) {
+            DTVTLogger.error("ChannelWebClient is stopping connection");
+            return false;
+        }
+
+        //パラメーターのチェック
+        if (!checkNormalParameter(pagetLimit, pagerOffset, filter, type, channelJsonParserCallback)) {
+            //パラメーターがおかしければ通信不能なので、falseで帰る
+            return false;
+        }
+
+        //コールバックの設定
+        mChannelJsonParserCallback = channelJsonParserCallback;
+
+        //送信用パラメータの作成
+        String sendParameter = makeSendParameter(pagetLimit, pagerOffset, filter, type, areaCode);
+
+        //JSONの組み立てに失敗していれば、falseで帰る
+        if (sendParameter.isEmpty()) {
+            return false;
+        }
+
+        //チャンネル一覧を呼び出す
+        openUrl(UrlConstants.WebApiUrl.CHANNEL_LIST, sendParameter, this);
+
+        //現状失敗は無いのでtrue
+        return true;
+    }
+
+    /**
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param pagetLimit                取得する最大件数(値は1以上)
@@ -174,6 +218,47 @@ public class ChannelWebClient
 
         //何もエラーが無いのでtrue
         return true;
+    }
+
+    /**
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
+     *
+     * @param pagetLimit  取得する最大件数(値は1以上)
+     * @param pagerOffset 取得位置(値は1以上)
+     * @param filter      フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type        タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param areaCode    エリアコード
+     * @return 組み立て後の文字列
+     */
+    private String makeSendParameter(final int pagetLimit, final int pagerOffset, final String filter, final String type, final String areaCode) {
+        JSONObject jsonObject = new JSONObject();
+        String answerText;
+        try {
+            //ページャー部の作成
+            if (pagetLimit > 0 && pagerOffset > 0) {
+                JSONObject jsonPagerObject = new JSONObject();
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, pagetLimit);
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
+                jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
+            }
+            if (filter.isEmpty()) {
+                DTVTLogger.debug("");
+            } else {
+                jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
+            }
+            jsonObject.put(JsonConstants.META_RESPONSE_AREA_CODE, areaCode);
+
+            //typeは無視する(ひかり、DTVともに必ず取得しキャッシュ)
+            //jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
+
+            answerText = jsonObject.toString();
+
+        } catch (JSONException e) {
+            //JSONの作成に失敗したので空文字とする
+            answerText = "";
+        }
+        DTVTLogger.debugHttp(answerText);
+        return answerText;
     }
 
     /**

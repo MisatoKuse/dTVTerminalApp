@@ -217,6 +217,22 @@ public class ContentUtils {
     }
 
     /**
+     * 番組表タブ表示タイプ.
+     */
+    public enum TvProgramType {
+        /** 未ログイン.*/
+        NO_LOGIN,
+        /**ログイン済み未契約エラーコードなし.*/
+        NO_CONTRACT_LOGIN_OK_AREA_NG,
+        /**ログイン済み未契約エラーコードあり.*/
+        NO_CONTRACT_LOGIN_OK_AREA_OK,
+        /**ログイン済みh4d契約エラーコードなし.*/
+        CONTRACT_LOGIN_OK_AREA_NG,
+        /**ログイン済みh4d契約エラーコードあり.*/
+        CONTRACT_LOGIN_OK_AREA_OK
+    }
+
+    /**
      * 視聴可否種別.
      */
     public enum ViewIngType {
