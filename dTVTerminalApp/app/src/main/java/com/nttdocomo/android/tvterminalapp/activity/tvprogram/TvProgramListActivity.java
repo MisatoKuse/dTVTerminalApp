@@ -1011,6 +1011,7 @@ public class TvProgramListActivity extends BaseActivity implements
         } else {
             //ひかり、dTVチャンネル
             if (channels != null && channels.size() > 0) {
+                this.mHikariChannels = channels;
 //                sort(channels);
                 showMyChannelNoItem(false, false);
                 setChannelContentsView(channels);
