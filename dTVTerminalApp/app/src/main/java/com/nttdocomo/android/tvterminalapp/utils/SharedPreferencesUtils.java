@@ -889,7 +889,20 @@ public class SharedPreferencesUtils {
         data.edit().clear().apply();
         DTVTLogger.end();
     }
-
+    /**
+     * 購入済みコンテンツのキャッシュキーの削除を行う.
+     *
+     * @param context コンテキスト
+     */
+    public static void deleteRentalInfoFromSharePre(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+             DateUtils.DATA_SAVE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(DateUtils.RENTAL_VOD_LAST_UPDATE, null);
+        editor.apply();
+        DTVTLogger.end();
+    }
     /**
      * ユーザ情報永続化.
      *

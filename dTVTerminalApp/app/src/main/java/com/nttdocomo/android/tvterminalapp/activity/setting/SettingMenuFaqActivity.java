@@ -56,7 +56,6 @@ public class SettingMenuFaqActivity extends BaseActivity {
         setTitleText(getString(R.string.main_setting_menu_title_faq_list));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
     }
 
     @Override

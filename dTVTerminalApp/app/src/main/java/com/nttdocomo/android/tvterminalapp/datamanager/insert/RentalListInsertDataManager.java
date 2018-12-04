@@ -88,14 +88,16 @@ public class RentalListInsertDataManager {
 
                     for (String item : vodMetaFullData.getRootPara()) {
                         //ラインセンスリスト情報は配列型なので、ここで保存する
-                        if (item.equals(JsonConstants.META_RESPONSE_LIINF_ARRAY)) {
+                        if (JsonConstants.META_RESPONSE_LIINF_ARRAY.equals(item)) {
                             StringBuilder stringBuffer = new StringBuilder();
                             String[] strings = vodMetaFullData.getmLiinf_array();
-                            for (int j = 0; j < strings.length; j++) {
-                                if (j > 0) {
-                                    stringBuffer.append(COMMA);
+                            if (strings != null) {
+                                for (int j = 0; j < strings.length; j++) {
+                                    if (j > 0) {
+                                        stringBuffer.append(COMMA);
+                                    }
+                                    stringBuffer.append(strings[j]);
                                 }
-                                stringBuffer.append(strings[j]);
                             }
                             String liinfString = stringBuffer.toString();
                             values.put(item, liinfString);

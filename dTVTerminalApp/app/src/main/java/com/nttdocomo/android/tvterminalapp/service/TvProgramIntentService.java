@@ -79,7 +79,9 @@ public class TvProgramIntentService extends IntentService {
         if (channelLists != null && channelLists.size() > 0) {
             ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(getApplicationContext());
             channelInsertDataManager.insertChannelInsertList(channelLists.get(0));
-            channelMap = getBeforeStorageChanelList(channelLists.get(0).getChannelList());
+            if (channelLists.get(0).getChannelList() != null) {
+                channelMap = getBeforeStorageChanelList(channelLists.get(0).getChannelList());
+            }
         }
         return channelMap;
     }

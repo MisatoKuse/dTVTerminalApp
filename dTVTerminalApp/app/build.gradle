@@ -7,9 +7,9 @@ android {
     buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.nttdocomo.android.tvterminalapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
-        versionCode 26           //★バージョンコード. リリース毎に更新する事
+        versionCode 27           //★バージョンコード. リリース毎に更新する事
         versionName "01.20."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -35,7 +35,7 @@ android {
 
     // ★マイナーリリース毎にインクリメントするVersionNameのリビジョン数値(下2桁)
     // ※バージョンが上がったら0リセットすること
-    def revison_end_num = "02"
+    def revison_end_num = "03"
 
     signingConfigs {
         dcmeval {
@@ -328,48 +328,39 @@ dependencies {
     //DiXiM SecurePlayer SDK Debug Version
     local_Signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     local_Signed_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
-    local_Signed_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     local_Signed_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
 
     _com_Signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     _com_Signed_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
-    _com_Signed_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     _com_Signed_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
 
     _com_Unsigned_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     _com_Unsigned_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
-    _com_Unsigned_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     _com_Unsigned_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
 
     _test__signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     _test__signed_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
-    _test__signed_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     _test__signed_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
 
     _test__unsigned_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     _test__unsigned_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
-    _test__unsigned_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     _test__unsigned_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
 
     //DiXiM SecurePlayer SDK Release Version
     _com_Signed_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
     _com_Signed_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-    _com_Signed_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
     _com_Signed_offCompile(name: 'dixim-android-util2', ext: 'aar')
 
     _com_Unsigned_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
     _com_Unsigned_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-    _com_Unsigned_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
     _com_Unsigned_offCompile(name: 'dixim-android-util2', ext: 'aar')
 
     _test__signed_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
     _test__signed_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-    _test__signed_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
     _test__signed_offCompile(name: 'dixim-android-util2', ext: 'aar')
 
     _test__unsigned_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
     _test__unsigned_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-    _test__unsigned_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
     _test__unsigned_offCompile(name: 'dixim-android-util2', ext: 'aar')
 
     //SSLチェックライブラリ

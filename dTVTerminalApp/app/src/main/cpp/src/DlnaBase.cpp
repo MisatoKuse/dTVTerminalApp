@@ -5,6 +5,7 @@
 #include <secure_io_global.h>
 #include <hwif_aux.h>
 #include <jni.h>
+#include <string.h>
 #include "DlnaBase.h"
 #include "DlnaMacro.h"
 #include "DlnaDefine.h"

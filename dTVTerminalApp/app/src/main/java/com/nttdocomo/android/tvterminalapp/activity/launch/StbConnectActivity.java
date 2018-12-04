@@ -112,7 +112,6 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
             setTitleText(getString(R.string.str_stb_paring_setting_title));
         }
         enableHeaderBackIcon(false);
-        setStatusBarColor(true);
         TextView connectResult = findViewById(R.id.connect_result_text);
         connectResult.setVisibility(View.VISIBLE);
         connectResult.setText(R.string.str_stb_connect_success_text);

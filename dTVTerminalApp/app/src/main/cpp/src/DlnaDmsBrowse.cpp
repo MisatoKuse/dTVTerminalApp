@@ -14,6 +14,7 @@
 #include <dav_dc_date.h>
 #include <dav_capability_libxml.h>
 #include <dav_cds.h>
+#include <string.h>
 
 #include "DlnaMacro.h"
 #include "Browse/browse.h"

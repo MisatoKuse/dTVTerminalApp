@@ -84,7 +84,6 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         enableHeaderBackIcon(false);
         enableGlobalMenuIcon(true);
         changeGlobalMenuIcon(false);
-        setStatusBarColor(false);
         initView();
         //ここに存在したloadDataメソッドは、処理の重複なので、削除を行いました。
     }

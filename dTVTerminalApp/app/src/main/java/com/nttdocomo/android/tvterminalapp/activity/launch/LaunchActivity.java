@@ -19,7 +19,6 @@ import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 
 /**
  * アプリ起動時に最初に呼び出されるActivity.
@@ -56,7 +55,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.launch_main_layout);
         setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
-        setStatusBarColor(true);
         setTheme(R.style.AppThemeBlack);
         setStatusBarColor(R.color.contents_header_background);
         setTitleVisibility(false);
@@ -69,6 +67,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
         // TODO: 暫定対応、削除必要する必要かも
         SharedPreferencesUtils.deleteUserInfoDate(getApplicationContext());
+        //購入済み情報削除を行う
+        SharedPreferencesUtils.deleteRentalInfoFromSharePre(getApplicationContext());
 
         StbConnectionManager.shared().launch(getApplicationContext());
         StbConnectionManager.shared().initializeState();

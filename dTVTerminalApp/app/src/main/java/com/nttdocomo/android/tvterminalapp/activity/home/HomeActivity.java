@@ -240,7 +240,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.home_main_layout);
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
-        setStatusBarColor(true);
         initView();
     }
 

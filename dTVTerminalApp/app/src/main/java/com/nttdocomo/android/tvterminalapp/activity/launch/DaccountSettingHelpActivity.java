@@ -61,7 +61,6 @@ public class DaccountSettingHelpActivity extends BaseActivity {
         }
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(false);
-        setStatusBarColor(true);
     }
 
     @Override

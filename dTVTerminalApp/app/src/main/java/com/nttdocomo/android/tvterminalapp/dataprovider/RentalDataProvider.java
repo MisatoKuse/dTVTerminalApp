@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
@@ -116,6 +117,8 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * レンタルデータ用エラー情報バッファ.
      */
     private ErrorState mError = null;
+    /** コンマ.*/
+    private static final String COMMA = ",";
 
     /**
      * Activity指定.
@@ -310,7 +313,12 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             vodMetaFullData.setmVod_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
             vodMetaFullData.setmVod_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             vodMetaFullData.setEstFlag(estFlg);
-            vodMetaFullData.setmLiinf_array(new String[]{vodMetaList.get(i).get(JsonConstants.META_RESPONSE_LIINF_ARRAY)});
+            String liinf_array = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_LIINF_ARRAY);
+            if (!TextUtils.isEmpty(liinf_array) && liinf_array.contains(COMMA)) {
+                vodMetaFullData.setmLiinf_array(liinf_array.split(COMMA));
+            } else {
+                vodMetaFullData.setmLiinf_array(new String[]{liinf_array});
+            }
             vodMetaFullDataList.add(vodMetaFullData);
         }
         ArrayList<ActiveData> activeDataList = new ArrayList<>();

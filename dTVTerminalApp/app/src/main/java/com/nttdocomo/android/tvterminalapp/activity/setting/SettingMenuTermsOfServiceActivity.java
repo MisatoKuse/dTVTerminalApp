@@ -51,7 +51,6 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         setTitleText(getString(R.string.main_setting_menu_title_terms_of_service));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        setStatusBarColor(true);
     }
 
     @Override

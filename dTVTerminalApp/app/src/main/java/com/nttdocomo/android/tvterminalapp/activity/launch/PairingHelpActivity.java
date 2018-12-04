@@ -75,7 +75,6 @@ public class PairingHelpActivity extends BaseActivity {
         //Headerの設定
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(false);
-        setStatusBarColor(true);
     }
 
     @Override
