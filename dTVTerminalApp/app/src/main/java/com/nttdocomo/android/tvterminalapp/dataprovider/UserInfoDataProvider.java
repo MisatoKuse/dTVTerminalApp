@@ -277,9 +277,9 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             String areaCode = tmpUserInfoLists.get(0).getLoggedinAccount().get(0).getAreaCode();
             String oldAreaCode = UserInfoUtils.getAreaCode(mContext);
             if (!TextUtils.isEmpty(oldAreaCode) && TextUtils.isEmpty(areaCode)) {
-                DateUtils.clearLastProgramDate(mContext, DateUtils.CHANNEL_LAST_UPDATE);
+                DateUtils.clearTvScheduleDate(mContext);
             } else if (!TextUtils.isEmpty(areaCode) && (!areaCode.equals(oldAreaCode))) {
-                DateUtils.clearLastProgramDate(mContext, DateUtils.CHANNEL_LAST_UPDATE);
+                DateUtils.clearTvScheduleDate(mContext);
             }
             SharedPreferencesUtils.setSharedKeyPreferencesAreaCode(mContext, areaCode);
         }

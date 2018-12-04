@@ -286,6 +286,48 @@ public class DateUtils {
     }
 
     /**
+     * フォルダ削除.
+     * @param dir ファイルパス
+     */
+    private static boolean deleteDir(final File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String file : children) {
+                boolean success = deleteDir(new File(dir, file));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+    }
+
+    /**
+     * 番組データ取得日付をクリアする.
+     * @param context コンテクスト
+     */
+    private static void clearLastTvScheduleDate(final Context context) {
+        //データクリア
+        String filesDir = context.getFilesDir().getAbsolutePath();
+        String path = StringUtils.getConnectStrings(filesDir, "/../databases/channel");
+        boolean isSuccess = deleteDir(new File(path));
+        if (!isSuccess) {
+            DTVTLogger.debug("clearLastTvScheduleDate delete file failed");
+        }
+    }
+
+    /**
+     * 番組関連データをクリアする.
+     * @param context コンテクスト
+     */
+    public static void clearTvScheduleDate(final Context context) {
+        //チャンネル
+        clearLastProgramDate(context, DateUtils.CHANNEL_LAST_UPDATE);
+        //番組
+        clearLastTvScheduleDate(context);
+    }
+
+    /**
      * 前回取得日時を返却.
      *
      * @param key ファイル名(KEY)
