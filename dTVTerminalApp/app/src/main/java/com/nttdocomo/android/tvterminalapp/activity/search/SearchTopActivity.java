@@ -168,9 +168,13 @@ public class SearchTopActivity extends BaseActivity
      */
     private static final int TAB_INDEX_DTV_CHANNEL = 3;
     /**
+     *  タブインデックス　DAZN.
+     */
+    private static final int TAB_INDEX_DAZN = 4;
+    /**
      * タブインデックス　dアニメストア.
      */
-    private static final int TAB_INDEX_DANIME = 4;
+    private static final int TAB_INDEX_DANIME = 5;
     /**
      * 最後に表示したタブindex.
      */
@@ -616,6 +620,12 @@ public class SearchTopActivity extends BaseActivity
                 }
                 screenName = getString(R.string.google_analytics_screen_name_search_result_dtv_channel);
                 break;
+            case TAB_INDEX_DAZN:
+                if (isFromServerSuccess) {
+                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_dazn));
+                }
+                screenName = getString(R.string.google_analytics_screen_name_search_result_dazn);
+                break;
             case TAB_INDEX_DANIME:
                 if (isFromServerSuccess) {
                     customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_danime));
@@ -821,8 +831,7 @@ public class SearchTopActivity extends BaseActivity
      * @return 検索結果件数の文字列
      */
     private String getResultString() {
-        String[] tabNames = getResources().getStringArray(R.array.tab_names);
-        String tabName = tabNames[mTabIndex];
+        String tabName = mTabNames[mTabIndex];
         String[] strings = {tabName,
                 getString(R.string.keyword_search_result_no),
                 getString(R.string.keyword_search_result),

@@ -269,6 +269,7 @@
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
+        <item>DAZN</item>
         <item>dアニメストア</item>
     </string-array>
 
@@ -539,6 +540,7 @@
     <string name="google_analytics_screen_name_search_result_tv">キーワード検索結果_テレビ</string>
     <string name="google_analytics_screen_name_search_result_video">キーワード検索結果_ビデオ</string>
     <string name="google_analytics_screen_name_search_result_dtv_channel">キーワード検索結果_dTVチャンネル</string>
+    <string name="google_analytics_screen_name_search_result_dazn">キーワード検索結果_DAZN</string>
     <string name="google_analytics_screen_name_search_result_dtv">キーワード検索結果_dTV</string>
     <string name="google_analytics_screen_name_search_result_danime">キーワード検索結果_dアニメストア</string>
     <string name="google_analytics_screen_name_ranking">ランキング</string>
