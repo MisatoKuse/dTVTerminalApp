@@ -3011,8 +3011,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (RemoteRecordingReservationResultResponse
                     .REMOTE_RECORDING_RESERVATION_RESULT_RESPONSE_STATUS_NG.equals(response.getStatus())) {
                 // サーバからのエラー通知
-                DTVTLogger.debug("error" + response.getErrorNo());
-                CustomDialog dialog = createErrorDialog();
+                String errorMessage = "";
+                if (RemoteRecordingReservationResultResponse.REMOTE_RECORDING_RESERVATION_OVER_REGISTRATION
+                        .equals(response.getErrorNo())) {
+                    errorMessage = getString(R.string.recording_reservation_failed_dialog_over);
+                } else {
+                    errorMessage = getString(R.string.recording_reservation_failed_dialog_msg);
+                }
+                CustomDialog dialog = createErrorDialog(errorMessage);
                 dialog.showDialog();
             } else {
                 if (mToast != null) {
@@ -3031,7 +3037,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         } else {
             // コンテンツ詳細取得データに失敗があった場合
-            CustomDialog dialog = createErrorDialog();
+            CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
             dialog.showDialog();
         }
         DTVTLogger.end();
@@ -3074,7 +3080,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!(contentsType == ContentUtils.ContentsType.HIKARI_TV
                || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
                 //録画ボタン表示対象の種別以外ならば、録画可能時間外や放送中等なので、録画不能のダイアログを出して、falseを返す
-                CustomDialog dialog = createErrorDialog();
+                CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
                 dialog.showDialog();
                 return false;
             }
@@ -3106,10 +3112,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * 録画予約失敗時エラーダイアログ表示.
      *
      * @return 録画予約失敗エラーダイアログ
+     * @param errorMessage エラーメッセージ.
      */
-    private CustomDialog createErrorDialog() {
+    private CustomDialog createErrorDialog(final String errorMessage) {
         CustomDialog failedRecordingReservationDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        failedRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
+        failedRecordingReservationDialog.setContent(errorMessage);
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
         // Cancelable
         failedRecordingReservationDialog.setCancelable(false);
@@ -3144,7 +3151,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (!mContentsDetailDataProvider.requestRecordingReservation(
                         mRecordingReservationContentsDetailInfo)) {
                     //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
-                    CustomDialog dialog = createErrorDialog();
+                    CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
                     dialog.showDialog();
                 }
             }

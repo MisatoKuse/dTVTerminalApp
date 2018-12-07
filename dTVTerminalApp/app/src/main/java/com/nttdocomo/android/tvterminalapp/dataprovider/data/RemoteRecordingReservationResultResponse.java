@@ -16,6 +16,8 @@ public class RemoteRecordingReservationResultResponse {
     private String mStatus; // Status(OK or NG)
     /**エラー番号.*/
     private String mErrorNo = REMOTE_RECORDING_RESERVATION_FIXED_ERROR_NO; //エラー番号
+    /**登録件数超過.*/
+    public static final String REMOTE_RECORDING_RESERVATION_OVER_REGISTRATION = "V005201";
 
     /**
      * ステータス取得.
