@@ -163,17 +163,18 @@
         <!-- <item>人物</item> -->
     </string-array>
 
-    <!-- チャンネルリスト -->
+    <!-- チャンネルリスト AreaCodeが取得できた時-->
     <string-array name="channel_list_tab_names">
         <item>ひかりＴＶ for docomo</item>
-        <item>地上波</item>
+        <item>地デジ</item>
         <item>BS</item>
         <item>dTVチャンネル</item>
     </string-array>
 
-    <!-- チャンネルリスト STB未接続時 -->
+    <!-- チャンネルリスト AreaCodeが取得できなかった時 -->
     <string-array name="channel_list_tab_names_no_paring">
         <item>ひかりＴＶ for docomo</item>
+        <item>BS</item>
         <item>dTVチャンネル</item>
     </string-array>
 

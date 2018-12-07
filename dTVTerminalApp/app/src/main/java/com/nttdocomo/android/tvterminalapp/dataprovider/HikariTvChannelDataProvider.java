@@ -61,8 +61,8 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
      * @param offset 取得位置(1～)
      * @param filter release、testa、demo ※指定なしの場合release
      */
-    public void getChannelList(final int limit, final int offset, final String filter) {
-        super.getChannelList(limit, offset, filter, JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI);
+    public void getChannelList(final int limit, final int offset, final String filter, final int service) {
+        super.getChannelList(limit, offset, filter, service);
     }
 
     /**

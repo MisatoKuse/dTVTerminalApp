@@ -6,18 +6,15 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
@@ -126,16 +123,6 @@ public class ChannelListAdapter extends BaseAdapter {
             switch (mChannelListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
-                    holder.mThumbnail.setVisibility(View.GONE);
-                    DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
-                    float density = displayMetrics.density;
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                            RelativeLayout.LayoutParams.MATCH_PARENT, TEXT_HEIGHT * (int) density);
-                    layoutParams.setMarginStart(TEXT_MARGIN_START * (int) density);
-                    layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-                    layoutParams.setMarginEnd(TEXT_MARGIN_END * (int) density);
-                    view.findViewById(R.id.channel_list_item_title_tv).setLayoutParams(layoutParams);
-                    break;
                 case CH_LIST_DATA_TYPE_HIKARI:
                 case CH_LIST_DATA_TYPE_DCH:
                     holder.mThumbnail.setVisibility(View.VISIBLE);
@@ -186,29 +173,13 @@ public class ChannelListAdapter extends BaseAdapter {
             switch (mChannelListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
-                    if (mData.get(position) instanceof DlnaObject) {
-                        DlnaObject listItem = (DlnaObject) mData.get(position);
-                        if (null != listItem) {
-                            chName = listItem.mChannelName;
-                            thumbnail = null;
-                        }
-                    }
-                    break;
                 case CH_LIST_DATA_TYPE_HIKARI:
+                case CH_LIST_DATA_TYPE_DCH:
                     if (mData.get(position) instanceof ChannelInfo) {
                         ChannelInfo ch = (ChannelInfo) mData.get(position);
                         if (null != ch) {
                             chName = ch.getTitle();
                             thumbnail = ch.getThumbnail();
-                        }
-                    }
-                    break;
-                case CH_LIST_DATA_TYPE_DCH:
-                    if (mData.get(position) instanceof ChannelInfo) {
-                        ChannelInfo ch2 = (ChannelInfo) mData.get(position);
-                        if (null != ch2) {
-                            chName = ch2.getTitle();
-                            thumbnail = ch2.getThumbnail();
                         }
                     }
                     break;

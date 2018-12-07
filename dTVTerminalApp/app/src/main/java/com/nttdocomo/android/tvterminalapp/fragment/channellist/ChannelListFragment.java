@@ -34,31 +34,12 @@ import java.util.List;
 /**
  * チャンネルリスト用フラグメント.
  */
-public class ChannelListFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+public class ChannelListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     /**
      * コールバックリスナー.
      */
     public interface ChannelListFragmentListener {
-        /**
-         * スクロール時のコールバック.
-         *
-         * @param fragment         fragment
-         * @param absListView      absListView
-         * @param firstVisibleItem firstVisibleItem
-         * @param visibleItemCount visibleItemCount
-         * @param totalItemCount   totalItemCount
-         */
-        void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
-
-        /**
-         * スクロール状態が変化した時のコールバック.
-         *
-         * @param fragment    fragment
-         * @param absListView absListView
-         * @param scrollState スクロール状態
-         */
-        void onScrollStateChanged(ChannelListFragment fragment, AbsListView absListView, int scrollState);
 
         /**
          * 表示状態/非表示状態の変化時のコールバック.
@@ -103,9 +84,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     private OnClickChannelItemListener mOnClickChannelItemListener;
     /** フッタービュー.*/
     private View mFootView;
-    /** 宅内、宅外区分.*/
-    private boolean mIsRemote;
-
     /**
      * コンストラクタ.
      */
@@ -194,29 +172,16 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if (null == mFootView) {
             mFootView = View.inflate(getContext(), R.layout.search_load_more, null);
         }
-        showProgressBar(true);
+        if (getDataCount() > 0) {
+            showProgressBar(false);
+        } else {
+            showProgressBar(true);
+        }
 
-        mListView.setOnScrollListener(this);
         mListView.setOnItemClickListener(this);
 
         mChannelListAdapter = new ChannelListAdapter(getContext(), mData);
         mListView.setAdapter(mChannelListAdapter);
-    }
-
-    /**
-     * ローディング処理（ページング）.
-     */
-    public void loadComplete() {
-        mListView.removeFooterView(mFootView);
-    }
-
-    /**
-     * ローディング開始.
-     */
-    public void loadStart() {
-        mListView.addFooterView(mFootView);
-        mListView.setSelection(mListView.getMaxScrollAmount());
-        mFootView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -261,22 +226,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * 最新の接続ステータス取得.
-     * @return true:宅外　false:宅内
-     */
-    public boolean getConnectionStatus() {
-        return StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN;
-    }
-
-    /**
-     * 元の接続ステータス取得.getConnectionStatusとは違い、元々動作していた際のステータスを返却する(変化があるかの確認用).
-     * @return true:宅外　false:宅内
-     */
-    public boolean isRemote() {
-        return mIsRemote;
-    }
-
-    /**
      * 表示するデータを設定する.
      *
      * @param item 表示するデータ
@@ -286,16 +235,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             mData = new ArrayList();
         }
         mData.add(item);
-        mIsRemote = getConnectionStatus();
-    }
-
-    /**
-     * 表示するデータを消去する.
-     */
-    public void clearDatas() {
-        if (null != mData) {
-            mData.clear();
-        }
     }
 
     /**
@@ -318,88 +257,12 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-        if (null != mScrollListener) {
-            mScrollListener.onScrollStateChanged(this, absListView, scrollState);
-        }
-    }
-
-    @Override
-    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        if (null != mScrollListener) {
-            mScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
-        }
-    }
-
-    @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i,
                             final long l) {
         if (mOnClickChannelItemListener != null) {
             //フラグメントも伝えるように変更
             mOnClickChannelItemListener.onClickChannelItem(i, mChannelListDataType, this);
         }
-        if (null == mData || i < 0) {
-            return;
-        }
-
-        RecordedContentsDetailData datas = getParcleData(i);
-        if (null == datas) {
-            return;
-        }
-        if (null != mContext) {
-            Intent intent = new Intent(mContext, ContentDetailActivity.class);
-            intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-            intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
-            ChannelListActivity channelListActivity = (ChannelListActivity) mContext;
-            channelListActivity.startActivity(intent);
-        }
     }
 
-    /**
-     * タップされたコンテンツから、コンテンツ詳細画面に渡すデータを取得する.
-     *
-     * @param i タップされたリスト番号
-     * @return 整形されたデータ
-     */
-    private RecordedContentsDetailData getParcleData(final int i) {
-        RecordedContentsDetailData ret = new RecordedContentsDetailData();
-        if (mChannelListDataType != null) {
-            switch (mChannelListDataType) {
-                case CH_LIST_DATA_TYPE_HIKARI:
-                case CH_LIST_DATA_TYPE_DCH:
-                    return null;
-                case CH_LIST_DATA_TYPE_BS:
-                    DlnaObject bsI = (DlnaObject) mData.get(i);
-                    ret.setUpnpIcon(null);
-                    ret.setSize(bsI.mSize);
-                    ret.setResUrl(bsI.mResUrl);
-                    ret.setResolution(bsI.mResolution);
-                    ret.setBitrate(bsI.mBitrate);
-                    ret.setDuration(bsI.mDuration);
-                    ret.setTitle(bsI.mChannelName);
-                    ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
-                    ret.setVideoType(bsI.mVideoType);
-                    ret.setIsLive(true);
-                    ret.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
-                    break;
-                case CH_LIST_DATA_TYPE_TDB:
-                    DlnaObject bsT = (DlnaObject) mData.get(i);
-                    ret.setUpnpIcon(null);
-                    ret.setSize(bsT.mSize);
-                    ret.setResUrl(bsT.mResUrl);
-                    ret.setResolution(bsT.mResolution);
-                    ret.setBitrate(bsT.mBitrate);
-                    ret.setDuration(bsT.mDuration);
-                    ret.setTitle(bsT.mChannelName);
-                    ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
-                    ret.setVideoType(bsT.mVideoType);
-                    ret.setIsLive(true);
-                    ret.setIsRemote(StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN);
-                    break;
-                default:
-                    return null;
-            }
-        }
-        return ret;
-    }
 }
