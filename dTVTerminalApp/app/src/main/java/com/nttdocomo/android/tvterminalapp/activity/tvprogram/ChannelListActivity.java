@@ -189,7 +189,7 @@ public class ChannelListActivity extends BaseActivity implements
                 break;
             case CH_LIST_DATA_TYPE_DCH:
                 mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_DCH);
-                break;ChannelListFragment
+                break;
             default:
                 break;
         }
