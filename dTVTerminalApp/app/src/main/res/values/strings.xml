@@ -509,6 +509,7 @@
     <string name="google_analytics_screen_name_content_detail_other_dtv">コンテンツ詳細_pure dTV</string>
     <string name="google_analytics_screen_name_content_detail_other_dtv_ch">コンテンツ詳細_pure dTVチャンネル</string>
     <string name="google_analytics_screen_name_content_detail_other_danime">コンテンツ詳細_pure dアニメストア</string>
+    <string name="google_analytics_screen_name_content_detail_other_dazn">コンテンツ詳細_pure DAZN</string>
     <string name="google_analytics_screen_name_recording_list">録画一覧</string>
     <string name="google_analytics_screen_name_recording_list_takeout">録画一覧_持ち出し</string>
     <string name="google_analytics_screen_name_recording_reservation">録画予約</string>

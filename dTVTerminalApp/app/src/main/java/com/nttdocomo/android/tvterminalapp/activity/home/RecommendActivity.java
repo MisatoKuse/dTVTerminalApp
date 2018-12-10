@@ -277,6 +277,10 @@ public class RecommendActivity extends BaseActivity implements
                 screenName = getString(R.string.google_analytics_screen_name_recommend_dtv_channel);
                 serviceName = getString(R.string.google_analytics_custom_dimension_service_dtv_ch);
                 break;
+            case TAB_INDEX_DAZN:
+                screenName = getString(R.string.google_analytics_screen_name_recommend_dazn);
+                serviceName = getString(R.string.google_analytics_custom_dimension_service_dazn);
+                break;
             case TAB_INDEX_DANIME:
                 screenName = getString(R.string.google_analytics_screen_name_recommend_danime);
                 serviceName = getString(R.string.google_analytics_custom_dimension_service_danime);

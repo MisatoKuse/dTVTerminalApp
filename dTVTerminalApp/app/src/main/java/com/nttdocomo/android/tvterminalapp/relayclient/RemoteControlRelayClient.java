@@ -285,7 +285,17 @@ public class RemoteControlRelayClient {
          */
         START_APPLICATION
     }
-
+    // STB側のサービスアプリ
+    /**STB側のサービスアプリの共通バージョンコマンド*/
+    private static final String STB_SERVICE_APPLICATION_CODE = "STB_SERVICE_APPLICATION";
+    /** dアニメストア・バージョンコード ※ アプリの有効バージョンが変更となった場合はこの定数を編集すること .*/
+    private static final String DANIMESTORE_VALID_VERSION = "33"; //33: 中継アプリ側で定義されたコード
+    /** dTV・バージョンコード ※ アプリの有効バージョンが変更となった場合はこの定数を編集すること .*/
+    private static final String DTV_VALID_VERSION = "10905000"; // 10905000: 中継アプリ側で定義されたコード
+    /** dTvチャンネル・バージョンコード ※ アプリの有効バージョンが変更となった場合はこの定数を編集すること .*/
+    private static final String DTVCHANNEL_VALID_VERSION = "45"; // 45: 中継アプリ側で定義されたコード
+    /** DAZN・バージョンコード ※ アプリの有効バージョンが変更となった場合はこの定数を編集すること .*/
+    private static final String DAZN_VALID_VERSION = "136107";
     // アプリ起動要求に対応するアプリ名
     /**dTV.*/
     static final String STB_APPLICATION_DTV = "dTV";  // dTV
@@ -1473,11 +1483,44 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_CONTENTS_ID, contentsId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
+            String stbServiceApplicationCode = getStbServiceApplicationCodeWithApplicationId(applicationId);
+            if (stbServiceApplicationCode != null) {
+                requestJson.put(STB_SERVICE_APPLICATION_CODE, stbServiceApplicationCode);
+            }
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
         }
         return request;
+    }
+
+    /**
+     * 指定のアプリケーションIDでアプリケーションのバージョンコードを返す
+     * @param applicationId　アプリケーションID
+     * @return アプリケーションバージョンコード
+     */
+    private String getStbServiceApplicationCodeWithApplicationId(final String applicationId) {
+        String stbServiceApplicationCode = null;
+        switch (applicationId) {
+            case STB_APPLICATION_DAZN:
+                stbServiceApplicationCode = DAZN_VALID_VERSION;
+                break;
+            case STB_APPLICATION_DTV:
+                stbServiceApplicationCode = DTV_VALID_VERSION;
+                break;
+            case STB_APPLICATION_DANIMESTORE:
+                stbServiceApplicationCode = DANIMESTORE_VALID_VERSION;
+                break;
+            case STB_APPLICATION_DTVCHANNEL:
+                stbServiceApplicationCode = DTVCHANNEL_VALID_VERSION;
+                break;
+            case STB_APPLICATION_HIKARITV:
+                stbServiceApplicationCode = HIKARITV_VALID_VERSION;
+                break;
+            default:
+                break;
+        }
+        return stbServiceApplicationCode;
     }
 
     /**
@@ -1507,6 +1550,10 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_CHNO_DTVCHANNEL, chno);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
+            String stbServiceApplicationCode = getStbServiceApplicationCodeWithApplicationId(applicationId);
+            if (stbServiceApplicationCode != null) {
+                requestJson.put(STB_SERVICE_APPLICATION_CODE, stbServiceApplicationCode);
+            }
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
