@@ -798,8 +798,8 @@ public class ContentUtils {
                     return ContentsType.OTHER;
                 } else {
                     switch (categoryId) {
-                        //categoryId = 01
-                        case RECOMMEND_CATEGORY_ID_ONE:
+                        //categoryId = 02
+                        case RECOMMEND_CATEGORY_ID_TWO:
                             //DAZN
                             return ContentsType.DAZN;
                         default:
@@ -1366,6 +1366,9 @@ public class ContentUtils {
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 screenName = context.getString(R.string.google_analytics_screen_name_content_detail_other_danime);
                 break;
+            case DAZN_CONTENTS_SERVICE_ID:
+                screenName = context.getString(R.string.google_analytics_screen_name_content_detail_other_dazn);
+                break;
             default:
                 break;
         }
@@ -1390,6 +1393,9 @@ public class ContentUtils {
                 break;
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 serviceName = context.getString(R.string.google_analytics_custom_dimension_service_danime);
+                break;
+            case DAZN_CONTENTS_SERVICE_ID:
+                serviceName = context.getString(R.string.google_analytics_custom_dimension_service_dazn);
                 break;
             default:
                 break;
@@ -1416,6 +1422,8 @@ public class ContentUtils {
             case D_ANIMATION_CONTENTS_SERVICE_ID:
                 contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
                 break;
+            case DAZN_CONTENTS_SERVICE_ID:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dazn);
             default:
                 break;
         }

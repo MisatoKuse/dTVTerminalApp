@@ -244,7 +244,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**DAZNパッケージ名.*/
     private static final String DAZN_PACKAGE_NAME = "com.dazn";
     /**DAZNバージョン.*/
-    private static final int DAZN_VERSION_STANDARD = 0;
+    private static final int DAZN_VERSION_STANDARD = 129825;
 
     /**dTVチャンネルパッケージ名.*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
@@ -1140,8 +1140,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     getContentsTypeByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
             //日付表示は一覧系画面と同じように判定する
             if (contentsType == ContentUtils.ContentsType.TV) {
-                //番組(m/d（曜日）h:ii - h:ii)
-                date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
+                int serviceId = mDetailData.getServiceId();
+                if (serviceId == ContentUtils.DAZN_CONTENTS_SERVICE_ID) {
+                    //番組(m/d（曜日）h:ii)
+                    date = DateUtils.getContentsDateString(mDetailData.getmStartDate());
+                } else {
+                    //番組(m/d（曜日）h:ii - h:ii)
+                    date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
+                }
+
                 // コンテンツ詳細(TVの場合、タブ一つに設定する)
                 mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service_tv);
                 setContentsType(ContentUtils.ContentsType.TV);
@@ -2234,8 +2241,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    // long localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
-                    long localVersionCode = 1;
+                    long localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
                     boolean execResult = true;
 
                     //バージョンチェック
