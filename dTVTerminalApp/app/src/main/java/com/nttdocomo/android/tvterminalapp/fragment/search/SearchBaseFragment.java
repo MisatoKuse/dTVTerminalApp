@@ -56,6 +56,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      */
     private TextView mCountText = null;
     /**
+     * 検索結果線.
+     */
+    private TextView mLineText = null;
+    /**
      * スクロールリスナー.
      */
     private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener = null;
@@ -131,7 +135,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             getContext();
             mLoadMoreView = LayoutInflater.from(mContext).inflate(R.layout.search_load_more, mTvListView, false);
         }
-        showProgressBar(true);
         if (getContext() != null) {
             mContentsAdapter = new ContentsAdapter(getContext(), mData, ContentsAdapter.ActivityTypeItem.TYPE_SEARCH_LIST);
         }
@@ -139,6 +142,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
         if (null == mCountText) {
             mCountText = mTvFragmentView.findViewById(R.id.tv_searched_result);
+            mLineText = mTvFragmentView.findViewById(R.id.fragment_search_result_line);
         }
         mNoDataMessage = mTvFragmentView.findViewById(R.id.search_list_no_items);
 
@@ -164,11 +168,24 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
                 return;
             }
             mTvListView.setVisibility(View.GONE);
+            mTvListView.smoothScrollToPosition(0);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {
             mTvListView.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * プロセスバー表示判定.
+     *
+     * @return  true:表示中 false:非表示
+     */
+    public boolean isProgressBarShowing() {
+        if (mRelativeLayout == null) {
+            return false;
+        }
+        return mRelativeLayout.getVisibility() == View.VISIBLE;
     }
 
     /**
@@ -232,8 +249,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (null != mCountText) {
             if (visibility) {
                 mCountText.setVisibility(View.VISIBLE);
+                mLineText.setVisibility(View.VISIBLE);
             } else {
                 mCountText.setVisibility(View.INVISIBLE);
+                mLineText.setVisibility(View.INVISIBLE);
                 setNoDataMessageVisibility(false);
             }
         }
@@ -268,16 +287,22 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     }
 
     @Override
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
+        if (null != mSearchBaseFragmentScrollListener) {
+            mSearchBaseFragmentScrollListener.onUserVisibleHint(isVisibleToUser, this);
+        }
+    }
+
+    @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (null != mSearchBaseFragmentScrollListener) {
+            mSearchBaseFragmentScrollListener.onScrollChanged(this, absListView, scrollState);
+        }
     }
 
     @Override
     public void onScroll(final AbsListView absListView, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
-        if (null != mSearchBaseFragmentScrollListener) {
-            mSearchBaseFragmentScrollListener.onScroll(
-                    this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
-        }
     }
 
     @Override
