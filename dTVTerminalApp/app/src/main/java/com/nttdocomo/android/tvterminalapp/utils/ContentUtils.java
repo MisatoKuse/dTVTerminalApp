@@ -458,7 +458,6 @@ public class ContentUtils {
                     viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
                 }
                 break;
-            case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
             case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1日以内).
                 //見逃しには 〇〇まで表示のみ
                 //見逃し(m/d（曜日）まで)
@@ -473,6 +472,7 @@ public class ContentUtils {
                 }
                 viewingPeriod = DateUtils.getContentsDateString(start);
                 break;
+            case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
             default:
                 break;
         }
@@ -481,14 +481,13 @@ public class ContentUtils {
         switch (periodContentsType) {
             case TV:
             case VOD:
-            case DCHANNEL_VOD_OVER_31:
             case DCHANNEL_VOD_31:
                 if (!TextUtils.isEmpty(viewingPeriod)) {
                     textView.setText(viewingPeriod);
                     textView.setVisibility(View.VISIBLE);
                 }
+            case DCHANNEL_VOD_OVER_31:// ひかりTV内dch_見逃し(３２日以上)の場合日付表示しません.
             case OTHER:
-                break;
             default:
                 break;
         }
@@ -539,7 +538,12 @@ public class ContentUtils {
         if (periodContentsType == ContentsType.TV || periodContentsType == ContentsType.VOD
                 || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
             if (!TextUtils.isEmpty(viewingChannelName)) {
-                hyphenTextView.setVisibility(View.VISIBLE);
+                //ひかりTV内dch_見逃し(３２以上)の場合、「見逃し」のみ表示する
+                if (periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31) {
+                    hyphenTextView.setVisibility(View.GONE);
+                } else {
+                    hyphenTextView.setVisibility(View.VISIBLE);
+                }
                 channelTextView.setVisibility(View.VISIBLE);
                 SpannableString spannableString = new SpannableString(viewingChannelName);
                 int subStart = 0;

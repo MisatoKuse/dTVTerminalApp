@@ -960,9 +960,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
         //ヌルチェック
         if (holder.tv_recorded_ch_name == null || holder.tv_recorded_hyphen == null) {
-            if (!mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST) && !mType.equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) {
-                return;
-            }
+            return;
         }
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT && !mType .equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) { //ランク
             //↓を判定条件に使っているため、直前に初期化
@@ -986,8 +984,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             ContentUtils.ContentsType contentsType = ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
             if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
-                holder.tv_recorded_ch_name.setVisibility(View.GONE);
-                if (!listContentInfo.isIsAfterLimitContents()) {
+                if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
+                    holder.tv_recorded_ch_name.setVisibility(View.GONE);
+                }
+                if (contentsType == ContentUtils.ContentsType.TV && holder.tv_time != null) {
                     holder.tv_time.setVisibility(View.GONE);
                 }
             }
@@ -1118,8 +1118,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
-            case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
-            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -1131,6 +1129,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_RECORDED_LIST: // 録画番組一覧
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+            case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
+            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
