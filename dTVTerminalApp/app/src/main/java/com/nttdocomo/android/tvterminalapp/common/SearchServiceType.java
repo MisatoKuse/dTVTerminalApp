@@ -29,6 +29,10 @@ public class SearchServiceType {
          * ひかりTV.
          */
         public static final String HIKARI_TV_FOR_DOCOMO = "44";
+        /**
+         * DAZN.
+         */
+        public static final String DAZN_CONTENTS = "35";
     }
 
     /**

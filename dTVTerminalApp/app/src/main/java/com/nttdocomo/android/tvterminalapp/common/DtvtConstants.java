@@ -27,7 +27,7 @@ public class DtvtConstants {
     /**
      * サーチエラーID.
      */
-    public static final String SEARCH_ERROR_ID_1 = "ERMD08001";
+    public static final String SEARCH_ERROR_ID_1 = "";
     /**
      * サーチパラメータnullリクエストエラー.
      */

@@ -8,15 +8,17 @@ import android.widget.AbsListView;
 
 /**サーチフラグメントスクロールリスナー.*/
 public interface SearchBaseFragmentScrollListener {
-    //public void onScrollStateChanged(SearchBaseFragment fragment, AbsListView absListView, int scrollState);
-
     /**
      * onScroll callback.
      * @param fragment fragment
      * @param absListView absListView
-     * @param firstVisibleItem firstVisibleItem
-     * @param visibleItemCount visibleItemCount
-     * @param totalItemCount totalItemCount
+     * @param scrollState scrollState
      */
-    void onScroll(SearchBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+    void onScrollChanged(SearchBaseFragment fragment, AbsListView absListView, int scrollState);
+    /**
+     * Fragment見えるのコールバック.
+     * @param isVisibleToUser true:表示 false:非表示
+     * @param searchBaseFragment フラグメント
+     */
+    void onUserVisibleHint(boolean isVisibleToUser, SearchBaseFragment searchBaseFragment);
 }
