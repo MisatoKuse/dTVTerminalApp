@@ -458,10 +458,7 @@ public class SearchTopActivity extends BaseActivity
         findViewById(R.id.fl_search_result).setVisibility(View.VISIBLE);
 
         mSearchViewPager = findViewById(R.id.vp_search_result);
-        mSearchViewPager.setCurrentItem(mTabIndex);
         mTabLayout =  initTabData(mTabLayout, mTabNames);
-        // 最後のタブ位置を復旧
-        mTabLayout.setTab(mTabIndex);
         // tabを表示
         findViewById(R.id.rl_search_tab).setVisibility(View.VISIBLE);
         if (mMainAdapter == null) {
@@ -477,6 +474,9 @@ public class SearchTopActivity extends BaseActivity
                 }
             });
         }
+        mSearchViewPager.setCurrentItem(mTabIndex);
+        // 最後のタブ位置を復旧
+        mTabLayout.setTab(mTabIndex);
         DTVTLogger.end();
     }
 
