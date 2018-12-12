@@ -91,7 +91,7 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
         }
 
         List<Map<String, String>> channelProgramList = tvScheduleList.get(0).geTvsList();
-        if (channelProgramList == null || channelProgramList.size() != 1) {
+        if (channelProgramList == null || channelProgramList.size() == 0) {
             DTVTLogger.error("3");
             // error
             mContentsDataCallback.onContentDataGet(null);

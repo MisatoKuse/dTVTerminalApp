@@ -173,30 +173,6 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     /**
-     * CHリストデータ取得.
-     */
-    private void getChListData() {
-        mNoDataMessage.setVisibility(View.GONE);
-        switch (mCurrentType) {
-            case CH_LIST_DATA_TYPE_HIKARI:
-                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI);
-                break;
-            case CH_LIST_DATA_TYPE_TDB:
-                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_TTB);
-                break;
-            case CH_LIST_DATA_TYPE_BS:
-                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_BS);
-                break;
-            case CH_LIST_DATA_TYPE_DCH:
-                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_DCH);
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    /**
      * onPause処理.
      */
     @Override
@@ -238,6 +214,7 @@ public class ChannelListActivity extends BaseActivity implements
                         sendScreenViewForPosition(position, true);
                     }
                 });
+        mViewPager.setCurrentItem(mTabIndex);
     }
 
     /**
@@ -396,6 +373,31 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.end();
     }
 
+
+    /**
+     * CHリストデータ取得.
+     */
+    private void getChListData() {
+        mNoDataMessage.setVisibility(View.GONE);
+        switch (mCurrentType) {
+            case CH_LIST_DATA_TYPE_HIKARI:
+                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI);
+                break;
+            case CH_LIST_DATA_TYPE_TDB:
+                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_TTB);
+                break;
+            case CH_LIST_DATA_TYPE_BS:
+                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_BS);
+                break;
+            case CH_LIST_DATA_TYPE_DCH:
+                mHikariTvChannelDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_DCH);
+                break;
+            default:
+                break;
+        }
+
+    }
+
     /**
      * データタイプ取得.
      *
@@ -455,13 +457,8 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
-        if (mTabIndex >= 0) {
-            mViewPager.setCurrentItem(mTabIndex);
-            mTabIndex = DEFAULT_TAB_INDEX;
-        }
         int pos = mViewPager.getCurrentItem();
-        ChannelListDataType chType = getTypeFromViewPagerIndex(pos);
-        ChannelListFragment fragment = mFactory.createFragment(pos, this, chType, this);
+        ChannelListFragment fragment = mFactory.createFragment(pos, this, mCurrentType, this);
         fragment.showProgressBar(false);
 
         if (null == channels) {
@@ -494,8 +491,8 @@ public class ChannelListActivity extends BaseActivity implements
             }
             return;
         }
-        fragment = mFactory.createFragment(pos, this, chType, this);
-        switch (chType) {
+
+        switch (mCurrentType) {
             case CH_LIST_DATA_TYPE_HIKARI:
                 mHikariTvChannelList = channels;
                 break;
