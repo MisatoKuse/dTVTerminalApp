@@ -470,6 +470,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (mPlayerData.isIsLive()) {
                         if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
                             showPlayerView();
+                        } else {
+                            mPlayerViewLayout.setVisibility(View.GONE);
                         }
                     } else {
                         setRemotePlayArrow(mPlayerData);
@@ -478,6 +480,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             } else {
                 if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
                     showPlayerView();
+                } else {
+                    mPlayerViewLayout.setVisibility(View.GONE);
                 }
             }
         }
