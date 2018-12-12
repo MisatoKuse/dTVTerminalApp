@@ -795,7 +795,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             cRid[cRid.length - 1] = mDetailData.getContentsId();
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
             int ageReq = userInfoDataProvider.getUserAge();
-            mContentsDetailDataProvider.getContentsDetailData(cRid, "", ageReq);
+            String areaCode = UserInfoUtils.getAreaCode(this);
+            mContentsDetailDataProvider.getContentsDetailData(cRid, "", ageReq, areaCode);
         } else {
             DTVTLogger.debug("contentId取得失敗しました。");
         }

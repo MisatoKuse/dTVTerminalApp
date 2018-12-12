@@ -531,12 +531,13 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * @param crid   取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter release、testa、demo ※指定なしの場合release
      * @param ageReq dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
+     * @param areaCode エリアコード
      */
-    public void getContentsDetailData(final String[] crid, final String filter, final int ageReq) {
+    public void getContentsDetailData(final String[] crid, final String filter, final int ageReq, final String areaCode) {
         mIsInContentsDetailRequest = true;
         if (!isStop) {
             mDetailGetWebClient = new ContentsDetailGetWebClient(mContext);
-            mDetailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
+            mDetailGetWebClient.getContentsDetailApi(crid, filter, ageReq, areaCode, this);
         } else {
             DTVTLogger.error("ContentsDetailDataProvider is stopping connect");
         }

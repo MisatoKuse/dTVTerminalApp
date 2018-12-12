@@ -94,10 +94,11 @@ public class ContentsDetailGetWebClient
      * @param crid                             取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter                           フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq                           年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
+     * @param areaCode                         エリアコード
      * @param contentsDetailJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getContentsDetailApi(final String[] crid, final String filter, final int ageReq,
+    public boolean getContentsDetailApi(final String[] crid, final String filter, final int ageReq, final String areaCode,
                                         final ContentsDetailJsonParserCallback
                                                 contentsDetailJsonParserCallback) {
         if (mIsCancel) {
@@ -115,7 +116,7 @@ public class ContentsDetailGetWebClient
         mContentsDetailJsonParserCallback = contentsDetailJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(crid, filter, ageReq);
+        String sendParameter = makeSendParameter(crid, filter, ageReq, areaCode);
 
         //JSONの組み立てに失敗していれば、falseで帰る
         if (sendParameter.isEmpty()) {
@@ -172,9 +173,10 @@ public class ContentsDetailGetWebClient
      * @param crids  取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq 年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
+     * @param areaCode エリアコード
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(final String[] crids, final String filter, final int ageReq) {
+    private String makeSendParameter(final String[] crids, final String filter, final int ageReq, final String areaCode) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -197,6 +199,8 @@ public class ContentsDetailGetWebClient
                 jsonObject.put(FILTER_PARAM, filter);
 
             }
+
+            jsonObject.put(JsonConstants.META_RESPONSE_AREA_CODE, areaCode);
 
             int intAge = ageReq;
             //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
