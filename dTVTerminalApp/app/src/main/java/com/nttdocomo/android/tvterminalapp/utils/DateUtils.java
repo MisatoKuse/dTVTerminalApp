@@ -867,8 +867,10 @@ public class DateUtils {
     public static ContentUtils.ContentsType getContentsTypeByAvailEndDate(final long startDate, final long endDate) {
         //VODコンテンツの配信開始前又は配信終了日が31日以内でない時は配信日付を表示しないため OTHER を設定する
         ContentUtils.ContentsType cType = ContentUtils.ContentsType.OTHER;
-        if (isIn31Day(endDate) || DateUtils.isBefore(startDate)) {
-            cType = ContentUtils.ContentsType.VOD;
+        if (startDate <= endDate) {
+            if (isIn31Day(endDate) || DateUtils.isBefore(startDate)) {
+                cType = ContentUtils.ContentsType.VOD;
+            }
         }
         return cType;
     }

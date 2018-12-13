@@ -458,7 +458,6 @@ public class ContentUtils {
                     viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
                 }
                 break;
-            case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
             case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1日以内).
                 //見逃しには 〇〇まで表示のみ
                 //見逃し(m/d（曜日）まで)
@@ -473,6 +472,7 @@ public class ContentUtils {
                 }
                 viewingPeriod = DateUtils.getContentsDateString(start);
                 break;
+            case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
             default:
                 break;
         }
@@ -481,14 +481,13 @@ public class ContentUtils {
         switch (periodContentsType) {
             case TV:
             case VOD:
-            case DCHANNEL_VOD_OVER_31:
             case DCHANNEL_VOD_31:
                 if (!TextUtils.isEmpty(viewingPeriod)) {
                     textView.setText(viewingPeriod);
                     textView.setVisibility(View.VISIBLE);
                 }
+            case DCHANNEL_VOD_OVER_31:// ひかりTV内dch_見逃し(３２日以上)の場合日付表示しません.
             case OTHER:
-                break;
             default:
                 break;
         }
@@ -539,7 +538,12 @@ public class ContentUtils {
         if (periodContentsType == ContentsType.TV || periodContentsType == ContentsType.VOD
                 || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
             if (!TextUtils.isEmpty(viewingChannelName)) {
-                hyphenTextView.setVisibility(View.VISIBLE);
+                //ひかりTV内dch_見逃し(３２以上)の場合、「見逃し」のみ表示する
+                if (periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31) {
+                    hyphenTextView.setVisibility(View.GONE);
+                } else {
+                    hyphenTextView.setVisibility(View.VISIBLE);
+                }
                 channelTextView.setVisibility(View.VISIBLE);
                 SpannableString spannableString = new SpannableString(viewingChannelName);
                 int subStart = 0;
@@ -1204,6 +1208,18 @@ public class ContentUtils {
         long vodLimitDate = 0;
         //現在Epoch秒
         long nowDate = DateUtils.getNowTimeFormatEpoch();
+        if (!TextUtils.isEmpty(puid)) {
+            for (ActiveData activeData : activeList) {
+                String license_id = activeData.getLicenseId();
+                if (puid.equals(license_id)) {
+                    long validEndDate = activeData.getValidEndDate();
+                    if (validEndDate > nowDate) {
+                        vodLimitDate = validEndDate;
+                    }
+                    break;
+                }
+            }
+        }
 
         if (liinfArray != null && activeList != null) {
             for (String liinf : liinfArray) {
@@ -1216,12 +1232,12 @@ public class ContentUtils {
                     String license_id = activeData.getLicenseId();
                     if (license_id != null) {
                         //対象VODのpuid、liinf_arrayのライセンスID（パイプ区切り）と購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
-                        if (column.length > 2 && (license_id.equals(column[0]) || license_id.equals(puid))) {
+                        if (column.length > 2 && license_id.equals(column[0])) {
                             //２カラム目 <= sysdate <= ３カラム目 であれば視聴可能。
                             if (DateUtils.getEpochTime(column[1]) <= nowDate && nowDate <= DateUtils.getEpochTime(column[2])) {
                                 long validEndDate = activeData.getValidEndDate();
                                 //一致した「active_list」の「valid_end_date」> 現在時刻の場合（一件でも条件を満たせば視聴可能）
-                                if (activeData.getValidEndDate() > nowDate) {
+                                if (validEndDate > nowDate) {
                                     if (vodLimitDate < validEndDate) {
                                         vodLimitDate = validEndDate;
                                     }

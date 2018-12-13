@@ -313,6 +313,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             vodMetaFullData.setmVod_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
             vodMetaFullData.setmVod_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             vodMetaFullData.setEstFlag(estFlg);
+            vodMetaFullData.setPuid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_PUID));
             String liinf_array = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_LIINF_ARRAY);
             if (!TextUtils.isEmpty(liinf_array) && liinf_array.contains(COMMA)) {
                 vodMetaFullData.setmLiinf_array(liinf_array.split(COMMA));

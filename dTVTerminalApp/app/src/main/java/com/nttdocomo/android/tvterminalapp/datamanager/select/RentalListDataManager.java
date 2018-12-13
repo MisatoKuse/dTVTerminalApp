@@ -63,7 +63,7 @@ public class RentalListDataManager {
                 JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_CHNO,
                 JsonConstants.META_RESPONSE_DISPLAY_START_DATE, JsonConstants.META_RESPONSE_DUR,
                 JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_CHSVOD,
-                JsonConstants.META_RESPONSE_LIINF_ARRAY
+                JsonConstants.META_RESPONSE_LIINF_ARRAY, JsonConstants.META_RESPONSE_PUID
         };
         List<Map<String, String>> list = null;
 

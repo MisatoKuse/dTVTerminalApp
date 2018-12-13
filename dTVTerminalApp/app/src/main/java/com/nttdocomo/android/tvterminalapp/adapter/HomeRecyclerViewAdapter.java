@@ -354,8 +354,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 //配信期限の設定
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
                 contentsType =  ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData, null);
-                if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31 && (mIndex == HOME_CONTENTS_SORT_VOD_CLIP || mIndex == HOME_CONTENTS_SORT_WATCHING_VIDEO)) {
-                    if (viewHolder.mTime != null) {
+                if (mIndex == HOME_CONTENTS_SORT_VOD_CLIP || mIndex == HOME_CONTENTS_SORT_WATCHING_VIDEO) {
+                    if (viewHolder.mTime != null && contentsType == ContentUtils.ContentsType.TV) {
                         viewHolder.mTime.setVisibility(View.GONE);
                     }
                 }
@@ -680,7 +680,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 String startViewing = contentsData.getStartViewing();
                 return !TextUtils.isEmpty(startViewing) && DateUtils.isInOneWeek(startViewing);
             default:
-                if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31
+                        || contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
                     //「見逃し」コンテンツはVodStartDateを使用する
                     long vodStartDate = contentsData.getVodStartDate();
                     return DateUtils.isInOneWeek(vodStartDate);
