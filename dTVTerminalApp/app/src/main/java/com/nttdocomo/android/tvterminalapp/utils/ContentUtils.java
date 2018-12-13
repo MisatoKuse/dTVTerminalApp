@@ -1208,6 +1208,18 @@ public class ContentUtils {
         long vodLimitDate = 0;
         //現在Epoch秒
         long nowDate = DateUtils.getNowTimeFormatEpoch();
+        if (!TextUtils.isEmpty(puid)) {
+            for (ActiveData activeData : activeList) {
+                String license_id = activeData.getLicenseId();
+                if (puid.equals(license_id)) {
+                    long validEndDate = activeData.getValidEndDate();
+                    if (validEndDate > nowDate) {
+                        vodLimitDate = validEndDate;
+                    }
+                    break;
+                }
+            }
+        }
 
         if (liinfArray != null && activeList != null) {
             for (String liinf : liinfArray) {
@@ -1220,12 +1232,12 @@ public class ContentUtils {
                     String license_id = activeData.getLicenseId();
                     if (license_id != null) {
                         //対象VODのpuid、liinf_arrayのライセンスID（パイプ区切り）と購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
-                        if (column.length > 2 && (license_id.equals(column[0]) || license_id.equals(puid))) {
+                        if (column.length > 2 && license_id.equals(column[0])) {
                             //２カラム目 <= sysdate <= ３カラム目 であれば視聴可能。
                             if (DateUtils.getEpochTime(column[1]) <= nowDate && nowDate <= DateUtils.getEpochTime(column[2])) {
                                 long validEndDate = activeData.getValidEndDate();
                                 //一致した「active_list」の「valid_end_date」> 現在時刻の場合（一件でも条件を満たせば視聴可能）
-                                if (activeData.getValidEndDate() > nowDate) {
+                                if (validEndDate > nowDate) {
                                     if (vodLimitDate < validEndDate) {
                                         vodLimitDate = validEndDate;
                                     }
