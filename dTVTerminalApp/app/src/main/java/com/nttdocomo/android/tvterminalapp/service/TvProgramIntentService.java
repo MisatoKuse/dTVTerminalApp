@@ -70,8 +70,7 @@ public class TvProgramIntentService extends IntentService {
      * @param areaCode エリアコード
      * @return チャンネル一覧
      */
-    private List<Map<String, String>> getChannelDataFromApi(final String areaCode) {
-        List<Map<String, String>> channelMap = new ArrayList<>();
+    private void getChannelDataFromApi(final String areaCode) {
         mChannelWebClientSync = new ChannelWebClientSync();
         mChannelWebClientSync.enableConnect();
         List<ChannelList> channelLists = mChannelWebClientSync.getChannelApi(getApplicationContext(), 0, 0, "", "", areaCode);
@@ -80,10 +79,9 @@ public class TvProgramIntentService extends IntentService {
             ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(getApplicationContext());
             channelInsertDataManager.insertChannelInsertList(channelLists.get(0));
             if (channelLists.get(0).getChannelList() != null) {
-                channelMap = getBeforeStorageChanelList(channelLists.get(0).getChannelList());
+                getBeforeStorageChanelList(channelLists.get(0).getChannelList());
             }
         }
-        return channelMap;
     }
 
     /**
@@ -94,28 +92,18 @@ public class TvProgramIntentService extends IntentService {
 
         DateUtils dateUtils = new DateUtils(TvProgramIntentService.this);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        List<Map<String, String>> channelMap;
         String areaCode = UserInfoUtils.getAreaCode(getApplicationContext());
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) && NetWorkUtils.isOnline(TvProgramIntentService.this)) {
             //非同期処理のチャンネルリスト取得を、同期処理として実行する
-            channelMap = getChannelDataFromApi(areaCode);
+            getChannelDataFromApi(areaCode);
         } else {
             ProgramDataManager channelDataManager = new ProgramDataManager(TvProgramIntentService.this);
             if (!TextUtils.isEmpty(areaCode)) {
                 List<Map<String, String>> resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.CH_SERVICE_TYPE_INDEX_TTB);
                 if (resultSet == null || resultSet.size() == 0) {
-                    channelMap = getChannelDataFromApi(areaCode);
-                } else {
-                    channelMap = getBeforeStorageChanelList(channelDataManager.selectChannelListProgramData(JsonConstants.CH_SERVICE_TYPE_INDEX_ALL));
+                    getChannelDataFromApi(areaCode);
                 }
-            } else {
-                channelMap = getBeforeStorageChanelList(channelDataManager.selectChannelListProgramData(JsonConstants.CH_SERVICE_TYPE_INDEX_ALL));
             }
-        }
-
-        if (channelMap != null && channelMap.size() > 0) {
-            //番組表取得(チャンネルリストの先頭10件)
-            getTvSchedule(channelMap);
         }
         DTVTLogger.end();
     }
@@ -124,9 +112,8 @@ public class TvProgramIntentService extends IntentService {
      * チャンネル一覧から先頭各10件を抽出(h4d,dTv).
      *
      * @param hashMapList チャンネル一覧
-     * @return チャンネル一覧(抽出後)
      */
-    private List<Map<String, String>> getBeforeStorageChanelList(final List<Map<String, String>> hashMapList) {
+    private void getBeforeStorageChanelList(final List<Map<String, String>> hashMapList) {
         List<Map<String, String>> channelMap = new ArrayList<>();
         List<Map<String, String>> dTvChannelMap = new ArrayList<>();
         List<Map<String, String>> ttbChannelMap = new ArrayList<>();
@@ -168,10 +155,16 @@ public class TvProgramIntentService extends IntentService {
                 break;
             }
         }
+        if (ttbChannelMap.size() > 0) {
+            //番組表取得(地テジの先頭10件)
+            getTvSchedule(ttbChannelMap);
+        }
         channelMap.addAll(dTvChannelMap);
-        channelMap.addAll(ttbChannelMap);
         channelMap.addAll(bsChannelMap);
-        return channelMap;
+        if (channelMap.size() > 0) {
+            //番組表取得(h4d、BS、dtvチャンネルの先頭10件)
+            getTvSchedule(channelMap);
+        }
     }
 
     /**
