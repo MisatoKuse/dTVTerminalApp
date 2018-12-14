@@ -168,6 +168,7 @@ public class ChannelListActivity extends BaseActivity implements
         super.onStartCommunication();
         if (null == mHikariTvChannelDataProvider) {
             mHikariTvChannelDataProvider = new HikariTvChannelDataProvider(this, this);
+            mHikariTvChannelDataProvider.setAreaCode(UserInfoUtils.getAreaCode(this));
         }
         mHikariTvChannelDataProvider.enableConnect();
     }
@@ -190,6 +191,7 @@ public class ChannelListActivity extends BaseActivity implements
         mFactory = new ChannelListFragmentFactory();
         if (null == mHikariTvChannelDataProvider) {
             mHikariTvChannelDataProvider = new HikariTvChannelDataProvider(this, this);
+            mHikariTvChannelDataProvider.setAreaCode(UserInfoUtils.getAreaCode(this));
         }
     }
 
