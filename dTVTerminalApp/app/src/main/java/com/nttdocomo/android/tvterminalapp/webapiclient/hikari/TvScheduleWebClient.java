@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -199,57 +200,6 @@ public class TvScheduleWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック.
-     *
-     * @param chno                         チャンネル番号
-     * @param date                         日付（"now"を指定した場合、現在放送中番組を返却)
-     * @param filter                       フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param tvScheduleJsonParserCallback コールバック
-     * @return 値がおかしいならばfalse
-     */
-    private boolean checkNormalParameter(final int[] chno, final String[] date, final String filter,
-                                         final TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
-        //パラメーターのチェック
-        if (chno.length == 0) {
-            //データが一つもなければエラー
-            return false;
-        }
-
-        if (date == null || date.length == 0) {
-            //データが一つもなければエラー
-            return false;
-        }
-
-        for (String singleDate : date) {
-            if (!checkDateString(singleDate)) {
-                if (!singleDate.equals(DATE_NOW)) {
-                    //日付でも"now"でもない文字だったので、エラー
-                    return false;
-                }
-            }
-        }
-
-        //フィルター用の固定値をひとまとめにする
-        List<String> filterList = makeStringArry(FILTER_RELEASE, FILTER_TESTA, FILTER_DEMO);
-
-        //指定された文字がひとまとめにした中に含まれるか確認
-        if (filterList.indexOf(filter) == -1) {
-            //空文字ならば有効なので、それ以外はfalse
-            if (!filter.isEmpty()) {
-                return false;
-            }
-        }
-
-        //コールバックがヌルならばfalse
-        if (tvScheduleJsonParserCallback == null) {
-            return false;
-        }
-
-        //何もエラーが無いのでtrue
-        return true;
-    }
-
-    /**
      * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param serviceIdUniq   サービスIDユニーク
@@ -280,7 +230,9 @@ public class TvScheduleWebClient
                 //その他
                 jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
             }
-            jsonObject.put(JsonConstants.META_RESPONSE_AREA_CODE, areaCode);
+            if (!TextUtils.isEmpty(areaCode)) {
+                jsonObject.put(JsonConstants.META_RESPONSE_AREA_CODE, areaCode);
+            }
             answerText = jsonObject.toString();
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする

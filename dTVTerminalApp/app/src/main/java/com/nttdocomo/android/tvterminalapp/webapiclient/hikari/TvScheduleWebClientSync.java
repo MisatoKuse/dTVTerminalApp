@@ -70,7 +70,7 @@ public class TvScheduleWebClientSync implements TvScheduleWebClient.TvScheduleJs
                             }
                         }
                         if (scheduleInfoList.size() < 1) {
-                            scheduleInfoList.add(DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(mContext, serviceIdUniq, false), null));
+                            continue;
                         }
                         channelInfo.setSchedules(scheduleInfoList);
                         mChannelInfoList.addChannel(channelInfo);
