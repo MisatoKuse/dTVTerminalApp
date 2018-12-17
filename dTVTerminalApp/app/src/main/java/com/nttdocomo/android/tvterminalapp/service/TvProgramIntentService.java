@@ -68,7 +68,6 @@ public class TvProgramIntentService extends IntentService {
      * チャンネルデータ.
      *
      * @param areaCode エリアコード
-     * @return チャンネル一覧
      */
     private void getChannelDataFromApi(final String areaCode) {
         mChannelWebClientSync = new ChannelWebClientSync();
@@ -98,12 +97,7 @@ public class TvProgramIntentService extends IntentService {
             getChannelDataFromApi(areaCode);
         } else {
             ProgramDataManager channelDataManager = new ProgramDataManager(TvProgramIntentService.this);
-            if (!TextUtils.isEmpty(areaCode)) {
-                List<Map<String, String>> resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.CH_SERVICE_TYPE_INDEX_TTB);
-                if (resultSet == null || resultSet.size() == 0) {
-                    getChannelDataFromApi(areaCode);
-                }
-            }
+            getBeforeStorageChanelList(channelDataManager.selectChannelListProgramData(JsonConstants.CH_SERVICE_TYPE_INDEX_ALL));
         }
         DTVTLogger.end();
     }
