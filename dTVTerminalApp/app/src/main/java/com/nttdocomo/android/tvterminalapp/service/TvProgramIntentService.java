@@ -114,7 +114,7 @@ public class TvProgramIntentService extends IntentService {
      * @param hashMapList チャンネル一覧
      */
     private void getBeforeStorageChanelList(final List<Map<String, String>> hashMapList) {
-        List<Map<String, String>> channelMap = new ArrayList<>();
+        List<Map<String, String>> h4dChannelMap = new ArrayList<>();
         List<Map<String, String>> dTvChannelMap = new ArrayList<>();
         List<Map<String, String>> ttbChannelMap = new ArrayList<>();
         List<Map<String, String>> bsChannelMap = new ArrayList<>();
@@ -124,8 +124,8 @@ public class TvProgramIntentService extends IntentService {
                 switch (service) {
                     case ProgramDataManager.CH_SERVICE_HIKARI:
                         //h4dチャンネルを10件取得
-                        if (channelMap.size() < 10) {
-                            channelMap.add(hashMapList.get(i));
+                        if (h4dChannelMap.size() < 10) {
+                            h4dChannelMap.add(hashMapList.get(i));
                         }
                         break;
                     case ProgramDataManager.CH_SERVICE_DCH:
@@ -151,28 +151,37 @@ public class TvProgramIntentService extends IntentService {
                 }
             }
             //h4d、dTvチャンネルが両方10件取得出来たらループを抜ける
-            if (channelMap.size() > 9 && dTvChannelMap.size() > 9 && ttbChannelMap.size() > 9 && bsChannelMap.size() > 9) {
+            if (h4dChannelMap.size() > 9 && dTvChannelMap.size() > 9 && ttbChannelMap.size() > 9 && bsChannelMap.size() > 9) {
                 break;
             }
         }
         if (ttbChannelMap.size() > 0) {
             //番組表取得(地テジの先頭10件)
-            getTvSchedule(ttbChannelMap);
+            String areaCode = UserInfoUtils.getAreaCode(getApplicationContext());
+            if (!TextUtils.isEmpty(areaCode)) {
+                getTvSchedule(ttbChannelMap, UserInfoUtils.getAreaCode(getApplicationContext()));
+            }
         }
-        channelMap.addAll(dTvChannelMap);
-        channelMap.addAll(bsChannelMap);
-        if (channelMap.size() > 0) {
-            //番組表取得(h4d、BS、dtvチャンネルの先頭10件)
-            getTvSchedule(channelMap);
+        if (dTvChannelMap.size() > 0) {
+            //番組表取得(dTVチャンネル先頭10件)
+            getTvSchedule(dTvChannelMap, null);
+        }
+        if (bsChannelMap.size() > 0) {
+            //番組表取得(BS先頭10件)
+            getTvSchedule(bsChannelMap, null);
+        }
+        if (h4dChannelMap.size() > 0) {
+            //番組表取得(h4d先頭10件)
+            getTvSchedule(h4dChannelMap, null);
         }
     }
 
     /**
      * 番組表取得(先頭10件(ひかり、dChを各10件づつ)).
-     *
+     * @param areaCode エリアコード
      * @param getChannelList 取得対象チャンネルリスト
      */
-    private void getTvSchedule(final List<Map<String, String>> getChannelList) {
+    private void getTvSchedule(final List<Map<String, String>> getChannelList, final String areaCode) {
         DTVTLogger.start();
         List<String> serviceIdUniqList = new ArrayList<>();
         //チャンネル一覧からチャンネル番号のみを取得
@@ -207,7 +216,6 @@ public class TvProgramIntentService extends IntentService {
             String[] dateList = new String[]{DateUtils.getStringNowDate()};
             mTvScheduleWebClientSync = new TvScheduleWebClientSync(TvProgramIntentService.this);
             mTvScheduleWebClientSync.enableConnect();
-            String areaCode = UserInfoUtils.getAreaCode(getApplicationContext());
             ChannelInfoList channelInfoList = mTvScheduleWebClientSync.getTvScheduleApi(getApplicationContext(), fromWebAPIServiceIdUniqs, dateList, "", areaCode);
             //サービス中断時に channelInfoList が null で返却される可能性があるためチェックを入れる
             if (channelInfoList != null && channelInfoList.getChannels() != null) {

@@ -703,18 +703,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         //データをWebAPIから取得する
         if (!mIsStop) {
             if (fromWebAPI.size() > 0) {
+                String[] serviceIdUniqs = new String[fromWebAPI.size()];
+                for (int i = 0; i < fromWebAPI.size(); i++) {
+                    serviceIdUniqs[i] = fromWebAPI.get(i);
+                }
                 if (NetWorkUtils.isOnline(mContext)) {
-                    String[] serviceIdUniqs = new String[fromWebAPI.size()];
-                    for (int i = 0; i < fromWebAPI.size(); i++) {
-                        serviceIdUniqs[i] = fromWebAPI.get(i);
-                    }
                     //キューに仕込む分はローカル変数を作成する(中断処理が別系統となるため)
                     TvScheduleWebClient tvScheduleWebClient = new TvScheduleWebClient(mContext);
                     tvScheduleWebClient.setChannelNoList(serviceIdUniqs, dateList, PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE);
                     mTvScheduleWebClientLinkedList.offer(tvScheduleWebClient);
                     pollTvScheduleWebClient();
                 } else {
-                    sendChannelInfoList(null, serviceIdUniq);
+                    sendChannelInfoList(null, serviceIdUniqs);
                 }
             }
         } else {
