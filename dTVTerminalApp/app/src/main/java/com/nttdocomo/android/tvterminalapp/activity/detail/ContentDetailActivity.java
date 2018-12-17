@@ -2241,7 +2241,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    long localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
+                    long localVersionCode = getVersionCode(DAZN_PACKAGE_NAME);
                     boolean execResult = true;
 
                     //バージョンチェック
