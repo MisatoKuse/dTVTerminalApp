@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
@@ -149,6 +150,17 @@ public class TvScheduleInsertDataManager {
         List<ChannelInfo> channelInformation = channelInfoList.getChannels();
         synchronized (channelInformation) {
             for (ChannelInfo channelInfo : channelInformation) {
+                ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
+                if (scheduleInformation == null) {
+                    continue;
+                }
+                if (mContext != null && scheduleInformation.size() == 1) {
+                    String title = scheduleInformation.get(0).getTitle();
+                    if (mContext.getString(R.string.common_failed_data_message).equals(title)
+                            || mContext.getString(R.string.common_empty_data_message).equals(title)) {
+                        continue;
+                    }
+                }
                 //DB名としてチャンネル番号を取得.
                 String serviceIdUniq = channelInfo.getServiceIdUniq();
                 DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, serviceIdUniq);
@@ -162,7 +174,6 @@ public class TvScheduleInsertDataManager {
                     TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
                     //ContentValuesに変換してDBに保存する.
-                    ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
                     try {
                         DTVTLogger.debug("bulk insert start");
                         database.beginTransaction();
