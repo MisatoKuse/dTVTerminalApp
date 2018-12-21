@@ -27,10 +27,8 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.Display;
-import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -57,6 +55,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataMan
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.StbMetaInfoGetDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -101,6 +100,7 @@ import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.StbMetaInfoResponseData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 
 import java.io.File;
@@ -129,7 +129,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         RemoteControllerView.OnStartRemoteControllerUIListener,
         DtvContentsDetailFragment.RecordingReservationIconListener,
         DtvContentsChannelFragment.ChangedScrollLoadListener,
-        SearchDataProvider.SearchDataProviderListener {
+        StbMetaInfoGetDataProvider.StbMetaInfoGetDataProviderListener {
 
     /** エラータイプ.*/
     private enum ErrorType {
@@ -163,8 +163,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ContentsDetailDataProvider mContentsDetailDataProvider = null;
     /** 縮小番組表データプロバイダー .*/
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
-    /** 検索データプロバイダー .*/
-    private SearchDataProvider mSearchDataProvider = null;
+//    /** 検索データプロバイダー .*/
+//    private SearchDataProvider mSearchDataProvider = null;
+    /** STBメタデータ取得データプロバイダー .*/
+    private StbMetaInfoGetDataProvider mStbMetaInfoGetDataProvider = null;
     /** サムネイルプロバイダー .*/
     private ThumbnailProvider mThumbnailProvider = null;
     /** サムネイル取得処理ストップフラグ .*/
@@ -571,9 +573,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
                     stopScaledProListDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
                 }
-                if (mSearchDataProvider != null) {
-                    StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
-                    stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSearchDataProvider);
+                if (mStbMetaInfoGetDataProvider != null) {
+//                    StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
+//                    stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mStbMetaInfoGetDataProvider);
                 }
                 if (mSendOperateLog != null) {
                     StopSendOperateLog stopSendOperateLog = new StopSendOperateLog();
@@ -633,8 +635,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mScaledDownProgramListDataProvider != null) {
                     mScaledDownProgramListDataProvider.enableConnect();
                 }
-                if (mSearchDataProvider != null) {
-                    mSearchDataProvider.enableConnect();
+                if (mStbMetaInfoGetDataProvider != null) {
+                    mStbMetaInfoGetDataProvider.enableConnect();
                 }
                 if (mSendOperateLog != null) {
                     mSendOperateLog.enableConnection();
@@ -1531,12 +1533,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void getContentDetailInfoFromSearchServer() {
 
-        if (mSearchDataProvider == null) {
-            mSearchDataProvider = new SearchDataProvider();
+        if (mStbMetaInfoGetDataProvider == null) {
+            mStbMetaInfoGetDataProvider = new StbMetaInfoGetDataProvider();
         }
 
         if (mDetailData != null) {
-            mSearchDataProvider.getContentDetailInfo(mDetailData.getContentsId(), String.valueOf(mDetailData.getServiceId()), this);
+            mStbMetaInfoGetDataProvider.getStbMetaInfo(mDetailData.getContentsId(), String.valueOf(mDetailData.getServiceId()), mDetailData.getCategoryId(), this);
         }
 
     }
@@ -4159,9 +4161,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mContentsDetailDataProvider != null) {
                     //コンテンツ詳細プロバイダーが存在すれば、そこからエラー値を取得する
                     errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
-                } else if (mSearchDataProvider != null) {
+                } else if (mStbMetaInfoGetDataProvider != null) {
                     //検索データプロバイダーが存在すれば、そこからエラー値を取得する
-                    errorState = mSearchDataProvider.getError();
+                    errorState = mStbMetaInfoGetDataProvider.getError();
                 } else {
                     //どちらのデータプロバイダーも無ければ、何もできないので帰る（ここに来るケースは無い筈）
                     DTVTLogger.debug(
@@ -4290,35 +4292,35 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onSearchDataProviderFinishOk(final ResultType<TotalSearchContentInfo> resultType) {
+    public void onStbMetaInfoGetDataProviderFinishOk(final ResultType<StbMetaInfoResponseData> resultType) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                TotalSearchContentInfo result = resultType.getResultType();
-
-                if (result.getContentsDataList().size() > 0) {
-                    ContentsData info = result.getContentsDataList().get(0);
-                    DtvContentsDetailFragment detailFragment = getDetailFragment();
-                    mDetailData.setTitleKind(info.getTitleKind());
-                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
-                    if (detailData != null) {
-                        detailData.setDescription1(info.getDescription1());
-                        detailData.setDescription2(info.getDescription2());
-                        detailData.setDescription3(info.getDescription3());
-                        detailData.setDetail(info.getSynopFromDescription());
-                        detailFragment.setOtherContentsDetailData(detailData);
-                        detailFragment.refreshDescription();
-                    }
-                }
-                // titleKind 取得完了フラグを立てる
-                mIsTitleKind = true;
+//                TotalSearchContentInfo result = resultType.getResultType();
+//
+//                if (result.getContentsDataList().size() > 0) {
+//                    ContentsData info = result.getContentsDataList().get(0);
+//                    DtvContentsDetailFragment detailFragment = getDetailFragment();
+//                    mDetailData.setTitleKind(info.getTitleKind());
+//                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+//                    if (detailData != null) {
+//                        detailData.setDescription1(info.getDescription1());
+//                        detailData.setDescription2(info.getDescription2());
+//                        detailData.setDescription3(info.getDescription3());
+//                        detailData.setDetail(info.getSynopFromDescription());
+//                        detailFragment.setOtherContentsDetailData(detailData);
+//                        detailFragment.refreshDescription();
+//                    }
+//                }
+//                // titleKind 取得完了フラグを立てる
+//                mIsTitleKind = true;
                 showProgressBar(false);
             }
         });
     }
 
     @Override
-    public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
+    public void onStbMetaInfoGetDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
