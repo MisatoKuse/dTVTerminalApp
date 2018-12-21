@@ -81,8 +81,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private DlnaContentRecordedDataProvider mDlnaContentRecordedDataProvider;
     /** Fragment作成クラス. */
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
-    /** 値渡すキー. */
-    public static final String RECORD_LIST_KEY = "recordListKey";
     /** 日付フォーマット. */
     public static final String sMinus = "-";
     /** タブ名. */

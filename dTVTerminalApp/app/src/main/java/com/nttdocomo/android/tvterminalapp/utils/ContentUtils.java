@@ -1196,16 +1196,17 @@ public class ContentUtils {
      *
      * @param metaFullData Vodメタデータ
      * @param activeList Activeリスト
-     * @return valid_end_date
+     * @param isEndDate isEndDate
+     * @return isEndDate true:valid_end_date false:ライセンスID
      */
-    public static long getRentalVodValidEndDate(
-            final VodMetaFullData metaFullData, final ArrayList<ActiveData> activeList) {
+    public static String getRentalVodValidInfo(final VodMetaFullData metaFullData, final ArrayList<ActiveData> activeList, final boolean isEndDate) {
         //購入済みVOD取得からの戻り(視聴可否判定)
         String[] liinfArray = metaFullData.getmLiinf_array();
         String puid = metaFullData.getPuid();
 
         //最長のvalid_end_dateを格納する
         long vodLimitDate = 0;
+        String licenseId = "";
         //現在Epoch秒
         long nowDate = DateUtils.getNowTimeFormatEpoch();
         if (!TextUtils.isEmpty(puid)) {
@@ -1215,6 +1216,7 @@ public class ContentUtils {
                     long validEndDate = activeData.getValidEndDate();
                     if (validEndDate > nowDate) {
                         vodLimitDate = validEndDate;
+                        licenseId = license_id;
                     }
                     break;
                 }
@@ -1240,6 +1242,7 @@ public class ContentUtils {
                                 if (validEndDate > nowDate) {
                                     if (vodLimitDate < validEndDate) {
                                         vodLimitDate = validEndDate;
+                                        licenseId = license_id;
                                     }
                                 }
                             }
@@ -1248,7 +1251,11 @@ public class ContentUtils {
                 }
             }
         }
-        return vodLimitDate;
+        if (isEndDate) {
+            return String.valueOf(vodLimitDate);
+        } else {
+            return licenseId;
+        }
     }
 
     /**

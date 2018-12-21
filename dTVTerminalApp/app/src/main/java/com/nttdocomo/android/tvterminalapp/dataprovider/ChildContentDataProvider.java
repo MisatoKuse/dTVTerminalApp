@@ -335,7 +335,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setAvailStartDate(vodMetaFullData.getAvail_start_date());
             if (mIsRental) {
                 // activeDataList から視聴可能期限を取り出し、配信期限(AvailEndDate)として使用する(DREM-2275の仕様)
-                long activeEndDate = ContentUtils.getRentalVodValidEndDate(vodMetaFullData, mActiveDatas);
+                String result = ContentUtils.getRentalVodValidInfo(vodMetaFullData, mActiveDatas, true);
+                long activeEndDate = Long.parseLong(result);
                 data.setAvailEndDate(activeEndDate);
                 data.setIsRental(mIsRental);
             } else {

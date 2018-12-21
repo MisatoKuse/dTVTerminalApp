@@ -36,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -309,7 +310,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 }
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
-                intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, detailData);
+                intent.putExtra(ContentDetailUtils.RECORD_LIST_KEY, detailData);
                 RecordedListActivity recordedListActivity = (RecordedListActivity) mActivity;
                 recordedListActivity.startActivity(intent);
             }
