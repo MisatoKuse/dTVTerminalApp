@@ -14,6 +14,12 @@ public class BaseUrlConstants {
             "https://ve.m.service.smt.docomo.ne.jp/srermd/search/index.do";
 
     /**
+     * STBメタデータ取得APIのURL.
+     */
+    public static final String STB_META_DATA_URL =
+            "https://ve.m.service.smt.docomo.ne.jp/srermd/getMeta/index.do";
+
+    /**
      * レコメンドサーバAPIのベースURL.
      */
     public static final String RECOMMEND_BASE_URL =

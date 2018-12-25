@@ -153,6 +153,11 @@ public class UrlConstants {
         public static final String TOTAL_SEARCH_URL = BaseUrlConstants.TOTAL_SEARCH_URL;
 
         /**
+         * STBメタデータ取得APIのURL.
+         */
+        public static final String STB_META_DATA_URL = BaseUrlConstants.STB_META_DATA_URL;
+
+        /**
          * レコメンド情報取得APIのURL.
          */
         public static final String RECOMMEND_LIST_GET_URL =
