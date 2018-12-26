@@ -117,12 +117,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DtvContentsDetailFragment.RecordingReservationIconListener,
         DtvContentsChannelFragment.ChangedScrollLoadListener,
         StbMetaInfoGetDataProvider.StbMetaInfoGetDataProviderListener,
-        DtvContentsDetailFragment.ContentsDetailFragmentScrollListener {
+        DtvContentsDetailFragment.ContentsDetailFragmentListener {
     // region variable
-    /** アスペクト比(16:9)の16.*/
-    private static final int SCREEN_RATIO_WIDTH_16 = 16;
-    /** アスペクト比(16:9)の9.*/
-    private static final int SCREEN_RATIO_HEIGHT_9 = 9;
     /** コンテンツ詳細 start HorizontalScrollView.*/
     private TabItemLayout mTabLayout = null;
     /** ViewPager.*/
@@ -181,8 +177,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private LinearLayout mContractLeadingView = null;
     /**「契約する」ボタンのクリック状態.*/
     private boolean mThumbnailContractButtonClicked = false;
-    /**コンテンツ詳細予約済みID.*/
-    public static final String CONTENTS_DETAIL_RESERVEDID = "1";
     /**モバイル視聴不可.*/
     private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
     /** 日付インディーズ.*/
@@ -191,10 +185,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private String[] mDateList = null;
     /**他サービス起動リクエストコード.*/
     private static final int START_APPLICATION_REQUEST_CODE = 0;
-    /** bvflg(1).*/
-    private static final String BVFLG_FLAG_ONE = "1";
-    /** bvflg(0).*/
-    private static final String BVFLG_FLAG_ZERO = "0";
     /** flg(0).*/
     private static final int FLAG_ZERO = 0;
     /** 画面すべてのクリップボタンを更新.*/
@@ -222,8 +212,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private long mVodEndDate = 0L;
     /** Vod視聴可能期限文字列.*/
     private String mVodEndDateText = null;
-    /** 一ヶ月(30日).*/
-    public static final int ONE_MONTH = 30;
     /** サムネイルにかけるシャドウのアルファ値.*/
     private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
     /** 操作履歴送信.*/
@@ -243,15 +231,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /** プレイヤーレイアウト.*/
     private PlayerViewLayout mPlayerViewLayout;
     /** プレイヤー前回のポジション.*/
-    private static final String SAVEDVARIABLE_PLAY_START_POSITION = "playStartPosition";
-    /** プレイヤー前回のポジション.*/
     private int mPlayStartPosition;
     /** 再生停止フラグ.*/
     private boolean mIsPlayerPaused = false;
     /** 前回リモートコントローラービュー表示フラグ.*/
     private boolean mVisibility = false;
-    /** 前回リモートコントローラービュー表示フラグ.*/
-    private static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
     /** ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの開始値.*/
     private static final int RETRY_ERROR_START = 2000;
     /** ディスプレイ幅.*/
@@ -277,8 +261,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private boolean mIsH4dPlayer = false;
     /** コンテンツタイプ(Google Analytics用).*/
     private ContentDetailUtils.ContentTypeForGoogleAnalytics contentType = null;
-    /** 契約リンク先.*/
-    private static final String CONTRACT_LINK = "https://www.nttdocomo.co.jp/";
     /** タブ表示区別.*/
     private ContentDetailUtils.TabType tabType;
     /** タブ再作成フラグ.*/
@@ -289,9 +271,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mPlayStartPosition = savedInstanceState
-                    .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
-            mVisibility = savedInstanceState.getBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY);
+            mPlayStartPosition = savedInstanceState.getInt(ContentDetailUtils.PLAY_START_POSITION);
+            mVisibility = savedInstanceState.getBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY);
             mViewPagerIndex = savedInstanceState.getInt(VIEWPAGER_INDEX);
             savedInstanceState.clear();
         }
@@ -475,9 +456,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (mPlayerViewLayout.getCurrentPosition() < 0) {
                 mPlayerViewLayout.setPlayStartPosition(0);
             }
-            outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
+            outState.putInt(ContentDetailUtils.PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
-        outState.putBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
+        outState.putBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
         if (mViewPager != null) {
             outState.putInt(VIEWPAGER_INDEX, mViewPager.getCurrentItem());
         }
@@ -603,7 +584,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mThumbnailBtn.setOnClickListener(this);
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
+                getWidthDensity(), getWidthDensity() / ContentDetailUtils.SCREEN_RATIO_WIDTH_16 * ContentDetailUtils.SCREEN_RATIO_HEIGHT_9);
         mThumbnail.setLayoutParams(layoutParams);
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         mContractLeadingView = findViewById(R.id.contract_leading_view);
@@ -1257,6 +1238,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             //VODは avail_start_date を使用する
                             detailData.setmStartDate(String.valueOf(mDetailFullData.getAvail_start_date()));
                         }
+                        tabType = ContentDetailUtils.TabType.VOD;
+                        setTabChanged();
                         if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) { //配信前 m/d（曜日）から
                             date = DateUtils.getContentsDateString(getApplicationContext(), mDetailFullData.getAvail_start_date(), true);
                         } else {
@@ -1315,6 +1298,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     }
                 } else {
+                    tabType = ContentDetailUtils.TabType.VOD;
+                    setTabChanged();
                     showErrorDialog(ContentDetailUtils.ErrorType.contentDetailGet);
                     mThumbnail.setImageResource(R.mipmap.error_movie);
                 }
@@ -1327,8 +1312,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     //チャンネル情報取得(取得後に視聴可否判定)
                     getChannelInfo();
                 } else {
-                    tabType = ContentDetailUtils.TabType.VOD;
-                    setTabChanged();
+                    if (tabType == ContentDetailUtils.TabType.TV_CH) {
+                        tabType = ContentDetailUtils.TabType.VOD;
+                        setTabChanged();
+                    }
                     mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
                     //コンテンツ種別ごとの視聴可否判定を実行
                     getViewingTypeRequest(mViewIngType);
@@ -1444,8 +1431,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mViewPagerIndex = DEFAULT_TAB_INDEX;
                 }
                 if (channels == null || channels.isEmpty()) {
-                    tabType = ContentDetailUtils.TabType.VOD;
-                    setTabChanged();
+                    if (tabType == ContentDetailUtils.TabType.TV_CH) {
+                        tabType = ContentDetailUtils.TabType.VOD;
+                        setTabChanged();
+                    }
                     showErrorDialog(ContentDetailUtils.ErrorType.channelListGet);
                     return;
                 }
@@ -1482,8 +1471,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
                 }
                 if (mChannel == null) {
-                    tabType = ContentDetailUtils.TabType.VOD;
-                    setTabChanged();
+                    if (tabType == ContentDetailUtils.TabType.TV_CH) {
+                        tabType = ContentDetailUtils.TabType.VOD;
+                        setTabChanged();
+                    }
                 }
                 if (mDetailFullData != null) {
                     checkWatchContents(mViewIngType);
@@ -1846,10 +1837,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (ContentUtils.VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())) {
             if (ContentUtils.DTV_FLAG_ZERO.equals(mDetailFullData.getDtv()) || TextUtils.isEmpty(mDetailFullData.getDtv())
                     || FLAG_ZERO == mDetailFullData.getDtv().trim().length()) {
-                if (BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
+                if (ContentDetailUtils.BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
                     requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
                             mDetailFullData.getCid(), mDetailFullData.getCrid());
-                } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
+                } else if (ContentDetailUtils.BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
                     if (mPurchasedVodListResponse == null) {
                         showStartStbProgress(View.GONE);
                         return;
@@ -3005,7 +2996,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param v view
      */
     public void contractButtonClick(final View v) {
-        Uri uri = Uri.parse(CONTRACT_LINK);
+        Uri uri = Uri.parse(UrlConstants.WebUrl.CONTRACT_LINK);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
@@ -3240,7 +3231,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dazn);
                     break;
                 case ContentUtils.DTV_CONTENTS_SERVICE_ID: // 「reserved1」が「1」STB視聴不可
-                    if (!CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                    if (!ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
                         showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dtv);
                     }
                     break;
@@ -3257,13 +3248,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mContentsType = type;
         switch (type) { //他サービスアプリスマホ連携表示
             case PURE_DTV:
-                if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())
-                        && CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                if (ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())
+                        && ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
                     // 「reserved1」が「1」STB視聴不可
                     // 「reserved2」が「1」Android視聴不可
                     // どちらも不可なので"お使いの端末では視聴できません"を表示
                     setThumbnailText(getString(R.string.contents_detail_thumbnail_text_unable_viewing));
-                } else if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                } else if (ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
                     // 「reserved2」が「1」Android視聴不可
                     // モバイル視聴不可なので、"テレビで視聴できます"を表示(ペアリングは無関係)
                     setThumbnailText(getString(R.string.contents_detail_thumbnail_text));

@@ -203,6 +203,8 @@ public class DateUtils {
     private static final String STR_T = "T";
     /** string　format. */
     private static final String STR_BLANK = "";
+    /** 一ヶ月(31日).*/
+    private static final int ONE_MONTH = 31;
 
     /**
      * 最初時.
@@ -1441,14 +1443,14 @@ public class DateUtils {
     }
 
     /**
-     * 30日以内判定.
+     * 31日以内判定.
      *
      * @param activeDataDate 判定対象日時
      * @return 真偽値
      */
     public static boolean isLimitThirtyDay(final long activeDataDate) {
         return activeDataDate - DateUtils.getNowTimeFormatEpoch()
-                < DateUtils.EPOCH_TIME_ONE_DAY * ContentDetailActivity.ONE_MONTH;
+                <= DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH;
     }
 
     /**

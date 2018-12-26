@@ -138,9 +138,14 @@ public class UrlConstants {
         public static final String D_ANIME_COPYRIGHT_SITE_URL = "https://anime.dmkt-sp.jp/animestore/CF/copyrights";
 
         /**
-         * ひかりTV for docomoガイドのURL
+         * ひかりTV for docomoガイドのURL.
          */
         public static final String H4D_GUIDE_URL = "https://www.hikaritv-docomo.jp/user/guide";
+
+        /**
+         * 契約リンク先.
+         */
+        public static final String CONTRACT_LINK = "https://www.nttdocomo.co.jp/";
     }
 
     /**

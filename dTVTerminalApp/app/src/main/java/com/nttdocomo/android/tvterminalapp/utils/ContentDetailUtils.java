@@ -90,6 +90,20 @@ public class ContentDetailUtils {
     private static final int CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER = 10;
     /** 値渡すキー. */
     public static final String RECORD_LIST_KEY = "recordListKey";
+    /** プレイヤー前回のポジション.*/
+    public static final String PLAY_START_POSITION = "playStartPosition";
+    /** 前回リモートコントローラービュー表示フラグ.*/
+    public static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
+    /**コンテンツ詳細予約済みID.*/
+    public static final String CONTENTS_DETAIL_RESERVEDID = "1";
+    /** bvflg(1).*/
+    public static final String BVFLG_FLAG_ONE = "1";
+    /** bvflg(0).*/
+    public static final String BVFLG_FLAG_ZERO = "0";
+    /** アスペクト比(16:9)の16.*/
+    public static final int SCREEN_RATIO_WIDTH_16 = 16;
+    /** アスペクト比(16:9)の9.*/
+    public static final int SCREEN_RATIO_HEIGHT_9 = 9;
 
     /** エラータイプ.*/
     public enum ErrorType {

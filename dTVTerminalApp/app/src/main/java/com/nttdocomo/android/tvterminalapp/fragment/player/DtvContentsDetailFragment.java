@@ -84,7 +84,7 @@ public class DtvContentsDetailFragment extends Fragment {
     /** 録画リスナー.*/
     private RecordingReservationIconListener mIconClickListener = null;
     /** フラグメント表示リスナー.*/
-    private ContentsDetailFragmentScrollListener mContentsDetailFragmentScrollListener = null;
+    private ContentsDetailFragmentListener mContentsDetailFragmentListener = null;
     /** スタッフ文字サイズ(title).*/
     private final static int TEXT_SIZE_12 = 12;
     /** スタッフ文字サイズ(内容).*/
@@ -117,7 +117,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
 
     /**フラグメントスクロールリスナー.*/
-    public interface ContentsDetailFragmentScrollListener {
+    public interface ContentsDetailFragmentListener {
         /**
          * Fragment見えるのコールバック.
          * @param isVisibleToUser    true:表示 false:非表示
@@ -126,9 +126,12 @@ public class DtvContentsDetailFragment extends Fragment {
         void onUserVisibleHint(boolean isVisibleToUser, DtvContentsDetailFragment dtvContentsDetailFragment);
     }
 
-    /**リスナー設定.*/
-    public void setContentsDetailFragmentScrollListener(final ContentsDetailFragmentScrollListener mContentsDetailFragmentScrollListener) {
-        this.mContentsDetailFragmentScrollListener = mContentsDetailFragmentScrollListener;
+    /**
+     * リスナー設定.
+     * @param mContentsDetailFragmentListener mContentsDetailFragmentListener
+     */
+    public void setContentsDetailFragmentScrollListener(final ContentsDetailFragmentListener mContentsDetailFragmentListener) {
+        this.mContentsDetailFragmentListener = mContentsDetailFragmentListener;
     }
 
     @Override
@@ -151,7 +154,7 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+    public View onCreateView(@Nullable final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         //コンテンツ詳細表示に必要なデータを取得する
         mOtherContentsDetailData = getArguments().getParcelable(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
@@ -760,8 +763,8 @@ public class DtvContentsDetailFragment extends Fragment {
 
     @Override
     public void setUserVisibleHint(final boolean isVisibleToUser) {
-        if (null != mContentsDetailFragmentScrollListener) {
-            mContentsDetailFragmentScrollListener.onUserVisibleHint(isVisibleToUser, this);
+        if (null != mContentsDetailFragmentListener) {
+            mContentsDetailFragmentListener.onUserVisibleHint(isVisibleToUser, this);
         }
     }
 }
