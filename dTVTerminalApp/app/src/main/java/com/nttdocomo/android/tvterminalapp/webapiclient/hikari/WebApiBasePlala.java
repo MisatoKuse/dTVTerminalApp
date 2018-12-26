@@ -499,7 +499,7 @@ public class WebApiBasePlala {
             mUrlConnections.remove(connection);
 
             //すべて削除済みならばヌルにする
-            if (mUrlConnections.size() == 0) {
+            if (mUrlConnections != null && mUrlConnections.size() == 0) {
                 mUrlConnections = null;
             }
         }

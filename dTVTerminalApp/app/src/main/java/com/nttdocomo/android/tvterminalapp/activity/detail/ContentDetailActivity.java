@@ -649,8 +649,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * コンテンツ詳細データ取得.
      */
-    private void getScheduleDetailData() {
-        findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
+    private void getContentDetailDataFromPlala() {
         mContentsDetailDataProvider = new ContentsDetailDataProvider(this);
         String[] cRid;
         if (mDetailData != null) {
@@ -867,6 +866,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         String contentsId = mIntent.getStringExtra(ContentUtils.PLALA_INFO_BUNDLE_KEY);
+        if (ContentDetailUtils.getStbStatus() || mVisibility) {
+            createRemoteControllerView(true);
+            findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
+        }
         if (!TextUtils.isEmpty(contentsId)) { //ぷらら
             if (mDetailData == null) {
                 mDetailData = new OtherContentsDetailData();
@@ -3219,6 +3222,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         int serviceId = mDetailData.getServiceId();
         contentType = ContentDetailUtils.ContentTypeForGoogleAnalytics.OTHER;
         if (ContentDetailUtils.getStbStatus() || mVisibility) { // STBに接続している 「テレビで視聴」が表示
+            findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
             switch (serviceId) {
                 case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
                     showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_d_anime);
@@ -3361,7 +3365,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mIsOtherService) {
                     getContentDetailInfoFromSearchServer();
                 } else {
-                    getScheduleDetailData();
+                    getContentDetailDataFromPlala();
                 }
             }
             isTabChanged = false;
