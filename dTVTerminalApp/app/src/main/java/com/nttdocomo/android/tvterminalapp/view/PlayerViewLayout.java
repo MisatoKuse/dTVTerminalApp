@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -689,6 +690,13 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mDmsDisconnectedTime = 0;
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
+                AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+                // 他アプリで音楽が再生されていないかチェックする
+                if (audioManager.isMusicActive()) {
+                    // 再生中なら止める
+                    audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                }
+
                 mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
                 if (!mIsVideoBroadcast && getCurrentPosition() == 0) {
