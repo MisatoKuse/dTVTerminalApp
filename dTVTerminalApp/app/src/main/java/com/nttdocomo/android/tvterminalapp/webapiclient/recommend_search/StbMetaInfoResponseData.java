@@ -138,7 +138,7 @@ public class StbMetaInfoResponseData {
     }
 
     /** 処理結果.*/
-    private String mStatus = "ok";
+    private int mStatus = 0;
     /** 返却コンテンツ情報.*/
     private Content mContent;
     /** 検索結果合計件数.*/
@@ -149,8 +149,7 @@ public class StbMetaInfoResponseData {
      */
     StbMetaInfoResponseData() {
         mContent = new Content();
-        ArrayList<Episode> episodeList = new ArrayList<>();
-        mContent.mEpisodeList = episodeList;
+        mContent.mEpisodeList = new ArrayList<>();
     }
 
     /**
@@ -158,7 +157,7 @@ public class StbMetaInfoResponseData {
      *
      * @param status 処理結果
      */
-    public void setStatus(final String status) {
+    public void setStatus(final int status) {
         this.mStatus = status;
     }
 

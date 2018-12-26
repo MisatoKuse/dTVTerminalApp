@@ -21,9 +21,13 @@ public class DtvtConstants {
      */
     public static final int SERVER_READ_TIMEOUT = 30000;
     /**
-     * NG.
+     * 検索サーバーレスポンス・処理結果NG.
      */
-    public static final String SEARCH_STATUS_NG = "ng";
+    public static final int SEARCH_STATUS_NG = 1;
+    /**
+     * 検索サーバーレスポンス・処理結果OK.
+     */
+    public static final int SEARCH_STATUS_OK = 0;
     /**
      * サーチエラーID.
      */

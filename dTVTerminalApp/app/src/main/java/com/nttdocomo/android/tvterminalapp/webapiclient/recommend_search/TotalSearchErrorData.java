@@ -16,7 +16,7 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 public class TotalSearchErrorData {
     //単純な構造体としての役割のクラスの為、メンバはpublicとする
     /**.*/
-    public String status;
+    public int status;
     /**エラー情報.*/
     public final ErrorResultData error;
 
@@ -33,7 +33,7 @@ public class TotalSearchErrorData {
     /**
      *インスタンス.
      */
-    public TotalSearchErrorData() {
+    TotalSearchErrorData() {
         error = new ErrorResultData();
     }
 
@@ -42,7 +42,7 @@ public class TotalSearchErrorData {
      * @param id エラーID
      * @param param エラー原因
      */
-    public TotalSearchErrorData(final String id, final String param) {
+    TotalSearchErrorData(final String id, final String param) {
         error = new ErrorResultData();
         error.id = id;
         error.param = param;

@@ -45,13 +45,13 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
      */
     private static final String STATUS = "status";
     /**
-     * 処理結果 ok.
+     * 処理結果メッセージ ok.
      */
-    private static final String STATUS_OK = "ok";
+    private static final String STATUS_MSG_OK = "ok";
     /**
-     * 処理結果 ng.
+     * 処理結果メッセージ ng.
      */
-    private static final String STATUS_NG = "ng";
+    private static final String STATUS_MSG_NG = "ng";
     /**
      * 検索結果合計件数.
      */
@@ -335,7 +335,6 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
         }
 
         boolean loop = true;
-        String text = "";
         try {
             while (loop) {
 
@@ -362,16 +361,6 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
 
                         if (name2 != null && 0 < name2.length()) {
                             parseProc(name2, xmlValue);
-                        }
-
-                        break;
-                    case XmlPullParser.TEXT:
-                        text = parser.getText();
-                        break;
-                    case XmlPullParser.END_TAG:
-                        String name = parser.getName();
-                        if (name != null && 0 < name.length()) {
-                            parseProc(name, text);
                         }
 
                         break;
@@ -423,220 +412,228 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
      */
     private void parseProc(final String tagName, final String value) {
 
-        if (!TextUtils.isEmpty(tagName)) {
-            switch (tagName) {
-                case STATUS:
-                    if (STATUS_OK.equals(value)) {
-                        DTVTLogger.debug("parseProc, " + STATUS_OK);
-                        searchResponse.setStatus(STATUS_OK);
-                    } else if (STATUS_NG.equals(value)) {
-                        DTVTLogger.debug("parseProc, " + STATUS_NG);
+        try {
+            if (!TextUtils.isEmpty(tagName)) {
+                switch (tagName) {
+                    case STATUS:
+                        int status = Integer.parseInt(value);
+                        if (DtvtConstants.SEARCH_STATUS_OK == status) {
+                            DTVTLogger.debug("parseProc, " + STATUS_MSG_OK);
+                            searchResponse.setStatus(DtvtConstants.SEARCH_STATUS_OK);
+                        } else if (DtvtConstants.SEARCH_STATUS_NG == status) {
+                            DTVTLogger.debug("parseProc, " + STATUS_MSG_NG);
+                            ifNullCreate();
+                            searchError.status = DtvtConstants.SEARCH_STATUS_NG;
+                        }
+                        break;
+                    case TOTAL_COUNT:
+                        searchResponse.setTotalCount(Integer.parseInt(value));
+                    case CONTENT:
+                        break;
+                    case SERVICE_ID:
+                        searchResponse.getContent().mServiceId = value;
+                        break;
+                    case CATEGORY_ID:
+                        searchResponse.getContent().mCategoryId = value;
+                        break;
+                    case CHANNEL_ID:
+                        searchResponse.getContent().mChannelId = value;
+                        break;
+                    case CONTENTS_ID:
+                        searchResponse.getContent().mContentsId = value;
+                        break;
+                    case TITLE:
+                        searchResponse.getContent().mTitle = value;
+                        break;
+                    case CHANNEL_NAME:
+                        searchResponse.getContent().mChannelName = value;
+                        break;
+                    case GENRE_NAME:
+                        searchResponse.getContent().mGenreName = value;
+                        break;
+                    case CTPICURL1:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mCtPicURL1 = value;
+                        } else {
+                            searchResponse.getContent().mCtPicURL1 = value;
+                        }
+                        break;
+                    case CTPICURL2:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mCtPicURL2 = value;
+                        } else {
+                            searchResponse.getContent().mCtPicURL2 = value;
+                        }
+                        break;
+                    case START_VIEWING:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mStartViewing = value;
+                        } else {
+                            searchResponse.getContent().mStartViewing = value;
+                        }
+                        break;
+                    case END_VIEWING:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mEndViewing = value;
+                        } else {
+                            searchResponse.getContent().mEndViewing = value;
+                        }
+                        break;
+                    case PAYMENT_FLG:
+                        searchResponse.getContent().mPaymentFlg = value;
+                        break;
+                    case MOBILE_VIEWING_FLG:
+                        searchResponse.getContent().mMobileViewingFlg = value;
+                        break;
+                    case VIEWABLE_AGE:
+                        searchResponse.getContent().mViewableAge = value;
+                        break;
+                    case TITLE_KIND:
+                        searchResponse.getContent().mTitleKind = value;
+                        break;
+                    case DIRECTOR:
+                        searchResponse.getContent().mDirector = value;
+                        break;
+                    case CAST:
+                        searchResponse.getContent().mCast = value;
+                        break;
+                    case ARTIST:
+                        searchResponse.getContent().mArtist = value;
+                        break;
+                    case DESCRIPTION1:
+                        searchResponse.getContent().mDescription1 = value;
+                        break;
+                    case DESCRIPTION2:
+                        searchResponse.getContent().mDescription2 = value;
+                        break;
+                    case DESCRIPTION3:
+                        searchResponse.getContent().mDescription3 = value;
+                        break;
+                    case PRODUCTION_YEAR:
+                        searchResponse.getContent().mProductionYear = value;
+                        break;
+                    case COPYRIGHT:
+                        searchResponse.getContent().mCopyright = value;
+                        break;
+                    case CONTENTS_LENGTH:
+
+                        int contentsLength = TextUtils.isEmpty(value) ? 0 : Integer.parseInt(value);
+
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mContentsLength = contentsLength;
+                        } else {
+                            searchResponse.getContent().mContentsLength = contentsLength;
+                        }
+                        break;
+                    case AREA:
+                        searchResponse.getContent().mArea = value;
+                        break;
+                    case RESERVED1:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved1 = value;
+                        } else {
+                            searchResponse.getContent().mReserved1 = value;
+                        }
+                        break;
+                    case RESERVED2:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved2 = value;
+                        } else {
+                            searchResponse.getContent().mReserved2 = value;
+                        }
+                        break;
+                    case RESERVED3:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved3 = value;
+                        } else {
+                            searchResponse.getContent().mReserved3 = value;
+                        }
+                        break;
+                    case RESERVED4:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved4 = value;
+                        } else {
+                            searchResponse.getContent().mReserved4 = value;
+                        }
+                        break;
+                    case RESERVED5:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved5 = value;
+                        } else {
+                            searchResponse.getContent().mReserved5 = value;
+                        }
+                        break;
+                    case RESERVED6:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved6 = value;
+                        } else {
+                            searchResponse.getContent().mReserved6 = value;
+                        }
+                        break;
+                    case RESERVED7:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved7 = value;
+                        } else {
+                            searchResponse.getContent().mReserved7 = value;
+                        }
+                        break;
+                    case RESERVED8:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved8 = value;
+                        } else {
+                            searchResponse.getContent().mReserved8 = value;
+                        }
+                        break;
+                    case RESERVED9:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved9 = value;
+                        } else {
+                            searchResponse.getContent().mReserved9 = value;
+                        }
+                        break;
+                    case RESERVED10:
+                        if (mIsEpisodeInfoProcessing) {
+                            searchResponse.getLastEpisode().mReserved10 = value;
+                        } else {
+                            searchResponse.getContent().mReserved10 = value;
+                        }
+                        break;
+                    case TOTAL_EPISODE_COUNT:
+                        searchResponse.getContent().mTotalEpisodeCount = Integer.parseInt(value);
+                        break;
+                    case EPISODE:
+                        mIsEpisodeInfoProcessing = true;
+                        searchResponse.appendEpisode();
+                        break;
+                    case EPISODE_ID:
+                        searchResponse.getLastEpisode().mEpisodeId = value;
+                        break;
+                    case SUB_TITLE:
+                        searchResponse.getLastEpisode().mSubTitle = value;
+                        break;
+                    case SUMMARY:
+                        searchResponse.getLastEpisode().mSummary = value;
+                        break;
+                    case EPISODE_NUMBER:
+                        searchResponse.getLastEpisode().mEpisodeNumber = value;
+                        break;
+                    case EPISODE_NUMBER_NOTATION:
+                        searchResponse.getLastEpisode().mEpisodeNumberNotation = value;
+                        break;
+                    case ID:
                         ifNullCreate();
-                        searchError.status = value;
-                    }
-                    break;
-                case TOTAL_COUNT:
-                    searchResponse.setTotalCount(Integer.parseInt(value));
-                case CONTENT:
-                    break;
-                case SERVICE_ID:
-                    searchResponse.getContent().mServiceId = value;
-                    break;
-                case CATEGORY_ID:
-                    searchResponse.getContent().mCategoryId = value;
-                    break;
-                case CHANNEL_ID:
-                    searchResponse.getContent().mChannelId = value;
-                    break;
-                case CONTENTS_ID:
-                    searchResponse.getContent().mContentsId = value;
-                    break;
-                case TITLE:
-                    searchResponse.getContent().mTitle = value;
-                    break;
-                case CHANNEL_NAME:
-                    searchResponse.getContent().mChannelName = value;
-                    break;
-                case GENRE_NAME:
-                    searchResponse.getContent().mGenreName = value;
-                    break;
-                case CTPICURL1:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mCtPicURL1 = value;
-                    } else {
-                        searchResponse.getContent().mCtPicURL1 = value;
-                    }
-                    break;
-                case CTPICURL2:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mCtPicURL2 = value;
-                    } else {
-                        searchResponse.getContent().mCtPicURL2 = value;
-                    }
-                    break;
-                case START_VIEWING:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mStartViewing = value;
-                    } else {
-                        searchResponse.getContent().mStartViewing = value;
-                    }
-                    break;
-                case END_VIEWING:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mEndViewing = value;
-                    } else {
-                        searchResponse.getContent().mEndViewing = value;
-                    }
-                    break;
-                case PAYMENT_FLG:
-                    searchResponse.getContent().mPaymentFlg = value;
-                    break;
-                case MOBILE_VIEWING_FLG:
-                    searchResponse.getContent().mMobileViewingFlg = value;
-                    break;
-                case VIEWABLE_AGE:
-                    searchResponse.getContent().mViewableAge = value;
-                    break;
-                case TITLE_KIND:
-                    searchResponse.getContent().mTitleKind = value;
-                    break;
-                case DIRECTOR:
-                    searchResponse.getContent().mDirector = value;
-                    break;
-                case CAST:
-                    searchResponse.getContent().mCast = value;
-                    break;
-                case ARTIST:
-                    searchResponse.getContent().mArtist = value;
-                    break;
-                case DESCRIPTION1:
-                    searchResponse.getContent().mDescription1 = value;
-                    break;
-                case DESCRIPTION2:
-                    searchResponse.getContent().mDescription2 = value;
-                    break;
-                case DESCRIPTION3:
-                    searchResponse.getContent().mDescription3 = value;
-                    break;
-                case PRODUCTION_YEAR:
-                    searchResponse.getContent().mProductionYear = value;
-                    break;
-                case COPYRIGHT:
-                    searchResponse.getContent().mCopyright = value;
-                    break;
-                case CONTENTS_LENGTH:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mContentsLength = Integer.parseInt(value);
-                    } else {
-                        searchResponse.getContent().mContentsLength = Integer.parseInt(value);
-                    }
-                    break;
-                case AREA:
-                    searchResponse.getContent().mArea = value;
-                    break;
-                case RESERVED1:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved1 = value;
-                    } else {
-                        searchResponse.getContent().mReserved1 = value;
-                    }
-                    break;
-                case RESERVED2:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved2 = value;
-                    } else {
-                        searchResponse.getContent().mReserved2 = value;
-                    }
-                    break;
-                case RESERVED3:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved3 = value;
-                    } else {
-                        searchResponse.getContent().mReserved3 = value;
-                    }
-                    break;
-                case RESERVED4:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved4 = value;
-                    } else {
-                        searchResponse.getContent().mReserved4 = value;
-                    }
-                    break;
-                case RESERVED5:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved5 = value;
-                    } else {
-                        searchResponse.getContent().mReserved5 = value;
-                    }
-                    break;
-                case RESERVED6:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved6 = value;
-                    } else {
-                        searchResponse.getContent().mReserved6 = value;
-                    }
-                    break;
-                case RESERVED7:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved7 = value;
-                    } else {
-                        searchResponse.getContent().mReserved7 = value;
-                    }
-                    break;
-                case RESERVED8:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved8 = value;
-                    } else {
-                        searchResponse.getContent().mReserved8 = value;
-                    }
-                    break;
-                case RESERVED9:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved9 = value;
-                    } else {
-                        searchResponse.getContent().mReserved9 = value;
-                    }
-                    break;
-                case RESERVED10:
-                    if (mIsEpisodeInfoProcessing) {
-                        searchResponse.getLastEpisode().mReserved10 = value;
-                    } else {
-                        searchResponse.getContent().mReserved10 = value;
-                    }
-                    break;
-                case TOTAL_EPISODE_COUNT:
-                    searchResponse.getContent().mTotalEpisodeCount = Integer.parseInt(value);
-                    break;
-                case EPISODE:
-                    mIsEpisodeInfoProcessing = true;
-                    searchResponse.appendEpisode();
-                    break;
-                case EPISODE_ID:
-                    searchResponse.getLastEpisode().mEpisodeId = value;
-                    break;
-                case SUB_TITLE:
-                    searchResponse.getLastEpisode().mSubTitle = value;
-                    break;
-                case SUMMARY:
-                    searchResponse.getLastEpisode().mSummary = value;
-                    break;
-                case EPISODE_NUMBER:
-                    searchResponse.getLastEpisode().mEpisodeNumber = value;
-                    break;
-                case EPISODE_NUMBER_NOTATION:
-                    searchResponse.getLastEpisode().mEpisodeNumberNotation = value;
-                    break;
-                case ID:
-                    ifNullCreate();
-                    searchError.error.id = value;
-                    break;
-                case PARAM:
-                    ifNullCreate();
-                    searchError.error.param = value;
-                    break;
-                default:
-                    break;
+                        searchError.error.id = value;
+                        break;
+                    case PARAM:
+                        ifNullCreate();
+                        searchError.error.param = value;
+                        break;
+                    default:
+                        break;
+                }
             }
+        } catch (NumberFormatException e) {
+            DTVTLogger.debug(e);
         }
     }
 }
