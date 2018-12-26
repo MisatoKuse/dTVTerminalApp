@@ -685,17 +685,12 @@ public class ContentUtils {
     /**
      * コンテンツ種別判定(レコメンド).
      *
-     * @param detailData コンテンツ詳細データ(レコメンド)
+     * @param serviceId サービスID
+     * @param categoryId カテゴリID
      * @return ContentsType
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static ContentsType getRecommendContentsType(final ContentsData detailData) {
-        String strServiceId = detailData.getServiceId();
-        int serviceId = -1;
-        if (strServiceId != null && DataBaseUtils.isNumber(strServiceId)) {
-            serviceId = Integer.parseInt(detailData.getServiceId());
-        }
-        String categoryId = detailData.getCategoryId();
+    public static ContentsType getRecommendContentsType(final int serviceId, final String categoryId) {
         switch (serviceId) {
             //serviceId = 44
             case DTV_HIKARI_CONTENTS_SERVICE_ID:

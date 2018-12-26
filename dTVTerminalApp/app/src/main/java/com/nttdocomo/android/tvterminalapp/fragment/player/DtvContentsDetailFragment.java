@@ -83,6 +83,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private ImageView mRecordButton = null;
     /** 録画リスナー.*/
     private RecordingReservationIconListener mIconClickListener = null;
+    /** フラグメント表示リスナー.*/
+    private ContentsDetailFragmentScrollListener mContentsDetailFragmentScrollListener = null;
     /** スタッフ文字サイズ(title).*/
     private final static int TEXT_SIZE_12 = 12;
     /** スタッフ文字サイズ(内容).*/
@@ -113,6 +115,21 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static String LABEL_STATUS_R_VALUE_R_18 = "R-18";
     /** r_value R-20.*/
     private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
+
+    /**フラグメントスクロールリスナー.*/
+    public interface ContentsDetailFragmentScrollListener {
+        /**
+         * Fragment見えるのコールバック.
+         * @param isVisibleToUser    true:表示 false:非表示
+         * @param dtvContentsDetailFragment フラグメント
+         */
+        void onUserVisibleHint(boolean isVisibleToUser, DtvContentsDetailFragment dtvContentsDetailFragment);
+    }
+
+    /**リスナー設定.*/
+    public void setContentsDetailFragmentScrollListener(final ContentsDetailFragmentScrollListener mContentsDetailFragmentScrollListener) {
+        this.mContentsDetailFragmentScrollListener = mContentsDetailFragmentScrollListener;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -282,7 +299,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private void setDetailData() {
         //ネットワーク接続が無い場合は通信処理は即座に終わるので、フラグメントの初期化終了前にここにきてしまう。
         //その場合は、処理をスキップする判定
-        if(mTextHeader == null) {
+        if (mTextHeader == null) {
             //ヌルの場合は何もできないので帰る
             DTVTLogger.debug("mTextHeader not init");
             return;
@@ -321,9 +338,7 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             mTxtChannelName.setVisibility(View.GONE);
         }
-        String contentsDetailInfo;
         setLabelStatus();
-        contentsDetailInfo = selectDetail();
         //日付
         String date = mOtherContentsDetailData.getChannelDate();
         if (!TextUtils.isEmpty(date)) {
@@ -345,12 +360,11 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             mStaffLayout.setVisibility(View.GONE);
         }
-        if (!TextUtils.isEmpty(contentsDetailInfo)) {
-            final String replaceString = contentsDetailInfo.replace("\\n", "\n");
-            mTxtTitleShortDetail.setText(replaceString);
-            mTxtTitleAllDetail.setText(replaceString);
-        }
         setClipButton(mClipButton);
+        if (mIconClickListener != null) {
+            setRecordingReservationIconListener(mIconClickListener, getContext());
+        }
+        showDescription();
     }
 
     /**
@@ -524,6 +538,9 @@ public class DtvContentsDetailFragment extends Fragment {
      * スタッフ情報を表示する.
      */
     private void setStaff() {
+        if (mStaffLayout == null) {
+            return;
+        }
         List<String> staffList = mOtherContentsDetailData.getStaffList();
         mStaffLayout.setVisibility(View.VISIBLE);
         mStaffLayout.removeAllViews();
@@ -598,7 +615,7 @@ public class DtvContentsDetailFragment extends Fragment {
     /**
      * あらすじ情報の更新.
      */
-    public void refreshDescription() {
+    private void showDescription() {
         String contentsDetailInfo = selectDetail();
         if (!TextUtils.isEmpty(contentsDetailInfo)) {
             final String replaceString = contentsDetailInfo.replace("\\n", "\n");
@@ -629,18 +646,9 @@ public class DtvContentsDetailFragment extends Fragment {
      * @return 商品詳細文字列
      */
     private String selectDetail() {
-        if (mOtherContentsDetailData.getDetail() != null
-                && !mOtherContentsDetailData.getDetail().isEmpty()) {
+        if (!TextUtils.isEmpty(mOtherContentsDetailData.getDetail())) {
             //"あらすじ"を返却
             return mOtherContentsDetailData.getDetail();
-        } else if (mOtherContentsDetailData.getComment() != null
-                && !mOtherContentsDetailData.getComment().isEmpty()) {
-            //"解説"を返却
-            return mOtherContentsDetailData.getComment();
-        } else if (mOtherContentsDetailData.getHighlight() != null
-                && !mOtherContentsDetailData.getHighlight().isEmpty()) {
-            //"みどころ"を返却
-            return mOtherContentsDetailData.getHighlight();
         } else {
             return "";
         }
@@ -689,13 +697,16 @@ public class DtvContentsDetailFragment extends Fragment {
 
     /**
      * 録画予約アイコンにOnClickListenerを登録.
-     *
      * @param listener リスナー
+     * @param context コンテキスト
      */
-    public void setRecordingReservationIconListener(final RecordingReservationIconListener listener) {
+    public void setRecordingReservationIconListener(final RecordingReservationIconListener listener, final Context context) {
         DTVTLogger.start();
+        if (mRecordButton == null) {
+            return;
+        }
         //未ログイン又は未契約時は録画ボタンを非活性
-        if (listener != null && UserInfoUtils.getClipActive(mContext)) {
+        if (listener != null && UserInfoUtils.getClipActive(context)) {
             DTVTLogger.debug("setOnClickListener");
             mIconClickListener = listener;
             mRecordButton.setOnClickListener(new View.OnClickListener() {
@@ -747,13 +758,10 @@ public class DtvContentsDetailFragment extends Fragment {
         mOtherContentsDetailData = otherContentsDetailData;
     }
 
-    public void setChannelNameVisibility() {
-        if (mTxtChannelName != null) {
-            if (!mOtherContentsDetailData.getChannelName().isEmpty()) {
-                mTxtChannelName.setVisibility(View.VISIBLE);
-            } else {
-                mTxtChannelName.setVisibility(View.GONE);
-            }
+    @Override
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
+        if (null != mContentsDetailFragmentScrollListener) {
+            mContentsDetailFragmentScrollListener.onUserVisibleHint(isVisibleToUser, this);
         }
     }
 }

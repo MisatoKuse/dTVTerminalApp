@@ -437,8 +437,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                             Intent intent = new Intent();
                             intent.setClass(mContext, ContentDetailActivity.class);
                             intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
-                            OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule);
-                            intent.putExtra(detailData.getRecommendFlg(), detailData);
+                            intent.putExtra(ContentUtils.PLALA_INFO_BUNDLE_KEY, itemSchedule.getContentsId());
                             TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
                             tvProgramListActivity.startActivity(intent);
                         }
@@ -892,25 +891,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
          * サービスユニーク.
          */
         String serviceIdUniq;
-    }
-
-    /**
-     * コンテンツ詳細に必要なデータを返す.
-     *
-     * @param itemSchedule レコメンド情報
-     * @return コンテンツ情報
-     */
-    private static OtherContentsDetailData getOtherContentsDetailData(final ScheduleInfo itemSchedule) {
-        OtherContentsDetailData detailData = new OtherContentsDetailData();
-
-        //コンテンツIDの受け渡しを追加
-        detailData.setContentsId(itemSchedule.getContentsId());
-        detailData.setDispType(itemSchedule.getDispType());
-        detailData.setContentsType(itemSchedule.getContentType());
-        detailData.setRecommendFlg(ContentUtils.PLALA_INFO_BUNDLE_KEY);
-        detailData.setThumb(itemSchedule.getImageDetailUrl());
-
-        return detailData;
     }
 
     /**

@@ -116,8 +116,6 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String mRvalue = "";
     /**コンテンツ種別.*/
     private ContentUtils.ContentsType mContentCategory = null;
-    /**検索画面から遷移フラグ.*/
-    private boolean mIsTranslateFromSearch = false;
 
     /**
      * 日付取得.
@@ -917,22 +915,6 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mContentCategory = mContentCategory;
     }
 
-    /**
-     * 検索画面から遷移フラグ.
-     * @return 検索画面から遷移フラグ.
-     */
-    public boolean getIsTranslateFromSearchFlag() {
-        return mIsTranslateFromSearch;
-    }
-
-    /**
-     * 検索画面から遷移フラグ設定.
-     * @param mIsTranslateFromSearch 検索画面から遷移フラグ
-     */
-    public void setIsTranslateFromSearchFlag(final boolean mIsTranslateFromSearch) {
-        this.mIsTranslateFromSearch = mIsTranslateFromSearch;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -992,7 +974,6 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mCopy);
         dest.writeString(this.mRvalue);
         dest.writeInt(this.mContentCategory == null ? -1 : this.mContentCategory.ordinal());
-        dest.writeByte(this.mIsTranslateFromSearch ? (byte) 1 : (byte) 0);
     }
 
     /**コンストラクタ.*/
@@ -1057,7 +1038,6 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mRvalue = in.readString();
         int tmpMContentCategory = in.readInt();
         this.mContentCategory = tmpMContentCategory == -1 ? null : ContentUtils.ContentsType.values()[tmpMContentCategory];
-        this.mIsTranslateFromSearch = in.readByte() != 0;
     }
 
     /**CREATOR構造初期化.*/

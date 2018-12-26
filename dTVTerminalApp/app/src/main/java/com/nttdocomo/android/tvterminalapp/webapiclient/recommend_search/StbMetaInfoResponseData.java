@@ -16,35 +16,35 @@ public class StbMetaInfoResponseData {
      */
     public class Content {
         /** サービスId.*/
-        String mServiceId;
+        public String mServiceId;
         /** カテゴリーID.*/
-        String mCategoryId;
+        public String mCategoryId;
         /** チャンネルID.*/
-        String mChannelId;
+        public String mChannelId;
         /** コンテンツId.*/
-        String mContentsId;
+        public String mContentsId;
         /** タイトル.*/
-        String mTitle;
+        public String mTitle;
         /** チャンネル名.*/
-        String mChannelName;
+        public String mChannelName;
         /** ジャンル名.*/
         String mGenreName;
         /** サムネイルURL1.*/
-        String mCtPicURL1;
+        public String mCtPicURL1;
         /** サムネイルURL2.*/
         String mCtPicURL2;
         /** 視聴可能期間開始日時.*/
-        String mStartViewing;
+        public String mStartViewing;
         /** 視聴可能期間終了日時.*/
-        String mEndViewing;
+        public String mEndViewing;
         /** 課金方法フラグ.*/
         String mPaymentFlg;
         /** モバイル視聴可否フラグ.*/
-        String mMobileViewingFlg;
+        public String mMobileViewingFlg;
         /** 視聴可能下限年齢.*/
         String mViewableAge;
         /** 作品種別.*/
-        String mTitleKind;
+        public String mTitleKind;
         /** 監督名.*/
         String mDirector;
         /** 声優・キャスト名.*/
@@ -52,11 +52,11 @@ public class StbMetaInfoResponseData {
         /** アーティスト名.*/
         String mArtist;
         /** 商品詳細1.*/
-        String mDescription1;
+        public String mDescription1;
         /** 商品詳細2.*/
-        String mDescription2;
+        public String mDescription2;
         /** 商品詳細3.*/
-        String mDescription3;
+        public String mDescription3;
         /** 制作年.*/
         String mProductionYear;
         /** コピーライト.*/
@@ -66,15 +66,15 @@ public class StbMetaInfoResponseData {
         /** 視聴エリアコード.*/
         String mArea;
         /** 予備1.*/
-        String mReserved1;
+        public String mReserved1;
         /** 予備2.*/
-        String mReserved2;
+        public String mReserved2;
         /** 予備3.*/
-        String mReserved3;
+        public String mReserved3;
         /** 予備4.*/
-        String mReserved4;
+        public String mReserved4;
         /** 予備5.*/
-        String mReserved5;
+        public String mReserved5;
         /** 予備6.*/
         String mReserved6;
         /** 予備7.*/
@@ -163,12 +163,19 @@ public class StbMetaInfoResponseData {
     }
 
     /**
-     * 検索結果合計件数を設定する
-     *
+     * 検索結果合計件数を設定する.
      * @param totalCount 検索結果合計件数
      */
     void setTotalCount(final int totalCount) {
         this.mTotalCount = totalCount;
+    }
+
+    /**
+     * 検索結果合計件数を返却する.
+     * @return  totalCount 検索結果合計件数
+     */
+    public int getTotalCount() {
+        return mTotalCount;
     }
 
     /**

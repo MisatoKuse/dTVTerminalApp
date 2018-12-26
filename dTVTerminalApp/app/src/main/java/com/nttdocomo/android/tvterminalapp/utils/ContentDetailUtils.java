@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
@@ -24,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.StbMetaInfoResponseData;
 
 import java.io.File;
 import java.text.ParseException;
@@ -89,6 +91,36 @@ public class ContentDetailUtils {
     /** 値渡すキー. */
     public static final String RECORD_LIST_KEY = "recordListKey";
 
+    /** エラータイプ.*/
+    public enum ErrorType {
+        /** コンテンツ詳細取得.*/
+        contentDetailGet,
+        /** スタッフリスト取得.*/
+        roleListGet,
+        /** レンタルチャンネル取得.*/
+        rentalChannelListGet,
+        /** レンタルVod取得.*/
+        rentalVoidListGet,
+        /** チャンネルリスト取得.*/
+        channelListGet,
+        /** 番組データ取得.*/
+        tvScheduleListGet,
+        /** あらすじ取得.*/
+        recommendDetailGet
+    }
+
+    /**
+     * タブ表示出しわけ.
+     */
+    public enum TabType {
+        /**作品情報のみ.*/
+        VOD,
+        /**番組詳細のみ.*/
+        TV_ONLY,
+        /**番組詳細＆チャンネル.*/
+        TV_CH
+    }
+
     /**
      * アプリ種別(Pure系).
      */
@@ -137,6 +169,14 @@ public class ContentDetailUtils {
         //10進変換後のサービスIDを10倍する
         serviceIdDecimal *= CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER;
         return serviceIdDecimal;
+    }
+
+    /**
+     * STB接続状態を取得.
+     * @return STB接続状態
+     */
+    public static boolean getStbStatus() {
+        return StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN;
     }
 
     /**
@@ -288,7 +328,7 @@ public class ContentDetailUtils {
      * @param detailData 詳細データ
      * @param clipStatus クリープステータス
      */
-    public static void setOtherContentsDetailData(final VodMetaFullData mDetailFullData, final OtherContentsDetailData detailData, final boolean clipStatus) {
+    public static void setContentsDetailData(final VodMetaFullData mDetailFullData, final OtherContentsDetailData detailData, final boolean clipStatus) {
         String dispType = mDetailFullData.getDisp_type();
         String searchOk = mDetailFullData.getmSearch_ok();
         String dTv = mDetailFullData.getDtv();
@@ -312,6 +352,53 @@ public class ContentDetailUtils {
         detailData.setM4kflg(mDetailFullData.getM4kflg());
         detailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
         detailData.setContentCategory(mDetailFullData.getContentsType());
+    }
+
+    /**
+     * コンテンツ詳細情報設定.
+     * @param content メタデータ
+     * @param detailData 詳細データ
+     * @param mDetailData 詳細データ(遷移元からもらった)
+     */
+    public static void setContentsDetailData(final StbMetaInfoResponseData.Content content, final OtherContentsDetailData detailData,
+            final OtherContentsDetailData mDetailData) {
+        if (DataBaseUtils.isNumber(content.mServiceId)) {
+            detailData.setServiceId(Integer.parseInt(content.mServiceId));
+        }
+        detailData.setTitleKind(content.mTitleKind);
+        detailData.setChannelName(content.mChannelName);
+        detailData.setDescription1(content.mDescription1);
+        detailData.setDescription2(content.mDescription2);
+        detailData.setDescription3(content.mDescription3);
+        String detail = "";
+        if (!TextUtils.isEmpty(content.mDescription2)) {
+            detail = content.mDescription2;
+        } else if (!TextUtils.isEmpty(content.mDescription1)) {
+            detail = content.mDescription1;
+        } else if (!TextUtils.isEmpty(content.mDescription3)) {
+            detail = content.mDescription3;
+        }
+        detailData.setDetail(detail);
+        detailData.setReserved1(content.mReserved1);
+        detailData.setReserved2(content.mReserved2);
+        detailData.setReserved3(content.mReserved3);
+        detailData.setReserved4(content.mReserved4);
+        detailData.setReserved5(content.mReserved5);
+        detailData.setMobileViewingFlg(content.mMobileViewingFlg);
+        detailData.setCategoryId(content.mCategoryId);
+        detailData.setTitle(content.mTitle);
+        detailData.setThumb(content.mCtPicURL1);
+        detailData.setmStartDate(content.mStartViewing);
+        detailData.setmEndDate(content.mEndViewing);
+        detailData.setChannelId(content.mChannelId);
+        detailData.setContentsId(content.mContentsId);
+        detailData.setContentCategory(ContentUtils.getRecommendContentsType(detailData.getServiceId(), content.mCategoryId));
+        //履歴送信用
+        detailData.setRecommendFlg(mDetailData.getRecommendFlg());
+        detailData.setGroupId(mDetailData.getGroupId());
+        detailData.setPageId(mDetailData.getPageId());
+        detailData.setRecommendOrder(mDetailData.getRecommendOrder());
+        detailData.setRecommendMethodId(mDetailData.getRecommendMethodId());
     }
 
     /**

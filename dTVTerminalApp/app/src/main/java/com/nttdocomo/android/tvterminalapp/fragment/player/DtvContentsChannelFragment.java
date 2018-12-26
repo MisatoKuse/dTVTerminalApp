@@ -81,8 +81,10 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
         /**
          * Fragment見えるのコールバック.
+         * @param isVisibleToUser isVisibleToUser
+         * @param fragment fragment
          */
-        void onUserVisibleHint();
+        void onUserVisibleHint(boolean isVisibleToUser, DtvContentsChannelFragment fragment);
     }
 
     /**
@@ -229,8 +231,8 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     public void setUserVisibleHint(final boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         DTVTLogger.start();
-        if (!isVisibleToUser && mChangedScrollLoadListener != null) {
-            mChangedScrollLoadListener.onUserVisibleHint();
+        if (mChangedScrollLoadListener != null) {
+            mChangedScrollLoadListener.onUserVisibleHint(isVisibleToUser, this);
         }
         DTVTLogger.end();
     }
@@ -258,8 +260,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         } else {
             Intent intent = new Intent();
             intent.setClass(mActivity, ContentDetailActivity.class);
-            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY);
-            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            intent.putExtra(ContentUtils.PLALA_INFO_BUNDLE_KEY, contentsData.getContentsId());
             contentDetailActivity.startActivity(intent);
         }
     }
