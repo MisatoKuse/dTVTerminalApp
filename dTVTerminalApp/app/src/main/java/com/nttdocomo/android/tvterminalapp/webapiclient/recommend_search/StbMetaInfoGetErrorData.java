@@ -15,7 +15,7 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 @SuppressWarnings("PublicField")
 public class StbMetaInfoGetErrorData {
     /**処理結果.*/
-    public String status;
+    public int status;
     /**エラー情報.*/
     public final ErrorResultData error;
 
