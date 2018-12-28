@@ -94,6 +94,8 @@ public class ContentDetailUtils {
     public static final String PLAY_START_POSITION = "playStartPosition";
     /** 前回リモートコントローラービュー表示フラグ.*/
     public static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
+    /** 前回ViewPagerのタブ位置.*/
+    public static final String VIEWPAGER_INDEX = "viewPagerIndex";
     /**コンテンツ詳細予約済みID.*/
     public static final String CONTENTS_DETAIL_RESERVEDID = "1";
     /** bvflg(1).*/
@@ -104,6 +106,16 @@ public class ContentDetailUtils {
     public static final int SCREEN_RATIO_WIDTH_16 = 16;
     /** アスペクト比(16:9)の9.*/
     public static final int SCREEN_RATIO_HEIGHT_9 = 9;
+    /** ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの開始値.*/
+    public static final int RETRY_ERROR_START = 2000;
+    /**モバイル視聴不可.*/
+    public static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
+    /** 番組詳細 or 作品情報タブ.*/
+    public static final int CONTENTS_DETAIL_INFO_TAB_POSITION = 0;
+    /** チャンネルタブ.*/
+    public static final int CONTENTS_DETAIL_CHANNEL_TAB_POSITION = 1;
+    /**他サービス起動リクエストコード.*/
+    public static final int START_APPLICATION_REQUEST_CODE = 0;
 
     /** エラータイプ.*/
     public enum ErrorType {

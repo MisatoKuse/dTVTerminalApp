@@ -85,6 +85,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private RecordingReservationIconListener mIconClickListener = null;
     /** フラグメント表示リスナー.*/
     private ContentsDetailFragmentListener mContentsDetailFragmentListener = null;
+    /** 正常取得成功.*/
+    private boolean mFinishFlg = false;
     /** スタッフ文字サイズ(title).*/
     private final static int TEXT_SIZE_12 = 12;
     /** スタッフ文字サイズ(内容).*/
@@ -219,6 +221,21 @@ public class DtvContentsDetailFragment extends Fragment {
         if (mClipButton != null) {
             setClipButton(mClipButton);
         }
+    }
+
+    /**
+     * 再取得防止ため.
+     */
+    public boolean isRequestFinish() {
+        return mFinishFlg;
+    }
+
+    /**
+     * 再取得防止ため.
+     * @param mFinishFlg mFinishFlg
+     */
+    public void setRequestFinish(final boolean mFinishFlg) {
+        this.mFinishFlg = mFinishFlg;
     }
 
     /**

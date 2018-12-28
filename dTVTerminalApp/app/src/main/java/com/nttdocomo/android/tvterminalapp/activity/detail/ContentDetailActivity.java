@@ -177,24 +177,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private LinearLayout mContractLeadingView = null;
     /**「契約する」ボタンのクリック状態.*/
     private boolean mThumbnailContractButtonClicked = false;
-    /**モバイル視聴不可.*/
-    private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
     /** 日付インディーズ.*/
     private int mDateIndex = 0;
     /** 日付リスト.*/
     private String[] mDateList = null;
-    /**他サービス起動リクエストコード.*/
-    private static final int START_APPLICATION_REQUEST_CODE = 0;
     /** flg(0).*/
     private static final int FLAG_ZERO = 0;
     /** 画面すべてのクリップボタンを更新.*/
     private static final int CLIP_BUTTON_ALL_UPDATE = 0;
     /** チャンネルリストのクリップボタンをのみを更新.*/
     private static final int CLIP_BUTTON_CHANNEL_UPDATE = 1;
-    /** 番組詳細 or 作品情報タブ.*/
-    private static final int CONTENTS_DETAIL_INFO_TAB_POSITION = 0;
-    /** チャンネルタブ.*/
-    private static final int CONTENTS_DETAIL_CHANNEL_TAB_POSITION = 1;
     /* player start */
     /**FrameLayout.*/
     private FrameLayout mFrameLayout = null;
@@ -236,8 +228,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private boolean mIsPlayerPaused = false;
     /** 前回リモートコントローラービュー表示フラグ.*/
     private boolean mVisibility = false;
-    /** ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの開始値.*/
-    private static final int RETRY_ERROR_START = 2000;
     /** ディスプレイ幅.*/
     private int mWidth;
     /** ディスプレイ高さ.*/
@@ -253,8 +243,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private int mViewPagerIndex = DEFAULT_TAB_INDEX;
     /** 前回ViewPagerのタブ位置.*/
     private static final int DEFAULT_TAB_INDEX = -1;
-    /** 前回ViewPagerのタブ位置.*/
-    private static final String VIEWPAGER_INDEX = "viewPagerIndex";
     /** コンテンツ種別1のコンテンツ種別名のひかりTVタイプ.*/
     private ContentUtils.HikariType mHikariType = null;
     /** 放送視聴可否.*/
@@ -263,8 +251,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ContentDetailUtils.ContentTypeForGoogleAnalytics contentType = null;
     /** タブ表示区別.*/
     private ContentDetailUtils.TabType tabType;
-    /** タブ再作成フラグ.*/
-    private boolean isTabChanged = false;
     // endregion
 
     @Override
@@ -273,7 +259,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (savedInstanceState != null) {
             mPlayStartPosition = savedInstanceState.getInt(ContentDetailUtils.PLAY_START_POSITION);
             mVisibility = savedInstanceState.getBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY);
-            mViewPagerIndex = savedInstanceState.getInt(VIEWPAGER_INDEX);
+            mViewPagerIndex = savedInstanceState.getInt(ContentDetailUtils.VIEWPAGER_INDEX);
             savedInstanceState.clear();
         }
         setTheme(R.style.AppThemeBlack);
@@ -333,7 +319,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (mViewPager != null) {
                 sendScreenViewForPosition(mViewPager.getCurrentItem());
             } else {
-                sendScreenViewForPosition(CONTENTS_DETAIL_INFO_TAB_POSITION);
+                sendScreenViewForPosition(ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION);
             }
         }
         if (mIsPlayerPaused) {
@@ -460,7 +446,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         outState.putBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
         if (mViewPager != null) {
-            outState.putInt(VIEWPAGER_INDEX, mViewPager.getCurrentItem());
+            outState.putInt(ContentDetailUtils.VIEWPAGER_INDEX, mViewPager.getCurrentItem());
         }
     }
 
@@ -878,7 +864,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * タブを再作成する.
      */
     private void setTabChanged() {
-        isTabChanged = true;
         createViewPagerAdapter();
     }
 
@@ -1165,6 +1150,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //詳細情報取得して、更新する
                 if (contentsDetailInfo != null) {
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
+                    detailFragment.setRequestFinish(true);
                     mDetailFullData = contentsDetailInfo;
                     //メタデータ取得時にコンテンツ種別を取得する
                     mContentsType = ContentUtils.getHikariContentsType(mDetailFullData);
@@ -1450,7 +1436,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             if (mServiceId.equals(channel.getServiceId())) {
                                 mChannel = channel;
                                 //チャンネル情報取得完了前にタブ切替されていた場合はここでチャンネルタブ表示処理を開始する
-                                if (mViewPager.getCurrentItem() == CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
+                                if (mViewPager.getCurrentItem() == ContentDetailUtils.CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
                                     showChannelProgressBar(true);
                                     getChannelDetailData(mChannel);
                                 }
@@ -1497,7 +1483,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     List<ChannelInfo> channels = channelsInfo.getChannels();
                     ContentDetailUtils.sort(channels);
                     if (channels.size() > 0) {
-                        if (mViewPager.getCurrentItem() == CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
+                        if (mViewPager.getCurrentItem() == ContentDetailUtils.CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
                             mChannelFragment = getChannelFragment();
                             ChannelInfo channelInfo = channels.get(0);
                             ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
@@ -1714,7 +1700,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
-            startActivityForResult(intent, START_APPLICATION_REQUEST_CODE);
+            startActivityForResult(intent, ContentDetailUtils.START_APPLICATION_REQUEST_CODE);
         } catch (ActivityNotFoundException exception) {
             //Androidのバグと思われる原因により、インストール情報の取得ができない場合がある。その場合は、この例外が発生する
             DTVTLogger.debug(exception);
@@ -2313,7 +2299,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         String errorMsg = getString(R.string.contents_player_fail_msg);
         errorMsg = errorMsg.replace(format, String.valueOf(errorCode));
         //通信エラーの場合はリトライする
-        if (errorCode >= RETRY_ERROR_START) {
+        if (errorCode >= ContentDetailUtils.RETRY_ERROR_START) {
             DTVTLogger.debug("not close");
             //自動再生コンテンツ再生準備
             setPlayRetryArrow();
@@ -3079,24 +3065,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //状況に合わせてエラーの取得場所を選択し、ダイアログ表示を行う
         switch (errorType) {
             case contentDetailGet:
-                //エラー値の取得元を切り替え
-                if (mContentsDetailDataProvider != null) {
-                    //コンテンツ詳細プロバイダーが存在すれば、そこからエラー値を取得する
-                    errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
-                } else if (mStbMetaInfoGetDataProvider != null) {
-                    //検索データプロバイダーが存在すれば、そこからエラー値を取得する
-                    errorState = mStbMetaInfoGetDataProvider.getError();
-                } else {
-                    //どちらのデータプロバイダーも無ければ、何もできないので帰る（ここに来るケースは無い筈）
-                    DTVTLogger.debug("mScaledDownProgramListData mSearchData both null:" + errorType);
-                    return;
-                }
-                okCallback = new CustomDialog.ApiOKCallback() {
-                    @Override
-                    public void onOKCallback(final boolean isOK) {
-                        finish();
-                    }
-                };
+                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
+                okCallback = showDialogOkToBack();
                 break;
             case roleListGet:
                 errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.roleList);
@@ -3115,6 +3085,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case recommendDetailGet:
                 errorState = mStbMetaInfoGetDataProvider.getError();
+                okCallback = showDialogOkToBack();
                 break;
             default:
                 break;
@@ -3131,10 +3102,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (okCallback != null) {
             customDialog.setOkCallBack(okCallback);
-            customDialog.setOnTouchOutside(false);
         }
+        customDialog.setOnTouchOutside(false);
+        customDialog.setCancelable(false);
+        customDialog.setOnTouchBackkey(false);
         customDialog.showDialog();
         DTVTLogger.end();
+    }
+
+    /**
+     * OKボタン押下後前画面に戻る.
+     * @return OKコールバック
+     */
+    private CustomDialog.ApiOKCallback showDialogOkToBack() {
+        return new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                finish();
+            }
+        };
     }
 
     /**
@@ -3258,7 +3244,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     // 「reserved2」が「1」Android視聴不可
                     // モバイル視聴不可なので、"テレビで視聴できます"を表示(ペアリングは無関係)
                     setThumbnailText(getString(R.string.contents_detail_thumbnail_text));
-                } else if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                } else if (ContentDetailUtils.MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
                     //「mobileViewingFlg」が「0」の場合モバイル視聴不可
                     //モバイル視聴不可なので、"テレビで視聴できます"を表示(ペアリングは無関係)
                     setThumbnailText(getString(R.string.contents_detail_thumbnail_text));
@@ -3312,6 +3298,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             tabType = ContentDetailUtils.TabType.VOD;
         }
         mDetailData.setChannelDate(date);
+        sendScreenViewForPosition(ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION);
     }
 
     @Override
@@ -3323,6 +3310,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (stbMetaInfoResponseData.getTotalCount() == 1) { //取得成功
                     StbMetaInfoResponseData.Content content = stbMetaInfoResponseData.getContent();
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
+                    detailFragment.setRequestFinish(true);
                     OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                     ContentDetailUtils.setContentsDetailData(content, detailData, mDetailData);
                     mDetailData = detailData;
@@ -3330,6 +3318,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (tabType != ContentDetailUtils.TabType.TV_CH) {
                         setTabChanged();
                     }
+                    detailFragment.noticeRefresh();
                 } else { //0件
                     showErrorDialog(ContentDetailUtils.ErrorType.recommendDetailGet);
                 }
@@ -3351,15 +3340,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onUserVisibleHint(final boolean isVisibleToUser, final DtvContentsDetailFragment dtvContentsDetailFragment) {
-        if (isVisibleToUser) {
-            if (!isTabChanged) {
-                if (mIsOtherService) {
-                    getContentDetailInfoFromSearchServer();
-                } else {
-                    getContentDetailDataFromPlala();
-                }
-            }
-            isTabChanged = false;
+        if (!isVisibleToUser || dtvContentsDetailFragment.isRequestFinish()) {
+            return;
+        }
+        if (mIsOtherService) {
+            getContentDetailInfoFromSearchServer();
+        } else {
+            getContentDetailDataFromPlala();
         }
     }
 
