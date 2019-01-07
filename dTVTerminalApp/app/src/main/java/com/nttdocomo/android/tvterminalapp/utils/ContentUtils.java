@@ -1165,7 +1165,7 @@ public class ContentUtils {
     }
 
     /**
-     * 購入済みCH一覧のservice_idと対象のCHのservice_idが一致するか確認.
+     * 購入済みCH一覧のservice_id_uniqと対象のCHのservice_id_uniqが一致するか確認.
      *
      * @param chList 購入済みCHリスト
      * @param channelInfo チャンネルデータ
@@ -1175,9 +1175,9 @@ public class ContentUtils {
 
         //CHのservice_id一覧を取得
         for (Map<String, String> hashMap : chList) {
-            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
-            if (serviceId != null && !serviceId.isEmpty()) {
-                if (serviceId.equals(channelInfo.getServiceId())) {
+            String serviceIdUniq = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
+            if (!TextUtils.isEmpty(serviceIdUniq)) {
+                if (serviceIdUniq.equals(channelInfo.getServiceIdUniq())) {
                     //service_idが一致
                     return hashMap;
                 }
