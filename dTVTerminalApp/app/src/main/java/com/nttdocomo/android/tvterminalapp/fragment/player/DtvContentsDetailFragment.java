@@ -381,9 +381,6 @@ public class DtvContentsDetailFragment extends Fragment {
             mStaffLayout.setVisibility(View.GONE);
         }
         setClipButton(mClipButton);
-        if (mIconClickListener != null) {
-            setRecordingReservationIconListener(mIconClickListener, getContext());
-        }
         showDescription();
     }
 
