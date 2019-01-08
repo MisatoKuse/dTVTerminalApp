@@ -1147,10 +1147,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //DBに保存されているUserInfoから契約情報を確認する
                 String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
                 DTVTLogger.debug("contractInfo: " + contractInfo);
+                DtvContentsDetailFragment detailFragment = getDetailFragment();
+                detailFragment.setRequestFinish(true);
                 //詳細情報取得して、更新する
                 if (contentsDetailInfo != null) {
-                    DtvContentsDetailFragment detailFragment = getDetailFragment();
-                    detailFragment.setRequestFinish(true);
                     mDetailFullData = contentsDetailInfo;
                     //メタデータ取得時にコンテンツ種別を取得する
                     mContentsType = ContentUtils.getHikariContentsType(mDetailFullData);
