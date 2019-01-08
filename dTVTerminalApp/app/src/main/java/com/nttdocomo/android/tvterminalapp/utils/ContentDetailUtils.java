@@ -116,6 +116,18 @@ public class ContentDetailUtils {
     public static final int CONTENTS_DETAIL_CHANNEL_TAB_POSITION = 1;
     /**他サービス起動リクエストコード.*/
     public static final int START_APPLICATION_REQUEST_CODE = 0;
+    /** 画面すべてのクリップボタンを更新.*/
+    public static final int CLIP_BUTTON_ALL_UPDATE = 0;
+    /** チャンネルリストのクリップボタンをのみを更新.*/
+    public static final int CLIP_BUTTON_CHANNEL_UPDATE = 1;
+    /**コンテンツ詳細のみ.*/
+    public final static int CONTENTS_DETAIL_ONLY = 0;
+    /**プレイヤーのみ.*/
+    public final static int PLAYER_ONLY = 1;
+    /**プレイヤーとコンテンツ詳細.*/
+    public final static int PLAYER_AND_CONTENTS_DETAIL = 2;
+    /** サムネイルにかけるシャドウのアルファ値.*/
+    public static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
 
     /** エラータイプ.*/
     public enum ErrorType {

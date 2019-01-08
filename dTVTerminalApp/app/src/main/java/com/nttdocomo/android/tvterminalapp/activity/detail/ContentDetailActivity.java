@@ -149,12 +149,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private String[] mTabNames = null;
     /**表示状態.*/
     private int mDisplayState = 0;
-    /**コンテンツ詳細のみ.*/
-    private final static int CONTENTS_DETAIL_ONLY = 0;
-    /**プレイヤーのみ.*/
-    private final static int PLAYER_ONLY = 1;
-    /**プレイヤーとコンテンツ詳細.*/
-    private final static int PLAYER_AND_CONTENTS_DETAIL = 2;
     /**リモコンコントローラービジブルか.*/
     private boolean mIsControllerVisible = false;
     /**インデント.*/
@@ -183,10 +177,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private String[] mDateList = null;
     /** flg(0).*/
     private static final int FLAG_ZERO = 0;
-    /** 画面すべてのクリップボタンを更新.*/
-    private static final int CLIP_BUTTON_ALL_UPDATE = 0;
-    /** チャンネルリストのクリップボタンをのみを更新.*/
-    private static final int CLIP_BUTTON_CHANNEL_UPDATE = 1;
     /* player start */
     /**FrameLayout.*/
     private FrameLayout mFrameLayout = null;
@@ -204,8 +194,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private long mVodEndDate = 0L;
     /** Vod視聴可能期限文字列.*/
     private String mVodEndDateText = null;
-    /** サムネイルにかけるシャドウのアルファ値.*/
-    private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
     /** 操作履歴送信.*/
     private SendOperateLog mSendOperateLog = null;
     /** 二回目リモコン送信防止.*/
@@ -279,13 +267,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         super.onResume();
         enableStbStatusIcon(true);
         switch (mDisplayState) {
-            case PLAYER_ONLY:
+            case ContentDetailUtils.PLAYER_ONLY:
                 if (mIsFromBgFlg) {
                     super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
                             ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
                 }
                 break;
-            case PLAYER_AND_CONTENTS_DETAIL:
+            case ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL:
                 if (mIsFromBgFlg) {
                     String screenName = null;
                     if (mIsH4dPlayer) {
@@ -302,7 +290,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 checkOnResumeClipStatus();
                 break;
-            case CONTENTS_DETAIL_ONLY:
+            case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
                 if (mIsFromBgFlg && contentType != null && mViewPager != null) {
                     String tabName = mTabNames[mViewPager.getCurrentItem()];
                     String screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this).get(tabName);
@@ -378,7 +366,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void checkOnResumeClipStatus() {
         if (!mIsFirstDisplay) {
-            checkClipStatus(CLIP_BUTTON_ALL_UPDATE);
+            checkClipStatus(ContentDetailUtils.CLIP_BUTTON_ALL_UPDATE);
         } else {
             mIsFirstDisplay = false;
         }
@@ -459,11 +447,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mIsPlayerPaused = true;
         }
         switch (mDisplayState) {
-            case PLAYER_AND_CONTENTS_DETAIL:
-            case CONTENTS_DETAIL_ONLY:
+            case ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL:
+            case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
                 stopConnect();
                 break;
-            case PLAYER_ONLY:
+            case ContentDetailUtils.PLAYER_ONLY:
             default:
                 break;
         }
@@ -472,7 +460,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onStop() {
         super.onStop();
-        //外部出力制御
         if (mPlayerViewLayout != null) {
             mPlayerViewLayout.onStop();
         }
@@ -480,26 +467,24 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
-        //外部出力制御
         if (mPlayerViewLayout != null) {
             mPlayerViewLayout.onDestory();
         }
         super.onDestroy();
     }
 
-    @SuppressWarnings("OverlyComplexMethod")
     @Override
     public void onStartCommunication() {
         DTVTLogger.start();
         super.onStartCommunication();
         switch (mDisplayState) {
-            case PLAYER_ONLY:
+            case ContentDetailUtils.PLAYER_ONLY:
                 if (mPlayerViewLayout != null) {
                     mPlayerViewLayout.enableThumbnailConnect();
                 }
                 break;
-            case PLAYER_AND_CONTENTS_DETAIL:
-            case CONTENTS_DETAIL_ONLY:
+            case ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL:
+            case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
                 enableConnect();
                 break;
             default:
@@ -576,7 +561,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mContractLeadingView = findViewById(R.id.contract_leading_view);
         Object object = mIntent.getParcelableExtra(ContentDetailUtils.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
-            mDisplayState = PLAYER_ONLY;
+            mDisplayState = ContentDetailUtils.PLAYER_ONLY;
             RecordedContentsDetailData playerData = mIntent.getParcelableExtra(ContentDetailUtils.RECORD_LIST_KEY);
             if (!TextUtils.isEmpty(playerData.getTitle())) {
                 setTitleText(playerData.getTitle());
@@ -618,10 +603,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void getContentDetailDataFromPlala() {
         mContentsDetailDataProvider = new ContentsDetailDataProvider(this);
-        String[] cRid;
         if (mDetailData != null) {
             DTVTLogger.debug("contentId:" + mDetailData.getContentsId());
-            cRid = new String[1];
+            String[] cRid = new String[1];
             cRid[cRid.length - 1] = mDetailData.getContentsId();
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
             int ageReq = userInfoDataProvider.getUserAge();
@@ -755,8 +739,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mThumbnailBtn.setVisibility(View.GONE);
                 mContractLeadingView.setVisibility(View.GONE);
             } else {
-                if (mDetailFullData != null
-                        && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
+                if (mDetailFullData != null && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
                     imageView.setVisibility(View.GONE);
                     // 連携アイコン非表示のためクリック抑止
                     mThumbnailBtn.setClickable(false);
@@ -798,7 +781,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * データの初期化.
-     *
      * @param title タイトル
      * @param url URL
      */
@@ -850,7 +832,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             } else {
                 showProgressBar(false);
-                DTVTLogger.debug("mDetailData is NULL");
             }
         }
         tabType = ContentDetailUtils.TabType.TV_CH;
@@ -858,13 +839,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mContentsDetailFragment.setContentsDetailFragmentScrollListener(this);
         createViewPagerAdapter();
         DTVTLogger.end();
-    }
-
-    /**
-     * タブを再作成する.
-     */
-    private void setTabChanged() {
-        createViewPagerAdapter();
     }
 
     /**
@@ -954,12 +928,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void initContentsView() {
         switch (mDisplayState) {
-            case PLAYER_AND_CONTENTS_DETAIL:
-            case CONTENTS_DETAIL_ONLY:
+            case ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL:
+            case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
                 mViewPager = findViewById(R.id.dtv_contents_detail_main_layout_vp);
                 initContentData();
                 break;
-            case PLAYER_ONLY:
+            case ContentDetailUtils.PLAYER_ONLY:
             default:
                 break;
         }
@@ -987,7 +961,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
-            DTVTLogger.debug("viewpager not null");
             mViewPager.setCurrentItem(position);
         }
         DTVTLogger.end();
@@ -1225,7 +1198,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             detailData.setmStartDate(String.valueOf(mDetailFullData.getAvail_start_date()));
                         }
                         tabType = ContentDetailUtils.TabType.VOD;
-                        setTabChanged();
+                        createViewPagerAdapter();
                         if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) { //配信前 m/d（曜日）から
                             date = DateUtils.getContentsDateString(getApplicationContext(), mDetailFullData.getAvail_start_date(), true);
                         } else {
@@ -1285,7 +1258,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 } else {
                     tabType = ContentDetailUtils.TabType.VOD;
-                    setTabChanged();
+                    createViewPagerAdapter();
                     showErrorDialog(ContentDetailUtils.ErrorType.contentDetailGet);
                     mThumbnail.setImageResource(R.mipmap.error_movie);
                 }
@@ -1300,7 +1273,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     if (tabType == ContentDetailUtils.TabType.TV_CH) {
                         tabType = ContentDetailUtils.TabType.VOD;
-                        setTabChanged();
+                        createViewPagerAdapter();
                     }
                     mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
                     //コンテンツ種別ごとの視聴可否判定を実行
@@ -1372,7 +1345,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                     responseResultCheck(mViewIngType, mContentsType);
                 } else {
-                    showErrorDialog(ContentDetailUtils.ErrorType.roleListGet);
+                    showErrorToast(ContentDetailUtils.ErrorType.roleListGet);
                 }
             }
         });
@@ -1419,9 +1392,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (channels == null || channels.isEmpty()) {
                     if (tabType == ContentDetailUtils.TabType.TV_CH) {
                         tabType = ContentDetailUtils.TabType.VOD;
-                        setTabChanged();
+                        createViewPagerAdapter();
                     }
-                    showErrorDialog(ContentDetailUtils.ErrorType.channelListGet);
+                    showErrorToast(ContentDetailUtils.ErrorType.channelListGet);
                     return;
                 }
                 //DBに保存されているUserInfoから契約情報を確認する
@@ -1459,7 +1432,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mChannel == null) {
                     if (tabType == ContentDetailUtils.TabType.TV_CH) {
                         tabType = ContentDetailUtils.TabType.VOD;
-                        setTabChanged();
+                        createViewPagerAdapter();
                     }
                 }
                 if (mDetailFullData != null) {
@@ -1504,7 +1477,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         if (!isFirst) {
                                             if (mDateIndex == 1) {
                                                 if (ContentUtils.isNowOnAir(startTime, endTime)) {
-                                                    //NOW ON AIR の判断
                                                     contentsData.setChannelName(getString(R.string.home_label_now_on_air));
                                                 }
                                             }
@@ -1519,7 +1491,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             if (mDateIndex == 1) {
                                 getChannelDetailByPageNo();
                             } else {
-                                checkClipStatus(CLIP_BUTTON_CHANNEL_UPDATE);
+                                checkClipStatus(ContentDetailUtils.CLIP_BUTTON_CHANNEL_UPDATE);
                             }
                         }
                     }
@@ -2118,8 +2090,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             public void onOKCallback(final boolean isOK) {
                 DTVTLogger.debug("Request RecordingReservation");
                 DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
-                if (!mContentsDetailDataProvider.requestRecordingReservation(
-                        mRecordingReservationContentsDetailInfo)) {
+                if (!mContentsDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo)) {
                     //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
                     CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
                     dialog.showDialog();
@@ -2164,7 +2135,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void run() {
                 if (response == null) {
-                    showErrorDialog(ContentDetailUtils.ErrorType.rentalVoidListGet);
+                    showErrorToast(ContentDetailUtils.ErrorType.rentalVoidListGet);
                     return;
                 }
                 mPurchasedVodListResponse = response;
@@ -2211,7 +2182,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void run() {
                 if (response == null) {
-                    showErrorDialog(ContentDetailUtils.ErrorType.rentalChannelListGet);
+                    showErrorToast(ContentDetailUtils.ErrorType.rentalChannelListGet);
                     return;
                 }
                 mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
@@ -2337,8 +2308,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void setTabVisibility(final boolean visible) {
         switch (mDisplayState) {
-            case CONTENTS_DETAIL_ONLY:
-            case PLAYER_AND_CONTENTS_DETAIL:
+            case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
+            case ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL:
                 if (visible) {
                     findViewById(R.id.dtv_contents_detail_main_layout_vp).setVisibility(View.VISIBLE);
                     findViewById(R.id.rl_dtv_contents_detail_tab).setVisibility(View.VISIBLE);
@@ -2347,7 +2318,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     findViewById(R.id.rl_dtv_contents_detail_tab).setVisibility(View.GONE);
                 }
                 break;
-            case PLAYER_ONLY:
+            case ContentDetailUtils.PLAYER_ONLY:
                 if (visible) {
                     findViewById(R.id.dtv_contents_detail_player_only).setVisibility(View.VISIBLE);
                 } else {
@@ -2437,7 +2408,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void playAutoContents() {
-        mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
+        mDisplayState = ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL;
         RecordedContentsDetailData data = new RecordedContentsDetailData();
         data.setUpnpIcon(mChannel.getThumbnail());
         if (mDetailFullData != null) {
@@ -2495,9 +2466,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
         //必要なデータが揃わないうちは何もしない
-        if (contentsType == null
-                || viewIngType == null
-                || ContentUtils.isSkipViewingType(viewIngType, contentsType)
+        if (contentsType == null || viewIngType == null || ContentUtils.isSkipViewingType(viewIngType, contentsType)
                 || contentsType.equals(ContentUtils.ContentsType.OTHER)) {
             DTVTLogger.debug("display thumbnail must data none");
             return;
@@ -2742,7 +2711,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    //ペアリング設定
                     Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
                     intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
                     startActivity(intent);
@@ -2992,7 +2960,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void setThumbnailShadow() {
         if (mThumbnail != null) {
-            mThumbnail.setAlpha(THUMBNAIL_SHADOW_ALPHA);
+            mThumbnail.setAlpha(ContentDetailUtils.THUMBNAIL_SHADOW_ALPHA);
         }
     }
 
@@ -3052,10 +3020,43 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
+     * エラートーストを表示する.
+     * @param errorType エラータイプ
+     */
+    private void showErrorToast(final ContentDetailUtils.ErrorType errorType) {
+        DTVTLogger.start();
+        showProgressBar(false);
+        ErrorState errorState = null;
+        switch (errorType) {
+            case rentalChannelListGet:
+                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.rentalChList);
+                break;
+            case rentalVoidListGet:
+                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.rentalVodList);
+                break;
+            case channelListGet:
+                errorState = mScaledDownProgramListDataProvider.getChannelError();
+                break;
+            case roleListGet:
+                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.roleList);
+                break;
+            case contentDetailGet:
+            case recommendDetailGet:
+            default:
+                break;
+        }
+        if (errorState != null) {
+            showGetDataFailedToast(errorState.getErrorMessage());
+        } else {
+            showGetDataFailedToast();
+        }
+        DTVTLogger.end();
+    }
+
+    /**
      * エラーダイアログを表示する.
      * @param errorType エラータイプ
      */
-    @SuppressWarnings("OverlyLongMethod")
     private void showErrorDialog(final ContentDetailUtils.ErrorType errorType) {
         DTVTLogger.start();
         showProgressBar(false);
@@ -3068,18 +3069,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
                 okCallback = showDialogOkToBack();
                 break;
-            case roleListGet:
-                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.roleList);
-                break;
-            case rentalChannelListGet:
-                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.rentalChList);
-                break;
-            case rentalVoidListGet:
-                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.rentalVodList);
-                break;
-            case channelListGet:
-                errorState = mScaledDownProgramListDataProvider.getChannelError();
-                break;
             case tvScheduleListGet:
                 errorState = mScaledDownProgramListDataProvider.getmTvScheduleError();
                 break;
@@ -3087,6 +3076,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 errorState = mStbMetaInfoGetDataProvider.getError();
                 okCallback = showDialogOkToBack();
                 break;
+            case channelListGet:
+            case rentalChannelListGet:
+            case rentalVoidListGet:
+            case roleListGet:
             default:
                 break;
         }
@@ -3132,11 +3125,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         ClipKeyListDataManager manager = new ClipKeyListDataManager(ContentDetailActivity.this);
         List<Map<String, String>> mapList = manager.selectClipAllList();
         switch (targetId) {
-            case CLIP_BUTTON_ALL_UPDATE:
+            case ContentDetailUtils.CLIP_BUTTON_ALL_UPDATE:
                 checkDetailClipStatus(mapList);
                 checkChannelClipStatus(mapList);
                 break;
-            case CLIP_BUTTON_CHANNEL_UPDATE:
+            case ContentDetailUtils.CLIP_BUTTON_CHANNEL_UPDATE:
                 checkChannelClipStatus(mapList);
                 break;
             default:
@@ -3316,7 +3309,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mDetailData = detailData;
                     checkRecommendResponse();
                     if (tabType != ContentDetailUtils.TabType.TV_CH) {
-                        setTabChanged();
+                        createViewPagerAdapter();
                     }
                     detailFragment.noticeRefresh();
                 } else { //0件
@@ -3354,7 +3347,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void showClipToast(final int msgId) {
         super.showClipToast(msgId);
         //クリップ処理が終わった時点で、コンテンツ詳細、チャンネルリストのクリップ状態を更新する
-        checkClipStatus(CLIP_BUTTON_ALL_UPDATE);
+        checkClipStatus(ContentDetailUtils.CLIP_BUTTON_ALL_UPDATE);
     }
 
     @Override
