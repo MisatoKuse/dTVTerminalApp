@@ -339,8 +339,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             }
             executeRoleListCallback(mRoleListInfo);
         } else {
-            //TODO :WEBAPIを取得できなかった時の処理を記載予定
-            DTVTLogger.debug("WEBAPIを取得できなかった時の処理を記載予定");
+            executeRoleListCallback(null);
         }
     }
 
