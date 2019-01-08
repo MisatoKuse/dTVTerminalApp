@@ -138,9 +138,14 @@ public class UrlConstants {
         public static final String D_ANIME_COPYRIGHT_SITE_URL = "https://anime.dmkt-sp.jp/animestore/CF/copyrights";
 
         /**
-         * ひかりTV for docomoガイドのURL
+         * ひかりTV for docomoガイドのURL.
          */
         public static final String H4D_GUIDE_URL = "https://www.hikaritv-docomo.jp/user/guide";
+
+        /**
+         * 契約リンク先.
+         */
+        public static final String CONTRACT_LINK = "https://www.nttdocomo.co.jp/";
     }
 
     /**
@@ -151,6 +156,11 @@ public class UrlConstants {
          * 検索サーバAPIのURL.
          */
         public static final String TOTAL_SEARCH_URL = BaseUrlConstants.TOTAL_SEARCH_URL;
+
+        /**
+         * STBメタデータ取得APIのURL.
+         */
+        public static final String STB_META_DATA_URL = BaseUrlConstants.STB_META_DATA_URL;
 
         /**
          * レコメンド情報取得APIのURL.

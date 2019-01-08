@@ -23,9 +23,6 @@ public class TotalSearchRequestData {
     public String query = null;       //複数条件の場合は半角スペース
 
     //optional
-    //public String searchFields;
-    /**レスポンスタイプ.*/
-    public final ResponseType responseType = ResponseType.xml;
     /**検索結果返却開始位置.*/
     public int startIndex = 1;     //省略時は1
     /**検索結果返却数.*/

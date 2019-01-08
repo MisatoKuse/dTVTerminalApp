@@ -26,11 +26,11 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.List;
@@ -367,14 +367,18 @@ public class RankingTopActivity extends BaseActivity
     }
 
     @Override
-    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+    public void onItemClickCallBack(final ContentsData contentsData, final String recommendFlg) {
         if (ContentUtils.isChildContentList(contentsData)) {
             startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             ComponentName componentName = this.getComponentName();
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
-            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
+                intent.putExtra(recommendFlg, DataConverter.getContentDataToContentsDetail(contentsData, ContentUtils.RECOMMEND_INFO_BUNDLE_KEY));
+            } else {
+                intent.putExtra(recommendFlg, contentsData.getContentsId());
+            }
             startActivity(intent);
         }
     }

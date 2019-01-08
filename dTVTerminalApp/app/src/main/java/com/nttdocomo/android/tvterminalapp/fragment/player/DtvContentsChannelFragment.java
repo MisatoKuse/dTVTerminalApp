@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,12 +28,10 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
@@ -81,8 +80,10 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
         /**
          * Fragment見えるのコールバック.
+         * @param isVisibleToUser isVisibleToUser
+         * @param fragment fragment
          */
-        void onUserVisibleHint();
+        void onUserVisibleHint(boolean isVisibleToUser, DtvContentsChannelFragment fragment);
     }
 
     /**
@@ -101,7 +102,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+    public View onCreateView(@Nullable final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         return initView(container);
     }
 
@@ -229,8 +230,8 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     public void setUserVisibleHint(final boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         DTVTLogger.start();
-        if (!isVisibleToUser && mChangedScrollLoadListener != null) {
-            mChangedScrollLoadListener.onUserVisibleHint();
+        if (mChangedScrollLoadListener != null) {
+            mChangedScrollLoadListener.onUserVisibleHint(isVisibleToUser, this);
         }
         DTVTLogger.end();
     }
@@ -258,8 +259,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         } else {
             Intent intent = new Intent();
             intent.setClass(mActivity, ContentDetailActivity.class);
-            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY);
-            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            intent.putExtra(ContentUtils.PLALA_INFO_BUNDLE_KEY, contentsData.getContentsId());
             contentDetailActivity.startActivity(intent);
         }
     }

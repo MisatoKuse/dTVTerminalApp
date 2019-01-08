@@ -313,9 +313,6 @@ public class ErrorState {
                         break;
                     case XmlPullParser.END_DOCUMENT:
                         endFlg = true;
-
-                        //本来はここまで来る前に結果コードを取得できるので、エラーとする
-                        mErrorType = DtvtConstants.ErrorType.NETWORK_ERROR;
                         break;
                     default:
                         break;

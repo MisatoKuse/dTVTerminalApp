@@ -270,7 +270,17 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             channelsInfo.addChannel(channel);
                         }
                     }
-                    sendChannelInfoList(channelsInfo, new String[0]);
+                    if (channelsInfo.getChannels().size() == 0 && NetWorkUtils.isOnline(mContext)) {
+                        List<String> serviceIdUniqs = dataBaseThread.getFromDB();
+                        String[] fromWebAPIServiceIdUniqs = new String[serviceIdUniqs.size()];
+                        for (int i = 0; i < serviceIdUniqs.size(); i++) {
+                            fromWebAPIServiceIdUniqs[i] = serviceIdUniqs.get(i);
+                        }
+                        String[] date = {mProgramSelectDate};
+                        getScheduleListFromApi(fromWebAPIServiceIdUniqs, date);
+                    } else {
+                        sendChannelInfoList(channelsInfo, new String[0]);
+                    }
                 } else {
                     sendChannelInfoList(null, new String[0]);
                 }
@@ -664,6 +674,19 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
+     * 番組データ一覧取得.
+     *
+     * @param serviceIdUniqs  配列, 中身はString値
+     * @param dateList 配列, 中身は整数値 YYYYMMDD
+     */
+    private void getScheduleListFromApi(final String[] serviceIdUniqs, final String[] dateList) {
+        TvScheduleWebClient tvScheduleWebClient = new TvScheduleWebClient(mContext);
+        tvScheduleWebClient.setChannelNoList(serviceIdUniqs, dateList, PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE);
+        mTvScheduleWebClientLinkedList.offer(tvScheduleWebClient);
+        pollTvScheduleWebClient();
+    }
+
+    /**
      * 通信/DBで、チャンネル毎番組取得.
      *
      * @param serviceIdUniq   配列, 中身はString値
@@ -709,10 +732,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 }
                 if (NetWorkUtils.isOnline(mContext)) {
                     //キューに仕込む分はローカル変数を作成する(中断処理が別系統となるため)
-                    TvScheduleWebClient tvScheduleWebClient = new TvScheduleWebClient(mContext);
-                    tvScheduleWebClient.setChannelNoList(serviceIdUniqs, dateList, PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE);
-                    mTvScheduleWebClientLinkedList.offer(tvScheduleWebClient);
-                    pollTvScheduleWebClient();
+                    getScheduleListFromApi(serviceIdUniqs, dateList);
                 } else {
                     sendChannelInfoList(null, serviceIdUniqs);
                 }

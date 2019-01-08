@@ -205,9 +205,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * アイテムクリックコールバック.
          *
          * @param contentsData クリックしたデータ
-         * @param detailData 遷移渡すデータ
+         * @param recommendFlg recommendFlg
          */
-        void onItemClickCallBack(ContentsData contentsData, OtherContentsDetailData detailData);
+        void onItemClickCallBack(ContentsData contentsData, String recommendFlg);
     }
 
     /**
@@ -431,12 +431,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             recommendFlg = ContentUtils.PLALA_INFO_BUNDLE_KEY;
         }
-        final OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, recommendFlg);
+        final String isRecommend = recommendFlg;
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 if (mItemClickCallback != null) {
-                    mItemClickCallback.onItemClickCallBack(contentsData, detailData);
+                    mItemClickCallback.onItemClickCallBack(contentsData, isRecommend);
                 }
             }
         });

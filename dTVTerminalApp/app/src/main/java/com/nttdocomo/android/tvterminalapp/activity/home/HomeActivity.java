@@ -45,7 +45,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
@@ -60,6 +59,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -1282,14 +1282,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+    public void onItemClickCallBack(final ContentsData contentsData, final String recommendFlg) {
         if (ContentUtils.isChildContentList(contentsData)) {
             startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             ComponentName componentName = this.getComponentName();
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
-            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
+                intent.putExtra(recommendFlg, DataConverter.getContentDataToContentsDetail(contentsData, ContentUtils.RECOMMEND_INFO_BUNDLE_KEY));
+            } else {
+                intent.putExtra(recommendFlg, contentsData.getContentsId());
+            }
             startActivity(intent);
         }
     }

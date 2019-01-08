@@ -77,56 +77,19 @@ public class DataConverter {
      * @param recommendFlg Bundleキー
      * @return コンテンツ情報
      */
-    public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
+    public static OtherContentsDetailData getContentDataToContentsDetail(final ContentsData info, final String recommendFlg) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
-        detailData.setTitle(info.getTitle());
-
-        //レコメンド独自のデータ設定
-        if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)
-                || ContentUtils.SEARCH_INFO_BUNDLE_KEY.equals(recommendFlg)) {
-            int servieId = Integer.parseInt(info.getServiceId());
-            detailData.setServiceId(servieId);
-            detailData.setContentCategory(ContentUtils.getRecommendContentsType(info));
-            detailData.setThumb(info.getThumURL());
-            detailData.setTitleKind(info.getTitleKind());
-            if (servieId != ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                detailData.setDetail(info.getSynopFromDescription());
-            }
-
-        } else {
-            detailData.setThumb(info.getThumDetailURL());
-            detailData.setContentCategory(ContentUtils.ContentsType.OTHER);
-            detailData.setDetail(info.getSynop());
+        detailData.setContentsId(info.getContentsId());
+        if (DataBaseUtils.isNumber(info.getServiceId())) {
+            int serviceId = Integer.parseInt(info.getServiceId());
+            detailData.setServiceId(serviceId);
         }
-        detailData.setMobileViewingFlg(info.getMobileViewingFlg());
-        detailData.setmStartDate(info.getStartViewing());
-        detailData.setmEndDate(info.getEndViewing());
+        detailData.setRecommendFlg(recommendFlg);
         detailData.setCategoryId(info.getCategoryId());
-        detailData.setChannelId(info.getChannelId());
-        detailData.setChannelName(info.getChannelName());
+        detailData.setRecommendOrder(info.getRecommendOrder());
         detailData.setPageId(info.getPageId());
         detailData.setGroupId(info.getGroupId());
         detailData.setRecommendMethodId(info.getRecommendMethodId());
-        detailData.setRecommendFlg(recommendFlg);
-        detailData.setReserved1(info.getReserved1());
-        detailData.setReserved2(info.getReserved2());
-        detailData.setReserved3(info.getReserved3());
-        detailData.setReserved4(info.getReserved4());
-        detailData.setReserved5(info.getReserved5());
-        detailData.setDescription1(info.getDescription1());
-        detailData.setDescription2(info.getDescription2());
-        detailData.setDescription3(info.getDescription3());
-
-        //コンテンツIDの受け渡しを追加
-        detailData.setContentsId(info.getContentsId());
-        detailData.setRecommendOrder(info.getRecommendOrder());
-
-        //ひかりサーバデータ
-        detailData.setDispType(info.getDispType());
-        detailData.setDtv(info.getDtv());
-        detailData.setTvService(info.getTvService());
-        detailData.setContentsType(info.getContentsType());
-
         return detailData;
     }
 

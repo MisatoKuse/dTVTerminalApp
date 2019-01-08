@@ -10,12 +10,11 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 //response
 
 /**
- *検索エラー情報.
+ *STBメタデータ取得エラー情報.
  */
 @SuppressWarnings("PublicField")
-public class TotalSearchErrorData {
-    //単純な構造体としての役割のクラスの為、メンバはpublicとする
-    /**.*/
+public class StbMetaInfoGetErrorData {
+    /**処理結果.*/
     public int status;
     /**エラー情報.*/
     public final ErrorResultData error;
@@ -33,7 +32,7 @@ public class TotalSearchErrorData {
     /**
      *インスタンス.
      */
-    TotalSearchErrorData() {
+    StbMetaInfoGetErrorData() {
         error = new ErrorResultData();
     }
 
@@ -42,7 +41,7 @@ public class TotalSearchErrorData {
      * @param id エラーID
      * @param param エラー原因
      */
-    TotalSearchErrorData(final String id, final String param) {
+    StbMetaInfoGetErrorData(final String id, final String param) {
         error = new ErrorResultData();
         error.id = id;
         error.param = param;

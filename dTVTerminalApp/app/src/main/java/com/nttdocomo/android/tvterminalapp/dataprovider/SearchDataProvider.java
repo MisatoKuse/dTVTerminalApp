@@ -153,36 +153,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     /**
-     * 検索サーバからコンテンツメタ情報を取得.
-     * @param contentsId コンテンツId
-     * @param serviceId  サービスId
-     * @param context context
-     */
-    public void getContentDetailInfo(final String contentsId, final String serviceId, final Context context) {
-
-        if (!mIsCancel) {
-            TotalSearchRequestData request = new TotalSearchRequestData();
-            try {
-                request.query = URLEncoder.encode(contentsId, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                DTVTLogger.debug(e);
-            }
-
-            request.serviceId = serviceId;
-            request.searchFields = CONTENTS_DETAIL_GET_SEARCH_FIELDS;
-            request.displayId = CONTENTS_DETAIL_GET_DISPLAY_ID;
-
-            mTotalSearchWebApi = new TotalSearchWebApi(context);
-            mTotalSearchWebApi.setDelegate(this);
-            mSearchDataProviderListener = (SearchDataProviderListener) context;
-            mTotalSearchWebApi.requestContentDetail(request);
-        } else {
-            DTVTLogger.error("GetContentDetailInfo is stopping connection");
-        }
-    }
-
-
-    /**
      * TODO :検索中止処理開始用.
      * 検索中止処理.
      */

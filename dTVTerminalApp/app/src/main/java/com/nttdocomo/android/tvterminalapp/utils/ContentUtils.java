@@ -685,17 +685,12 @@ public class ContentUtils {
     /**
      * コンテンツ種別判定(レコメンド).
      *
-     * @param detailData コンテンツ詳細データ(レコメンド)
+     * @param serviceId サービスID
+     * @param categoryId カテゴリID
      * @return ContentsType
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static ContentsType getRecommendContentsType(final ContentsData detailData) {
-        String strServiceId = detailData.getServiceId();
-        int serviceId = -1;
-        if (strServiceId != null && DataBaseUtils.isNumber(strServiceId)) {
-            serviceId = Integer.parseInt(detailData.getServiceId());
-        }
-        String categoryId = detailData.getCategoryId();
+    public static ContentsType getRecommendContentsType(final int serviceId, final String categoryId) {
         switch (serviceId) {
             //serviceId = 44
             case DTV_HIKARI_CONTENTS_SERVICE_ID:
@@ -1170,7 +1165,7 @@ public class ContentUtils {
     }
 
     /**
-     * 購入済みCH一覧のservice_idと対象のCHのservice_idが一致するか確認.
+     * 購入済みCH一覧のservice_id_uniqと対象のCHのservice_id_uniqが一致するか確認.
      *
      * @param chList 購入済みCHリスト
      * @param channelInfo チャンネルデータ
@@ -1180,9 +1175,9 @@ public class ContentUtils {
 
         //CHのservice_id一覧を取得
         for (Map<String, String> hashMap : chList) {
-            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
-            if (serviceId != null && !serviceId.isEmpty()) {
-                if (serviceId.equals(channelInfo.getServiceId())) {
+            String serviceIdUniq = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
+            if (!TextUtils.isEmpty(serviceIdUniq)) {
+                if (serviceIdUniq.equals(channelInfo.getServiceIdUniq())) {
                     //service_idが一致
                     return hashMap;
                 }
@@ -1196,16 +1191,17 @@ public class ContentUtils {
      *
      * @param metaFullData Vodメタデータ
      * @param activeList Activeリスト
-     * @return valid_end_date
+     * @param isEndDate isEndDate
+     * @return isEndDate true:valid_end_date false:ライセンスID
      */
-    public static long getRentalVodValidEndDate(
-            final VodMetaFullData metaFullData, final ArrayList<ActiveData> activeList) {
+    public static String getRentalVodValidInfo(final VodMetaFullData metaFullData, final ArrayList<ActiveData> activeList, final boolean isEndDate) {
         //購入済みVOD取得からの戻り(視聴可否判定)
         String[] liinfArray = metaFullData.getmLiinf_array();
         String puid = metaFullData.getPuid();
 
         //最長のvalid_end_dateを格納する
         long vodLimitDate = 0;
+        String licenseId = "";
         //現在Epoch秒
         long nowDate = DateUtils.getNowTimeFormatEpoch();
         if (!TextUtils.isEmpty(puid)) {
@@ -1215,6 +1211,7 @@ public class ContentUtils {
                     long validEndDate = activeData.getValidEndDate();
                     if (validEndDate > nowDate) {
                         vodLimitDate = validEndDate;
+                        licenseId = license_id;
                     }
                     break;
                 }
@@ -1240,6 +1237,7 @@ public class ContentUtils {
                                 if (validEndDate > nowDate) {
                                     if (vodLimitDate < validEndDate) {
                                         vodLimitDate = validEndDate;
+                                        licenseId = license_id;
                                     }
                                 }
                             }
@@ -1248,7 +1246,11 @@ public class ContentUtils {
                 }
             }
         }
-        return vodLimitDate;
+        if (isEndDate) {
+            return String.valueOf(vodLimitDate);
+        } else {
+            return licenseId;
+        }
     }
 
     /**

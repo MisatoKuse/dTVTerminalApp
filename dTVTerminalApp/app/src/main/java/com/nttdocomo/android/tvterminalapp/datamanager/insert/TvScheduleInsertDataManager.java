@@ -130,17 +130,25 @@ public class TvScheduleInsertDataManager {
         String filesDir = mContext.getFilesDir().getAbsolutePath();
         String dbChannelDir = StringUtils.getConnectStrings(filesDir, "/../databases/channel");
         String dbDir = StringUtils.getConnectStrings(dbChannelDir, "/" + chInfoGetDate);
+        File channelDir = new File(dbChannelDir);
+        if (!channelDir.isDirectory()) {
+            //取得日のフォルダが存在しないためフォルダを作成する.
+            DTVTLogger.debug("channel Folder not exist, make folder.");
+            boolean isChannelDir = channelDir.mkdir();
+            if (!isChannelDir) {
+                //フォルダの作成に失敗
+                DTVTLogger.error("date Failed to create channel cache directory");
+            }
+        }
         File fileDir = new File(dbDir);
         if (!fileDir.isDirectory()) {
             //取得日のフォルダが存在しないためフォルダを作成する.
             DTVTLogger.debug("Folder not exist, make folder.");
             try {
-                File channelDir = new File(dbChannelDir);
-                boolean isChannelDir = channelDir.mkdir();
                 boolean isCreateDir = fileDir.mkdir();
-                if (!isChannelDir || !isCreateDir) {
+                if (!isCreateDir) {
                     //フォルダの作成に失敗
-                    DTVTLogger.error("Failed to create cache directory");
+                    DTVTLogger.error("Failed to create date cache directory");
                 }
             } catch (SecurityException | NullPointerException e) {
                 DTVTLogger.error(e.toString());

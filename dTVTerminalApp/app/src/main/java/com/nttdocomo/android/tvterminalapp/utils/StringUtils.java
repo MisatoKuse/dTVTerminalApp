@@ -756,7 +756,7 @@ public class StringUtils {
                     return context.getString(R.string.dtv_content_service_start_text);
                 } else {
                     switch (reserve) {
-                        case ContentDetailActivity.CONTENTS_DETAIL_RESERVEDID:
+                        case ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID:
                             //dTVで視聴
                             return context.getString(R.string.contents_detail_thumbnail_text);
                         default:

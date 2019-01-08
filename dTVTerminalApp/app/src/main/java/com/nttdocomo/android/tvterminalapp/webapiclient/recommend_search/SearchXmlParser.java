@@ -415,13 +415,14 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
         if (!TextUtils.isEmpty(tagName)) {
             switch (tagName) {
                 case STATUS:
-                    if (STATUS_OK.equals(value)) {
+                    int status = Integer.parseInt(value);
+                    if (DtvtConstants.SEARCH_STATUS_OK == status) {
                         DTVTLogger.debug("parseProc, " + STATUS_OK);
                         searchResponse.setStatus(STATUS_OK);
-                    } else if (STATUS_NG.equals(value)) {
+                    } else if (DtvtConstants.SEARCH_STATUS_NG == status) {
                         DTVTLogger.debug("parseProc, " + STATUS_NG);
                         ifNullCreate();
-                        searchError.status = value;
+                        searchError.status = status;
                     }
                     break;
                 case TOTAL_COUNT:

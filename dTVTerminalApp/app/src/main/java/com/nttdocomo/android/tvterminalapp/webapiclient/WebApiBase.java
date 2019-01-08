@@ -41,15 +41,15 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      * @param callback   終了コールバック
      * @param context    コンテキスト
      */
-    protected void getNoPassword(final LinkedHashMap<String, String> queryItems,
+    protected void getNoPassword(final String url, final LinkedHashMap<String, String> queryItems,
                               final WebApiCallback callback, final Context context) {
         final Handler handler = new Handler();
-        final String url = createUrlComponents(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems);
+        final String requestUrl = createUrlComponents(url, queryItems);
         mWebApiCallback = callback;
         final WebApiBase webApiBase = this;
 
         //ワンタイムパスワード無しで呼び出す
-        mHttpThread = new HttpThread(url, handler, webApiBase, context, "", null);
+        mHttpThread = new HttpThread(requestUrl, handler, webApiBase, context, "", null);
         mHttpThread.start();
     }
 

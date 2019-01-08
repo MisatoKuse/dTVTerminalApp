@@ -682,23 +682,6 @@ public class ContentsData {
     }
 
     /**
-     * Descriptionからあらすじを取得.
-     * @return あらすじ
-     */
-    public String getSynopFromDescription() {
-
-        if (!TextUtils.isEmpty(mDescription2)) {
-            return mDescription2;
-        } else if (!TextUtils.isEmpty(mDescription1)) {
-            return mDescription1;
-        } else if (!TextUtils.isEmpty(mDescription3)) {
-            return mDescription3;
-        }
-
-        return null;
-    }
-
-    /**
      * あらすじ設定.
      * @param mSynop あらすじ
      */

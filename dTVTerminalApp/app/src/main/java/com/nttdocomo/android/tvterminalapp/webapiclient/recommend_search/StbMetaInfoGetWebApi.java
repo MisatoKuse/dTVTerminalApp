@@ -9,29 +9,26 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
 import java.util.LinkedHashMap;
 
 /**
- * 検索WebApi.
+ * STBメタデータ取得WebApi.
  */
-public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, SearchXmlParser.XMLParserFinishListener {
+public class StbMetaInfoGetWebApi extends WebApiBase implements WebApiCallback, StbMetaInfoGetXmlParser.XMLParserFinishListener {
 
     /**
      * XMLのparse結果をコールバックする.
      */
-    private TotalSearchWebApiDelegate mDelegate;
-
-    /**
-     * リクエストパラメータ"displayId"固定値.
-     */
-    private static final String SEARCH_WEBAPI_PARAM_DISPLAY_ID = "SEA0000001";
+    private StbMetaInfoGetWebApiDelegate mDelegate;
 
     /**
      * SSLチェック用コンテキスト.
      */
     private final Context mContext;
+
     /**
      * 通信禁止判定フラグ.
      */
@@ -42,7 +39,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
      *
      * @param context コンテキスト
      */
-    public TotalSearchWebApi(final Context context) {
+    public StbMetaInfoGetWebApi(final Context context) {
         //コンテキストの退避
         mContext = context;
     }
@@ -52,35 +49,34 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
      *
      * @param delegate デリゲート
      */
-    public void setDelegate(final TotalSearchWebApiDelegate delegate) {
+    public void setDelegate(final StbMetaInfoGetWebApiDelegate delegate) {
         synchronized (this) {
             mDelegate = delegate;
         }
     }
 
     /**
-     * 検索リクエスト.
-     *
+     *  STBメタデータ取得のリクエスト.
      * @param requestData リクエストデータ
      */
-    public void request(final TotalSearchRequestData requestData) {
+    public void request(final StbMetaInfoRequestData requestData) {
         DTVTLogger.debug("request");
 
         if (!mIsCancel) {
             LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
-            queryItems.put(SearchRequestKey.kQuery, requestData.query);
-            queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(requestData.startIndex));
-            queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(requestData.maxResult));
-            queryItems.put(SearchRequestKey.kServiceCategory, requestData.serviceCategory);
 
-            int sortKind = requestData.sortKind;
-            queryItems.put(SearchRequestKey.kSortKind, sortKind + "");
+            queryItems.put(StbMetainfoRequestKey.kServiceCategory, requestData.serviceCategory);
+            queryItems.put(StbMetainfoRequestKey.kContentId, requestData.contentsId);
+            if (requestData.episodeStartIndex > 0) {
+                queryItems.put(StbMetainfoRequestKey.kEpisodeStartIndex, String.valueOf(requestData.episodeStartIndex));
+            }
+            if (requestData.episodeMaxResult > 0) {
+                queryItems.put(StbMetainfoRequestKey.kEpisodeMaxResult, String.valueOf(requestData.episodeMaxResult));
+            }
 
-            //固定値のため直接指定する
-            queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
-            getRecommendSearch(queryItems, this, mContext);
+            getNoPassword(UrlConstants.WebApiUrl.STB_META_DATA_URL, queryItems, this, mContext);
         } else {
-            DTVTLogger.error("TotalSearchWebApi is stopping connection");
+            DTVTLogger.error("StbMetaInfoGetWebApi is stopping connection");
         }
     }
 
@@ -90,18 +86,18 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         if (null == responseData || 0 == responseData.length()) {
             str = "";
         }
-        new SearchXmlParser(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, str);
+        new StbMetaInfoGetXmlParser(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, str);
     }
 
     @Override
-    public void onXMLParserFinish(final TotalSearchResponseData responseData) {
+    public void onXMLParserFinish(final StbMetaInfoResponseData responseData) {
         if (null != mDelegate) {
             mDelegate.onSuccess(responseData);
         }
     }
 
     @Override
-    public void onXMLParserError(final TotalSearchErrorData errorData) {
+    public void onXMLParserError(final StbMetaInfoGetErrorData errorData) {
         if (null != mDelegate) {
             mDelegate.onFailure(errorData);
         }
@@ -109,7 +105,6 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
 
     /**
      * 通信を止める.
-     * TotalSearchWebApiは検索の度にnewされているので通信可能状態にする処理は不要
      */
     public void stopConnection() {
         DTVTLogger.start();

@@ -3611,7 +3611,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+    public void onItemClickCallBack(final ContentsData contentsData, final String recommendFlg) {
 
     }
 
