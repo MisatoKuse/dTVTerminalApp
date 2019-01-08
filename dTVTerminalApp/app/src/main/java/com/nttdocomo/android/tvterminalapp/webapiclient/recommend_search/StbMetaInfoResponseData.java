@@ -200,6 +200,10 @@ public class StbMetaInfoResponseData {
      */
     Episode getLastEpisode() {
         int index = this.mContent.mEpisodeList.size() - 1;
+        if (index < 0) {
+            appendEpisode();
+            index++;
+        }
         return this.mContent.mEpisodeList.get(index);
     }
 }

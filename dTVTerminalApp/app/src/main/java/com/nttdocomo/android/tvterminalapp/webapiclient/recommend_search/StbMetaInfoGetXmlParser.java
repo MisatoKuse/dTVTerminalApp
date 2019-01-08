@@ -335,9 +335,9 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
         }
 
         boolean loop = true;
+        String xmlValue = null;
         try {
             while (loop) {
-
                 switch (event) {
                     case XmlPullParser.START_DOCUMENT:
                         parserDidStartDocument();
@@ -351,18 +351,26 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
                     case XmlPullParser.START_TAG:
 
                         String name2 = parser.getName();
-                        String xmlValue = null;
-
+                        xmlValue = null;
                         try {
                             xmlValue = parser.nextText();
                         } catch (XmlPullParserException | IOException e) {
                             DTVTLogger.debug(e);
                         }
 
-                        if (name2 != null && 0 < name2.length()) {
+                        if (name2 != null && 0 < name2.length() && xmlValue != null) {
                             parseProc(name2, xmlValue);
                         }
 
+                        break;
+                    case XmlPullParser.TEXT:
+                        xmlValue = parser.getText();
+                        break;
+                    case XmlPullParser.END_TAG:
+                        String name = parser.getName();
+                        if (name != null && 0 < name.length() && xmlValue != null) {
+                            parseProc(name, xmlValue);
+                        }
                         break;
                     default:
                 }
