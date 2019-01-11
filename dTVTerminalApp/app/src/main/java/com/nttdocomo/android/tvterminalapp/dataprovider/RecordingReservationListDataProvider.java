@@ -9,11 +9,12 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 録画予約データ取得用プロパイダ.
@@ -33,7 +33,7 @@ import java.util.Map;
 public class RecordingReservationListDataProvider implements
         RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback,
         RecordingReservationListWebClient.RecordingReservationListJsonParserCallback,
-        ChannelWebClient.ChannelJsonParserCallback {
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
 
     /**
      * コンテキスト.
@@ -62,7 +62,11 @@ public class RecordingReservationListDataProvider implements
     /**
      * チャンネル一覧.
      */
-    private List<Map<String, String>> mTvScheduleList = null;
+    private List<ChannelInfo> mTvScheduleList = null;
+    /**
+     * チャンネルプロバイダー.
+     */
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
 
     /**
      * 録画予約情報受信時刻.
@@ -183,9 +187,9 @@ public class RecordingReservationListDataProvider implements
      */
     private static final int RECORD_RESERVATION_MAP_INDEX_SINGLE_RECORD = 8;
     /**
-     * 多チャンネル放送の区分.
+     * 多チャンネル放送,BS,地デジ全部取得.
      */
-    private static final int RECORD_RESERVATION_MULTI_CHANNEL = 1;
+    private static final int RECORD_RESERVATION_ALL_REQUEST = 0;
     /**
      * 通信禁止判定フラグ.
      */
@@ -198,10 +202,6 @@ public class RecordingReservationListDataProvider implements
      * dリモート側録画予約一覧取得用Webクライアント.
      */
     private RecordingReservationListWebClient mDRemoteWebClient = null;
-    /**
-     * チャンネルリスト取得用Webクライアント.
-     */
-    private ChannelWebClient mWebClient = null;
     /**
      * 録画予約一覧用エラー情報バッファ.
      */
@@ -344,12 +344,9 @@ public class RecordingReservationListDataProvider implements
     }
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
-        DTVTLogger.start();
-        if (channelLists != null && channelLists.size() > 0) {
-            ChannelList list = channelLists.get(0);
-            mTvScheduleList = list.getChannelList();
-            // 録画予約一覧取得との同期
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        if (channels != null) {
+            mTvScheduleList = channels;
             if (mStbResponse != null && mDRemoteResponse != null) {
                 buttRecordingReservationListData();
                 sortRecordingReservationListData();
@@ -358,12 +355,17 @@ public class RecordingReservationListDataProvider implements
         } else {
             DTVTLogger.error("response is null");
             //データが取得できなかったので、エラーを取得する
-            if (mWebClient != null) {
-                mError = mWebClient.getError();
+            if (mScaledDownProgramListDataProvider != null) {
+                mError = mScaledDownProgramListDataProvider.getChannelError();
             }
             mApiDataProviderCallback.recordingReservationListCallback(null);
         }
-        DTVTLogger.end();
+    }
+    @Override
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final  String[] serviceIdUniq) {
+    }
+    @Override
+    public void clipKeyResult() {
     }
 
     /**
@@ -400,7 +402,7 @@ public class RecordingReservationListDataProvider implements
             // STB側録画予約一覧取得要求 現状プラットフォームタイプのパラメータは仕様書には1のみ記載
             mStbWebClient = new RemoteRecordingReservationListWebClient(mContext);
             mStbWebClient.getRemoteRecordingReservationListApi(
-                    RECORD_RESERVATION_MULTI_CHANNEL, this);
+                    RECORD_RESERVATION_ALL_REQUEST, this);
 
             // dリモート側録画予約一覧取得要求
             mDRemoteWebClient = new RecordingReservationListWebClient(mContext);
@@ -433,11 +435,11 @@ public class RecordingReservationListDataProvider implements
      */
     private void getTvScheduleListData() {
         DTVTLogger.start();
-        //通信クラスにデータ取得要求を出す
-        mWebClient = new ChannelWebClient(mContext);
-        String filter = "";
-        String type = "";
-        mWebClient.getChannelApi(0, 0, filter, type, this);
+
+        if (mScaledDownProgramListDataProvider == null) {
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
+        }
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
         DTVTLogger.end();
     }
 
@@ -491,48 +493,11 @@ public class RecordingReservationListDataProvider implements
         }
         List<RecordingReservationContentInfo> tmpBuffMatchArray = mBuffMatchList;
         DTVTLogger.debug("tmpBuffMatchArray.size() = " + tmpBuffMatchArray.size());
-        boolean matchFlag;
-        // リモート側データとSTB側の重複を除外してリスト化.
-        // リモート側はServiceidは"00XX"のような値が来るが、STB側は"0xXX"のような値が来る
-        // ともに16進数のようだが単純文字列比較では重複とみなさなくなるので、先頭0xやその後の0を削除して比較する
         for (RecordingReservationMetaData dRemoteData : dRemoteList) {
-            matchFlag = false;
-            String remote_seriviceId = shapeIdString(dRemoteData.getServiceId());
-            String remote_eventId = shapeIdString(dRemoteData.getEventId());
-            if (remote_seriviceId != null && !remote_seriviceId.isEmpty()
-                    && remote_eventId != null && !remote_eventId.isEmpty()) {
-                for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
-                    String stb_serviceId = shapeIdString(info.getServiceId());
-                    String stb_eventId = shapeIdString(info.getEventId());
-                    if (stb_serviceId != null && !stb_serviceId.isEmpty()
-                            && stb_eventId != null && !stb_eventId.isEmpty()) {
-                        if (remote_seriviceId.equals(stb_serviceId) && remote_eventId.equals(stb_eventId)) {
-                            matchFlag = true;
-                            DTVTLogger.debug("Match Data");
-                        }
-                    }
-                }
-            }
-            if (!matchFlag) {
-                setRecordingReservationContentInfo(dRemoteData);
-            }
+            setRecordingReservationContentInfo(dRemoteData);
         }
         DTVTLogger.end();
     }
-
-    /**
-     * ServiceId、EventId文字列の整形.
-     */
-    private String shapeIdString(final String id) {
-        String retStr = null;
-        if (id != null) {
-            //先頭0xとその後の0連続を削除する
-            retStr = id.replaceFirst("0x", "");
-            retStr = retStr.replaceFirst("^0+", "");
-        }
-        return retStr;
-    }
-
     /**
      * STB側レスポンスデータをRecordingReservationContentInfoに設定.
      *
@@ -583,15 +548,6 @@ public class RecordingReservationListDataProvider implements
      */
     private void putBuffMatchListMapSingle(final long startTime, final RecordingReservationContentInfo info) {
         DTVTLogger.start();
-
-        // 現在時刻
-        Long nowTime = DateUtils.getNowTimeFormatEpoch();
-
-        if (nowTime > startTime) {
-            // 時間比較：現在日時より値が小さい場合リストには表示しない
-            return;
-        }
-
         info.setStartTimeEpoch(startTime);
         mBuffMatchList.add(info);
         DTVTLogger.end();
@@ -833,10 +789,9 @@ public class RecordingReservationListDataProvider implements
     private String getChannelName(final String serviceId) {
         DTVTLogger.start("serviceId = " + serviceId + " TvScheduleList.size = " + mTvScheduleList.size());
         String channelName = null;
-        for (Map<String, String> map : mTvScheduleList) {
-            if (map != null && serviceId.equals(map.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
-                channelName = map.get(JsonConstants.META_RESPONSE_TITLE);
-                DTVTLogger.debug("channel = " + map.get(JsonConstants.META_RESPONSE_TITLE));
+        for (int i = 0; i < mTvScheduleList.size(); i++) {
+            if (serviceId.equals(mTvScheduleList.get(i).getServiceId())) {
+                channelName = mTvScheduleList.get(i).getTitle();
                 break;
             }
         }
@@ -976,9 +931,6 @@ public class RecordingReservationListDataProvider implements
         if (mDRemoteWebClient != null) {
             mDRemoteWebClient.stopConnection();
         }
-        if (mWebClient != null) {
-            mWebClient.stopConnection();
-        }
     }
 
     /**
@@ -993,9 +945,6 @@ public class RecordingReservationListDataProvider implements
         if (mDRemoteWebClient != null) {
             mDRemoteWebClient.enableConnection();
         }
-        if (mWebClient != null) {
-            mWebClient.enableConnection();
-        }
     }
 
     /**
@@ -1007,9 +956,10 @@ public class RecordingReservationListDataProvider implements
         return mError;
     }
 
-
+    /**
+     * リストの更新時間を取得.
+     */
     public String getReservationTime() {
         return mReservationTime;
     }
-
 }
