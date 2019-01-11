@@ -3693,7 +3693,7 @@ public class BaseActivity extends FragmentActivity implements
             //24時間経過していたので、再度ローカルレジストレーションを行う
             DlnaManager.shared().mLocalRegisterListener = new DlnaManager.LocalRegisterListener() {
                 @Override
-                public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
+                public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
                     if (result) {
                         //ローカルレジストレーションが成功したので日時を蓄積する
                         SharedPreferencesUtils.setRegistTime(getApplicationContext());

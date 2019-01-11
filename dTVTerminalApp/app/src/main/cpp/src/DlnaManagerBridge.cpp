@@ -546,12 +546,13 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_browseContentWithContai
     }
 }
 
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_startDtcp(JNIEnv *env, jobject thiz) {
     LOG_WITH("");
     jclass clazz = env->GetObjectClass(thiz);
     jmethodID mid = env->GetMethodID(clazz, "getUniqueId", "()Ljava/lang/String;");
-    dlnaBase->startDtcp(dmp, g_ctx.javaVM, thiz, mid);
+    bool result = dlnaBase->startDtcp(dmp, g_ctx.javaVM, thiz, mid);
+    return (jboolean) result;
 }
 
 JNIEXPORT void JNICALL

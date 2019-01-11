@@ -49,16 +49,6 @@ public class DlnaManager {
      */
     private List<String> containerIds = new ArrayList<>();
 
-    /**エラータイプ.*/
-    public enum LocalRegistrationErrorType {
-        /**NONE.*/
-        NONE,
-        /**OVER.*/
-        OVER,
-        /**UNKNOWN.*/
-        UNKNOWN
-    }
-
     /**リモート接続ステータス.*/
     private enum RemoteConnectStatus {
         /** 不明. */
@@ -186,7 +176,7 @@ public class DlnaManager {
          * @param result result
          * @param errorType errorType
          */
-        void onRegisterCallBack(final boolean result, final LocalRegistrationErrorType errorType);
+        void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType);
     }
 
     /**
@@ -407,12 +397,11 @@ public class DlnaManager {
                         @Override
                         public void run() {
                             cancelTimer();
-                            StartDtcp();
+                            if (!StartDtcp()) {
+                                browseError(containerId);
+                            }
                             if (!RestartDirag()) {
-                                BrowseListener listener = DlnaManager.shared().mBrowseListener;
-                                if (listener != null) {
-                                    listener.onContentBrowseErrorCallback(containerId);
-                                }
+                                browseError(containerId);
                             }
                         }
                     }).start();
@@ -438,13 +427,21 @@ public class DlnaManager {
             case NONE_PAIRING:
             default:
                 DTVTLogger.warning("default");
-                BrowseListener listener = DlnaManager.shared().mBrowseListener;
-                if (listener != null) {
-                    listener.onContentBrowseErrorCallback(containerId);
-                }
+                browseError(containerId);
                 break;
         }
         DTVTLogger.warning("containerId = " + containerId);
+    }
+
+    /**
+     * ブラウズエラー.
+     * @param containerId containerId
+     */
+    private void browseError(final String containerId) {
+        BrowseListener listener = DlnaManager.shared().mBrowseListener;
+        if (listener != null) {
+            listener.onContentBrowseErrorCallback(containerId);
+        }
     }
 
     /**
@@ -461,10 +458,7 @@ public class DlnaManager {
                 public void run() {
                     if (!browseContentWithContainerId(requestIndex, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, controlUrl)) {
                         DlnaManager.shared().clearQue();
-                        BrowseListener listener = DlnaManager.shared().mBrowseListener;
-                        if (listener != null) {
-                            listener.onContentBrowseErrorCallback(containerId);
-                        }
+                        browseError(containerId);
                     }
                 }
             }).start();
@@ -493,10 +487,12 @@ public class DlnaManager {
     /**
      * StartDtcp.
      */
-    public void StartDtcp() {
+    public boolean StartDtcp() {
         if (!DlnaManager.shared().startedDtcp) {
             DlnaManager.shared().startedDtcp = true;
-            startDtcp();
+            return startDtcp();
+        } else {
+            return true;
         }
     }
 
@@ -761,10 +757,7 @@ public class DlnaManager {
             DTVTLogger.warning("ContentBrowseErrorCallback checkContainerId containerId = " + containerId);
             return;
         }
-        BrowseListener listener = DlnaManager.shared().mBrowseListener;
-        if (listener != null) {
-            listener.onContentBrowseErrorCallback(containerId);
-        }
+        browseError(containerId);
         DlnaManager.shared().clearQue();
     }
 
@@ -783,9 +776,9 @@ public class DlnaManager {
 
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
-            LocalRegistrationErrorType localRegistrationErrorType = LocalRegistrationErrorType.NONE;
+            DlnaUtils.ExcuteLocalRegistrationErrorType localRegistrationErrorType = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE;
             if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER) {
-                localRegistrationErrorType = LocalRegistrationErrorType.OVER;
+                localRegistrationErrorType = DlnaUtils.ExcuteLocalRegistrationErrorType.DEVICE_OVER_ERROR;
             }
             if (result) {
                 //リモート視聴設定期限ダイアログ表示フラグをリセットする
@@ -1053,7 +1046,7 @@ public class DlnaManager {
      */
     private native boolean browseContentWithContainerId(final int offset, final int limit, final String containerId, final String controlUrl);
     /** dtcpを開始.*/
-    private native void startDtcp();
+    private native boolean startDtcp();
     /** dtcpを停止.*/
     private native void stopDtcp();
     /**

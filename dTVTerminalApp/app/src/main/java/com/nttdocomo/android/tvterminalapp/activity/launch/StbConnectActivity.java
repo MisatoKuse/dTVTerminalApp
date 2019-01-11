@@ -176,12 +176,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
      */
     private void showRemoteConfirmDialog() {
         //　アプリが無ければインストール画面に誘導
-        CustomDialog remoteConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_first_start));
-        remoteConfirmDialog.setConfirmText(R.string.custom_dialog_ok);
-        remoteConfirmDialog.setCancelText(R.string.custom_dialog_cancel);
-        remoteConfirmDialog.setOnTouchOutside(false);
-        remoteConfirmDialog.setCancelable(false);
+        CustomDialog remoteConfirmDialog = DlnaUtils.getRemoteConfirmDialog(StbConnectActivity.this);
         remoteConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -190,23 +185,11 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            boolean result = DlnaUtils.getActivationState(StbConnectActivity.this);
-                            DTVTLogger.warning("result = " + result);
-                            if (result) {
-                                DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
-                                DlnaManager.shared().StartDtcp();
-                                //初回使用からRestartで良いとの事なので、StartDiragへの変更は無用
-                                DlnaManager.shared().RestartDirag();
-                                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
-                                DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
-                            } else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setRemoteProgressVisible(View.GONE);
-                                        showActivationErrorDialog();
-                                    }
-                                });
+                            DlnaUtils.ExcuteLocalRegistrationErrorType errorType =
+                                    DlnaUtils.excuteLocalRegistration(getApplicationContext(), StbConnectActivity.this);
+                            boolean result = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE.equals(errorType);
+                            if (!result) {
+                                showRegistResultDialog(false, errorType);
                             }
                         }
                     }).start();
@@ -235,19 +218,12 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
-    public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
+    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
         if (result) {
             //ローカルレジストレーションが成功したので日時を蓄積する
             SharedPreferencesUtils.setRegistTime(getApplicationContext());
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                setRemoteProgressVisible(View.GONE);
-                showRegistResultDialog(result, errorType);
-            }
-        });
+        showRegistResultDialog(result, errorType);
     }
 
     /**
@@ -256,52 +232,20 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
      * @param isSuccess true 成功 false 失敗
      * @param errorType エラータイプ
      */
-    private void showRegistResultDialog(final boolean isSuccess, final DlnaManager.LocalRegistrationErrorType errorType) {
-        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        resultDialog.setOnTouchOutside(false);
-        resultDialog.setCancelable(false);
-        if (isSuccess) {
-            resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
-            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
-            SharedPreferencesUtils.setRemoteDeviceExpireDate(StbConnectActivity.this, expireDate);
-        } else {
-            switch (errorType) {
-                case OVER:
-                    resultDialog.setContent(getString(R.string.common_text_regist_over_error_setting));
-                    break;
-                case NONE:
-                case UNKNOWN:
-                default:
-                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));
-                    break;
-            }
-            resultDialog.setConfirmText(R.string.common_text_close);
-        }
-        resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+    private void showRegistResultDialog(final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onOKCallback(final boolean isOK) {
-                mHandler.post(runnable);
+            public void run() {
+                CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(StbConnectActivity.this, isSuccess, errorType);
+                resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(final boolean isOK) {
+                        mHandler.post(runnable);
+                    }
+                });
+                setRemoteProgressVisible(View.GONE);
+                resultDialog.showDialog();
             }
         });
-        resultDialog.showDialog();
-    }
-
-    /**
-     * アクティベーションのエラー表示.
-     */
-    private void showActivationErrorDialog() {
-        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        resultDialog.setOnTouchOutside(false);
-        resultDialog.setCancelable(false);
-        resultDialog.setContent(getString(R.string.activation_failed_error_local_registration));
-        resultDialog.setConfirmText(R.string.common_text_close);
-        resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                mHandler.post(runnable);
-            }
-        });
-        resultDialog.showDialog();
     }
 }

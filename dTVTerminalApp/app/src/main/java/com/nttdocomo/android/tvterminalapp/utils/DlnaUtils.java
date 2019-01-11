@@ -19,7 +19,9 @@ import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -95,6 +97,48 @@ public class DlnaUtils {
     /*ローカルレジストレーション期限表示*/
     /**ダウンロード通知チャンネルID.*/
     private static final String DOWNLOAD_NOTIFICATION_ID = "downloadProgress";
+
+    /**
+     * ローカルレジストレーションエラータイプ.
+     */
+    public enum ExcuteLocalRegistrationErrorType {
+        /**アクティベーション失敗.*/
+        ACTIVATION,
+        /**Dirag起動失敗.*/
+        START_DIRAG,
+        /**dtcp起動失敗.*/
+        START_DTCP,
+        /**台数超過エラー.*/
+        DEVICE_OVER_ERROR,
+        /**その他エラー.*/
+        UNKOWN,
+        /**なし.*/
+        NONE
+    }
+
+    /**
+     * ローカルレジストレーション実行.
+     * @param context コンテスト
+     * @param mLocalRegisterListener リスナー
+     * @return エラータイプ
+     */
+    public static ExcuteLocalRegistrationErrorType excuteLocalRegistration(final Context context, final DlnaManager.LocalRegisterListener mLocalRegisterListener) {
+        ExcuteLocalRegistrationErrorType localRegistrationErrorType = ExcuteLocalRegistrationErrorType.NONE;
+        if (context == null || mLocalRegisterListener == null) {
+            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.UNKOWN;
+        } else if (!DlnaUtils.getActivationState(context)) {
+            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.ACTIVATION;
+        } else if (!DlnaManager.shared().StartDtcp()) {
+            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.START_DTCP;
+        } else if (!DlnaManager.shared().RestartDirag()) {
+            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.START_DIRAG;
+        } else {
+            DlnaManager.shared().mLocalRegisterListener = mLocalRegisterListener;
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+            DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, context);
+        }
+        return localRegistrationErrorType;
+    }
 
     /**
      * アクティベーションのチェック、実行.
@@ -403,6 +447,62 @@ public class DlnaUtils {
             builder.setChannelId(DOWNLOAD_NOTIFICATION_ID);
         }
         return builder.build();
+    }
+
+
+    /**
+     * ローカルレジストレーション確認ダイアログ取得.
+     *  @param context コンテキスト
+     *  @return リモート視聴設定ダイアログ
+     */
+    public static CustomDialog getRemoteConfirmDialog(final Context context) {
+        CustomDialog remoteConfirmDialog = new CustomDialog(context, CustomDialog.DialogType.CONFIRM);
+        remoteConfirmDialog.setContent(context.getString(R.string.main_setting_remote_confirm_message_first_start));
+        remoteConfirmDialog.setConfirmText(R.string.custom_dialog_ok);
+        remoteConfirmDialog.setCancelText(R.string.custom_dialog_cancel);
+        remoteConfirmDialog.setOnTouchOutside(false);
+        remoteConfirmDialog.setCancelable(false);
+        remoteConfirmDialog.setOnTouchBackkey(false);
+        return remoteConfirmDialog;
+    }
+
+    /**
+     * ローカルレジストレーションの処理結果.
+     *
+     * @param context コンテキスト
+     * @param isSuccess true 成功 false 失敗
+     * @param errorType エラータイプ
+     * @return ローカルレジストレーションの処理結果ダイアログ
+     */
+    public static CustomDialog getRegistResultDialog(final Context context, final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+        CustomDialog resultDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
+        resultDialog.setOnTouchOutside(false);
+        resultDialog.setCancelable(false);
+        resultDialog.setOnTouchBackkey(false);
+        if (isSuccess) {
+            resultDialog.setContent(context.getString(R.string.common_text_regist_progress_done));
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
+            SharedPreferencesUtils.setRemoteDeviceExpireDate(context, expireDate);
+        } else {
+            switch (errorType) {
+                case ACTIVATION:
+                    resultDialog.setContent(context.getString(R.string.activation_failed_error_local_registration));
+                    break;
+                case DEVICE_OVER_ERROR:
+                    resultDialog.setContent(context.getString(R.string.common_text_regist_over_error_setting));
+                    break;
+                case START_DTCP:
+                case START_DIRAG:
+                case UNKOWN:
+                case NONE:
+                default:
+                    resultDialog.setContent(context.getString(R.string.common_text_regist_other_error));
+                    break;
+            }
+            resultDialog.setConfirmText(R.string.common_text_close);
+        }
+        return resultDialog;
     }
 
 }

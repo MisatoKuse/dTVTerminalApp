@@ -364,11 +364,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      * ローカルレジストレーションを促すダイアログを表示.
      */
     private void showRemoteConfirmDialog() {
-        CustomDialog remoteConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_setting));
-        remoteConfirmDialog.setConfirmText(R.string.custom_dialog_ok);
-        remoteConfirmDialog.setCancelText(R.string.custom_dialog_cancel);
-        remoteConfirmDialog.setOnTouchOutside(false);
+        CustomDialog remoteConfirmDialog = DlnaUtils.getRemoteConfirmDialog(SettingActivity.this);
         remoteConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -377,21 +373,11 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            boolean result = DlnaUtils.getActivationState(SettingActivity.this);
-                            if (result) {
-                                DlnaManager.shared().mLocalRegisterListener = SettingActivity.this;
-                                DlnaManager.shared().StartDtcp();
-                                DlnaManager.shared().RestartDirag();
-                                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-                                DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
-                            } else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setRemoteProgressVisible(View.GONE);
-                                        showErrorDialog(getString(R.string.activation_failed_error_local_registration));
-                                    }
-                                });
+                            DlnaUtils.ExcuteLocalRegistrationErrorType errorType =
+                                    DlnaUtils.excuteLocalRegistration(getApplicationContext(), SettingActivity.this);
+                            boolean result = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE.equals(errorType);
+                            if (!result) {
+                                showRegistResultDialog(false, errorType);
                             }
                         }
                     }).start();
@@ -402,19 +388,12 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     @Override
-    public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
+    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
         if (result) {
             //ローカルレジストレーションが成功したので日時を蓄積する
             SharedPreferencesUtils.setRegistTime(getApplicationContext());
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                setRemoteProgressVisible(View.GONE);
-                showRegistResultDialog(result, errorType);
-            }
-        });
+        showRegistResultDialog(result, errorType);
     }
 
     /**
@@ -422,28 +401,15 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      * @param errorType errorType
      * @param isSuccess true 成功 false 失敗
      */
-    private void showRegistResultDialog(final boolean isSuccess, final DlnaManager.LocalRegistrationErrorType errorType) {
-        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        resultDialog.setOnTouchOutside(false);
-        if (isSuccess) {
-            resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
-            SharedPreferencesUtils.setRemoteDeviceExpireDate(SettingActivity.this, expireDate);
-        } else {
-            switch (errorType) {
-                case OVER:
-                    resultDialog.setContent(getString(R.string.common_text_regist_over_error_setting));
-                    break;
-                case NONE:
-                case UNKNOWN:
-                default:
-                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));
-                    break;
+    private void showRegistResultDialog(final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(SettingActivity.this, isSuccess, errorType);
+                setRemoteProgressVisible(View.GONE);
+                resultDialog.showDialog();
             }
-            resultDialog.setConfirmText(R.string.common_text_close);
-        }
-        resultDialog.showDialog();
+        });
     }
 
 }
