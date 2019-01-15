@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalChListJsonParser;
@@ -32,7 +33,7 @@ public class RentalChListWebClient
          *
          * @param RentalChListResponse JSONパース後のデータ
          */
-        void onRentalChListJsonParsed(PurchasedChannelListResponse RentalChListResponse);
+        void onRentalChListJsonParsed(PurchasedChannelListResponse RentalChListResponse, ErrorState jsonParseError);
     }
 
     /**
@@ -67,7 +68,7 @@ public class RentalChListWebClient
     public void onError(final ReturnCode returnCode) {
         if (mRentalChListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
-            mRentalChListJsonParserCallback.onRentalChListJsonParsed(null);
+            mRentalChListJsonParserCallback.onRentalChListJsonParsed(null, null);
         }
     }
 

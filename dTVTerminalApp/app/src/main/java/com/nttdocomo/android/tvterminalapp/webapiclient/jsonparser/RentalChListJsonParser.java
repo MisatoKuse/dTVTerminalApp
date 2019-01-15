@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -40,6 +42,8 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
 
+    private ErrorState mJsonParseError = null;
+
     /**
      * コンストラクタ.
      *
@@ -52,7 +56,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRentalChListJsonParserCallback.onRentalChListJsonParsed(mPurchasedChannelListResponse);
+        mRentalChListJsonParserCallback.onRentalChListJsonParsed(mPurchasedChannelListResponse, mJsonParseError);
     }
 
     @Override
@@ -81,6 +85,8 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
 
             return mPurchasedChannelListResponse;
         } catch (JSONException e) {
+            mJsonParseError = new ErrorState();
+            mJsonParseError.setErrorType(DtvtConstants.ErrorType.PARSE_ERROR);
             DTVTLogger.debug(e);
         }
 

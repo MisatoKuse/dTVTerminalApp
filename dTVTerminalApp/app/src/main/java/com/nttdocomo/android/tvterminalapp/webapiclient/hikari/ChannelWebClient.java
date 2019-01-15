@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -38,7 +39,7 @@ public class ChannelWebClient
          *
          * @param channelLists JSONパース後のデータ
          */
-        void onChannelJsonParsed(List<ChannelList> channelLists);
+        void onChannelJsonParsed(List<ChannelList> channelLists, ErrorState jsonParseError);
     }
 
     /**コールバックのインスタンス.*/
@@ -72,7 +73,7 @@ public class ChannelWebClient
     @Override
     public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
-        mChannelJsonParserCallback.onChannelJsonParsed(null);
+        mChannelJsonParserCallback.onChannelJsonParsed(null, null);
     }
 
     /**

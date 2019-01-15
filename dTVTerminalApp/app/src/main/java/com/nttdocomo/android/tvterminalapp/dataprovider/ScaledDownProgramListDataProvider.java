@@ -292,9 +292,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists, final ErrorState jsonParseError) {
         ArrayList<ChannelInfo> channels = null;
-        if (channelLists != null && channelLists.size() > 0) {
+        if (channelLists != null && channelLists.size() > 0 && jsonParseError == null) {
             mChannelList = channelLists.get(0);
             List<Map<String, String>> channelList = mChannelList.getChannelList();
 
@@ -310,6 +310,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 channels = null;
             }
         } else {
+            //JSONパースエラー更新
+            mChannelWebClient.setJsonParseError(jsonParseError);
             //データが取得できなかったので、エラーを取得する
             mChannelError = mChannelWebClient.getError();
         }

@@ -135,7 +135,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     @Override
-    public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse response, final ErrorState jsonParseError) {
         if (response == null) {
             if (mWebClient.getError() != null && mWebClient.getError().getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
                 mError = mWebClient.getError();

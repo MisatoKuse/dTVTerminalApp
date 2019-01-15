@@ -33,7 +33,7 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
     private static final int LATCH_COUNT_MAX = 1;
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists, final ErrorState jsonParseError) {
         DTVTLogger.start();
 
         //コールバックが返ってきた

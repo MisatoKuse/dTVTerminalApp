@@ -133,7 +133,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
 
 
     @Override
-    public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse, final ErrorState jsonParseError) {
         mPurchasedVodListResponse = purchasedVodListResponse;
         if (purchasedVodListResponse != null) {
             Handler handler = new Handler(); //チャンネル情報更新

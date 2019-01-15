@@ -205,6 +205,13 @@ public class ErrorState {
                 mToastErrorMessage = context.getString(
                         R.string.network_http_error_message);
                 break;
+            case PARSE_ERROR:
+                //JSONパースエラーのダイアログ用メッセージの取得
+                mErrorMessage = context.getString(R.string.json_parse_error_message);
+
+                //JSONパースエラーのトースト用メッセージの取得
+                mToastErrorMessage = context.getString(R.string.json_parse_error_message);
+                break;
             default:
                 break;
         }

@@ -9,6 +9,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -32,6 +34,8 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
             mContentsDetailJsonParserCallback;
     /**オブジェクトクラスの定義　.*/
     private ContentsDetailGetResponse mContentsDetailGetResponse;
+    /**JSONパースエラー*/
+    private ErrorState mJsonParseError = null;
 
     /**
      * コンストラクタ.
@@ -51,7 +55,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     @Override
     protected void onPostExecute(final Object s) {
         mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(
-                (mContentsDetailGetResponse));
+                mContentsDetailGetResponse, mJsonParseError);
     }
 
     @Override
@@ -79,6 +83,8 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
                 return mContentsDetailGetResponse;
             }
         } catch (JSONException e) {
+            mJsonParseError = new ErrorState();
+            mJsonParseError.setErrorType(DtvtConstants.ErrorType.PARSE_ERROR);
             DTVTLogger.debug(e);
         }
         return null;
