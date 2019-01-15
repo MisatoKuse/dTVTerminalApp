@@ -152,6 +152,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mIsDownloadStop = false;
     /** 放送中フラグ.*/
     private boolean mIsVideoBroadcast = false;
+    /** 操作アイコン表示フラグ.*/
+    private boolean mIsShowStartControl = false;
     /**再生開始可否.*/
     private boolean mCanPlay = false;
     /**ダウンロード再生.*/
@@ -688,6 +690,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             case MediaPlayerDefinitions.PE_START_RENDERING:
                 mReconnectStartTime = 0;
                 mDmsDisconnectedTime = 0;
+                if (!mIsVideoBroadcast && getCurrentPosition() == 0 && mIsShowStartControl) {
+                    mIsShowStartControl = false;
+                }
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
@@ -699,7 +704,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
                 mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
-                if (!mIsVideoBroadcast && getCurrentPosition() == 0) {
+                if (!mIsVideoBroadcast && !mIsShowStartControl) {
+                    mIsShowStartControl = true;
                     showRecordContentsControlView();
                 }
                 break;
