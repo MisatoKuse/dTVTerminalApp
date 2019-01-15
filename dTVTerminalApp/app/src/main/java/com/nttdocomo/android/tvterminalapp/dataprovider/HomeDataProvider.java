@@ -401,7 +401,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onRentalVodListJsonParsed(final PurchasedVodListResponse RentalVodListResponse) {
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse RentalVodListResponse, final ErrorState jsonParseError) {
         if (RentalVodListResponse != null) {
             setStructDB(RentalVodListResponse);
             sendRentalListData(RentalVodListResponse);
@@ -421,7 +421,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse, final ErrorState jsonParseError) {
         if (RentalChListResponse != null) {
             setStructDB(RentalChListResponse);
         } else {
@@ -431,7 +431,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists, final ErrorState jsonParseError) {
         DTVTLogger.start();
 
         //ヌルならば、エラー判定を行う

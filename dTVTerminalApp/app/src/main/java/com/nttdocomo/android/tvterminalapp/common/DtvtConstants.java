@@ -119,6 +119,11 @@ public class DtvtConstants {
          * HTTPエラー:その他通信エラー.
          */
         HTTP_ERROR,
+
+        /**
+         * パースエラー(JSON, HTML)
+         */
+        PARSE_ERROR,
     }
 
 }

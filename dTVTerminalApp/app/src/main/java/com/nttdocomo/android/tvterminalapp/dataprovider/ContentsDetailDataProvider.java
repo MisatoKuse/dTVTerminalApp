@@ -180,9 +180,10 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     // region super class
+
     @Override
-    public void onContentsDetailJsonParsed(final ContentsDetailGetResponse contentsDetailLists) {
-        if (contentsDetailLists != null) {
+    public void onContentsDetailJsonParsed(ContentsDetailGetResponse contentsDetailLists, final ErrorState jsonParseError) {
+        if (contentsDetailLists != null && jsonParseError == null) {
             if (contentsDetailLists.getStatus().equals(mContext.getString(R.string.contents_detail_response_ok))) {
                 ArrayList<VodMetaFullData> detailListInfo = contentsDetailLists.getVodMetaFullData();
                 if (detailListInfo != null && detailListInfo.size() > 0) {
@@ -203,6 +204,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 executeContentsDetailInfoCallback(null, false);
             }
         } else {
+            mDetailGetWebClient.setJsonParseError(jsonParseError);
             executeContentsDetailInfoCallback(null, false);
         }
     }
@@ -264,10 +266,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     @Override
-    public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
-
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse, final ErrorState jsonParseError ) {
         mPurchasedVodListResponse = purchasedVodListResponse;
-        if (mPurchasedVodListResponse != null) {
+        if (mPurchasedVodListResponse != null && jsonParseError == null) {
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_UPDATE);
@@ -277,6 +278,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             }
             executeRentalVodListCallback(mPurchasedVodListResponse);
         } else {
+            mRentalVodListWebClient.setJsonParseError(jsonParseError);
             executeRentalVodListCallback(null);
         }
     }
@@ -293,9 +295,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChannelListResponse purchasedChannelListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse purchasedChannelListResponse, final ErrorState jsonParseError) {
         mPurchasedChannelListResponse = purchasedChannelListResponse;
-        if (mPurchasedChannelListResponse != null) {
+        if (mPurchasedChannelListResponse != null && jsonParseError == null) {
             ArrayList<ActiveData> actionData = mPurchasedChannelListResponse.getChActiveData();
             List<Map<String, String>> channelList = mPurchasedChannelListResponse.getChannelListData().getChannelList();
             if (actionData != null && actionData.size() > 0 && channelList != null && !channelList.isEmpty()) {
@@ -309,6 +311,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             }
             executeRentalChListCallback(purchasedChannelListResponse);
         } else {
+            mRentalChListWebClient.setJsonParseError(jsonParseError);
             executeRentalChListCallback(null);
         }
     }

@@ -344,7 +344,7 @@ public class RecordingReservationListDataProvider implements
     }
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists, final ErrorState jsonParseError) {
         DTVTLogger.start();
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);

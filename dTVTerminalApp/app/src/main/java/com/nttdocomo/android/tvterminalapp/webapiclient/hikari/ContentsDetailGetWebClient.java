@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
@@ -39,7 +40,7 @@ public class ContentsDetailGetWebClient
          *
          * @param ContentsDetailLists JSONパース後のデータ
          */
-        void onContentsDetailJsonParsed(ContentsDetailGetResponse ContentsDetailLists);
+        void onContentsDetailJsonParsed(ContentsDetailGetResponse ContentsDetailLists, ErrorState jsonParseError);
     }
 
     /**
@@ -84,7 +85,7 @@ public class ContentsDetailGetWebClient
     public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         if (mContentsDetailJsonParserCallback != null) {
-            mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(null);
+            mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(null, null);
         }
     }
 

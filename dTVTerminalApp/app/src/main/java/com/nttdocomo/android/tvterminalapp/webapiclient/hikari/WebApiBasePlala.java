@@ -522,6 +522,18 @@ public class WebApiBasePlala {
     }
 
     /**
+     * JSON parseのエラーが発生された場合、エラーの情報を更新する
+     * @param jsonParseError
+     */
+    public void setJsonParseError(ErrorState jsonParseError) {
+        if (jsonParseError != null) {
+            mReturnCode.errorState.setErrorType(jsonParseError.getErrorType());
+            mReturnCode.errorState.setErrorCode(jsonParseError.getErrorCode());
+            mReturnCode.errorState.setErrorMessage(jsonParseError.getErrorMessage());
+        }
+    }
+
+    /**
      * 指定したAPIで通信を開始する.
      *
      * @param sourceUrl               API呼び出し名

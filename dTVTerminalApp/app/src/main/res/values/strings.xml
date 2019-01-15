@@ -490,6 +490,7 @@
     <string name="network_nw_error_message_dialog">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
     <string name="network_ssl_error_message">SSL通信に失敗しました</string>
     <string name="network_http_error_message">サーバとの通信に失敗しました</string>
+    <string name="json_parse_error_message">取得に失敗しました</string>
 
     <!-- TODO: 設定ファイル動作制御用仮ワーディング -->
     <string name="setting_file_force_download">ドコモテレビターミナルアプリの新バージョンがあります。アップデートを行います。</string>

@@ -1237,7 +1237,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse, final ErrorState jsonParseError) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 

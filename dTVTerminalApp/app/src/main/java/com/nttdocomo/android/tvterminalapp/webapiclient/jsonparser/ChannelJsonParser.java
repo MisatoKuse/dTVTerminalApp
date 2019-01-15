@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
@@ -42,6 +44,10 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     private static final String[] PAGER_PARAMETERS = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
             JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
             JsonConstants.META_RESPONSE_TOTAL};
+    /**
+     * JSONパースエラー
+     */
+    private ErrorState mJsonParseError = null;
 
     /**
      * CH一覧Jsonデータを解析する.
@@ -60,6 +66,8 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             sendVcList(jsonObj);
             return Collections.singletonList(mChannelList);
         } catch (JSONException e) {
+            mJsonParseError = new ErrorState();
+            mJsonParseError.setErrorType(DtvtConstants.ErrorType.PARSE_ERROR);
             DTVTLogger.debug(e);
         }
         return null;
@@ -107,7 +115,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
 
     @Override
     protected void onPostExecute(final Object object) {
-        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>) object);
+        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>) object, mJsonParseError);
     }
 
     @Override

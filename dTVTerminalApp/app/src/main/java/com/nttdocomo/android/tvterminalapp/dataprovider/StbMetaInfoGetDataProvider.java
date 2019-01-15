@@ -97,10 +97,13 @@ public class StbMetaInfoGetDataProvider implements StbMetaInfoGetWebApiDelegate 
     public void onFailure(final StbMetaInfoGetErrorData result) {
         DTVTLogger.start();
         SearchResultError error = SearchResultError.systemError;
+        ErrorState errorState = getError();
         if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {
             error = SearchResultError.requestError;
-            ErrorState errorState = getError();
             errorState.setErrorType(DtvtConstants.ErrorType.SERVER_ERROR);
+        } else if (result.error.id.equals(DtvtConstants.SEARCH_ERROR_ID_1)) {
+            error = SearchResultError.parseError;
+            errorState.setErrorType(DtvtConstants.ErrorType.PARSE_ERROR);
         }
 
         ResultType<SearchResultError> resultType = new ResultType<>();

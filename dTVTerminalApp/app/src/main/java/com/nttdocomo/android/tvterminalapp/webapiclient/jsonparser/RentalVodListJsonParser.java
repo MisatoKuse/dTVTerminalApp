@@ -8,6 +8,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -36,6 +38,8 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
 
     /**オブジェクトクラスの定義.*/
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
+    /**JSONパースエラー*/
+    private ErrorState mJsonParseError = null;
 
     /**
      * コンストラクタ.
@@ -50,7 +54,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRentalVodListJsonParserCallback.onRentalVodListJsonParsed(mPurchasedVodListResponse);
+        mRentalVodListJsonParserCallback.onRentalVodListJsonParsed(mPurchasedVodListResponse, mJsonParseError);
     }
 
     @Override
@@ -82,6 +86,8 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
             }
         } catch (JSONException e) {
             mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
+            mJsonParseError = new ErrorState();
+            mJsonParseError.setErrorType(DtvtConstants.ErrorType.PARSE_ERROR);
             DTVTLogger.debug(e);
         }
         return mPurchasedVodListResponse;
