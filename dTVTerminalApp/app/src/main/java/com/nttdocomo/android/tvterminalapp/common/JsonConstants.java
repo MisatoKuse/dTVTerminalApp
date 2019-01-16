@@ -172,6 +172,10 @@ public class JsonConstants {
      */
     public static final String META_RESPONSE_PLATFORM_TYPE = "platform_type";
     /**
+     * 予約種類.
+     */
+    public static final String META_RESPONSE_RESV_TYPE = "resv_type";
+    /**
      * レジュームメタ情報.
      */
     public static final String META_RESPONSE_METADATE_LIST = "metadata_list";

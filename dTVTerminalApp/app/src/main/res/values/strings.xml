@@ -358,6 +358,7 @@
     <string name="contents_detail_hikari_channel_agreement">ご覧になるにはチャンネルの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
     <string name="contents_detail_hikari_vod_agreement">本コンテンツ（有料）はテレビで視聴できます。\nコンテンツの契約状態はテレビでご確認ください。</string>
     <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
+    <string name="contents_detail_bs_premium_ch">本チャンネル（有料）はテレビで視聴できます。\nチャンネルの契約状態はテレビでご確認ください。</string>
     <string-array name="contents_detail_tab_vod">
         <item>@string/contents_detail_tab_contents_info</item>
     </string-array>

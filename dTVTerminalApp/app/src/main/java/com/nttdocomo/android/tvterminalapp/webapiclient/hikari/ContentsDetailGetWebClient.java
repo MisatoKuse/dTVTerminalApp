@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -200,7 +201,9 @@ public class ContentsDetailGetWebClient
 
             }
 
-            jsonObject.put(JsonConstants.META_RESPONSE_AREA_CODE, areaCode);
+            if (!TextUtils.isEmpty(areaCode)) {
+                jsonObject.put(JsonConstants.META_RESPONSE_AREA_CODE, areaCode);
+            }
 
             int intAge = ageReq;
             //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.

@@ -202,8 +202,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private boolean mIsFromHeader = false;
     /** チャンネル日付.*/
     private String mChannelDate = null;
-    /** サービスID(ぷらら).*/
-    private String mServiceId = null;
+    /** サービスIDユニーク.*/
+    private String mServiceIdUniq = null;
     /** 視聴可否ステータス.*/
     private ContentUtils.ViewIngType mViewIngType = null;
     /** コンテンツ種別.*/
@@ -743,8 +743,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     imageView.setVisibility(View.GONE);
                     // 連携アイコン非表示のためクリック抑止
                     mThumbnailBtn.setClickable(false);
-                } else if (content.equals(getResources().getString(R.string.contents_detail_thumbnail_text_unable_viewing))
-                        || content.equals(getResources().getString(R.string.contents_detail_thumbnail_text))) {
+                } else if (content.equals(getString(R.string.contents_detail_thumbnail_text_unable_viewing))
+                        || content.equals(getString(R.string.contents_detail_bs_premium_ch))
+                        || content.equals(getString(R.string.contents_detail_thumbnail_text))) {
                     imageView.setVisibility(View.GONE);
                     // 連携アイコン非表示のためクリック抑止
                     mThumbnailBtn.setClickable(false);
@@ -1073,13 +1074,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void setRecordingData(final DtvContentsDetailFragment detailFragment) {
         // リモート録画予約情報を生成
-        mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
-                mDetailFullData.getmService_id(),
-                mDetailFullData.getTitle(),
-                mDetailFullData.getPublish_start_date(),
-                mDetailFullData.getDur(),
-                mDetailFullData.getR_value());
-        mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
+        mRecordingReservationContentsDetailInfo = ContentDetailUtils.getRecordingReservationContentsDetailInfo(mDetailFullData);
         detailFragment.setRecordingReservationIconListener(this, ContentDetailActivity.this);
     }
 
@@ -1130,8 +1125,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     //DBに保存されているUserInfoから契約情報を確認する
                     contentType = ContentDetailUtils.ContentTypeForGoogleAnalytics.TV;
                     if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
-                        if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                            //tv_serviceは1の場合(ひかりTV多ch)
+                        if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())
+                                || ContentUtils.TV_SERVICE_FLAG_TTB.equals(mDetailFullData.getmTv_service())
+                                || ContentUtils.TV_SERVICE_FLAG_BS.equals(mDetailFullData.getmTv_service())) {
+                            //tv_serviceは1、3、4の場合
                             setRecordingData(detailFragment);
                         } else if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                             //tv_serviceは2の場合(ひかり内dチャンネル)
@@ -1266,8 +1263,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (ContentDetailUtils.getStbStatus() || mVisibility) {
                     findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
                 }
-                if (mDetailFullData != null && !TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                    mServiceId = mDetailFullData.getmService_id();
+                if (mDetailFullData != null && !TextUtils.isEmpty(mDetailFullData.getServiceIdUniq())) {
+                    mServiceIdUniq = mDetailFullData.getServiceIdUniq();
                     //チャンネル情報取得(取得後に視聴可否判定)
                     getChannelInfo();
                 } else {
@@ -1402,11 +1399,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 DTVTLogger.debug("contractInfo: " + contractInfo);
                 if (mContentsType != null) {
                     //チャンネル情報取得して、更新する
-                    if (!TextUtils.isEmpty(mServiceId)) {
+                    if (!TextUtils.isEmpty(mServiceIdUniq)) {
                         DtvContentsDetailFragment detailFragment = getDetailFragment();
                         for (int i = 0; i < channels.size(); i++) {
                             ChannelInfo channel = channels.get(i);
-                            if (mServiceId.equals(channel.getServiceId())) {
+                            if (mServiceIdUniq.equals(channel.getServiceIdUniq())) {
                                 mChannel = channel;
                                 //チャンネル情報取得完了前にタブ切替されていた場合はここでチャンネルタブ表示処理を開始する
                                 if (mViewPager.getCurrentItem() == ContentDetailUtils.CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
@@ -1944,7 +1941,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * プレイヤーエラーダイアログを表示.
-     *
      * (ダイアログ終了後画面が終わらないタイプ)
      * @param errorMessage エラーメッセージ
      */
@@ -1995,7 +1991,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     errorMessage = getString(R.string.recording_reservation_failed_dialog_msg);
                 }
-                CustomDialog dialog = createErrorDialog(errorMessage);
+                CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this, errorMessage);
                 dialog.showDialog();
             } else {
                 if (mToast != null) {
@@ -2013,7 +2009,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             }
         } else {
-            CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
+            CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this, getString(R.string.recording_reservation_failed_dialog_msg));
             dialog.showDialog();
         }
         DTVTLogger.end();
@@ -2032,7 +2028,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         // リスト表示用のアラートダイアログを表示
         if (mRecordingReservationCustomtDialog == null) {
-            mRecordingReservationCustomtDialog = createRecordingReservationConfirmDialog();
+            mRecordingReservationCustomtDialog = ContentDetailUtils.createRecordingReservationConfirmDialog(ContentDetailActivity.this);
+            mRecordingReservationCustomtDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    DTVTLogger.debug("Request RecordingReservation");
+                    DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
+                    if (!mContentsDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo)) {
+                        //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
+                        CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this,
+                                getString(R.string.recording_reservation_failed_dialog_msg));
+                        dialog.showDialog();
+                    }
+                }
+            });
         }
         mRecordingReservationCustomtDialog.showDialog();
     }
@@ -2049,55 +2058,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!(contentsType == ContentUtils.ContentsType.HIKARI_TV
                || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
                 //録画ボタン表示対象の種別以外ならば、録画可能時間外や放送中等なので、録画不能のダイアログを出して、falseを返す
-                CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
+                CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this,
+                        getString(R.string.recording_reservation_failed_dialog_msg));
                 dialog.showDialog();
                 return false;
             }
         }
         //制限時間経過以外ならばtrue
         return true;
-    }
-
-    /**
-     * 録画予約失敗時エラーダイアログ表示.
-     * @return 録画予約失敗エラーダイアログ
-     * @param errorMessage エラーメッセージ.
-     */
-    private CustomDialog createErrorDialog(final String errorMessage) {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        failedRecordingReservationDialog.setContent(errorMessage);
-        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
-        failedRecordingReservationDialog.setCancelable(false);
-        return failedRecordingReservationDialog;
-    }
-
-    /**
-     * 録画予約確認ダイアログを表示.
-     * @return 録画予約確認ダイアログ
-     */
-    private CustomDialog createRecordingReservationConfirmDialog() {
-        CustomDialog recordingReservationConfirmDialog =
-                new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-        recordingReservationConfirmDialog.setTitle(getResources().getString(
-                R.string.recording_reservation_confirm_dialog_title));
-        recordingReservationConfirmDialog.setContent(getResources().getString(
-                R.string.recording_reservation_confirm_dialog_msg));
-        recordingReservationConfirmDialog.setConfirmText(R.string.recording_reservation_confirm_dialog_confirm);
-        recordingReservationConfirmDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
-        recordingReservationConfirmDialog.setCancelable(false);
-        recordingReservationConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                DTVTLogger.debug("Request RecordingReservation");
-                DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
-                if (!mContentsDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo)) {
-                    //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
-                    CustomDialog dialog = createErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg));
-                    dialog.showDialog();
-                }
-            }
-        });
-        return recordingReservationConfirmDialog;
     }
 
     /**
@@ -2177,7 +2145,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onRentalChListCallback(final PurchasedChannelListResponse response) {
         DTVTLogger.start();
-        //購入済みCH一覧取得からの戻り
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2488,6 +2455,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 thumbnailContractButtonAction();
                             }
                         });
+                    } else if (ContentUtils.isBsPremiumCh(viewIngType)) {
+                        setThumbnailText(getString(R.string.contents_detail_bs_premium_ch));
                     } else {
                         playerSwitch();
                     }
@@ -2503,6 +2472,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 thumbnailContractButtonAction();
                             }
                         });
+                    } else if (ContentUtils.isBsPremiumCh(viewIngType)) {
+                        setThumbnailText(getString(R.string.contents_detail_bs_premium_ch));
                     } else {
                         playerSwitch();
                     }
@@ -2527,6 +2498,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 thumbnailContractButtonAction();
                             }
                         });
+                    } else if (ContentUtils.isBsPremiumCh(viewIngType)) {
+                        setThumbnailText(getString(R.string.contents_detail_bs_premium_ch));
                     }
                     //未ペアリング契約有
                 } else {
@@ -2959,9 +2932,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * サムネイル画像にシャドウをかける(アルファをかける).
      */
     private void setThumbnailShadow() {
-        if (mThumbnail != null) {
-            mThumbnail.setAlpha(ContentDetailUtils.THUMBNAIL_SHADOW_ALPHA);
-        }
+        mThumbnail.setAlpha(ContentDetailUtils.THUMBNAIL_SHADOW_ALPHA);
     }
 
     /**

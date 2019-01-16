@@ -4,17 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.struct;
 
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-
 /**
  * 録画予約コンテンツ詳細クラス.
  * 　　機能： コンテンツ詳細を管理するクラスである
  */
 public class RecordingReservationContentsDetailInfo {
     /**
-     * 放送種別 1:多チャンネル放送.
+     * 放送種別.
      */
-    private static final int PLATFORM_TYPE = 1;
+    private int mPlatformType;
     /**
      * サービスID.
      */
@@ -38,7 +36,11 @@ public class RecordingReservationContentsDetailInfo {
     /**
      * 定期予約指定値:0～10（イベントIDありの場合0固定）.
      */
-    private int mLoopTypeNum = 0;
+    private static final int sLoopTypeNum = 0;
+    /**
+     * 予約種類（地デジ、BSの場合必須）.
+     */
+    private static final int sResvType = 1;
     /**
      * パレンタル設定値.
      */
@@ -75,11 +77,19 @@ public class RecordingReservationContentsDetailInfo {
     }
 
     /**
-     * 放送種別 1:多チャンネル放送取得.
+     * 放送種別取得.
      * @return 放送種別
      */
     public int getPlatformType() {
-        return PLATFORM_TYPE;
+        return mPlatformType;
+    }
+
+    /**
+     * 放送種別設定.
+     * @param mPlatformType 放送種別
+     */
+    public void setPlatformType(final int mPlatformType) {
+        this.mPlatformType = mPlatformType;
     }
 
     /**
@@ -127,7 +137,15 @@ public class RecordingReservationContentsDetailInfo {
      * @return 定期予約指定値:0～10（イベントIDありの場合0固定）
      */
     public int getLoopTypeNum() {
-        return mLoopTypeNum;
+        return sLoopTypeNum;
+    }
+
+    /**
+     * 予約種類.
+     * @return 予約種類（地デジ、BSの場合必須）
+     */
+    public int getResvType() {
+        return sResvType;
     }
 
     /**
