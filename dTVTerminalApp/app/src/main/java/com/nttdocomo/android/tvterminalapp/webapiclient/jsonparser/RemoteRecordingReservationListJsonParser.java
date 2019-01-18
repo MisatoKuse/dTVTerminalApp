@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
@@ -140,7 +141,10 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 for (int i = 0; i < lists.length(); i++) {
                     RemoteRecordingReservationMetaData remoteRecordingReservationMetaData = new RemoteRecordingReservationMetaData();
                     remoteRecordingReservationMetaData.setData(lists.getJSONObject(i));
-                    remoteRecordingReservationMetaDataList.add(remoteRecordingReservationMetaData);
+                    //受付成功しているリモート録画予約の番組は一律非表示とする
+                    if (remoteRecordingReservationMetaData.getSyncStatus() != RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT) {
+                        remoteRecordingReservationMetaDataList.add(remoteRecordingReservationMetaData);
+                    }
                 }
                 if (mRemoteRecordingReservationListResponse != null) {
                     // リモート録画予約一覧リストをセットする

@@ -9,8 +9,11 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -695,13 +698,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 }
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
-                AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-                // 他アプリで音楽が再生されていないかチェックする
-                if (audioManager.isMusicActive()) {
-                    // 再生中なら止める
-                    audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-                }
-
+                doRequestAudioFocus();
                 mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
                 if (!mIsVideoBroadcast && !mIsShowStartControl) {
@@ -711,6 +708,35 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 break;
             default:
                 break;
+        }
+    }
+    /**
+     *requestAudioFocus.
+     */
+    @SuppressWarnings("deprecation")
+    private void doRequestAudioFocus() {
+        AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        // 他アプリで音楽が再生されていないかチェックする
+        if (audioManager.isMusicActive()) {
+            // 再生中なら止める
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                AudioAttributes playbackAttributes = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build();
+                AudioFocusRequest focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                        .setAudioAttributes(playbackAttributes)
+                        .setAcceptsDelayedFocusGain(true)
+                        .setOnAudioFocusChangeListener(new AudioManager.OnAudioFocusChangeListener() {
+                            @Override
+                            public void onAudioFocusChange(final int i) {
+                            }
+                        })
+                        .build();
+                audioManager.requestAudioFocus(focusRequest);
+            } else {
+                audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+            }
         }
     }
 
