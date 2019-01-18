@@ -1051,7 +1051,7 @@ public class ContentUtils {
                     if (CH_TYPE_PREMIUM.equals(chType)) {
                         //サムネイル領域文言 「本チャンネル（有料）はテレビで視聴できます。\nチャンネルの契約状態はテレビでご確認ください。」
                         return ViewIngType.BS_PREMIUM_CH;
-                    } else {
+                    } else if (CH_TYPE_KIHON.equals(chType)) {
                         //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
                         if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
                             if (publishStartDate <= nowDate
@@ -1071,6 +1071,9 @@ public class ContentUtils {
                             //取得したチャンネル情報が不正の場合
                             return ViewIngType.NONE_STATUS;
                         }
+                    } else {
+                        //取得したチャンネル情報が不正の場合
+                        return ViewIngType.NONE_STATUS;
                     }
                 } else {
                     //視聴可否範囲外
