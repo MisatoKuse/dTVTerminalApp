@@ -675,7 +675,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
-            super.sendScreenView(getString(R.string.str_stb_pairing), null);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_connect), null);
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
             //次回表示しないTextView表示フラグをTRUEにする
@@ -716,7 +716,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mParingTextView.setVisibility(View.INVISIBLE);
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
         DTVTLogger.end();
     }
 
