@@ -124,6 +124,8 @@ public class VodMetaFullData implements Serializable {
     private String mTv_cid = null;
     /**サービスID.*/
     private String mService_id = null;
+    /**サービスIDユニーク.*/
+    private String mServiceIdUniq = null;
     /**イベントID.*/
     private String mEvent_id = null;
     /**チャンネル番号.*/
@@ -936,6 +938,22 @@ public class VodMetaFullData implements Serializable {
     }
 
     /**
+     *サービスIDユニーク 取得.
+     * @return サービスIDユニーク
+     */
+    public String getServiceIdUniq() {
+        return mServiceIdUniq;
+    }
+
+    /**
+     * サービスIDユニーク設定.
+     * @param mServiceIdUniq サービスIDユニーク
+     */
+    public void setServiceIdUniq(final String mServiceIdUniq) {
+        this.mServiceIdUniq = mServiceIdUniq;
+    }
+
+    /**
      * イベントID取得.
      * @return イベントID
      */
@@ -1178,7 +1196,7 @@ public class VodMetaFullData implements Serializable {
             JsonConstants.META_RESPONSE_VOD_START_DATE, JsonConstants.META_RESPONSE_VOD_END_DATE,
             JsonConstants.META_RESPONSE_MAIN_GENRE, JsonConstants.META_RESPONSE_DTV_TYPE,
             //JsonConstants.META_RESPONSE_SECOND_GENRE_ARRAY,
-            JsonConstants.META_RESPONSE_COPY,
+            JsonConstants.META_RESPONSE_COPY, JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ
             //JsonConstants.META_RESPONSE_ADINFO_ARRAY,
             //JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY,
     };
@@ -1457,6 +1475,10 @@ public class VodMetaFullData implements Serializable {
                     //サービスID
                     mService_id = String.valueOf(data);
                     break;
+                case JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ:
+                    //サービスIDユニーク
+                    mServiceIdUniq = String.valueOf(data);
+                    break;
                 case JsonConstants.META_RESPONSE_EVENT_ID:
                     //イベントID
                     mEvent_id = String.valueOf(data);
@@ -1664,6 +1686,9 @@ public class VodMetaFullData implements Serializable {
                 case JsonConstants.META_RESPONSE_SERVICE_ID:
                     //サービスID
                     return mService_id;
+                case JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ:
+                    //サービスIDユニーク
+                    return mServiceIdUniq;
                 case JsonConstants.META_RESPONSE_EVENT_ID:
                     //イベントID
                     return mEvent_id;

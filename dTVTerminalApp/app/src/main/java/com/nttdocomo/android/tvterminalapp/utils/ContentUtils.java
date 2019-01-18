@@ -89,10 +89,14 @@ public class ContentUtils {
     public static final String SUBSCRIPTION_PACKAGE = "subscription_package";
     /** disp_type(series_svod).*/
     public static final String SERIES_SVOD = "series_svod";
-    /** tv_service(0).*/
-    public static final String TV_SERVICE_FLAG_HIKARI = "1";
     /** tv_service(1).*/
+    public static final String TV_SERVICE_FLAG_HIKARI = "1";
+    /** tv_service(2).*/
     public static final String TV_SERVICE_FLAG_DCH_IN_HIKARI = "2";
+    /** tv_service(3).*/
+    public static final String TV_SERVICE_FLAG_TTB = "3";
+    /** tv_service(4).*/
+    public static final String TV_SERVICE_FLAG_BS = "4";
     /** contents_type(0).*/
     public static final String CONTENT_TYPE_FLAG_ZERO = "0";
     /** contents_type(1).*/
@@ -238,11 +242,11 @@ public class ContentUtils {
     public enum ViewIngType {
         /**視聴可能.*/
         ENABLE_WATCH,
-        /**視聴可能.dCHのみ契約*/
+        /**視聴可能.dCHのみ契約.*/
         ENABLE_WATCH_001,
         /**視聴可能(期限30日以内なので視聴可能期限表示).*/
         ENABLE_WATCH_LIMIT_THIRTY,
-        /**視聴可能(期限30日以内なので視聴可能期限表示).dCHのみ契約*/
+        /**視聴可能(期限30日以内なので視聴可能期限表示).dCHのみ契約.*/
         ENABLE_WATCH_LIMIT_THIRTY_001,
         /**視聴可能(期限30日以内なので視聴可能期限表示) ※複数期限があり、期限が一番長いのを基準にする場合.*/
         ENABLE_WATCH_LIMIT_THIRTY_LONGEST,
@@ -250,7 +254,7 @@ public class ContentUtils {
         ENABLE_WATCH_LIMIT_THIRTY_OVER,
         /**視聴不可(再生導線非表示).*/
         DISABLE_WATCH_AND_PLAY,
-        /**視聴不可(再生導線非表示).dCHのみ契約*/
+        /**視聴不可(再生導線非表示).dCHのみ契約.*/
         DISABLE_WATCH_AND_PLAY_001,
         /**視聴不可契約導線表示.*/
         DISABLE_WATCH_AGREEMENT_DISPLAY,
@@ -264,6 +268,8 @@ public class ContentUtils {
         PREMIUM_CHECK_START,
         /**購入済みVOD判定開始.*/
         SUBSCRIPTION_CHECK_START,
+        /**BSプレミアムチャンネル.*/
+        BS_PREMIUM_CH,
         /**視聴可否判定外ステータス ※サーバレスポンスが正常ならこの状態にはならない想定.*/
         NONE_STATUS
     }
@@ -388,7 +394,7 @@ public class ContentUtils {
             //ひかりTV_VOD、ひかりTV内dTV
             cType = DateUtils.getContentsTypeByAvailEndDate(availStartDate, availEndDate);
         } else if (TV_PROGRAM.equals(dispType)) {
-            if (TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
+            if (TV_SERVICE_FLAG_HIKARI.equals(tvService) || TV_SERVICE_FLAG_TTB.equals(tvService) || TV_SERVICE_FLAG_BS.equals(tvService)) {
                 //ひかりTV_番組
                 cType = ContentsType.TV;
             } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
@@ -620,7 +626,9 @@ public class ContentUtils {
                     } else {
                         switch (tvService) {
                             case TV_SERVICE_FLAG_HIKARI:
-                                //tv_service=1 -> ひかりTV_番組
+                            case TV_SERVICE_FLAG_TTB:
+                            case TV_SERVICE_FLAG_BS:
+                                //tv_service=1、3、4 -> ひかりTV_番組
                                 if (isNowOnAir) {
                                     return ContentsType.HIKARI_TV_NOW_ON_AIR;
                                 } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
@@ -925,17 +933,17 @@ public class ContentUtils {
 
         String dispType = metaFullData.getDisp_type();
 
-        String channelServiceId = null;
+        String channelServiceIdUniq = null;
         String chType = null;
         //tv_programの場合、チャンネル情報がnullなら判定不可
         if (TV_PROGRAM.equals(dispType) && channelInfo == null) {
             return ViewIngType.NONE_STATUS;
         } else if (channelInfo != null) {
-            channelServiceId = channelInfo.getServiceId();
+            channelServiceIdUniq = channelInfo.getServiceIdUniq();
             chType = channelInfo.getChannelType();
         }
 
-        String vodServiceId = metaFullData.getmService_id();
+        String metaServiceIdUniq = metaFullData.getServiceIdUniq();
         String tvService = metaFullData.getmTv_service();
         long publishStartDate = metaFullData.getPublish_start_date();
         long publishEndDate = metaFullData.getPublish_end_date();
@@ -947,8 +955,8 @@ public class ContentUtils {
             case TV_PROGRAM:
                 //メタレスポンス「tv_service」が「1」
                 if (TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
-                    //メタレスポンスの「service_id」とCH一覧取得IFで取得したチャンネルの「service_id」で番組に紐づくチャンネルを特定する
-                    if (vodServiceId.equals(channelServiceId)) {
+                    //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
+                    if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
                         //チャンネルメタレスポンス「ch_type」が「kihon_ch」、「basic_ch」、「trial_free」
                         if (CH_TYPE_KIHON.equals(chType)
                                 || CH_TYPE_BASIC.equals(chType)
@@ -1013,6 +1021,58 @@ public class ContentUtils {
                         }
                     } else {
                         //視聴可否範囲外
+                        return ViewIngType.NONE_STATUS;
+                    }
+                    //メタレスポンス「tv_service」が「3」
+                } else if (TV_SERVICE_FLAG_TTB.equals(tvService)) {
+                    //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
+                    if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
+                        //チャンネルメタレスポンス「ch_type」が「kihon_ch」
+                        if (publishStartDate <= nowDate
+                                && nowDate < publishEndDate) {
+                            //視聴可能
+                            return ViewIngType.ENABLE_WATCH;
+                            //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」
+                        } else if (publishStartDate > nowDate
+                                || nowDate >= publishEndDate) {
+                            //視聴不可(放送時間外のため再生導線を非表示)
+                            return ViewIngType.DISABLE_WATCH_AND_PLAY;
+                        } else {
+                            //視聴可否判定外
+                            return ViewIngType.NONE_STATUS;
+                        }
+                    } else {
+                        //取得したチャンネル情報が不正の場合
+                        return ViewIngType.NONE_STATUS;
+                    }
+                    //メタレスポンス「tv_service」が「4」
+                } else if (TV_SERVICE_FLAG_BS.equals(tvService)) {
+                    //チャンネルメタレスポンス「ch_type」が「premium_ch」
+                    if (CH_TYPE_PREMIUM.equals(chType)) {
+                        //サムネイル領域文言 「本チャンネル（有料）はテレビで視聴できます。\nチャンネルの契約状態はテレビでご確認ください。」
+                        return ViewIngType.BS_PREMIUM_CH;
+                    } else if (CH_TYPE_KIHON.equals(chType)) {
+                        //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
+                        if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
+                            if (publishStartDate <= nowDate
+                                    && nowDate < publishEndDate) {
+                                //視聴可能
+                                return ViewIngType.ENABLE_WATCH;
+                                //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」
+                            } else if (publishStartDate > nowDate
+                                    || nowDate >= publishEndDate) {
+                                //視聴不可(放送時間外のため再生導線を非表示)
+                                return ViewIngType.DISABLE_WATCH_AND_PLAY;
+                            } else {
+                                //視聴可否判定外
+                                return ViewIngType.NONE_STATUS;
+                            }
+                        } else {
+                            //取得したチャンネル情報が不正の場合
+                            return ViewIngType.NONE_STATUS;
+                        }
+                    } else {
+                        //取得したチャンネル情報が不正の場合
                         return ViewIngType.NONE_STATUS;
                     }
                 } else {
@@ -1680,6 +1740,16 @@ public class ContentUtils {
             case DISABLE_WATCH_AGREEMENT_DISPLAY:
             case DISABLE_CHANNEL_WATCH_AGREEMENT_DISPLAY:
             case DISABLE_VOD_WATCH_AGREEMENT_DISPLAY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isBsPremiumCh(@NonNull final ViewIngType viewIngType) {
+        switch (viewIngType) {
+            case BS_PREMIUM_CH:
                 return true;
             default:
                 return false;

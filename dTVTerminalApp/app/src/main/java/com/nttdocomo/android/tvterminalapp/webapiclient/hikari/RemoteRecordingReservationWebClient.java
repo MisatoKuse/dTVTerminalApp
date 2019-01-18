@@ -119,11 +119,6 @@ public class RemoteRecordingReservationWebClient
     private boolean checkNormalParameter(final RecordingReservationContentsDetailInfo contentsDetailInfo,
                                          final RemoteRecordingReservationJsonParserCallback
                                                  remoteRecordingReservationJsonParserCallback) {
-        // 放送種別が 1 以外ならばfalse
-        if (contentsDetailInfo.getPlatformType() != 1) {
-            DTVTLogger.debug("PlatformType:error");
-            return false;
-        }
         // サービスIDが null ならばfalse
         if (contentsDetailInfo.getServiceId() == null) {
             DTVTLogger.debug("ServiceId:error");
@@ -178,7 +173,8 @@ public class RemoteRecordingReservationWebClient
         try {
             jsonObject.put(JsonConstants.META_RESPONSE_PLATFORM_TYPE, contentsDetailInfo.getPlatformType());
             jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, contentsDetailInfo.getServiceId());
-            if (contentsDetailInfo.getEventId() != null) {
+            //地テジ・BSの場合設定しない
+            if (contentsDetailInfo.getPlatformType() == 1 && contentsDetailInfo.getEventId() != null) {
                 jsonObject.put(JsonConstants.META_RESPONSE_EVENT_ID, contentsDetailInfo.getEventId());
             }
             jsonObject.put(JsonConstants.META_RESPONSE_TITLE, contentsDetailInfo.getTitle());
@@ -186,6 +182,7 @@ public class RemoteRecordingReservationWebClient
             jsonObject.put(JsonConstants.META_RESPONSE_DURATION, contentsDetailInfo.getDuration());
             jsonObject.put(JsonConstants.META_RESPONSE_LOOP_TYPE_NUM, contentsDetailInfo.getLoopTypeNum());
             jsonObject.put(JsonConstants.META_RESPONSE_R_VALUE, contentsDetailInfo.getRValue());
+            jsonObject.put(JsonConstants.META_RESPONSE_RESV_TYPE, contentsDetailInfo.getResvType());
 
             answerText = jsonObject.toString();
         } catch (JSONException e) {

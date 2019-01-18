@@ -358,7 +358,7 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
                             DTVTLogger.debug(e);
                         }
 
-                        if (name2 != null && 0 < name2.length() && xmlValue != null) {
+                        if (name2 != null && 0 < name2.length()) {
                             parseProc(name2, xmlValue);
                         }
 
@@ -368,7 +368,7 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
                         break;
                     case XmlPullParser.END_TAG:
                         String name = parser.getName();
-                        if (name != null && 0 < name.length() && xmlValue != null) {
+                        if (name != null && 0 < name.length()) {
                             parseProc(name, xmlValue);
                         }
                         break;

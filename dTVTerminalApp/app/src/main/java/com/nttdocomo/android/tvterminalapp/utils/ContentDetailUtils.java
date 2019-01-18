@@ -24,7 +24,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.StbMetaInfoResponseData;
 
 import java.io.File;
@@ -128,6 +130,12 @@ public class ContentDetailUtils {
     public final static int PLAYER_AND_CONTENTS_DETAIL = 2;
     /** サムネイルにかけるシャドウのアルファ値.*/
     public static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
+    /** 多チャンネル放送.*/
+    private static final int PLATFORM_TYPE_H4D = 1;
+    /** 地デジ.*/
+    private static final int PLATFORM_TYPE_TTB = 2;
+    /** BS.*/
+    private static final int PLATFORM_TYPE_BS = 3;
 
     /** エラータイプ.*/
     public enum ErrorType {
@@ -225,10 +233,10 @@ public class ContentDetailUtils {
      * @param title タイトル名
      * @return カスタムディメンション配列
      */
-    public static SparseArray<String> getPlalaCallBackCustomDimensions(final ContentDetailUtils.ContentTypeForGoogleAnalytics contentType,
+    public static SparseArray<String> getPlalaCallBackCustomDimensions(final ContentTypeForGoogleAnalytics contentType,
                                                                         final ContentUtils.HikariType mHikariType, final Context context, final String title) {
         String contentsType2;
-        if (contentType == ContentDetailUtils.ContentTypeForGoogleAnalytics.VOD) {
+        if (contentType == ContentTypeForGoogleAnalytics.VOD) {
             contentsType2 = context.getString(R.string.google_analytics_custom_dimension_contents_type2_void);
         } else {
             contentsType2 = context.getString(R.string.google_analytics_custom_dimension_contents_type2_live);
@@ -251,9 +259,9 @@ public class ContentDetailUtils {
      * @param context コンテキスト
      * @return スクリーン名
      */
-    public static String getPlalaCallBackScreenName(final ContentDetailUtils.ContentTypeForGoogleAnalytics contentType, final Context context) {
+    public static String getPlalaCallBackScreenName(final ContentTypeForGoogleAnalytics contentType, final Context context) {
         String screenName;
-        if (contentType == ContentDetailUtils.ContentTypeForGoogleAnalytics.VOD) {
+        if (contentType == ContentTypeForGoogleAnalytics.VOD) {
             screenName = context.getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail);
         } else {
             screenName = context.getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail);
@@ -875,5 +883,79 @@ public class ContentDetailUtils {
             versionUpMessage = getStartAppUpdateMessage(serviceType, context);
         }
         return versionUpMessage;
+    }
+
+    /**
+     * 機能：放送種別取得.
+     * @param tvService tvService
+     * @return 放送種別
+     */
+    private static int getPlatformType(final String tvService) {
+        int result = 0;
+        if (tvService != null) {
+            switch (tvService) {
+                case ContentUtils.TV_SERVICE_FLAG_HIKARI:
+                    result = PLATFORM_TYPE_H4D;
+                    break;
+                case ContentUtils.TV_SERVICE_FLAG_TTB:
+                    result = PLATFORM_TYPE_TTB;
+                    break;
+                case ContentUtils.TV_SERVICE_FLAG_BS:
+                    result = PLATFORM_TYPE_BS;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 機能：録画予約情報取得.
+     * @param mDetailFullData mDetailFullData
+     * @return 録画予約情報
+     */
+    public static RecordingReservationContentsDetailInfo getRecordingReservationContentsDetailInfo(final VodMetaFullData mDetailFullData) {
+        RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
+                mDetailFullData.getmService_id(),
+                mDetailFullData.getTitle(),
+                mDetailFullData.getPublish_start_date(),
+                mDetailFullData.getDur(),
+                mDetailFullData.getR_value());
+        mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
+        mRecordingReservationContentsDetailInfo.setPlatformType(getPlatformType(mDetailFullData.getmTv_service()));
+        return mRecordingReservationContentsDetailInfo;
+    }
+
+    /**
+     * 録画予約確認ダイアログを表示.
+     * @param context コンテキスト
+     * @return 録画予約確認ダイアログ
+     */
+    public static CustomDialog createRecordingReservationConfirmDialog(final Context context) {
+        CustomDialog recordingReservationConfirmDialog =
+                new CustomDialog(context, CustomDialog.DialogType.CONFIRM);
+        recordingReservationConfirmDialog.setTitle(context.getString(
+                R.string.recording_reservation_confirm_dialog_title));
+        recordingReservationConfirmDialog.setContent(context.getString(
+                R.string.recording_reservation_confirm_dialog_msg));
+        recordingReservationConfirmDialog.setConfirmText(R.string.recording_reservation_confirm_dialog_confirm);
+        recordingReservationConfirmDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
+        recordingReservationConfirmDialog.setCancelable(false);
+        return recordingReservationConfirmDialog;
+    }
+
+    /**
+     * 録画予約失敗時エラーダイアログ表示.
+     * @param context コンテキスト.
+     * @param errorMessage エラーメッセージ.
+     * @return 録画予約失敗エラーダイアログ
+     */
+    public static CustomDialog createErrorDialog(final Context context, final String errorMessage) {
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
+        failedRecordingReservationDialog.setContent(errorMessage);
+        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
+        failedRecordingReservationDialog.setCancelable(false);
+        return failedRecordingReservationDialog;
     }
 }
