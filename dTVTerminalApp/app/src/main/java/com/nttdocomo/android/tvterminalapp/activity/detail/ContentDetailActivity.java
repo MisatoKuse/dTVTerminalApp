@@ -1096,6 +1096,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mStbMetaInfoGetDataProvider = new StbMetaInfoGetDataProvider();
         }
         if (mDetailData != null) {
+            if (mDetailData.getContentsId() == null ||  mDetailData.getCategoryId() == null) {
+                // ダイアログを表示
+                showProgressBar(false);
+                showDialogToClose(this, getString(R.string.common_failed_get_info));
+                return;
+            }
             mStbMetaInfoGetDataProvider.getStbMetaInfo(mDetailData.getContentsId(),
                     String.valueOf(mDetailData.getServiceId()), mDetailData.getCategoryId(), this);
         }
