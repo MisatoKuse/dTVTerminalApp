@@ -859,7 +859,7 @@ public class ContentUtils {
             DTVTLogger.debug("tv_service: " + metaFullData.getmTv_service());
             String tvService = metaFullData.getmTv_service();
             //メタレスポンス「tv_service」が「2」
-            if (tvService != null && TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
+            if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                 long publishStartDate = metaFullData.getPublish_start_date();
                 long publishEndDate = metaFullData.getPublish_end_date();
                 long nowDate = DateUtils.getNowTimeFormatEpoch();
@@ -906,8 +906,9 @@ public class ContentUtils {
                     //視聴可否判定外ステータス
                     return ViewIngType.NONE_STATUS;
                 }
-                //メタレスポンス「tv_service」が「1」または未設定
-            } else if (tvService == null || tvService.equals(TV_SERVICE_FLAG_HIKARI)) {
+                //メタレスポンス「tv_service」が「1、3、4」または未設定
+            } else if (tvService == null || tvService.equals(TV_SERVICE_FLAG_HIKARI)
+                    || tvService.equals(TV_SERVICE_FLAG_TTB) || tvService.equals(TV_SERVICE_FLAG_BS)) {
                 //視聴不可(視聴導線を非表示)
                 return ViewIngType.DISABLE_WATCH;
             } else {
