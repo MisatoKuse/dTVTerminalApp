@@ -40,11 +40,11 @@ public class ClipKeyListDao {
      */
     public enum ContentTypeEnum {
         /** 多チャンネル放送. */
-        TV,
-        /** ひかりTVビデオ、dTVチャンネル. */
-        VOD,
+        SERVICE_ID_AND_EVENT_ID_REFERENCE,
+        /** ひかりTVビデオ、dTVチャンネル、地デジ、BS. */
+        CRID_REFERENCE,
         /** DTV. */
-        DTV
+        TITLE_ID_REFERENCE
     }
 
     /**

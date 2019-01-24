@@ -180,7 +180,7 @@ public class ClipRegistWebClient
 
         //タイプ用の固定値をひとまとめにする
         List<String> typeList = makeStringArry(CLIP_TYPE_H4D_IPTV, CLIP_TYPE_H4D_VOD,
-                CLIP_TYPE_DCH, CLIP_TYPE_DTV_VOD);
+                CLIP_TYPE_DCH, CLIP_TYPE_DTV_VOD, CLIP_TYPE_H4D_TTB_CRID, CLIP_TYPE_H4D_BS_CRID);
 
         if (typeList.indexOf(type) == -1) {
             //含まれていないならばfalse
@@ -209,14 +209,15 @@ public class ClipRegistWebClient
                                              final String linearEndDate, final boolean isNotify,
                                              final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
 
-        //コンテンツタイトル、番組のパレンタル設定値 type=h4d_iptv、h4d_vod、is_notify=true の場合必須
-        if ((type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD)
-                || isNotify) && (title == null || rValue == null || title.length() < 1
+        //コンテンツタイトル、番組のパレンタル設定値 type=h4d_iptv、h4d_vod、is_notify=true、h4d_ttb_crid、h4d_bs_crid の場合必須
+        if ((CLIP_TYPE_H4D_IPTV.equals(type) || CLIP_TYPE_H4D_VOD.equals(type) || CLIP_TYPE_H4D_TTB_CRID.equals(type)
+                || CLIP_TYPE_H4D_BS_CRID.equals(type) || isNotify) && (title == null || rValue == null || title.length() < 1
                 || rValue.length() < 1)) {
             return false;
         }
-        //放送開始日時、放送終了日時 type=h4d_iptv、dch の場合必須
-        if ((type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_DCH))
+        //放送開始日時、放送終了日時 type=h4d_iptv、h4d_ttb_crid、h4d_bs_crid の場合必須
+        if ((CLIP_TYPE_H4D_IPTV.equals(type) || CLIP_TYPE_H4D_TTB_CRID.equals(type)
+                || CLIP_TYPE_H4D_BS_CRID.equals(type))
                 && (linearStartDate == null || linearEndDate == null || linearStartDate.length()
                 < 1 || linearEndDate.length() < 1)) {
             return false;
@@ -260,29 +261,32 @@ public class ClipRegistWebClient
             //必須
             putSelect(jsonObject, JsonConstants.META_RESPONSE_CRID, crid);
             //type=h4d_iptvの場合必須。is_notify=trueの場合必須。
-            if (type.equals(CLIP_TYPE_H4D_IPTV) || isNotify) {
+            if (CLIP_TYPE_H4D_IPTV.equals(type) || isNotify) {
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
             }
             //type=h4d_iptvの場合必須。
-            if (type.equals(CLIP_TYPE_H4D_IPTV)) {
+            if (CLIP_TYPE_H4D_IPTV.equals(type)) {
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_EVENT_ID, eventId);
             }
             //type=dtv_vodの場合必須。
-            if (type.equals(CLIP_TYPE_DTV_VOD)) {
+            if (CLIP_TYPE_DTV_VOD.equals(type)) {
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             }
-            //type=h4d_iptv、h4d_vodの場合必須。is_notify=trueの場合必須。
-            if (type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD) || isNotify) {
+            //type=h4d_iptv、h4d_vod、h4d_ttb_crid、h4d_bs_cridの場合必須。is_notify=trueの場合必須。
+            if (CLIP_TYPE_H4D_IPTV.equals(type) || CLIP_TYPE_H4D_VOD.equals(type) || isNotify
+                    || CLIP_TYPE_H4D_TTB_CRID.equals(type) || CLIP_TYPE_H4D_BS_CRID.equals(type)) {
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE, title);
             }
-            //type=h4d_iptv、h4d_vodの場合必須。is_notify=trueの場合必須。
-            if (type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD) || isNotify) {
+            //type=h4d_iptv、h4d_vod、h4d_ttb_crid、h4d_bs_cridの場合必須。is_notify=trueの場合必須。
+            if (CLIP_TYPE_H4D_IPTV.equals(type) || CLIP_TYPE_H4D_VOD.equals(type) || isNotify
+                    || CLIP_TYPE_H4D_TTB_CRID.equals(type) || CLIP_TYPE_H4D_BS_CRID.equals(type)) {
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_R_VALUE, rValue);
             }
-            //type=h4d_iptv、dchの場合必須。
-            if (type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_DCH)) {
+            //type=h4d_iptv、h4d_ttb_crid、h4d_bs_cridの場合必須。
+            if (CLIP_TYPE_H4D_IPTV.equals(type) || CLIP_TYPE_H4D_TTB_CRID.equals(type)
+                    || CLIP_TYPE_H4D_BS_CRID.equals(type) || isNotify) {
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
-                //type=h4d_iptv、dchの場合必須。
+                //type=h4d_iptv、h4d_ttb_crid、h4d_bs_cridの場合必須。
                 putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
             }
             //isNotifyは事実上無いことが無い

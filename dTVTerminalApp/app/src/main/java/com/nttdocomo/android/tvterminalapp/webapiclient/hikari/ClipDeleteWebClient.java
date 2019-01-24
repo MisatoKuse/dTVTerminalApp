@@ -135,7 +135,7 @@ public class ClipDeleteWebClient
 
         //タイプ用の固定値をひとまとめにする
         List<String> typeList = makeStringArry(CLIP_TYPE_H4D_IPTV, CLIP_TYPE_H4D_VOD,
-                CLIP_TYPE_DCH, CLIP_TYPE_DTV_VOD);
+                CLIP_TYPE_DCH, CLIP_TYPE_DTV_VOD, CLIP_TYPE_H4D_TTB_CRID, CLIP_TYPE_H4D_BS_CRID);
 
         if (typeList.indexOf(type) == -1) {
             //含まれていないならばfalse

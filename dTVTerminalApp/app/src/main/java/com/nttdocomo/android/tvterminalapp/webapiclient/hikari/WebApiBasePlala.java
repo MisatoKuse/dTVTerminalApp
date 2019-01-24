@@ -360,6 +360,16 @@ public class WebApiBasePlala {
     public static final String CLIP_TYPE_DTV_VOD = "dtv_vod";
 
     /**
+     * h4d_ttb_crid:TTB.
+     */
+    public static final String CLIP_TYPE_H4D_TTB_CRID = "h4d_ttb_crid";
+
+    /**
+     * h4d_bs_crid:BS.
+     */
+    public static final String CLIP_TYPE_H4D_BS_CRID = "h4d_ttb_crid";
+
+    /**
      * ワンタイムトークン設定のキー名.
      */
     private static final String ONE_TIME_TOKEN_KEY = "x-service-token";
