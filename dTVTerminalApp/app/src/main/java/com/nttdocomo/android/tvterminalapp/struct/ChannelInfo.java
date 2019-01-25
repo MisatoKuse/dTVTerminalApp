@@ -32,6 +32,10 @@ public class ChannelInfo implements Parcelable {
      */
     private int mChannelNo = -1;
     /**
+     * チャンネルのリモコンキー.
+     */
+    private String mRemoconKey;
+    /**
      * チャンネルのサービスID.
      */
     private String mServiceId;
@@ -121,6 +125,20 @@ public class ChannelInfo implements Parcelable {
     public void setChannelNo(final int chNo) {
         this.mChannelNo = chNo;
     }
+
+    /**
+     * mRemoconKeyを設定.
+     * @param remoconKey リモコンキー
+     */
+    public void setRemoconKey(final String remoconKey) {
+        this.mRemoconKey = remoconKey;
+    }
+
+    /**
+     * remoconKeyを取得.
+     * @return remoconKey
+     */
+    public String getRemoconKey() {return mRemoconKey; }
 
     /**
      * serviceIdを取得.

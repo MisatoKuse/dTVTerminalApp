@@ -486,44 +486,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     public void onRemoteRecordingReservationJsonParsed(final RemoteRecordingReservationResultResponse response) {
         mApiDataProviderCallback.recordingReservationResult(response);
     }
-
-    /**
-     * チャンネルデータの整形.
-     *
-     * @param channels    チャンネル一覧
-     * @param channelList パースされたチャンネル情報
-     */
-    private void setChannelData(final ArrayList<ChannelInfo> channels, final List<HashMap<String, String>> channelList) {
-        for (int i = 0; i < channelList.size(); i++) {
-            HashMap<String, String> hashMap = channelList.get(i);
-            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
-            String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
-            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
-            String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
-            String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
-            String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
-            String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
-            String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
-            String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
-                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
-            String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
-                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
-            if (!TextUtils.isEmpty(chNo)) {
-                ChannelInfo channel = new ChannelInfo();
-                channel.setTitle(title);
-                channel.setChannelNo(Integer.parseInt(chNo));
-                channel.setServiceId(serviceId);
-                channel.setStartDate(startDate);
-                channel.setEndDate(endDate);
-                channel.setChannelType(chType);
-                channel.setPurchaseId(puId);
-                channel.setSubPurchaseId(subPuId);
-                channel.setChannelPackPurchaseId(chPackPuId);
-                channel.setChannelPackSubPurchaseId(chPackSubPuId);
-                channels.add(channel);
-            }
-        }
-    }
     // endregion
 
     // region public method

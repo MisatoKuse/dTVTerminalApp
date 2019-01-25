@@ -36,7 +36,7 @@ public class JsonConstants {
             JsonConstants.META_RESPONSE_PU_END_DATE, JsonConstants.META_RESPONSE_CHPACK,
             JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_DTV,
             JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CONTENT_TYPE,
-            JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ};
+            JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ, JsonConstants.META_RESPONSE_REMOCON_KEY};
 
     /**
      * 番組表（縮小版）.
@@ -283,6 +283,10 @@ public class JsonConstants {
      * チャンネル番号.
      */
     public static final String META_RESPONSE_CHNO = "chno";
+    /**
+     * リモコンキー.
+     */
+    public static final String META_RESPONSE_REMOCON_KEY = "remocon_key";
     /**
      * タイトル.
      */

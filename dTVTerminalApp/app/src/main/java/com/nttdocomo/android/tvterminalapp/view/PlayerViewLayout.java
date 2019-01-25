@@ -64,10 +64,9 @@ import java.util.Map;
 /**
  * プレイヤーレイアウト.
  */
-public class PlayerViewLayout extends RelativeLayout implements View.OnClickListener,
-        MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
-        MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener,
-        MediaPlayerController.OnCaptionDataListener {
+public class PlayerViewLayout extends RelativeLayout implements MediaPlayerController.OnStateChangeListener,
+        MediaPlayerController.OnFormatChangeListener, MediaPlayerController.OnPlayerEventListener,
+        MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener {
 
     /**エラータイプ.*/
     public enum PlayerErrorType {
@@ -95,6 +94,23 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         PLAYER_CONTROL_30_SEC_SKIP,
         /**再生・一時停止.*/
         PLAYER_CONTROL_PLAY_PAUSE,
+        /**拡大・縮小.*/
+        PLAYER_CONTROL_FULL_SCREEN
+    }
+
+    public enum PlayerEventType {
+        /**再生・一時停止ボタンタップ.*/
+        PLAY_PAUSE_TAP,
+        /**30秒スキップボタンタップ.*/
+        SKIP_TAP,
+        /**10秒戻りボタンタップ.*/
+        BACK_TAP,
+        /**フルスクリーンボタンタップ.*/
+        ZOOM_OUT_TAP,
+        /**縮小ボタンタップ.*/
+        ZOOM_IN_TAP,
+        /**操作なし.*/
+        NONE
     }
 
     /** コンストラクタ.*/
@@ -163,8 +179,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mIsLocalPlay = false;
     /**操作アイコン表示か.*/
     private boolean mIsHideOperate = true;
-    /**操作アイコン押せるか.*/
-    private boolean mIsOperateActivated = false;
     /**再生開始フラグ.*/
     private boolean mAlreadyRendered = false;
     /**完了フラグ.*/
@@ -199,6 +213,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private volatile long mReconnectStartTime;
     /**切断時間.*/
     private volatile long mDmsDisconnectedTime;
+    /**プレイヤーイベントタイプ.*/
+    private PlayerEventType mPlayerEventType = PlayerEventType.NONE;
     /**ビデオサイズ.*/
     private long mTotalDuration = 0;
     /**前回のポジション.*/
@@ -339,6 +355,14 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     /**
+     * プレイヤー初期化.
+     * @param playerEventType プレイヤーイベント
+     */
+    public void setPlayerEventType(PlayerEventType playerEventType) {
+        this.mPlayerEventType = playerEventType;
+    }
+
+    /**
      * スクリーンサイズ.
      * @param width スクリーン幅さ
      * @param height スクリーン高さ
@@ -412,6 +436,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 if (!mExternalDisplayFlg) {
                     mExternalDisplayFlg = true;
                     mPlayerStateListener.onErrorCallBack(PlayerErrorType.EXTERNAL);
+                    mPlayerEventType = PlayerEventType.NONE;
                     mRecordCtrlView.setOnTouchListener(null);
                     hideCtrlView(false);
                     playPause();
@@ -650,6 +675,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     @Override
                     public void run() {
                         mPlayerStateListener.onPlayerErrorCallBack(what);
+                        mPlayerEventType = PlayerEventType.NONE;
                     }
                 });
                 goneCtrlView();
@@ -658,6 +684,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         }
         goneCtrlView();
         mPlayerStateListener.onPlayerErrorCallBack(what);
+        mPlayerEventType = PlayerEventType.NONE;
     }
 
     @Override
@@ -667,6 +694,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         if (mAge < mediaPlayerController.getParentalRating()) {
             mPlayerController.stop();
             mPlayerStateListener.onErrorCallBack(PlayerErrorType.AGE);
+            mPlayerEventType = PlayerEventType.NONE;
         }
         //外部出力制御
         mExternalDisplayHelper.onResume();
@@ -684,7 +712,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 playButton(false);
                 showPlayingProgress(false);
                 if (!mIsVideoBroadcast) {
-                    showRecordContentsControlView();
+                    showControlViewAfterPlayerEvent(mPlayerEventType);
+                    mPlayerEventType = PlayerEventType.NONE;
                 }
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
@@ -701,9 +730,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 doRequestAudioFocus();
                 mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
-                if (!mIsVideoBroadcast && !mIsShowStartControl) {
+                if (!mIsShowStartControl || mPlayerEventType == PlayerEventType.PLAY_PAUSE_TAP
+                        || mPlayerEventType == PlayerEventType.SKIP_TAP || mPlayerEventType == PlayerEventType.BACK_TAP) {
                     mIsShowStartControl = true;
-                    showRecordContentsControlView();
+                    showControlViewAfterPlayerEvent(mPlayerEventType);
+                    mPlayerEventType = PlayerEventType.NONE;
                 }
                 break;
             default:
@@ -745,24 +776,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(final View v) {
-        DTVTLogger.start();
-        switch (v.getId()) {
-            case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
-                if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                } else {
-                    mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                }
-                initPlayerView();
-                setPlayerEvent();
-//                hideCtrlViewAfterOperate();
-                break;
-        }
-        DTVTLogger.end();
-    }
-
     /**
      * リモート視聴以外はそのまま再生を行う。リモート視聴の場合は再生可否のチェックを行う.
      *
@@ -779,6 +792,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 String remoteExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(mContext);
                 if (TextUtils.isEmpty(remoteExpireDate)) {
                     mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE);
+                    mPlayerEventType = PlayerEventType.NONE;
                     return;
                 }
             }
@@ -878,8 +892,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mScreenWidth, mScreenHeight);
         initLiveLayout();
         setScreenSize(mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, layoutParams);
-        mVideoFullScreen.setOnClickListener(this);
-        mVideoCtrlRootView.setOnClickListener(this);
         setSeekBarListener(mVideoSeekBar);
         this.addView(mRecordCtrlView);
         //初期化の時点から、handlerにmsgを送る
@@ -924,7 +936,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         if (mSecureVideoPlayer.getVisibility() != View.GONE) {
             mSecureVideoPlayer.setBackgroundResource(0);
         }
-        mIsOperateActivated = false;
         mIsSeekBarFromUser = false;
         DTVTLogger.end();
     }
@@ -948,8 +959,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             mPortraitLayout.setVisibility(INVISIBLE);
             mLandscapeLayout.setVisibility(INVISIBLE);
         }
-        mSecureVideoPlayer.setBackgroundResource(0);
-        mIsOperateActivated = false;
         DTVTLogger.end();
     }
 
@@ -970,7 +979,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mPortraitLayout.setVisibility(GONE);
         mLandscapeLayout.setVisibility(GONE);
         mSecureVideoPlayer.setBackgroundResource(0);
-        mIsOperateActivated = false;
         DTVTLogger.end();
     }
 
@@ -1192,6 +1200,12 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         if (!TextUtils.isEmpty(title)) {
             mChanneltitle.setText(title);
         }
+        // ビデオの場合は、タイトルのみ表示
+        if (!mIsVideoBroadcast) {
+            mChannellogo.setVisibility(View.GONE);
+            return;
+        }
+
         if (!TextUtils.isEmpty(url)) {
             if (mThumbnailProvider == null) {
                 mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
@@ -1247,6 +1261,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             int ret = mPlayerController.dtcpInit(privateHomePath);
             if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
+                mPlayerEventType = PlayerEventType.NONE;
                 return false;
             }
         }
@@ -1319,16 +1334,36 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         DTVTLogger.start();
         sCtrlHandler.removeCallbacks(mHideCtrlViewThread);
         sCtrlHandler.postDelayed(mHideCtrlViewThread, HIDE_IN_3_SECOND);
-        mIsHideOperate = true;
         DTVTLogger.end();
     }
 
     /**
-     * 録画コンテンツ再生開始時と終了の動作.
+     * コンテンツ再生開始時と終了および10秒バック、30秒スキップ後、フルスクリーンボタンタップ後の表示処理.
      */
-    private void showRecordContentsControlView() {
-        hideCtrlViewAfterOperate();
+    private void showControlViewAfterPlayerEvent(final PlayerEventType playerEventType) {
         showControlView();
+        if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            showLiveLayout(true);
+        } else {
+            showLiveLayout(false);
+        }
+        switch (playerEventType) {
+            case ZOOM_OUT_TAP:
+                mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_landscape);
+                break;
+            case ZOOM_IN_TAP:
+                mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_portrait);
+                break;
+            default:
+                int orientation = getResources().getConfiguration().orientation;
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_portrait);
+                } else {
+                    mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_landscape);
+                }
+                break;
+        }
+        hideCtrlViewAfterOperate();
         mIsShowControl = true;
     }
 
@@ -1366,12 +1401,10 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     mGestureDetector.onTouchEvent(motionEvent);
                 }
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
-                        if (mIsHideOperate) {
-                            hideCtrlView(false);
-                        }
+                    if (!mIsHideOperate) {
+                        // ボタン非表示にする
+                        PlayerControlType controlType = getPlayerControlType(motionEvent);
                         if (!mIsVideoBroadcast) {
-                            PlayerControlType controlType = getPlayerControlType(motionEvent);
                             if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
                                 // 再生・一時停止ボタン長押し時の再生・一時停止処理.
                                 if (!mPlayerController.isPlaying()) {
@@ -1389,7 +1422,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                                     setPlayerEvent();
                                     mExternalDisplayFlg = false;
                                 }
-                                mIsHideOperate = false;
+                                mPlayerEventType = PlayerEventType.PLAY_PAUSE_TAP;
                             } else if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
                                 int pos = mPlayerController.getCurrentPosition();
                                 pos -= REWIND_SECOND;
@@ -1398,7 +1431,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                                     setProgress0();
                                 }
                                 mPlayerController.seekTo(pos);
-                                mIsHideOperate = false;
+                                mPlayerEventType = PlayerEventType.BACK_TAP;
                             } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
                                 int pos = mPlayerController.getCurrentPosition();
                                 pos += FAST_SECOND;
@@ -1409,7 +1442,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                                     pos = 0;
                                 }
                                 mPlayerController.seekTo(pos);
-                                mIsHideOperate = false;
+                                mPlayerEventType = PlayerEventType.SKIP_TAP;
                             }
                             // タップアップ時点で操作処理は終わっているので各ボタン非タップアイコンに切り替える.
                             mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
@@ -1417,27 +1450,34 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                             mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_white_replay_10);
                             mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_white_forward_30);
                         }
-                    }
-                    hideCtrlViewAfterOperate();
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    mIsHideOperate = false;
-                    mIsSeekBarFromUser = false;
-                    sCtrlHandler.removeCallbacks(mHideCtrlViewThread);
-                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
-                        if (!mIsVideoBroadcast) {
-                            // タップダウンした時に長押し処理を開始する.
-                            PlayerControlType controlType = getPlayerControlType(motionEvent);
-                            if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
-                                mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
-                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
-                                mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
-                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
-                                mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
-                                mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
+
+                        if (controlType == PlayerControlType.PLAYER_CONTROL_FULL_SCREEN) {
+                            if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                                mPlayerEventType = PlayerEventType.ZOOM_IN_TAP;
+                                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                            } else {
+                                mPlayerEventType = PlayerEventType.ZOOM_OUT_TAP;
+                                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                             }
+                            initPlayerView();
+                            setPlayerEvent();
+                            showControlViewAfterPlayerEvent(mPlayerEventType);
+                            // プレイヤーからコールバックがないため、表示後は"PlayerEventType"を"NONE"にする
+                            mPlayerEventType = PlayerEventType.NONE;
+                            return true;
                         }
+                         // 操作ボタンタップ後であれば、onPlayerEvent()内の処理で3秒後に非表示。画面タップ時は、すぐ非表示
+                        if (mPlayerEventType != PlayerEventType.NONE) {
+                            hideCtrlViewAfterOperate();
+                        } else {
+                            hideCtrlViewIfVisible();
+                        }
+                        mIsHideOperate = true;
                     } else {
+                        // ボタン表示する
                         showControlView();
+                        mIsHideOperate = false;
+
                         if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                             showLiveLayout(true);
                         } else {
@@ -1449,19 +1489,42 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         } else {
                             mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_landscape);
                         }
-                        //ボタン押せるまで0.3秒置き
-                        getHandler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mIsOperateActivated = true;
-                            }
-                        }, 300);
-                    }
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
-                        // 長押ししている間にタップしているアイコンから離れたかどうか確認.
                         hideCtrlViewAfterOperate();
+                    }
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    mIsSeekBarFromUser = false;
+                    mPlayerEventType = PlayerEventType.NONE;
+                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
                         mIsHideOperate = false;
+                        PlayerControlType controlType = getPlayerControlType(motionEvent);
+                        if (!mIsVideoBroadcast) {
+                            // タップダウンした時に長押し処理を開始する.
+                            if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
+                                mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
+                                mPlayerEventType = PlayerEventType.BACK_TAP;
+                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
+                                mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
+                                mPlayerEventType = PlayerEventType.SKIP_TAP;
+                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
+                                mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
+                                mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
+                                mPlayerEventType = PlayerEventType.PLAY_PAUSE_TAP;
+                            }
+                        }
+                        if (controlType == PlayerControlType.PLAYER_CONTROL_FULL_SCREEN) {
+                            //表示画像変更処理
+                            if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                                mPlayerEventType = PlayerEventType.ZOOM_IN_TAP;
+                            } else {
+                                mPlayerEventType = PlayerEventType.ZOOM_OUT_TAP;
+                            }
+                        }
+                        if (mPlayerEventType != PlayerEventType.NONE) {
+                            // 操作ボタン長押し時は非表示にしない
+                            sCtrlHandler.removeCallbacks(mHideCtrlViewThread);
+                        }
+                    } else {
+                        mIsHideOperate = true;
                     }
                 }
                 DTVTLogger.end();
@@ -1491,7 +1554,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         } else if (touchX >= mVideoFast30.getX() && touchX <=  mVideoFast30.getX() + mVideoFast30.getWidth()
                 && touchY >= mVideoFast30.getY() && touchY <= mVideoFast30.getY() + mVideoFast30.getHeight()) {
             controlType = PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP;
-        }
+        } else if (touchX >= mVideoFullScreen.getX() && touchX <= mVideoFullScreen.getX() + mVideoFullScreen.getWidth()
+                && touchY >= mVideoFullScreen.getY() && touchY <= mVideoFullScreen.getY() + mVideoFullScreen.getHeight())
+            controlType = PlayerControlType.PLAYER_CONTROL_FULL_SCREEN;
         return controlType;
     }
 
@@ -1654,9 +1719,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             public boolean onFling(final MotionEvent e1, final MotionEvent e2,
                                    final float velocityX, final float velocityY) {
                 DTVTLogger.start();
-                if (!mIsOperateActivated) {
-                    return false;
-                }
                 if (mRecordCtrlView != null && mVideoPlayPause != null && mPlayerController != null && e1 != null && e2 != null) {
                     if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
                             && e2.getY() > (float) mRecordCtrlView.getHeight() / 3

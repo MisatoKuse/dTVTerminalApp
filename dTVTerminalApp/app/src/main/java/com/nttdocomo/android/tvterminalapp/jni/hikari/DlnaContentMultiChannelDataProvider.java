@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 
 /**
@@ -48,6 +49,8 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     private final OnMultiChCallbackListener mOnMultiChCallbackListener;
     /** ページインデックス. */
     private int mRequestIndex;
+    /** DLNA取得先パス */
+    private String mDlnaGetPath = "";
 
     /**
      * 機能：DlnaProvHikariVideoを構造.
@@ -63,14 +66,29 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     /**
      * 機能：チャンネル情報を探す.
      * @param mChannelNr  チャンネル番号
+     * @param tvService  TVサービス
      */
-    public void findChannelByChannelNo(final String mChannelNr) {
+    public void findChannelByChannelNo(final String mChannelNr, final String tvService) {
         this.mChannelNr = mChannelNr;
+
+        switch (tvService) {
+            case ContentUtils.TV_SERVICE_FLAG_HIKARI: // 多チャンネル
+                mDlnaGetPath = DlnaUtils.DLNA_DMS_MULTI_CHANNEL;
+                break;
+            case ContentUtils.TV_SERVICE_FLAG_TTB: //　地デジ
+                mDlnaGetPath = DlnaUtils.DLNA_DMS_TER_CHANNEL;
+                break;
+            case ContentUtils.TV_SERVICE_FLAG_BS: //　BS
+                mDlnaGetPath = DlnaUtils.DLNA_DMS_BS_CHANNEL;
+                break;
+            default: // dTVチャンネル
+                break;
+        }
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
         DlnaManager.shared().clearQue();
         mRequestIndex = 0;
-        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mRequestIndex);
+        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, mDlnaGetPath), mRequestIndex);
     }
 
     @Override
@@ -90,7 +108,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
             }
             mRequestIndex += objs.length;
             DlnaManager.shared().clearQue();
-            DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mRequestIndex);
+            DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, mDlnaGetPath), mRequestIndex);
         }
     }
 

@@ -154,6 +154,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         Map<String, String> map = resultSet.get(i);
                         String adult = map.get(JsonConstants.META_RESPONSE_ADULT);
                         String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
+                        String remoconKey = map.get(JsonConstants.META_RESPONSE_REMOCON_KEY);
                         String title = map.get(JsonConstants.META_RESPONSE_TITLE);
                         String thumb = map.get(JsonConstants.META_RESPONSE_THUMB_448);
                         String serviceId = map.get(JsonConstants.META_RESPONSE_SERVICE_ID);
@@ -190,6 +191,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             ChannelInfo channel = new ChannelInfo();
                             channel.setAdult(adult);
                             channel.setChannelNo(Integer.parseInt(chNo));
+                            channel.setRemoconKey(remoconKey);
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
@@ -545,6 +547,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             Map<String, String> hashMap = channelList.get(i);
             String adult =  hashMap.get(JsonConstants.META_RESPONSE_ADULT);
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+            String remoconKey = hashMap.get(JsonConstants.META_RESPONSE_REMOCON_KEY);
             String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
             String thumbnail = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
             String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
@@ -562,6 +565,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 channel.setAdult(adult);
                 channel.setTitle(title);
                 channel.setChannelNo(Integer.parseInt(chNo));
+                channel.setRemoconKey(remoconKey);
                 channel.setThumbnail(thumbnail);
                 channel.setServiceId(serviceId);
                 channel.setServiceIdUniq(serviceIdUniq);

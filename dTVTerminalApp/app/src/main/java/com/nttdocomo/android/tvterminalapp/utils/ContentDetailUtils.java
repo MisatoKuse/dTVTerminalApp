@@ -90,6 +90,10 @@ public class ContentDetailUtils {
     private static final int SOURCE_HEXADECIMAL = 16;
     /** サービスIDをひかりTV用のチャンネル番号に変換する際の倍率. */
     private static final int CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER = 10;
+    /** リモコンキーを地デジ・BS用のチャンネル番号に変換する際の倍率. */
+    private static final int CONVERT_REMOCON_KEY_TO_CHANNEL_NUMBER = 10000;
+    /** チャンネルNoを地デジ・BS用のチャンネル番号に変換する際の倍率*/
+    private static final int CONVERT_CHANNEL_NO_TO_CHANNEL_NUMBER = 10;
     /** 値渡すキー. */
     public static final String RECORD_LIST_KEY = "recordListKey";
     /** プレイヤー前回のポジション.*/
@@ -198,22 +202,47 @@ public class ContentDetailUtils {
     /**
      * ひかりTVのNowOnAir用のチャンネル情報を算出する.
      * @param channelInfo チャンネルメタ情報
+     * @param tvService  TVサービス
      * @return 変換後チャンネル番号
      */
-    public static int convertChannelNumber(final ChannelInfo channelInfo) {
-        //サービスIDを取得
-        String serviceId = channelInfo.getServiceId();
-        //サービスIDを10進数にした物を格納する
+    public static int convertChannelNumber(final ChannelInfo channelInfo, final String tvService) {
         int serviceIdDecimal = 0;
-        try {
-            //サービスIDを10進数に変換する
-            serviceIdDecimal = Integer.parseInt(serviceId, SOURCE_HEXADECIMAL);
-        } catch (NumberFormatException exception) {
-            //メタ情報に誤りが無ければ、ここに来る事は無い。フェールセーフ用
-            DTVTLogger.debug(exception);
+
+        switch (tvService) {
+            case ContentUtils.TV_SERVICE_FLAG_HIKARI: // 多チャンネル
+                // サービスIDを取得
+                String serviceId = channelInfo.getServiceId();
+                // チャンネル番号を「service_id」から算出
+                try {
+                    //サービスIDを16進数に変換する
+                    serviceIdDecimal = Integer.parseInt(serviceId, SOURCE_HEXADECIMAL);
+                } catch (NumberFormatException exception) {
+                    // フェールセーフ用
+                    DTVTLogger.debug(exception);
+                }
+                serviceIdDecimal *= CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER;
+                break;
+            case ContentUtils.TV_SERVICE_FLAG_TTB: //　地デジ
+            case ContentUtils.TV_SERVICE_FLAG_BS: //　BS
+                // remoconKeyを使ってチャンネル番号を計算
+                if (channelInfo.getRemoconKey() != null) {
+                    try {
+                        int remoconKey = Integer.parseInt(channelInfo.getRemoconKey());
+                        serviceIdDecimal = remoconKey * CONVERT_REMOCON_KEY_TO_CHANNEL_NUMBER + channelInfo.getChannelNo() * CONVERT_CHANNEL_NO_TO_CHANNEL_NUMBER;
+                    } catch (NumberFormatException exception) {
+                        // フェールセーフ用
+                        DTVTLogger.debug(exception);
+                    }
+                } else {
+                    // remoconKeyが無い場合
+                    // チャンネル番号を「chno」から算出
+                    serviceIdDecimal = channelInfo.getChannelNo() * CONVERT_CHANNEL_NO_TO_CHANNEL_NUMBER;
+                }
+                break;
+            default: // dTVチャンネル
+                break;
         }
-        //10進変換後のサービスIDを10倍する
-        serviceIdDecimal *= CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER;
+
         return serviceIdDecimal;
     }
 
