@@ -46,21 +46,21 @@ public class ContentUtils {
     /** レコメンドのCategoryId 01. **/
     public static final String RECOMMEND_CATEGORY_ID_ONE = "01";
     /** レコメンドのCategoryId 02. **/
-    public static final String RECOMMEND_CATEGORY_ID_TWO = "02";
+    private static final String RECOMMEND_CATEGORY_ID_TWO = "02";
     /** レコメンドのCategoryId 03. **/
     public static final String RECOMMEND_CATEGORY_ID_THREE = "03";
     /** レコメンドのCategoryId 04. **/
     public static final String RECOMMEND_CATEGORY_ID_FOUR = "04";
     /** レコメンドのCategoryId 05. **/
-    public static final String RECOMMEND_CATEGORY_ID_FIVE = "05";
+    private static final String RECOMMEND_CATEGORY_ID_FIVE = "05";
     /** レコメンドのCategoryId 06. **/
-    public static final String RECOMMEND_CATEGORY_ID_SIX = "06";
+    private static final String RECOMMEND_CATEGORY_ID_SIX = "06";
     /** レコメンドのCategoryId 07. **/
-    public static final String RECOMMEND_CATEGORY_ID_SEVEN = "07";
+    private static final String RECOMMEND_CATEGORY_ID_SEVEN = "07";
     /** レコメンドのCategoryId 08. **/
-    public static final String RECOMMEND_CATEGORY_ID_EIGHT = "08";
+    private static final String RECOMMEND_CATEGORY_ID_EIGHT = "08";
     /** レコメンドのCategoryId 10. **/
-    public static final String RECOMMEND_CATEGORY_ID_TEN = "10";
+    private static final String RECOMMEND_CATEGORY_ID_TEN = "10";
     /**DTVコンテンツサービスID.*/
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     /**DアニメコンテンツサービスID.*/
@@ -140,12 +140,32 @@ public class ContentUtils {
     public static final int CUSTOMDIMENSION_KEYWORD = 8;
     /** ジャンル.*/
     public static final int CUSTOMDIMENSION_GENRE = 10;
+    /** tv_service(1).*/
+    public static final String CH_TYPE_TV_SERVICE_H4D = "1";
+    /** tv_service(2).*/
+    private static final String CH_TYPE_TV_SERVICE_D_CH = "2";
+    /** tv_service(3).*/
+    private static final String CH_TYPE_TV_SERVICE_TTB = "3";
+    /** tv_service(4).*/
+    private static final String CH_TYPE_TV_SERVICE_BS = "4";
     /** スペース.*/
     private static final String STR_SPACE = " ";
     /** 空白.*/
     private static final String STR_BLANK = "";
     /** サイズ.*/
     private static final int SCHEDULE_FORMAT_SIZE = 10;
+    /** 予約されたサービス 多チャン.*/
+    private static final String PLATFORM_STB_IPSP = "ipsp";
+    /** 予約されたサービス 地デジ.*/
+    private static final String PLATFORM_STB_TTB = "ttb";
+    /** 予約されたサービス BS.*/
+    private static final String PLATFORM_STB_BS = "bs";
+    /** 予約されたサービス 多チャン.*/
+    private static final int PLATFORM_REMOTE_H4D = 1;
+    /** 予約されたサービス 地デジ.*/
+    private static final int PLATFORM_REMOTE_TTB = 2;
+    /** 予約されたサービス BS.*/
+    private static final int PLATFORM_REMOTE_BS = 3;
     //endregion
 
     /**
@@ -174,7 +194,7 @@ public class ContentUtils {
         HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR,
         /**ひかりTV(VOD).*/
         HIKARI_TV_VOD,
-        /**ひかり内dTVCh.(検レコメタで判定)*/
+        /**ひかり内dTVCh.(検レコメタで判定).*/
         HIKARI_IN_DCH,
         /**ひかり内dTV.*/
         HIKARI_IN_DTV,
@@ -218,6 +238,22 @@ public class ContentUtils {
         HIKARITV_IN_DTV_CH,
         /**ひかりTV内dTV.*/
         HIKARITV_IN_DTV,
+    }
+
+    /**
+     * チャンネルタイプ.
+     */
+    public enum ChannelServiceType {
+        /**ひかりTV for docomo.*/
+        H4D,
+        /**dtvチャンネル.*/
+        DTV_CH,
+        /**地デジ.*/
+        TTB,
+        /**BS.*/
+        BS,
+        /**UNKOWN.*/
+        UNKOWN
     }
 
     /**
@@ -1747,6 +1783,11 @@ public class ContentUtils {
         }
     }
 
+    /**
+     * BSのプレミアムチャンネル判定.
+     * @param viewIngType 視聴可否種別
+     * @return BSのプレミアム
+     */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     public static boolean isBsPremiumCh(@NonNull final ViewIngType viewIngType) {
         switch (viewIngType) {
@@ -1937,5 +1978,139 @@ public class ContentUtils {
         customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, contentsType2);
         customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTNAME, contentsName);
         return customDimensions;
+    }
+
+    /**
+     * チャンネルタイプ取得(検レコサーバ).
+     *  @param serviceId サービスID
+     *  @param categoryId カテゴリID
+     *  @return カスタムディメンション情報
+     */
+    public static ChannelServiceType getChannelServiceTypeFromRecommend(final int serviceId, final String categoryId) {
+        ChannelServiceType channelServiceType = ChannelServiceType.UNKOWN;
+        switch (serviceId) {
+            case DTV_HIKARI_CONTENTS_SERVICE_ID:
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
+                    channelServiceType = ChannelServiceType.TTB;
+                } else if (RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)) {
+                    channelServiceType = ChannelServiceType.BS;
+                } else if (RECOMMEND_CATEGORY_ID_THREE.equals(categoryId) || RECOMMEND_CATEGORY_ID_EIGHT.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_TEN.equals(categoryId)) {
+                    channelServiceType = ChannelServiceType.H4D;
+                } else if (RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId) || RECOMMEND_CATEGORY_ID_FIVE.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_SIX.equals(categoryId)) {
+                    channelServiceType = ChannelServiceType.DTV_CH;
+                }
+                break;
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                channelServiceType = ChannelServiceType.DTV_CH;
+                break;
+            default:
+                break;
+        }
+        return channelServiceType;
+    }
+
+    /**
+     * チャンネルタイプよりtv_service取得.
+     *  @param channelServiceType チャンネルタイプ
+     *  @return tv_service
+     */
+    public static String getTvService(final ChannelServiceType channelServiceType) {
+        if (channelServiceType == null) {
+            return null;
+        }
+        String result = null;
+        switch (channelServiceType) {
+            case H4D:
+                result = CH_TYPE_TV_SERVICE_H4D;
+                break;
+            case DTV_CH:
+                result = CH_TYPE_TV_SERVICE_D_CH;
+                break;
+            case TTB:
+                result = CH_TYPE_TV_SERVICE_TTB;
+                break;
+            case BS:
+                result = CH_TYPE_TV_SERVICE_BS;
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * チャンネル名取得(検レコ).
+     *  @param channelId チャンネルId
+     *  @param serviceId サービスId
+     *  @param categoryId カテゴリId
+     *  @param mChannels チャンネルリスト情報
+     *  @return チャンネル名
+     */
+    public static String getChannelName(final String channelId, final String serviceId, final String categoryId, final ArrayList<ChannelInfo> mChannels) {
+        if (DataBaseUtils.isNumber(serviceId) && mChannels != null && mChannels.size() > 0) {
+            int serviceID = Integer.parseInt(serviceId);
+            ContentUtils.ChannelServiceType serviceType = getChannelServiceTypeFromRecommend(serviceID, categoryId);
+            String tvService = getTvService(serviceType);
+            if (!TextUtils.isEmpty(tvService) && !TextUtils.isEmpty(channelId)) {
+                for (int i = 0; i < mChannels.size(); i++) {
+                    ChannelInfo channelInfo = mChannels.get(i);
+                    if (channelId.equals(channelInfo.getServiceId()) && tvService.equals(channelInfo.getService())) {
+                        return channelInfo.getTitle();
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * 予約されたサービス.
+     *  @param platformType platformType
+     *  @return サービス
+     */
+    public static String getTvServiceByRemotePlatformType(final int platformType) {
+        String result = null;
+        switch (platformType) {
+            case PLATFORM_REMOTE_H4D:
+                result = TV_SERVICE_FLAG_HIKARI;
+                break;
+            case PLATFORM_REMOTE_TTB:
+                result = TV_SERVICE_FLAG_TTB;
+                break;
+            case PLATFORM_REMOTE_BS:
+                result = TV_SERVICE_FLAG_BS;
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * 予約されたサービス.
+     *  @param platformType platformType
+     *  @return サービス
+     */
+    public static String getTvServiceByStbPlatformType(final String platformType) {
+        if (TextUtils.isEmpty(platformType)) {
+            return null;
+        }
+        String result = null;
+        switch (platformType) {
+            case PLATFORM_STB_IPSP:
+                result = TV_SERVICE_FLAG_HIKARI;
+                break;
+            case PLATFORM_STB_TTB:
+                result = TV_SERVICE_FLAG_TTB;
+                break;
+            case PLATFORM_STB_BS:
+                result = TV_SERVICE_FLAG_BS;
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 }

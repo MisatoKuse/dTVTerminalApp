@@ -165,6 +165,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
                         String startDate = map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
                         String endDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+                        String service = map.get(JsonConstants.META_RESPONSE_SERVICE);
 
                         ScheduleInfo mSchedule = new ScheduleInfo();
                         mSchedule.setStartTime(startDate);
@@ -193,6 +194,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
+                            channel.setService(service);
                             channel.setServiceIdUniq(serviceIdUniq);
                             channel.setPurchaseId(map.get(JsonConstants.META_RESPONSE_PUID));
                             channel.setSubPurchaseId(map.get(JsonConstants.META_RESPONSE_SUB_PUID));

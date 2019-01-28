@@ -106,11 +106,13 @@ public class DataConverter {
         if (myChannelDataList != null) {
             for (int i = 0; i < myChannelDataList.size(); i++) {
                 for (int j = 0; j < hikariChannels.size(); j++) {
+                    ChannelInfo channelInfo = hikariChannels.get(j);
                     //サービスIDでマッピング
-                    if (myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())) {
+                    if (myChannelDataList.get(i).getServiceId().equals(channelInfo.getServiceId())
+                            && ContentUtils.CH_TYPE_TV_SERVICE_H4D.equals(channelInfo.getService())) {
                         //マイ番組表を作成する際に、マイ番組表のタグを追加する
-                        hikariChannels.get(j).setService(ProgramDataManager.CH_SERVICE_MY_CHANNEL);
-                        myChannels.add(hikariChannels.get(j));
+                        channelInfo.setService(ProgramDataManager.CH_SERVICE_MY_CHANNEL);
+                        myChannels.add(channelInfo);
                     }
                 }
             }

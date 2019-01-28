@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.struct;
 
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
@@ -33,8 +32,6 @@ public class ContentsData {
     private int mRecordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     /**チャンネル名.*/
     private String mChannelName = null;
-    /**録画番組用 チャンネル名.*/
-    private String recordedChannelName = null;
     /**録画番組用 コピー残り回数.*/
     private int mAllowedUse = 0;
     /**クリップ状態.*/
@@ -43,6 +40,8 @@ public class ContentsData {
     private String mCrid = null;
     /**サービスID.*/
     private String mServiceId = null;
+    /**サービスIDユニーク.*/
+    private String mServiceIdUniq = null;
     /**イベントID.*/
     private String mEventId = null;
     /**タイトルID.*/
@@ -479,6 +478,22 @@ public class ContentsData {
      */
     public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
+    }
+
+    /**
+     * サービスIDユニーク取得.
+     * @return サービスIDユニーク
+     */
+    public String getServiceIdUniq() {
+        return mServiceIdUniq;
+    }
+
+    /**
+     * サービスIDユニーク設定.
+     * @param mServiceIdUniq サービスIDユニーク
+     */
+    public void setServiceIdUniq(final String mServiceIdUniq) {
+        this.mServiceIdUniq = mServiceIdUniq;
     }
 
     /**

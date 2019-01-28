@@ -8,12 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,8 +37,7 @@ import java.util.List;
 /**
  * おすすめ番組・ビデオ（タブフラグメントクラス）.
  */
-public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener,
-        AdapterView.OnItemClickListener {
+public class RecommendBaseFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     /**
      * コンテスト.
@@ -48,10 +47,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * リストデータ.
      */
     private List<ContentsData> mData = null;
-    /**
-     * リストフッタービュー.
-     */
-    private View mLoadMoreView = null;
     /**
      * フラグメントビュー.
      */
@@ -72,10 +67,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * アダプター.
      */
     private ContentsAdapter mRecommendListBaseAdapter = null;
-    /**
-     * スクロールコールバック.
-     */
-    private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
     /**
      * テレビ（タブインデックス）.
      */
@@ -101,16 +92,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     private static final int POSITION_D_ANIMATION = POSITION_TV + 5;
 
-
-    /**
-     * リスナーを設定.
-     *
-     * @param lis スクロールリスナー
-     */
-    public void setRecommendBaseFragmentScrollListener(final RecommendBaseFragmentScrollListener lis) {
-        mRecommendBaseFragmentScrollListener = lis;
-    }
-
     @Override
     public Context getContext() {
         this.mActivity = getActivity();
@@ -118,9 +99,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         initData();
-        return initView(container);
+        return initView();
     }
 
     /**
@@ -132,23 +113,18 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
     /**
      * Viewの初期設定.
-     *
-     * @param container 親ビュー
      * @return この行のビュー
      */
-    private View initView(final ViewGroup container) {
+    private View initView() {
         if (null == mRecommendFragmentView) {
             mRecommendFragmentView = View.inflate(getActivity(),
                     R.layout.fragment_recommend_content, null);
             mRecommendListView = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
             mRelativeLayout = mRecommendFragmentView.findViewById(R.id.lv_recommend_progress);
 
-            mRecommendListView.setOnScrollListener(this);
             mRecommendListView.setOnItemClickListener(this);
 
             getContext();
-            mLoadMoreView = LayoutInflater.from(mActivity).inflate(
-                    R.layout.search_load_more, container, false);
         }
         showProgressBar(true);
         if (getContext() != null) {
@@ -278,19 +254,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             mRecommendListBaseAdapter.resetMaxItemCount();
             mRecommendListBaseAdapter.notifyDataSetChanged();
             showProgressBar(false);
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-    }
-
-    @Override
-    public void onScroll(final AbsListView absListView,
-                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        if (null != mRecommendBaseFragmentScrollListener) {
-            mRecommendBaseFragmentScrollListener.onScroll(this, absListView,
-                    firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 

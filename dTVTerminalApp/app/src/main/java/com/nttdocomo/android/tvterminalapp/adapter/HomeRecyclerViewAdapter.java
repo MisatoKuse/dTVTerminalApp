@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,21 +20,16 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Home画面に表示するコンテンツリストのアダプタ.
@@ -67,10 +63,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * もっと見るフッター.
      */
     private View mFooterView;
-    /**
-     * チャンネル一覧.
-     */
-    private ChannelList mChannelList = null;
     /**
      * ダウンロード禁止判定フラグ.
      */
@@ -268,17 +260,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
     }
 
-    /**
-     * チャンネル一覧情報をセットする.
-     *
-     * @param channelList チャンネル一覧
-     */
-    public void setChannnelList(final ChannelList channelList) {
-        this.mChannelList = channelList;
-    }
-
     @Override
-    public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int viewType) {
+    @NonNull
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int viewType) {
         if (mFooterView != null && viewType == TYPE_FOOTER) {
             return new ViewHolder(mFooterView);
         }
@@ -300,7 +284,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
         if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
@@ -650,7 +634,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     @Override
-    public void onViewRecycled(final ViewHolder viewHolder) {
+    public void onViewRecycled(@NonNull final ViewHolder viewHolder) {
         super.onViewRecycled(viewHolder);
         if (viewHolder.mImage != null) {
             //サムネイルの取得が遅い時、前のViewが残っている事がある現象の対処
@@ -746,29 +730,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * おすすめサービスアイコン.
          */
         ImageView mServiceIconSecond;
-    }
-
-    /**
-     * コンテンツのServiceIDとServiceIDが一致するチャンネル名を取得する.
-     *
-     * @param serviceId コンテンツのServiceID
-     * @return チャンネル名
-     */
-    private String getChannelName(final String serviceId) {
-        if (serviceId == null) {
-            return "";
-        }
-        if (mChannelList != null) {
-            List<Map<String, String>> list = mChannelList.getChannelList();
-            for (Map<String, String> hashMap : list) {
-                if (!TextUtils.isEmpty(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
-                    if (serviceId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
-                        return hashMap.get(JsonConstants.META_RESPONSE_TITLE);
-                    }
-                }
-            }
-        }
-        return "";
     }
 
     /**

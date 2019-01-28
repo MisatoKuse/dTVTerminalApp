@@ -60,10 +60,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 5;
     /** dアニメ作品種別(アニメ（映像）).*/
     public static final String D_ANIME_STORE_SONG_CONTENTS = "1";
-    /** contentsId.*/
-    private static final String CONTENTS_DETAIL_GET_SEARCH_FIELDS = "contentsId";
-    /** getDetail.*/
-    private static final String CONTENTS_DETAIL_GET_DISPLAY_ID = "getDetail";
 
     /**
      * 検索データプロバイダリスナーインターフェース.
@@ -210,7 +206,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             contentsData.setTitleKind(ci.mTitleKind);
             contentsData.setStartViewing(ci.mStartViewing);
             contentsData.setEndViewing(ci.mEndViewing);
-            contentsData.setChannelName(ci.mChannelName);
             contentsData.setChannelId(ci.mChannelId);
             contentsData.setReserved1(ci.mReserved1);
             contentsData.setReserved2(ci.mReserved2);
@@ -269,11 +264,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
-                ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_TERRESTRIAL_DIGITAL);
-                ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_SATELLITE_BROADCASTING);
                 ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_IP_TV);
                 ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_BROADCAST);
-                ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_RECORDED_CONTENTS);
                 break;
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
                 ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_WATCH_AGAIN);

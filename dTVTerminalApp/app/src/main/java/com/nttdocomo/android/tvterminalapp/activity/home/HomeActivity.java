@@ -43,7 +43,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
@@ -102,10 +101,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * エラーダイアログが表示されているかのフラグ.
      */
     private boolean mIsCloseDialog = false;
-    /**
-     * NOW ON AIR用チャンネル一覧.
-     */
-    private final ChannelList mChannelList = null;
     /**
      * コンテンツ一覧数.
      */
@@ -174,7 +169,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 最後のデータ読み込みコールバックを受けてからタイムアウトが発動するまでの時間.
      */
     private final static long HOME_MENU_TIME_OUT_TIME = 10000L;
-
     /**
      * HomeDataProvider.
      */
@@ -187,17 +181,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 検索完了フラグ.
      */
     private boolean mIsSearchDone = false;
-
     /**
      * 情報取得に失敗したときのフラグ.
      */
     private boolean mPartDataGetFailed = false;
-
     /**
      * ホーム画面表示時にdアカウントが取得できていなかった場合に、取得後にユーザー情報を取得しに行くフラグ.
      */
     private boolean mUserInfoGetRequest = false;
-
     /**
      * dアカウントの取得が行えない事が確定した場合はtrueに変更する.
      */
@@ -207,14 +198,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mAlreadyScroll = false;
     /**
-     * 準備が整うまでは、メニューボタンの表示要求を無効化するフラグ
+     * 準備が整うまでは、メニューボタンの表示要求を無効化するフラグ.
      */
     private boolean mShowProgessBarEnabled = false;
     /**
      * ユーザーのスクロールを検知する為の、以前のスクロール位置.
      */
     private int mOldScrollPosition = 0;
-
     /**
      * ホーム画面でOTTチェック処理フラグ.
      */
@@ -224,11 +214,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 前回 onPause 時間.
      */
     private long mLastTimeOnPause = 0;
-
     /**
      * メニュー表示制御タイムアウト制御用.
      */
     private Handler mMenuTimeOutHandler = null;
+    /**
+     * メニュー表示制御タイムアウト制御用.
+     */
     private Runnable mMenuTimeOutRunnable = null;
 
     @Override
@@ -314,20 +306,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(final MotionEvent event) {
         //契約情報を読みこむか、読めない事が確定するまで、操作を封じる
         if (mShowProgessBarEnabled) {
             //操作抑止が解除になったので、受け付けるようにする
             return super.dispatchTouchEvent(event);
         }
-
         //操作抑止中なので、タッチイベントの流れをここで断ち切る
         return true;
     }
 
     /**
      * ホーム画面用のグローバルメニュー制御処理.
-     *
      * @param isOn グローバルメニューを表示するならばtrue
      */
     private void enableGlobalMenuIconHome(final boolean isOn) {
@@ -393,8 +383,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * オーバーライドを行い、元々あったメニューアイコンの表示非表示の制御は行わないようにする
-     *
+     * オーバーライドを行い、元々あったメニューアイコンの表示非表示の制御は行わないようにする.
      * @param isOn true: 表示  false: 非表示
      */
     @Override
@@ -419,7 +408,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             setDaccountControl();
 
             //この段階で通信不能だった場合はdアカウントの処理を呼び出さない。事実上ホーム画面は動作しないので、問題は無い
-            if(!NetWorkUtils.isOnline(this)) {
+            if (!NetWorkUtils.isOnline(this)) {
                 //通信不能なので、この時点で以後の操作を有効にする
                 setShowProgessBarEnabled(true);
 
@@ -518,9 +507,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     DaccountControl daccountControl = getDAccountControl();
 
                     //レイアウトの表示件数のチェックとエラーのチェックを行う
-                    if (checkMainLayout() && daccountControl != null &&
-                            daccountControl.getResult()
-                                    == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                    if (checkMainLayout() && daccountControl != null
+                            && daccountControl.getResult() == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
                         //dアカウントアプリ実行不能時点でtrueにしたプログレス表示を
                         setShowProgessBarEnabled(false);
 
@@ -538,10 +526,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * mShowProgessBarEnabledの変更を集中して行う
+     * mShowProgessBarEnabledの変更を集中して行う.
      * @param showProgessBarEnabled 変更したい値
      */
-    private void setShowProgessBarEnabled(boolean showProgessBarEnabled) {
+    private void setShowProgessBarEnabled(final boolean showProgessBarEnabled) {
         mShowProgessBarEnabled = showProgessBarEnabled;
     }
 
@@ -555,7 +543,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         int notVisibleCounter = 0;
 
         //レイアウトに登録されているビューの個数だけ回る（先頭は数えないので1から始める）
-        for(int counter = 1; counter < mLinearLayout.getChildCount(); counter++) {
+        for (int counter = 1; counter < mLinearLayout.getChildCount(); counter++) {
             //子ビューの表示状態を見る
             if (mLinearLayout.getChildAt(counter).getVisibility() == View.VISIBLE) {
                 //VISIBLEなので、カウントアップ
@@ -753,7 +741,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      *
      * @param enableSwitch 活性化するならばtrue
      */
-    private void setMenuIconEnabled(boolean enableSwitch) {
+    private void setMenuIconEnabled(final boolean enableSwitch) {
         //グローバルメニューのアイコンを取得
         View menuIcon = getMenuImageViewForBase();
 
@@ -863,14 +851,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         return typeName;
     }
 
-    @Override
-    protected void saveAdapter(final int index, final HomeRecyclerViewAdapter horizontalViewAdapter) {
-        super.saveAdapter(index, horizontalViewAdapter);
-        if (index == HOME_CONTENTS_SORT_CHANNEL && mChannelList != null) {
-            //Now On Airのデータセット時に、チャンネルデータが既にある場合にはアダプタに渡す.
-            horizontalViewAdapter.setChannnelList(mChannelList);
-        }
-    }
     @Override
     protected void startTo(final int index) {
         super.startTo(index);
@@ -1184,8 +1164,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 //契約情報の変更を確認
                 if (isContractChange) {
                     //データ変更があった場合は、ダイアログを表示して、その後に処理を行う
-                    showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
-                            , new CustomDialog.ApiOKCallback() {
+                    showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change), new CustomDialog.ApiOKCallback() {
                                 @Override
                                 public void onOKCallback(final boolean isOK) {
                                     //OKが押された場合は、ユーザー情報処理の既存処理を実行する

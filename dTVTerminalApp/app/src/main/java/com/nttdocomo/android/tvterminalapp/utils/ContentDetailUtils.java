@@ -412,7 +412,6 @@ public class ContentDetailUtils {
             detailData.setServiceId(Integer.parseInt(content.mServiceId));
         }
         detailData.setTitleKind(content.mTitleKind);
-        detailData.setChannelName(content.mChannelName);
         detailData.setDescription1(content.mDescription1);
         detailData.setDescription2(content.mDescription2);
         detailData.setDescription3(content.mDescription3);
@@ -957,5 +956,26 @@ public class ContentDetailUtils {
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
         failedRecordingReservationDialog.setCancelable(false);
         return failedRecordingReservationDialog;
+    }
+
+    /**
+     * 録画予約失敗時エラーダイアログ表示.
+     * @param channels チャンネルリスト.
+     * @param channelId チャンネルId.
+     * @return チャンネル情報
+     */
+    public static ChannelInfo setPureDchChannelName(final ArrayList<ChannelInfo> channels, final String channelId) {
+        ChannelInfo mChannel = null;
+        String tvService = ContentUtils.getTvService(ContentUtils.ChannelServiceType.DTV_CH);
+        if (!TextUtils.isEmpty(channelId) && !TextUtils.isEmpty(tvService)) {
+            for (int i = 0; i < channels.size(); i++) {
+                ChannelInfo channel = channels.get(i);
+                if (channelId.equals(channel.getServiceId()) && tvService.equals(channel.getService())) {
+                    mChannel = channel;
+                    break;
+                }
+            }
+        }
+        return mChannel;
     }
 }

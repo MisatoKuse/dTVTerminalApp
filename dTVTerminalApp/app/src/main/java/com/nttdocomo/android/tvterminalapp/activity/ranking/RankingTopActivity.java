@@ -328,7 +328,6 @@ public class RankingTopActivity extends BaseActivity
             public void run() {
                 //週間番組ランキングの実行済みフラグを立てる
                 mIsWeeklyExeced = true;
-
                 showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, WEEK_SORT, mLinearLayout);

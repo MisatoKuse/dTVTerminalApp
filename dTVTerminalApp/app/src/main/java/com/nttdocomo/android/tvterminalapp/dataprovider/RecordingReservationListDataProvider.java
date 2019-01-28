@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -16,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingRese
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
@@ -454,7 +456,7 @@ public class RecordingReservationListDataProvider implements
         // タイトル
         contentsData.setTitle(data.getTitle());
         // チャンネル名
-        contentsData.setChannelName(getChannelName(data.getServiceId()));
+        contentsData.setChannelName(getChannelName(data.getServiceId(), ContentUtils.getTvServiceByRemotePlatformType(data.getPlatformType())));
         // 録画予約ステータス
         contentsData.setRecordingReservationStatus(data.getSyncStatus());
 
@@ -472,7 +474,7 @@ public class RecordingReservationListDataProvider implements
         // タイトル
         contentsData.setTitle(data.getTitle());
         // チャンネル名
-        contentsData.setChannelName(getChannelName(data.getServiceId()));
+        contentsData.setChannelName(getChannelName(data.getServiceId(), ContentUtils.getTvServiceByStbPlatformType(data.getPlatformType())));
         // 録画予約ステータス
         contentsData.setRecordingReservationStatus(RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT);
 
@@ -790,15 +792,19 @@ public class RecordingReservationListDataProvider implements
      * CH一覧のレスポンスからチャンネル名を取得.
      *
      * @param serviceId サービスID
+     * @param tvService サービス
      * @return チャンネル名
      */
-    private String getChannelName(final String serviceId) {
+    private String getChannelName(final String serviceId, final String tvService) {
         DTVTLogger.start("serviceId = " + serviceId + " TvScheduleList.size = " + mTvScheduleList.size());
-        String channelName = null;
-        for (int i = 0; i < mTvScheduleList.size(); i++) {
-            if (serviceId.equals(mTvScheduleList.get(i).getServiceId())) {
-                channelName = mTvScheduleList.get(i).getTitle();
-                break;
+        String channelName = "";
+        if (!TextUtils.isEmpty(serviceId) && !TextUtils.isEmpty(tvService)) {
+            for (int i = 0; i < mTvScheduleList.size(); i++) {
+                ChannelInfo channelInfo = mTvScheduleList.get(i);
+                if (serviceId.equals(channelInfo.getServiceId()) && tvService.equals(channelInfo.getService())) {
+                    channelName = channelInfo.getTitle();
+                    break;
+                }
             }
         }
         DTVTLogger.end();

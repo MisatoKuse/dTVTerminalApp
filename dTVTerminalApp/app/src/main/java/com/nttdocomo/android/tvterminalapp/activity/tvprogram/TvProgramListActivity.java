@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -574,7 +575,7 @@ public class TvProgramListActivity extends BaseActivity implements
     private void syncScroll(final RecyclerView channelList, final RecyclerView programList) {
         channelList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+            public void onScrolled(@NonNull final RecyclerView recyclerView, final int dx, final int dy) {
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
                     programList.stopScroll();
                     programList.scrollBy(dx, dy);
@@ -582,7 +583,7 @@ public class TvProgramListActivity extends BaseActivity implements
             }
 
             @Override
-            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+            public void onScrollStateChanged(@NonNull final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 setProgramData(newState);
             }
@@ -590,7 +591,7 @@ public class TvProgramListActivity extends BaseActivity implements
 
         programList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+            public void onScrolled(@NonNull final RecyclerView recyclerView, final int dx, final int dy) {
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
                     channelList.stopScroll();
                     channelList.scrollBy(dx, dy);
@@ -598,7 +599,7 @@ public class TvProgramListActivity extends BaseActivity implements
             }
 
             @Override
-            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+            public void onScrollStateChanged(@NonNull final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 setProgramData(newState);
             }
@@ -994,25 +995,26 @@ public class TvProgramListActivity extends BaseActivity implements
         //★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく
         //★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分
         if (mTabIndex == mMyChannelTabNo) {
-            //MY番組表
-            if (channels != null && channels.size() > 0) {
-//                sort(channels);
-                showMyChannelNoItem(false, false);
-                this.mHikariChannels = channels;
-                //TODO 作業(https://agile.apccloud.jp/jira/browse/DREM-2508)
-                //TODO ↓のchannelListをDB保存
-                ArrayList<ChannelInfo> channelList = DataConverter.executeMapping(mMyChannelDataList, mHikariChannels);
-                setChannelContentsView(channelList);
-                loadMyChannel(channelList);
+            if (channels == null) {
+                ErrorState errorState = mScaledDownProgramListDataProvider.getChannelError();
+                if (errorState != null) {
+                    String message = errorState.getErrorMessage();
+                    //メッセージの有無で処理を分ける
+                    showGetDataFailedToast(message);
+                }
             } else {
-                //ひかりTVデータなしの場合
-
+                if (channels.size() > 0) {
+                    showMyChannelNoItem(false, false);
+                    this.mHikariChannels = channels;
+                    ArrayList<ChannelInfo> channelList = DataConverter.executeMapping(mMyChannelDataList, mHikariChannels);
+                    setChannelContentsView(channelList);
+                    loadMyChannel(channelList);
+                }
             }
         } else {
             //ひかり、dTVチャンネル
             if (channels != null && channels.size() > 0) {
                 this.mHikariChannels = channels;
-//                sort(channels);
                 showMyChannelNoItem(false, false);
                 setChannelContentsView(channels);
                 if (mScaledDownProgramListDataProvider == null) {

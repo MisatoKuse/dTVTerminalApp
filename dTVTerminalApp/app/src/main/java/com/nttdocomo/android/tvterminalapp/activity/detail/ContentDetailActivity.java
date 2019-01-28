@@ -239,6 +239,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ContentDetailUtils.ContentTypeForGoogleAnalytics contentType = null;
     /** タブ表示区別.*/
     private ContentDetailUtils.TabType tabType;
+    /** pure dchチャンネル名取得.*/
+    private boolean mIsOtherServiceDtvChLoading = false;
     // endregion
 
     @Override
@@ -1393,11 +1395,28 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mViewPagerIndex = DEFAULT_TAB_INDEX;
                 }
                 if (channels == null || channels.isEmpty()) {
-                    if (tabType == ContentDetailUtils.TabType.TV_CH) {
-                        tabType = ContentDetailUtils.TabType.VOD;
-                        createViewPagerAdapter();
+                    if (!mIsOtherServiceDtvChLoading) {
+                        if (tabType == ContentDetailUtils.TabType.TV_CH) {
+                            tabType = ContentDetailUtils.TabType.VOD;
+                            createViewPagerAdapter();
+                        }
+                    } else {
+                        showProgressBar(false);
                     }
                     showErrorToast(ContentDetailUtils.ErrorType.channelListGet);
+                    return;
+                }
+                DtvContentsDetailFragment detailFragment = getDetailFragment();
+                if (mIsOtherServiceDtvChLoading) {
+                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                    ChannelInfo mChannelInfo = ContentDetailUtils.setPureDchChannelName(channels, mDetailData.getChannelId());
+                    if (mChannelInfo != null) {
+                        mChannel = mChannelInfo;
+                        detailData.setChannelName(mChannelInfo.getTitle());
+                        mDetailData = detailData;
+                    }
+                    detailFragment.noticeRefresh();
+                    showProgressBar(false);
                     return;
                 }
                 //DBに保存されているUserInfoから契約情報を確認する
@@ -1406,7 +1425,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mContentsType != null) {
                     //チャンネル情報取得して、更新する
                     if (!TextUtils.isEmpty(mServiceIdUniq)) {
-                        DtvContentsDetailFragment detailFragment = getDetailFragment();
                         for (int i = 0; i < channels.size(); i++) {
                             ChannelInfo channel = channels.get(i);
                             if (mServiceIdUniq.equals(channel.getServiceIdUniq())) {
@@ -3229,6 +3247,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case PURE_DTV_CHANNEL_RELATION:
                 setThumbnailText(getString(R.string.dtv_channel_service_start_text));
                 setThumbnailShadow();
+                if (!TextUtils.isEmpty(mDetailData.getChannelId())) {
+                    mIsOtherServiceDtvChLoading = true;
+                    getChannelInfo();
+                }
                 break;
             case D_ANIME_STORE:
                 setThumbnailText(getString(R.string.d_anime_store_content_service_start_text));
@@ -3288,12 +3310,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (tabType != ContentDetailUtils.TabType.TV_CH) {
                         createViewPagerAdapter();
                     }
-                    detailFragment.noticeRefresh();
+                    if (!mIsOtherServiceDtvChLoading) {
+                        detailFragment.noticeRefresh();
+                    }
                 } else { //0件
                     showErrorDialog(ContentDetailUtils.ErrorType.recommendDetailGet);
                 }
                 sendOperateLog();
-                showProgressBar(false);
+                if (!mIsOtherServiceDtvChLoading) {
+                    showProgressBar(false);
+                }
             }
         });
     }

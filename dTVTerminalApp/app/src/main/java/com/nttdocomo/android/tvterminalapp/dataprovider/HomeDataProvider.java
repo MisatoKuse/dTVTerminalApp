@@ -91,12 +91,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * Context.
      */
-    private Context mContext = null;
+    private Context mContext;
 
     /**
      * Home画面用データを返却するためのコールバック.
      */
-    private ApiDataProviderCallback mApiDataProviderCallback = null;
+    private ApiDataProviderCallback mApiDataProviderCallback;
 
     /**
      * Home画面ではチャンネルリストを使用しないため"全て"を]設定する.
@@ -277,6 +277,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private List<Map<String, String>> mDailyRankListData = null;
     /**
+     * クリップ(番組).
+     */
+    private List<Map<String, String>> mTvClipListData = null;
+    /**
      * 通信禁止判定フラグ.
      */
     private boolean mIsStop = false;
@@ -313,9 +317,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final String[] serviceIdUniqs) {
         DTVTLogger.start();
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
-            TvScheduleList list = tvScheduleList.get(0);
-
-            mTvScheduleList = list;
+            mTvScheduleList = tvScheduleList.get(0);
             if (mTvScheduleList != null && mTvScheduleList.geTvsList() != null) {
                 List<Map<String, String>> map = mTvScheduleList.geTvsList();
                 List<ContentsData> contentsData = setHomeContentData(map, false);
@@ -456,6 +458,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mDailyRankListData != null) {
             sendDailyRankListData(mDailyRankListData);
         }
+        if (mTvClipListData != null) {
+            sendTvClipListData(mTvClipListData);
+        }
         DTVTLogger.end();
     }
 
@@ -477,33 +482,45 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * コンテンツのServiceIDとServiceIDが一致するチャンネル名を追加する.
      *
-     * @param scheduleList 番組表コンテンツリスト
+     * @param contentDataList コンテンツリスト
      * @param channelList  チャンネルリスト
-     * @param isPlala  true ぷららサーバ  flase レコメンドサーバ
-     * @return チャンネル名
+     * @param isPlala true:ぷららサーバ  false:レコメンドサーバ
+     * @return チャンネル名付いているコンテンツリスト
      */
-    private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList, final boolean isPlala) {
-        if (channelList != null && scheduleList != null) {
+    private List<ContentsData> setChannelName(final List<ContentsData> contentDataList, final ChannelList channelList, final boolean isPlala) {
+        if (channelList != null && contentDataList != null) {
             List<Map<String, String>> list = channelList.getChannelList();
-            for (int i = 0; i < scheduleList.size(); i++) {
-                String scheduleId = "";
+            for (int i = 0; i < contentDataList.size(); i++) {
                 if (!isPlala) {
-                    scheduleId = scheduleList.get(i).getChannelId();
+                    String channelId = contentDataList.get(i).getChannelId();
+                    String serviceId = contentDataList.get(i).getServiceId();
+                    String categoryId = contentDataList.get(i).getCategoryId();
+                    if (DataBaseUtils.isNumber(serviceId)) {
+                        int serviceID = Integer.parseInt(serviceId);
+                        ContentUtils.ChannelServiceType serviceType = ContentUtils.getChannelServiceTypeFromRecommend(serviceID, categoryId);
+                        String tvService = ContentUtils.getTvService(serviceType);
+                        if (!TextUtils.isEmpty(tvService) && !TextUtils.isEmpty(channelId)) {
+                            for (Map<String, String> hashMap : list) {
+                                if (tvService.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE))
+                                        && channelId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
+                                    contentDataList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
+                                }
+                            }
+                        }
+                    }
                 } else {
-                    scheduleId = scheduleList.get(i).getServiceId();
-                }
-                if (!TextUtils.isEmpty(scheduleId)) {
-                    for (Map<String, String> hashMap : list) {
-                        String channelId = (hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID));
-                        //番組表と
-                        if (!TextUtils.isEmpty(channelId) && scheduleId.equals(channelId)) {
-                            scheduleList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
+                    String serviceIdUniq = contentDataList.get(i).getServiceIdUniq();
+                    if (!TextUtils.isEmpty(serviceIdUniq)) {
+                        for (Map<String, String> hashMap : list) {
+                            if (serviceIdUniq.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ))) {
+                                contentDataList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
+                            }
                         }
                     }
                 }
             }
         }
-        return scheduleList;
+        return contentDataList;
     }
 
     @Override
@@ -618,8 +635,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * 先行してデータを取得しているランキング情報の更新日付をクリアし、ユーザー情報取得後の情報で更新を行わせるため
      */
     public void clearPrecedingData() {
-        DateUtils.clearLastProgramDate(mContext,DateUtils.DAILY_RANK_LAST_INSERT);
-        DateUtils.clearLastProgramDate(mContext,DateUtils.VIDEO_RANK_LAST_INSERT);
+        DateUtils.clearLastProgramDate(mContext, DateUtils.DAILY_RANK_LAST_INSERT);
+        DateUtils.clearLastProgramDate(mContext, DateUtils.VIDEO_RANK_LAST_INSERT);
     }
 
     /**
@@ -811,7 +828,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list クリップ[テレビ]リスト
      */
     private void sendTvClipListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.tvClipListCallback(setChannelName(setHomeContentData(list, false), mChannelList, true));
+        if (mChannelList != null) {
+            mApiDataProviderCallback.tvClipListCallback(setChannelName(setHomeContentData(list, false), mChannelList, true));
+        } else {
+            mTvClipListData = list;
+        }
     }
 
     /**
@@ -854,6 +875,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             contentInfo.setPublishStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
             contentInfo.setPublishEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
             contentInfo.setServiceId(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentInfo.setServiceIdUniq(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ));
             contentInfo.setTvService(mapList.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE));
             contentInfo.setChannelNo(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
             contentInfo.setRValue(mapList.get(i).get(JsonConstants.META_RESPONSE_R_VALUE));
@@ -1583,6 +1605,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 }
                 if (mDailyRankListData != null) {
                     sendDailyRankListData(mDailyRankListData);
+                }
+                if (mTvClipListData != null) {
+                    sendTvClipListData(mTvClipListData);
                 }
                 break;
             case SELECT_WATCH_LISTEN_VIDEO_LIST:

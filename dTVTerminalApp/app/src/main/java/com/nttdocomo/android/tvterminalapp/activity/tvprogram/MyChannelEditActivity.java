@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -204,7 +205,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                 } else {
                     //その他のエラーなので、その他のエラーを表示
                     showProgressView(View.GONE);
-                    showErrorDialog();
+                    showErrorDialog(true);
                 }
             }
         });
@@ -221,57 +222,42 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             public void run() {
                 //APIの実行が終わったので、再実行を許可
                 getOk = true;
-
                 if (channels != null) {
                     mEditList = new ArrayList<>();
-                    if (mEditList.size() == 0) {
-                        for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
-                            MyChannelMetaData myChannelItemData = null;
-                            for (int j = 0; j < mMyChannelMetaData.size(); j++) {
-                                MyChannelMetaData myChData = mMyChannelMetaData.get(j);
-                                //念のため初期値に blank を設定
-                                myChData.setDisplayTitle("");
-                                for (int k = 0; k < channels.size(); k++) {
-                                    //画面表示用チャンネル名はチャンネル一覧のものを使用する
-                                    if (myChData.getServiceId().equals(channels.get(k).getServiceId())) {
-                                        myChData.setDisplayTitle(channels.get(k).getTitle());
-                                        break;
-                                    }
-                                }
-                                int index = Integer.parseInt(myChData.getIndex());
-                                if (i == index) {
-                                    myChannelItemData = myChData;
+                    for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
+                        MyChannelMetaData myChannelItemData = null;
+                        for (int j = 0; j < mMyChannelMetaData.size(); j++) {
+                            MyChannelMetaData myChData = mMyChannelMetaData.get(j);
+                            //念のため初期値に blank を設定
+                            myChData.setDisplayTitle("");
+                            for (int k = 0; k < channels.size(); k++) {
+                                //画面表示用チャンネル名はチャンネル一覧のものを使用する
+                                String serviceId = myChData.getServiceId();
+                                ChannelInfo channelInfo = channels.get(k);
+                                if (!TextUtils.isEmpty(serviceId) && serviceId.equals(channelInfo.getServiceId())
+                                        && ContentUtils.CH_TYPE_TV_SERVICE_H4D.equals(channelInfo.getService())) {
+                                    myChData.setDisplayTitle(channelInfo.getTitle());
                                     break;
                                 }
                             }
-                            if (myChannelItemData == null) {
-                                myChannelItemData = new MyChannelMetaData();
-                                myChannelItemData.setIndex(String.valueOf(i));
-                            }
-                            mEditList.add(myChannelItemData);
-                        }
-                    } else {
-                        ArrayList<MyChannelMetaData> rmList = new ArrayList<>();
-                        for (int i = 0; i < mMyChannelMetaData.size(); i++) {
-                            for (int j = 0; j < mEditList.size(); j++) {
-                                String myChannelItemServiceId = mMyChannelMetaData.get(i).getServiceId();
-                                if (myChannelItemServiceId != null) {
-                                    if (myChannelItemServiceId.equals(mEditList.get(j).getServiceId())) {
-                                        rmList.add(mMyChannelMetaData.get(i));
-                                        break;
-                                    }
-                                }
+                            int index = Integer.parseInt(myChData.getIndex());
+                            if (i == index) {
+                                myChannelItemData = myChData;
+                                break;
                             }
                         }
-                        mMyChannelMetaData.removeAll(rmList);
-                        mEditList.addAll(mMyChannelMetaData);
+                        if (myChannelItemData == null) {
+                            myChannelItemData = new MyChannelMetaData();
+                            myChannelItemData.setIndex(String.valueOf(i));
+                        }
+                        mEditList.add(myChannelItemData);
                     }
                     MyChannelEditAdapter myEditAdapter = new MyChannelEditAdapter(me, mEditList);
                     mEditListView.setAdapter(myEditAdapter);
                     myEditAdapter.notifyDataSetChanged();
                 } else {
                     //その他のエラーなので、その他のエラーを表示
-                    showErrorDialog();
+                    showErrorDialog(false);
                 }
             }
         });
@@ -467,13 +453,18 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
     /**
      * エラーダイアログを表示する.
+     * @param isMyChannelError 毎チャンネルエラーダイアログ
      */
-    private void showErrorDialog() {
-        ErrorState errorState = mMyChannelDataProvider.getMyChannelListError();
+    private void showErrorDialog(final boolean isMyChannelError) {
+        ErrorState errorState;
+        if (isMyChannelError) {
+            errorState = mMyChannelDataProvider.getMyChannelListError();
+        } else {
+            errorState = mScaledDownProgramListDataProvider.getChannelError();
+        }
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
             return;
         }
-
         CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         customDialog.setContent(errorState.getApiErrorMessage(this));
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -482,6 +473,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                 finish();
             }
         });
+        customDialog.setOnTouchOutside(false);
+        customDialog.setCancelable(false);
+        customDialog.setOnTouchBackkey(false);
         customDialog.showDialog();
     }
     @Override

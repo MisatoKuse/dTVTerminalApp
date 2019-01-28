@@ -350,10 +350,10 @@ public class RecommendActivity extends BaseActivity implements
         } else if (resultInfoList.isEmpty() || resultInfoList.size() <= 0) {
             baseFragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
         }
-        if (0 < resultInfoList.size()) {
+        if (resultInfoList != null && 0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
                 //チャンネル名を付加
-                info.setChannelName(searchChannelName(info.getChannelId()));
+                info.setChannelName(searchChannelName(info.getChannelId(), info.getServiceId(), info.getCategoryId()));
 
                 baseFragment.addData(info);
             }
@@ -376,27 +376,18 @@ public class RecommendActivity extends BaseActivity implements
      * 指定されたIDを持つチャンネル名を見つける.
      *
      * @param channelId チャンネルID
+     * @param serviceId サービスID
+     * @param categoryId カテゴリID
      * @return 見つかったチャンネル名
      */
-    private String searchChannelName(final String channelId) {
+    private String searchChannelName(final String channelId, final String serviceId, final String categoryId) {
         //チャンネルデータの取得がまだの場合や、チャンネル名を使うのはテレビタブだけなので、それ以外のタブなら帰る
         if (mChannels == null
                 || (mRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_TV
                 && mRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL)) {
             return "";
         }
-
-        //チャンネル名検索
-        for (int ct = 0; ct < mChannels.size(); ct++) {
-            if (!TextUtils.isEmpty(channelId)
-                    && channelId.equals(mChannels.get(ct).getServiceId())) {
-                //チャンネルIDが見つかった
-                return mChannels.get(ct).getTitle();
-            }
-        }
-
-        //見つからなければ空文字
-        return "";
+        return ContentUtils.getChannelName(channelId, serviceId, categoryId, mChannels);
     }
 
     /**
@@ -859,8 +850,9 @@ public class RecommendActivity extends BaseActivity implements
             //おすすめ情報にはチャンネル名が無いので、取得したチャンネル名をIDで検索して設定を行う
             for (int count = 0; count < baseFragment.getDataSize(); count++) {
                 if (baseFragment.getData() != null) {
+                    ContentsData contentsData = baseFragment.getData().get(count);
                     baseFragment.getData().get(count).setChannelName(
-                            searchChannelName(baseFragment.getData().get(count).getChannelId()));
+                            searchChannelName(contentsData.getChannelId(), contentsData.getServiceId(), contentsData.getCategoryId()));
                 }
             }
 

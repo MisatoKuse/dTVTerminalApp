@@ -27,11 +27,15 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
@@ -47,6 +51,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchS
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,7 +59,7 @@ import java.util.TimerTask;
  * 検索画面.
  */
 public class SearchTopActivity extends BaseActivity
-        implements SearchDataProvider.SearchDataProviderListener,
+        implements SearchDataProvider.SearchDataProviderListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         View.OnClickListener, SearchBaseFragmentScrollListener, TabItemLayout.OnClickTabTextListener {
 
     /** 検索結果件数.*/
@@ -127,6 +132,10 @@ public class SearchTopActivity extends BaseActivity
     private boolean mIsLoading = false;
     /** ロード終了. */
     private boolean mIsEndPage = false;
+    /** チャンネルプロバイダー.*/
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /** チャンネル一覧.*/
+    private ArrayList<ChannelInfo> mChannels = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -192,6 +201,7 @@ public class SearchTopActivity extends BaseActivity
     private void initView() {
         mSearchView = findViewById(R.id.keyword_search_form);
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+        getChannelListData();
     }
 
     /**
@@ -327,6 +337,50 @@ public class SearchTopActivity extends BaseActivity
             searchAutoComplete.setText(mCharSequence.toString());
         }
         searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
+    }
+
+    /**
+     * CH一覧情報取得.
+     */
+    private void getChannelListData() {
+        DTVTLogger.start();
+        if (mChannels != null && mChannels.size() > 0) {
+            return;
+        }
+        if (mScaledDownProgramListDataProvider == null) {
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(SearchTopActivity.this, this);
+        }
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        //チャンネル情報を受け取る
+        DTVTLogger.start();
+        if (null == channels) {
+            String message = mScaledDownProgramListDataProvider.getChannelError().getApiErrorMessage(this);
+            showGetDataFailedToast(message);
+            DTVTLogger.end();
+            return;
+        }
+        //後で使用する為に控えておく
+        mChannels = channels;
+        if (channels.size() > 0) {
+            SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
+            if (null == baseFragment) {
+                return;
+            }
+            if (baseFragment.getContentDataSize() > 0) {
+                List<ContentsData> contentsDatas = baseFragment.getContentsData();
+                for (int i = 0; i < contentsDatas.size(); i++) {
+                    ContentsData contentsData = contentsDatas.get(i);
+                    contentsData.setChannelName(searchChannelName(contentsData.getChannelId(), contentsData.getServiceId(), contentsData.getCategoryId()));
+                }
+                baseFragment.setNotifyDataSetChanged();
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -593,7 +647,9 @@ public class SearchTopActivity extends BaseActivity
             baseFragment.setNoDataMessageVisibility(false);
             //画面表示用のデータセット
             for (int i = 0; i < content.getContentsDataList().size(); ++i) {
-                baseFragment.addContentData(content.getContentsDataList().get(i));
+                ContentsData contentsData = content.getContentsDataList().get(i);
+                contentsData.setChannelName(searchChannelName(contentsData.getChannelId(), contentsData.getServiceId(), contentsData.getCategoryId()));
+                baseFragment.addContentData(contentsData);
             }
             if (content.getContentsDataList().size() < SearchConstants.Search.requestMaxResultCount) {
                 mIsEndPage = true;
@@ -612,6 +668,23 @@ public class SearchTopActivity extends BaseActivity
         baseFragment.showProgressBar(false);
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
+    }
+
+    /**
+     * 指定されたIDを持つチャンネル名を見つける.
+     *
+     * @param channelId チャンネルID
+     * @param serviceId サービスID
+     * @param categoryId カテゴリID
+     * @return 見つかったチャンネル名
+     */
+    private String searchChannelName(final String channelId, final String serviceId, final String categoryId) {
+        getChannelListData();
+        if (mSearchViewPager.getCurrentItem() != TAB_INDEX_TV
+                && mSearchViewPager.getCurrentItem() != TAB_INDEX_DTV_CHANNEL) {
+            return "";
+        }
+        return ContentUtils.getChannelName(channelId, serviceId, categoryId, mChannels);
     }
 
     /**

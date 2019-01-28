@@ -119,7 +119,8 @@ public class JsonConstants {
             JsonConstants.META_RESPONSE_VOD_START_DATE, JsonConstants.META_RESPONSE_VOD_END_DATE,
             JsonConstants.META_RESPONSE_MAIN_GENRE, JsonConstants.META_RESPONSE_SECOND_GENRE_ARRAY,
             JsonConstants.META_RESPONSE_COPY, JsonConstants.META_RESPONSE_ADINFO_ARRAY,
-            JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, JsonConstants.META_RESPONSE_DTV_TYPE};
+            JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, JsonConstants.META_RESPONSE_DTV_TYPE,
+            JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ};
 
     /**
      * VOD＆EPGマージメタレスポンス（縮小版）.

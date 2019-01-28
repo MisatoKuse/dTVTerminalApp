@@ -660,9 +660,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 //VODクリップ一覧ではチャンネル名不要かつ後の処理で異物混入の原因となるため blank を設定
                 //VODクリップ一覧での title = コンテンツタイトル
                 contentInfo.setChannelName("");
-            } else {
-                //TVクリップ一覧での title = チャンネル名
-                contentInfo.setChannelName(title);
             }
             contentInfo.setSearchOk(searchOk);
             contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
@@ -749,10 +746,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param channels チャンネル情報
      */
     void setChannelInfo(final Map<String, String> map, final ContentsData contentInfo, final ArrayList<ChannelInfo> channels) {
-        String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
-        if (channels != null && !TextUtils.isEmpty(chNo)) {
+        String serviceIdUniq = map.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
+        if (channels != null && !TextUtils.isEmpty(serviceIdUniq)) {
             for (ChannelInfo channelInfo : channels) {
-                if (chNo.equals(String.valueOf(channelInfo.getChannelNo()))) {
+                if (serviceIdUniq.equals(channelInfo.getServiceIdUniq())) {
                     contentInfo.setChannelName(channelInfo.getTitle());
                     break;
                 }

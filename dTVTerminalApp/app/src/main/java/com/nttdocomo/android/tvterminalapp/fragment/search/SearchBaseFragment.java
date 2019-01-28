@@ -217,6 +217,15 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     }
 
     /**
+     * リスト更新.
+     */
+    public void setNotifyDataSetChanged() {
+        if (mContentsAdapter != null) {
+            mContentsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
      * リストの表示を更新する.
      */
     public void invalidateViews() {
@@ -354,6 +363,14 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (mData != null) {
             mData.add(content);
         }
+    }
+
+    /**
+     * コンテンツデータ取得.
+     * @return コンテンツリスト
+     */
+    public List<ContentsData> getContentsData() {
+        return mData;
     }
 
     /**

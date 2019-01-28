@@ -212,19 +212,6 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     /**
-     * ページング単位値取得.
-     *
-     * @return ページング単位
-     */
-    private int getCurrentNumber() {
-        ClipListBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment) {
-            return 0;
-        }
-        return baseFragment.getClipListDataSize() / NUM_PER_PAGE;
-    }
-
-    /**
      * 取得結果が更新前と同じなら更新しない.
      *
      * @param tvClipContentInfo 取得コンテンツデータ
