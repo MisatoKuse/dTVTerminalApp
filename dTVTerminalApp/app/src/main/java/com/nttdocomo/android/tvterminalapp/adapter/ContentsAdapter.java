@@ -614,6 +614,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         break;
                 }
                 break;
+            case TYPE_CLIP_LIST_MODE_TV: // クリップ（番組）
             case TYPE_DAILY_RANK: // 今日の番組ランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
                 checkNowOnAir(holder, listContentInfo, contentView, true);
@@ -639,25 +640,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
         if (isPlala) {
             if (ContentUtils.TV_PROGRAM.equals(listContentInfo.getDispType())) {
-                if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
-                    if (ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
-                        if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
-                                listContentInfo.getPublishEndDate(), true)) {
-                            result = true;
-                        }
-                    } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
-                            || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
-                        if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
-                                listContentInfo.getPublishEndDate(), true)) {
-                            result = true;
-                        }
-                    } else {
-                        if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
-                                listContentInfo.getPublishEndDate(), true)) {
-                            result = true;
-                        }
-                    }
-                } else if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
+                if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())
+                        || ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())
+                        || ContentUtils.TV_SERVICE_FLAG_TTB.equals(listContentInfo.getTvService())
+                        || ContentUtils.TV_SERVICE_FLAG_BS.equals(listContentInfo.getTvService())) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
                             listContentInfo.getPublishEndDate(), true)) {
                         result = true;
