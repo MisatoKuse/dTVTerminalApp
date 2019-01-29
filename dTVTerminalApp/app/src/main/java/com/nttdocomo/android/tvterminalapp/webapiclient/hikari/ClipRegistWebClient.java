@@ -215,9 +215,9 @@ public class ClipRegistWebClient
                 || rValue.length() < 1)) {
             return false;
         }
-        //放送開始日時、放送終了日時 type=h4d_iptv、h4d_ttb_crid、h4d_bs_crid の場合必須
+        //放送開始日時、放送終了日時 type=h4d_iptv、h4d_ttb_crid、h4d_bs_crid、is_notify=trueの場合必須
         if ((CLIP_TYPE_H4D_IPTV.equals(type) || CLIP_TYPE_H4D_TTB_CRID.equals(type)
-                || CLIP_TYPE_H4D_BS_CRID.equals(type))
+                || CLIP_TYPE_H4D_BS_CRID.equals(type) || isNotify)
                 && (linearStartDate == null || linearEndDate == null || linearStartDate.length()
                 < 1 || linearEndDate.length() < 1)) {
             return false;

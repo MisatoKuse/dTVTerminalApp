@@ -367,7 +367,7 @@ public class WebApiBasePlala {
     /**
      * h4d_bs_crid:BS.
      */
-    public static final String CLIP_TYPE_H4D_BS_CRID = "h4d_ttb_crid";
+    public static final String CLIP_TYPE_H4D_BS_CRID = "h4d_bs_crid";
 
     /**
      * ワンタイムトークン設定のキー名.
