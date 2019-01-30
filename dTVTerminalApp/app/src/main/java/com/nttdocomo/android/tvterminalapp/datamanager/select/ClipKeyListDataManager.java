@@ -85,17 +85,17 @@ public class ClipKeyListDataManager {
         StringBuilder strBuilder = new StringBuilder();
 
         switch (contentType) {
-            case VOD:
+            case CRID_REFERENCE:
                 strBuilder.append(JsonConstants.META_RESPONSE_CRID)
                         .append(" = ? ");
                 break;
-            case TV:
+            case SERVICE_ID_AND_EVENT_ID_REFERENCE:
                 strBuilder.append(JsonConstants.META_RESPONSE_SERVICE_ID)
                         .append(" = ? AND ")
                         .append(JsonConstants.META_RESPONSE_EVENT_ID)
                         .append(" = ? ");
                 break;
-            case DTV:
+            case TITLE_ID_REFERENCE:
                 strBuilder.append(JsonConstants.META_RESPONSE_TITLE_ID)
                         .append(" = ? ");
                 break;
@@ -115,7 +115,7 @@ public class ClipKeyListDataManager {
             final ClipKeyListDao.TableTypeEnum tableType, final String serviceId,
             final String eventId) {
         String[] args = {serviceId, eventId};
-        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.TV);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.SERVICE_ID_AND_EVENT_ID_REFERENCE);
         return selectClipKeyListData(tableType, selection, args);
     }
 
@@ -129,7 +129,7 @@ public class ClipKeyListDataManager {
     public List<Map<String, String>> selectClipKeyDbDtvData(
             final ClipKeyListDao.TableTypeEnum tableType, final String titleId) {
         String[] args = {titleId};
-        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.DTV);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.TITLE_ID_REFERENCE);
 
         return selectClipKeyListData(tableType, selection, args);
     }
@@ -144,7 +144,7 @@ public class ClipKeyListDataManager {
     public List<Map<String, String>> selectClipKeyDbVodData(
             final ClipKeyListDao.TableTypeEnum tableType, final String crid) {
         String[] args = {crid};
-        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.VOD);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.CRID_REFERENCE);
         return selectClipKeyListData(tableType, selection, args);
     }
 

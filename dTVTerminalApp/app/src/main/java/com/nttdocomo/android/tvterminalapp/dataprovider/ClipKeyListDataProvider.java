@@ -83,6 +83,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     private static final String CONTENTS_TYPE_FLAG_ONE = "1";
     /** コンテンツ種別判定2. */
     private static final String CONTENTS_TYPE_FLAG_TWO = "2";
+    /** コンテンツ種別判定3. */
+    private static final String CONTENTS_TYPE_FLAG_THREE = "3";
+    /** コンテンツ種別判定4. */
+    private static final String CONTENTS_TYPE_FLAG_FOUR = "4";
     /** TVクリップINSERT用定数. */
     private static final int TV_CLIP_KEY_ALL_INSERT = 101;
     /** VODクリップINSERT用定数. */
@@ -274,28 +278,27 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         //ぷららサーバ対応
         if (dispType != null) {
             //「disp_type」が tv_program でかつ「tv_service」が「1」となります。
-            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && tvService != null && CONTENTS_TYPE_FLAG_ONE.equals(tvService)) {
-                return ClipKeyListDao.ContentTypeEnum.TV;
+            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType) && CONTENTS_TYPE_FLAG_ONE.equals(tvService)) {
+                return ClipKeyListDao.ContentTypeEnum.SERVICE_ID_AND_EVENT_ID_REFERENCE;
             }
-            //「tv_program」かつ「tv_service」が「2」
-            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && tvService != null && CONTENTS_TYPE_FLAG_TWO.equals(tvService)) {
-                return ClipKeyListDao.ContentTypeEnum.VOD;
+            //「tv_program」かつ「tv_service」が「2」「3」「4」の場合.
+            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType) && (CONTENTS_TYPE_FLAG_TWO.equals(tvService)
+                    || CONTENTS_TYPE_FLAG_THREE.equals(tvService) || CONTENTS_TYPE_FLAG_FOUR.equals(tvService))) {
+                return ClipKeyListDao.ContentTypeEnum.CRID_REFERENCE;
             }
             //「disp_type」が video_program・video_series・video_package・subscription_package・series_svodのいずれか、 かつ「dtv」が0または未設定
             if (getVodStatus(dispType)
                     && (dTv == null || dTv.isEmpty() || ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv))) {
-                return ClipKeyListDao.ContentTypeEnum.VOD;
+                return ClipKeyListDao.ContentTypeEnum.CRID_REFERENCE;
             }
             //「disp_type」が video_program・video_series・video_package・subscription_package・series_svodのいずれか、 かつ「dtv」が1
             if (getVodStatus(dispType)
-                    && (dTv != null || CONTENTS_TYPE_FLAG_ONE.equals(dTv))) {
-                return ClipKeyListDao.ContentTypeEnum.DTV;
+                    && (CONTENTS_TYPE_FLAG_ONE.equals(dTv))) {
+                return ClipKeyListDao.ContentTypeEnum.TITLE_ID_REFERENCE;
             }
             //「video_program・video_series・video_package・subscription_package・series_svodのいずれか」
             if (getVodStatus(dispType)) {
-                return ClipKeyListDao.ContentTypeEnum.VOD;
+                return ClipKeyListDao.ContentTypeEnum.CRID_REFERENCE;
             }
         }
         return null;
@@ -421,10 +424,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             String serviceId = data.getServiceId();
             String eventId = data.getEventId();
             String titleId = data.getTitleId();
-
             switch (operationId) {
                 case CLIP_ROW_DELETE:
-                    dataManager.deleteRowSqlStart(crid, serviceId, eventId, titleId);
+                    dataManager.deleteRowSqlStart(crid, titleId);
                     break;
                 case CLIP_ROW_INSERT:
                     ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentType);
@@ -484,13 +486,13 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentsType);
         if (contentType != null && tableType != null) {
             switch (contentType) {
-                case TV:
+                case SERVICE_ID_AND_EVENT_ID_REFERENCE:
                     clipStatus = findDbTvClipKeyData(tableType, serviceId, eventId);
                     break;
-                case VOD:
+                case CRID_REFERENCE:
                     clipStatus = findDbVodClipKeyData(tableType, crid);
                     break;
-                case DTV:
+                case TITLE_ID_REFERENCE:
                     clipStatus = findDbDtvClipKeyData(tableType, titleId);
                     break;
                 default:

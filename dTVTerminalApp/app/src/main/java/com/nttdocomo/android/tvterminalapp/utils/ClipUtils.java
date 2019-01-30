@@ -19,22 +19,6 @@ import java.util.Map;
  * クリップ関連のUtilクラス.
  */
 public class ClipUtils {
-
-    /**
-     * 種別：ひかりＴＶビデオ、dTVチャンネル.
-     */
-    private static final int HIKARI_TV_VIDEO_CLIP_KEY = 0;
-
-    /**
-     * 種別：多チャンネル.
-     */
-    private static final int HIKARI_MULTI_CHANNEL_CLIP_KEY = 1;
-
-    /**
-     * 種別：dTV.
-     */
-    private static final int DTV_CLIP_KEY = 2;
-
     /**
      * TVクリップとVODクリップの取得方向（逆順）.
      */
@@ -209,7 +193,7 @@ public class ClipUtils {
         if (contentType != null) {
             DTVTLogger.debug("setClipStatusFromMap start contentType != null");
             switch (contentType) {
-                case TV:
+                case SERVICE_ID_AND_EVENT_ID_REFERENCE:
                     //多チャンネル放送の場合 service_id、event_id
                     for (int k = 0; k < mapList.size(); k++) {
                         String mapServiceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
@@ -220,8 +204,8 @@ public class ClipUtils {
                         }
                     }
                     break;
-                case VOD:
-                    //ひかりＴＶビデオ、dTVチャンネル場合 crid
+                case CRID_REFERENCE:
+                    //ひかりＴＶビデオ、dTVチャンネル、地デジ、BSの場合　crid
                     for (int k = 0; k < mapList.size(); k++) {
                         String mapCrId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
                         if (mapCrId != null && mapCrId.equals(crId)) {
@@ -229,7 +213,7 @@ public class ClipUtils {
                         }
                     }
                     break;
-                case DTV:
+                case TITLE_ID_REFERENCE:
                     //dTVの場合 title_id
                     for (int k = 0; k < mapList.size(); k++) {
                         String mapTitleId = mapList.get(k).get(JsonConstants.META_RESPONSE_TITLE_ID);

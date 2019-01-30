@@ -51,6 +51,10 @@ public class ClipRequestData {
     private static final String TV_SERVICE_H4D_CONTENTS = "1";
     /**tv_service値 dch.*/
     private static final String TV_SERVICE_DCH_CONTENTS = "2";
+    /**tv_service値 ttb.*/
+    private static final String TV_SERVICE_TTB_CONTENTS = "3";
+    /**tv_service値 bs.*/
+    private static final String TV_SERVICE_BS_CONTENTS = "4";
     /**content_type値 dCh番組1.*/
     private static final String CONTENT_TYPE_DCH_PROGRAM_1 = "1";
     /**content_type値 dCh番組2.*/
@@ -313,27 +317,32 @@ public class ClipRequestData {
                             final long vodStartDate, final String tvService, final String dTV) {
 
         //EPG/DTVはdispType,contentsTypeの内容で判定する
-        if (dispType != null && dispType.equals(DISP_TYPE_TV_PROGRAM)) {
-            if (tvService != null && tvService.equals(TV_SERVICE_H4D_CONTENTS)) {
+        if (DISP_TYPE_TV_PROGRAM.equals(dispType)) {
+            if (TV_SERVICE_H4D_CONTENTS.equals(tvService)) {
                 //dispTypeがtv_programかつtvServiceが1ならH4dのIPTVコンテンツ
                 mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
                 mIsNotify = true;
-            } else if (tvService != null && tvService.equals(TV_SERVICE_DCH_CONTENTS)) {
+            } else if (TV_SERVICE_DCH_CONTENTS.equals(tvService)) {
                 //dispTypeがtv_programかつtvServiceが2なら全てdChコンテンツ(見逃しもこちら)
                 mType = WebApiBasePlala.CLIP_TYPE_DCH;
 
                 //視聴通知フラグの設定（EPG:true、VOD:false）
-                if (contentsType != null && contentsType.equals(CONTENT_TYPE_DCH_VOD)) {
+                if (CONTENT_TYPE_DCH_VOD.equals(contentsType)) {
                     //contents_typeが3(dCh関連VOD)なら固定でVODなので視聴通知はoffにする
                     mIsNotify = false;
-                } else if (contentsType != null
-                        && ((contentsType.equals(CONTENT_TYPE_DCH_PROGRAM_1)) || (contentsType.equals(CONTENT_TYPE_DCH_PROGRAM_2)))) {
+                } else if (CONTENT_TYPE_DCH_PROGRAM_1.equals(contentsType) || CONTENT_TYPE_DCH_PROGRAM_2.equals(contentsType)) {
                     //contents_typeが1or2(dCh番組)なら見逃し判定を行い、見逃し化している物は視聴通知はoffにする
                     mIsNotify = vodStartDate > DateUtils.getNowTimeFormatEpoch();
                 } else {
                     //contents_typeが未設定やその他は番組扱いする
                     mIsNotify = true;
                 }
+            } else if (TV_SERVICE_TTB_CONTENTS.equals(tvService)) {
+                mType = WebApiBasePlala.CLIP_TYPE_H4D_TTB_CRID;
+                mIsNotify = true;
+            } else if (TV_SERVICE_BS_CONTENTS.equals(tvService)) {
+                mType = WebApiBasePlala.CLIP_TYPE_H4D_BS_CRID;
+                mIsNotify = true;
             } else {
                 //tvServiceが未設定の場合は異常.
                 DTVTLogger.warning("tv_program content has not tv_service!!");
@@ -342,7 +351,7 @@ public class ClipRequestData {
             }
         } else {
             //dispTypeがtv_program以外は固定でVOD.dTVフラグでdTVかどうかを判断
-            if (dTV != null && dTV.equals(DTV_SERVICE_CONTENTS_TRUE)) {
+            if (DTV_SERVICE_CONTENTS_TRUE.equals(dTV)) {
                 //dtv_vod
                 mType = WebApiBasePlala.CLIP_TYPE_DTV_VOD;
             } else {

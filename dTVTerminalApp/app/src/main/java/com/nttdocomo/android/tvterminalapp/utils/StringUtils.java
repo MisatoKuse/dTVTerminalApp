@@ -265,7 +265,9 @@ public class StringUtils {
         boolean isHikari = false;
         if (contentsType != null && (contentsType.equals(WebApiBasePlala.CLIP_TYPE_H4D_IPTV)
                 || contentsType.equals(WebApiBasePlala.CLIP_TYPE_H4D_VOD)
-                || contentsType.equals(WebApiBasePlala.CLIP_TYPE_DCH))) {
+                || contentsType.equals(WebApiBasePlala.CLIP_TYPE_DCH)
+                || contentsType.equals(WebApiBasePlala.CLIP_TYPE_H4D_BS_CRID)
+                || contentsType.equals(WebApiBasePlala.CLIP_TYPE_H4D_TTB_CRID))) {
             isHikari = true;
         }
         return isHikari;
