@@ -694,6 +694,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 return;
             }
             mDateIndex++;
+            mScaledDownProgramListDataProvider.setAreaCode(UserInfoUtils.getAreaCode(this));
             mScaledDownProgramListDataProvider.getProgram(serviceIdUniqs, mDateList);
         } else {
             channelLoadCompleted();

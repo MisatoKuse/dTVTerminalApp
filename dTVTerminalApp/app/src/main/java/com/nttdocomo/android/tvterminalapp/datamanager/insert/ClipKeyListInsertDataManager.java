@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -15,7 +16,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -140,13 +140,9 @@ public class ClipKeyListInsertDataManager {
      * 条件に一致する行を削除する.
      *
      * @param crId      コンテンツ識別子
-     * @param serviceId サービスID
-     * @param eventId   イベントID
      * @param titleId   タイトルID
      */
-    public void deleteRowSqlStart(
-            final String crId, final String serviceId,
-            final String eventId, final String titleId) {
+    public void deleteRowSqlStart(final String crId, final String titleId) {
         DTVTLogger.start();
 
         DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
@@ -157,15 +153,20 @@ public class ClipKeyListInsertDataManager {
                 SQLiteDatabase database = databaseManager.openDatabase();
                 database.acquireReference();
                 ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
-
-                String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
-                        JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
-                        JsonConstants.META_RESPONSE_EVENT_ID, "=? OR ",
-                        JsonConstants.META_RESPONSE_TITLE_ID, "=?");
-
-                String[] columns = {crId, serviceId, eventId, titleId};
-                clipKeyListDao.deleteRowData(ClipKeyListDao.TableTypeEnum.TV, query, columns);
-                clipKeyListDao.deleteRowData(ClipKeyListDao.TableTypeEnum.VOD, query, columns);
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(JsonConstants.META_RESPONSE_CRID);
+                stringBuilder.append("=?");
+                String[] columns;
+                if (!TextUtils.isEmpty(titleId)) {
+                    stringBuilder.append(" AND ");
+                    stringBuilder.append(JsonConstants.META_RESPONSE_TITLE_ID);
+                    stringBuilder.append("=?");
+                    columns = new String[]{crId, titleId};
+                } else {
+                    columns = new String[]{crId};
+                }
+                clipKeyListDao.deleteRowData(ClipKeyListDao.TableTypeEnum.TV, stringBuilder.toString(), columns);
+                clipKeyListDao.deleteRowData(ClipKeyListDao.TableTypeEnum.VOD, stringBuilder.toString(), columns);
             } catch (SQLiteException e) {
                 DTVTLogger.debug("ClipKeyListInsertDataManager::deleteRowSqlStart, e.cause=" + e.getCause());
             } finally {
