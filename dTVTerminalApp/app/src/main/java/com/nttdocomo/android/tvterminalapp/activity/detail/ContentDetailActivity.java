@@ -511,6 +511,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mPlayerViewLayout.setScreenNavigationBarSize(mWidth, mScreenNavHeight);
         mPlayerViewLayout.setParentLayout(mThumbnailRelativeLayout);
         mPlayerViewLayout.setDensity(getDensity());
+        mPlayerViewLayout.setPlayerEventType(PlayerViewLayout.PlayerEventType.PLAY_PAUSE_TAP);
         boolean mIsOncreateOk = mPlayerViewLayout.initMediaInfo(playerData);
         mPlayerData = playerData;
         //外部出力および画面キャプチャ制御
@@ -2385,10 +2386,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 });
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (dlnaDmsItem != null) {
+            String tvService = mDetailFullData.getmTv_service();
             //この場合に使用するチャンネル番号を取得する
-            int convertedChannelNumber = ContentDetailUtils.convertChannelNumber(mChannel);
+            int convertedChannelNumber = ContentDetailUtils.convertChannelNumber(mChannel, tvService);
             //変換後のチャンネルIDを使用して呼び出す
-            provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber));
+            provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber), tvService);
         } else {
             showRemotePlayingProgress(false);
             DTVTLogger.error("dlnaDmsItem == null");
@@ -3363,7 +3365,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && mPlayerViewLayout != null) {
-                mPlayerViewLayout.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv).callOnClick();
+                mPlayerViewLayout.tapBackKey();
                 return false;
             }
         }

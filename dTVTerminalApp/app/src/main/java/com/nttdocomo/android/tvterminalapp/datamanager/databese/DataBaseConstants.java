@@ -92,6 +92,7 @@ public class DataBaseConstants {
             JsonConstants.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
+            JsonConstants.META_RESPONSE_REMOCON_KEY, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
