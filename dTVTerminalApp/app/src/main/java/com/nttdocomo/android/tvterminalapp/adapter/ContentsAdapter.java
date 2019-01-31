@@ -45,15 +45,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * 各Activityインスタンス.
      */
-    private Context mContext = null;
+    private Context mContext;
     /**
      * リスト用データソース.
      */
-    private List<ContentsData> mListData = null;
+    private List<ContentsData> mListData;
     /**
      * サムネイル取得用プロバイダー.
      */
-    private ThumbnailProvider mThumbnailProvider = null;
+    private ThumbnailProvider mThumbnailProvider;
     /**
      * 表示項目のタイプ.
      */
@@ -99,11 +99,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private final static int TITLE_MARGIN_TOP20 = 20;
 
     /**
-     * 番組タイトル margintop.
-     */
-    private final static int TITLE_MARGIN_TOP30 = 30;
-
-    /**
      * クリップアイコンmargintop.
      */
     private final static int CLIP_MARGIN_TOP35 = 35;
@@ -115,15 +110,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * margin0.
      */
     private final static int THUMBNAIL_MARGIN0 = 0;
-    /**
-     * コピー残り回数.
-     */
-    private final static int ALLOWED_USE = 0;
-
-    /**
-     * 受付アイコンマージン.
-     */
-    private final static int RECEPTION_MARGIN_TOP30 = 30;
     /**
      * ダウンロードStatus種別.
      */
@@ -424,8 +410,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RECORDING_RESERVATION_LIST:
                 //録画予約一覧用余白設定
                 textMargin = STATUS_MARGIN_TOP17;
-                setTextAllMargin(THUMBNAIL_MARGIN_LEFT, textMargin, THUMBNAIL_MARGIN_BOTTOM,
-                        textMargin, holder, contentView);
+                setTextAllMargin(textMargin, textMargin, holder, contentView);
                 break;
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
             case TYPE_RECORDED_LIST:
@@ -534,16 +519,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * 4方向のマージンをセットする.
      *
-     * @param leftMargin   左マージン
      * @param topMargin    上マージン
-     * @param rightMargin  右マージン
      * @param bottomMargin 下マージン
      * @param holder       ビューの集合体
      * @param view         マージンを指定するビュー
      */
-    private void setTextAllMargin(
-            final int leftMargin, final int topMargin, final int rightMargin,
-            final int bottomMargin, final ViewHolder holder, final View view) {
+    private void setTextAllMargin(final int topMargin, final int bottomMargin, final ViewHolder holder, final View view) {
         //解像度の倍率を取得する
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
@@ -554,8 +535,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
         //マージンの数値を算出して格納する
-        layoutParams.setMargins(leftMargin * (int) density, topMargin * (int) density,
-                rightMargin * (int) density, bottomMargin * (int) density);
+        layoutParams.setMargins(THUMBNAIL_MARGIN_LEFT * (int) density, topMargin * (int) density,
+                THUMBNAIL_MARGIN_BOTTOM * (int) density, bottomMargin * (int) density);
 
         //表示開始位置をステータスエリアに合わせる
         layoutParams.addRule(RelativeLayout.START_OF, R.id.item_common_result_show_status_area);
@@ -948,7 +929,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (holder.tv_recorded_ch_name == null || holder.tv_recorded_hyphen == null) {
             return;
         }
-        if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT && !mType .equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) { //ランク
+        if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT
+                && !mType .equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) { //ランク
             //↓を判定条件に使っているため、直前に初期化
             if (holder.tv_recorded_hyphen == null) {
                 holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
@@ -967,7 +949,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (holder.tv_recorded_ch_name == null) {
                 holder.tv_recorded_ch_name = contentView.findViewById(R.id.item_common_result_recorded_content_channel_name);
             }
-            ContentUtils.ContentsType contentsType = ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
+            ContentUtils.ContentsType contentsType =
+                    ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
             if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {

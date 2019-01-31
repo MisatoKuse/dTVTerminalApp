@@ -20,7 +20,6 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     /**
      * コンテキストファイル.
      */
-    private Context mContext = null;
+    private Context mContext;
 
     /**
      * データを返すコールバック.
@@ -144,8 +143,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         if (!isOnline(mContext) || !isUserInfoTimeOut()) {
             DTVTLogger.debug("OffLine or Use cache");
 
-            mUserDataProviderCallback.userInfoListCallback(false, SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext)
-                    ,false);
+            mUserDataProviderCallback.userInfoListCallback(false, SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext), false);
             return;
         }
 
@@ -199,10 +197,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         DTVTLogger.end("UserInfo lastTime:" + lastTime + " now:" + now);
         if (now < lastTime + DateUtils.EPOCH_TIME_ONE_HOUR) {
             // ただし時刻が巻き戻った(最終取得が未来の)場合は再取得する.
-            if (now < lastTime) {
-                return true;
-            }
-            return false;
+            return now < lastTime;
         }
         //データは古くなった
         return true;
@@ -285,8 +280,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         }
 
         //結果を返すコールバックを呼ぶ(userInfoListsはfinal付与の余波でヌルのままになる場合があるので、ここはtmpUserInfoListsを指定)
-        mUserDataProviderCallback.userInfoListCallback(isChangeAge, tmpUserInfoLists
-                , contractAnswer);
+        mUserDataProviderCallback.userInfoListCallback(isChangeAge, tmpUserInfoLists, contractAnswer);
 
         DTVTLogger.end();
     }
@@ -313,7 +307,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      *
      * @return h4dユーザフラグ
      */
-    public boolean isH4dUser() {
+    boolean isH4dUser() {
         List<UserInfoList> userInfoList = SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext);
         //loggedin_account が0番目 h4d_contracted_account が1番目に来ることを想定
         final int LOGGEDIN_ACCOUNT = 0;

@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentF
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -817,6 +818,7 @@ public class RecommendActivity extends BaseActivity implements
         public void run() {
             DTVTLogger.start();
             //全番組表の取り込み
+            mScaledDownProgramListDataProvider.setAreaCode(UserInfoUtils.getAreaCode(RecommendActivity.this));
             mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 0);
             DTVTLogger.end();
         }

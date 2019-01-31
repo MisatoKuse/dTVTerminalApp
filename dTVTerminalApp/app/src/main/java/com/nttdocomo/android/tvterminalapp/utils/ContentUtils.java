@@ -2113,4 +2113,39 @@ public class ContentUtils {
         }
         return result;
     }
+
+    /**
+     * リストデータ整形（チャンネル名追加）.
+     *  @param contentsData contentsData
+     *  @param mChannels チャンネル一覧
+     *  @return リストデータ
+     */
+    public static List<ContentsData> getContentsDataAddChannelNameByRecommend(final List<ContentsData> contentsData, final ArrayList<ChannelInfo> mChannels) {
+        for (ContentsData info : contentsData) {
+            info.setChannelName(getChannelName(info.getChannelId(), info.getServiceId(), info.getCategoryId(), mChannels));
+        }
+        return contentsData;
+    }
+
+    /**
+     * チャンネル名取得(ぷらら).
+     *  @param contentsDataList contentsData
+     *  @param mChannels チャンネル一覧
+     *  @return リストデータ
+     */
+    public static List<ContentsData> getContentsDataAddChannelNameByPlala(final List<ContentsData> contentsDataList, final ArrayList<ChannelInfo> mChannels) {
+        for (int i = 0; i < contentsDataList.size(); i++) {
+            ContentsData contentsData = contentsDataList.get(i);
+            String serviceIdUniq = contentsData.getServiceIdUniq();
+            if (!TextUtils.isEmpty(serviceIdUniq)) {
+                for (int j = 0; j < mChannels.size(); j++) {
+                    ChannelInfo channelInfo = mChannels.get(j);
+                    if (serviceIdUniq.equals(channelInfo.getServiceIdUniq())) {
+                        contentsData.setChannelName(channelInfo.getTitle());
+                    }
+                }
+            }
+        }
+        return contentsDataList;
+    }
 }
