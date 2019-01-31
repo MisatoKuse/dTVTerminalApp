@@ -777,6 +777,16 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     }
 
     /**
+     * 横画面視聴中にバックキーボタンをタップした際に、縦画面に戻る処理
+     */
+    public void tapBackKey() {
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        initPlayerView();
+        setPlayerEvent();
+        showControlViewAfterPlayerEvent(mPlayerEventType);
+    }
+
+    /**
      * リモート視聴以外はそのまま再生を行う。リモート視聴の場合は再生可否のチェックを行う.
      *
      * @param isShow true くるくる表示　false 非表示

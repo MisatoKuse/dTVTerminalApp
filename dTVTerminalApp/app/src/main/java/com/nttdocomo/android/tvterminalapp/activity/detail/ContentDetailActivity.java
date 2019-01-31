@@ -3338,7 +3338,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && mPlayerViewLayout != null) {
-                mPlayerViewLayout.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv).callOnClick();
+                mPlayerViewLayout.tapBackKey();
                 return false;
             }
         }
