@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchDubbedType;
@@ -350,6 +351,7 @@ public class SearchTopActivity extends BaseActivity
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(SearchTopActivity.this, this);
         }
+        mScaledDownProgramListDataProvider.setAreaCode(UserInfoUtils.getAreaCode(this));
         mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
         DTVTLogger.end();
     }

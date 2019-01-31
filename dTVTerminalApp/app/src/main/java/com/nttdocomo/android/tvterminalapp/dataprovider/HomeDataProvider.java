@@ -645,7 +645,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void getHomeData() {
         DTVTLogger.start();
         //NOW ON AIRを取得するためにまずはチャンネルリスト取得
-        getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
+        getChannelList();
 
         //今日のテレビランキング
         getDailyRankListData();
@@ -1089,13 +1089,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * CH一覧取得.
-     *
-     * @param limit  レスポンスの最大件数
-     * @param offset 取得位置(1～)
-     * @param filter release、testa、demo ※指定なしの場合release
-     * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
-    private void getChannelList(final int limit, final int offset, final String filter, final int type) {
+    private void getChannelList() {
         DTVTLogger.start();
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
@@ -1108,7 +1103,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //通信クラスにデータ取得要求を出す
             mChannelWebClient = new ChannelWebClient(mContext);
-            mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+            mChannelWebClient.getChannelApi(0, 0, "", JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE], this);
         }
         DTVTLogger.end();
     }

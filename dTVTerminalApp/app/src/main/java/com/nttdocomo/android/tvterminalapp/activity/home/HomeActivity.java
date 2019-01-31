@@ -34,6 +34,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoratio
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
@@ -41,6 +42,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvid
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
@@ -52,8 +54,10 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
@@ -85,142 +89,79 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         HomeDataProvider.ApiDataProviderCallback, UserInfoDataProvider.UserDataProviderCallback,
         HomeRecyclerViewAdapter.ItemClickCallback {
 
-    /**
-     * 表示するコンテンツを内包するLinearLayout.
-     */
+    /** 表示するコンテンツを内包するLinearLayout.*/
     private LinearLayout mLinearLayout = null;
-    /**
-     * 未契約者導線.
-     */
+    /** 未契約者導線.*/
     private LinearLayout mAgreementRl = null;
-    /**
-     * ホーム画面のスクロール部.
-     */
+    /** ホーム画面のスクロール部.*/
     private ScrollView mScrollView = null;
-    /**
-     * エラーダイアログが表示されているかのフラグ.
-     */
+    /** エラーダイアログが表示されているかのフラグ.*/
     private boolean mIsCloseDialog = false;
-    /**
-     * コンテンツ一覧数.
-     */
+    /** コンテンツ一覧数.*/
     public final static int HOME_CONTENTS_LIST_COUNT = 10;
-    /**
-     * ヘッダのmargin.
-     */
+    /** ヘッダのmargin.*/
     private final static int HOME_CONTENTS_LIST_START_INDEX = 1;
-    /**
-     * UIの上下表示順(NOW ON AIR).
-     */
+    /** UIの上下表示順(NOW ON AIR).*/
     public final static int HOME_CONTENTS_SORT_CHANNEL = HOME_CONTENTS_LIST_START_INDEX;
-    /**
-     * UIの上下表示順(おすすめ番組).
-     */
+    /** UIの上下表示順(おすすめ番組).*/
     public final static int HOME_CONTENTS_SORT_RECOMMEND_PROGRAM = HOME_CONTENTS_LIST_START_INDEX + 1;
-    /**
-     * UIの上下表示順(おすすめビデオ).
-     */
+    /** UIの上下表示順(おすすめビデオ).*/
     public final static int HOME_CONTENTS_SORT_RECOMMEND_VOD = HOME_CONTENTS_LIST_START_INDEX + 2;
-    /**
-     * UIの上下表示順(今日のテレビランキング).
-     */
+    /** UIの上下表示順(今日のテレビランキング).*/
     public final static int HOME_CONTENTS_SORT_TODAY = HOME_CONTENTS_LIST_START_INDEX + 3;
-    /**
-     * UIの上下表示順(ビデオランキング).
-     */
+    /** UIの上下表示順(ビデオランキング).*/
     public final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 4;
-    /**
-     * UIの上下表示順(視聴中ビデオ).
-     */
+    /** UIの上下表示順(視聴中ビデオ).*/
     public final static int HOME_CONTENTS_SORT_WATCHING_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 5;
-    /**
-     * UIの上下表示順(クリップ[テレビ]).
-     */
+    /** UIの上下表示順(クリップ[テレビ]).*/
     public final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_LIST_START_INDEX + 6;
-    /**
-     * UIの上下表示順(クリップ[ビデオ]).
-     */
+    /** UIの上下表示順(クリップ[ビデオ]).*/
     public final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 7;
-    /**
-     * UIの上下表示順(プレミアム).
-     */
+    /** UIの上下表示順(プレミアム).*/
     public final static int HOME_CONTENTS_SORT_PREMIUM = HOME_CONTENTS_LIST_START_INDEX + 8;
-    /**
-     * UIの上下表示順(レンタル).
-     */
+    /** UIの上下表示順(レンタル).*/
     public final static int HOME_CONTENTS_SORT_RENTAL = HOME_CONTENTS_LIST_START_INDEX + 9;
-    /**
-     * エラー情報の取得用に追加（ジャンル一覧）.
-     */
-    public final static int HOME_CONTENTS_LIST_PER_GENRE =
-            HOME_CONTENTS_LIST_START_INDEX + 10;
-    /**
-     * エラー情報の取得用に追加（デイリーランク）.
-     */
-    public final static int HOME_CONTENTS_DAILY_RANK_LIST =
-            HOME_CONTENTS_LIST_START_INDEX + 11;
-    /**
-     * エラー情報の取得用に追加（番組表）.
-     */
-    public final static int HOME_CONTENTS_TV_SCHEDULE =
-            HOME_CONTENTS_LIST_START_INDEX + 12;
-
-    /**
-     * 最後のデータ読み込みコールバックを受けてからタイムアウトが発動するまでの時間.
-     */
+    /** エラー情報の取得用に追加（ジャンル一覧）.*/
+    public final static int HOME_CONTENTS_LIST_PER_GENRE = HOME_CONTENTS_LIST_START_INDEX + 10;
+    /** エラー情報の取得用に追加（デイリーランク）.*/
+    public final static int HOME_CONTENTS_DAILY_RANK_LIST = HOME_CONTENTS_LIST_START_INDEX + 11;
+    /** エラー情報の取得用に追加（番組表）.*/
+    public final static int HOME_CONTENTS_TV_SCHEDULE = HOME_CONTENTS_LIST_START_INDEX + 12;
+    /** 最後のデータ読み込みコールバックを受けてからタイムアウトが発動するまでの時間. */
     private final static long HOME_MENU_TIME_OUT_TIME = 10000L;
-    /**
-     * HomeDataProvider.
-     */
+    /** HomeDataProvider.*/
     private HomeDataProvider mHomeDataProvider = null;
-    /**
-     * UserInfoDataProvider.
-     */
+    /** UserInfoDataProvider.*/
     private UserInfoDataProvider mUserInfoDataProvider = null;
-    /**
-     * 検索完了フラグ.
-     */
+    /** チャンネル情報取得プロバイダー.*/
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /** 検索完了フラグ.*/
     private boolean mIsSearchDone = false;
-    /**
-     * 情報取得に失敗したときのフラグ.
-     */
+    /** 情報取得に失敗したときのフラグ.*/
     private boolean mPartDataGetFailed = false;
-    /**
-     * ホーム画面表示時にdアカウントが取得できていなかった場合に、取得後にユーザー情報を取得しに行くフラグ.
-     */
+    /** ホーム画面表示時にdアカウントが取得できていなかった場合に、取得後にユーザー情報を取得しに行くフラグ.*/
     private boolean mUserInfoGetRequest = false;
-    /**
-     * dアカウントの取得が行えない事が確定した場合はtrueに変更する.
-     */
+    /** dアカウントの取得が行えない事が確定した場合はtrueに変更する.*/
     private boolean mIsDaccountGetNg = false;
-    /**
-     * ユーザーがスクロール操作を行ったならばtrueにして、以後のスクロール位置補正をスキップさせる.
-     */
+    /** ユーザーがスクロール操作を行ったならばtrueにして、以後のスクロール位置補正をスキップさせる.*/
     private boolean mAlreadyScroll = false;
-    /**
-     * 準備が整うまでは、メニューボタンの表示要求を無効化するフラグ.
-     */
+    /** 準備が整うまでは、メニューボタンの表示要求を無効化するフラグ.*/
     private boolean mShowProgessBarEnabled = false;
-    /**
-     * ユーザーのスクロールを検知する為の、以前のスクロール位置.
-     */
+    /** ユーザーのスクロールを検知する為の、以前のスクロール位置.*/
     private int mOldScrollPosition = 0;
-    /**
-     * ホーム画面でOTTチェック処理フラグ.
-     */
+    /** ホーム画面でOTTチェック処理フラグ.*/
     private boolean isOttChecked = false;
-
-    /**
-     * 前回 onPause 時間.
-     */
+    /** チャンネル情報.*/
+    private ArrayList<ChannelInfo> mChannels;
+    /** おすすめ番組情報.*/
+    private List<ContentsData> redChList;
+    /** クリップ番組情報.*/
+    private List<ContentsData> tvClipList;
+    /** 前回 onPause 時間.*/
     private long mLastTimeOnPause = 0;
-    /**
-     * メニュー表示制御タイムアウト制御用.
-     */
+    /** メニュー表示制御タイムアウト制御用.*/
     private Handler mMenuTimeOutHandler = null;
-    /**
-     * メニュー表示制御タイムアウト制御用.
-     */
+    /** メニュー表示制御タイムアウト制御用.*/
     private Runnable mMenuTimeOutRunnable = null;
 
     @Override
@@ -237,7 +178,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 汎用エラーダイアログ.
-     *
      * @param message       エラーメッセージ
      * @param confirmTextId OKボタンに表示する文字のリソース
      */
@@ -251,7 +191,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             // Cancelable
             failedRecordingReservationDialog.setCancelable(false);
             failedRecordingReservationDialog.showDialog();
-
             failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
@@ -260,7 +199,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mIsCloseDialog = false;
                 }
             });
-
             failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
                 public void otherDismissCallback() {
@@ -268,7 +206,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     showProgessBar(false);
                     mIsCloseDialog = false;
                 }
-
                 @Override
                 public void allDismissCallback() {
                     //NOP
@@ -279,7 +216,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * プロセスバーを表示する.
-     *
      * @param showProgessBar プロセスバーを表示するかどうか
      */
     private void showProgessBar(final boolean showProgessBar) {
@@ -296,7 +232,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             if (mShowProgessBarEnabled) {
                 relativeLayout.setVisibility(View.GONE);
             }
-
             //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う(通信手段が無い場合、mScrollViewが未初期化でここに来る事があったので、ヌルチェックを追加)
             if (!mAlreadyScroll && mScrollView != null) {
                 //既にユーザー操作によるスクロールがまだ行われていない場合は、補正を行う
@@ -323,23 +258,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void enableGlobalMenuIconHome(final boolean isOn) {
         //通常のグローバルメニュー制御を呼ぶ
         enableGlobalMenuIcon(isOn);
-
         //ユーザー情報を取得する
         UserState userState = UserInfoUtils.getUserState(this);
-
         //ユーザー状況の判定
         if (userState == UserState.CONTRACT_OK_PARING_OK
                 || userState == UserState.CONTRACT_OK_PAIRING_NG
                 || mAgreementRl.getVisibility() == View.VISIBLE) {
             //契約済みか契約無しを検知したか、未ログインが確定して誘導バナーが表示されたならば、この時点でメニューを活性化する
             setMenuIconEnabled(true);
-
             //以後はshowProgessBarでの制御も有効となる
             setShowProgessBarEnabled(true);
         } else {
             //その他の場合は、ユーザー情報データプロバイダーの結果待ちとする
             DTVTLogger.debug("CONTRACT or PARING NG GlobalMenu not enabled");
-
             //不正状態用のタイムアウトを設定する
             setGlobalMenuTimeOut();
         }
@@ -356,7 +287,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 mMenuTimeOutHandler.removeCallbacks(mMenuTimeOutRunnable);
                 mMenuTimeOutRunnable = null;
             }
-
             //情報の確定が終わっていないので、タイムアウト処理を準備する
             mMenuTimeOutHandler = new Handler();
             mMenuTimeOutHandler.postDelayed(mMenuTimeOutRunnable = new Runnable() {
@@ -369,11 +299,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         //最後のコールバックから指定時間が経過して、まだメニューが非活性の場合は、メニューを活性化する
                         setShowProgessBarEnabled(true);
                         setMenuIconEnabled(true);
-
                         //プログレスも消す
                         showProgessBar(false);
                     }
-
                     //タイムアウト処理は初期化
                     mMenuTimeOutHandler.removeCallbacks(mMenuTimeOutRunnable);
                     mMenuTimeOutRunnable = null;
@@ -404,24 +332,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (!isOttChecked) {
             //ワンタイムトークンチェックフラグを済みにする
             isOttChecked = true;
-
             setDaccountControl();
-
             //この段階で通信不能だった場合はdアカウントの処理を呼び出さない。事実上ホーム画面は動作しないので、問題は無い
             if (!NetWorkUtils.isOnline(this)) {
                 //通信不能なので、この時点で以後の操作を有効にする
                 setShowProgessBarEnabled(true);
-
                 //dアカウントの処理を行わないとグローバルメニューを活性化する機会が失われるので、この時点で活性化する
                 setMenuIconEnabled(true);
                 enableGlobalMenuIcon(true);
             }
         }
-
         //ユーザー情報取得開始(super.onResumeで行われるdアカウントの取得よりも先に行う事で、
         // dアカウントが未取得だった場合のユーザー情報再取得への流れを明確化する)
         getUserInfoStart();
-
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_home),
                 ContentUtils.getParingAndLoginCustomDimensions(HomeActivity.this));
@@ -430,17 +353,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * ホーム画面表示時のユーザー情報取得部.
-     *
      * (複数個所から呼ばれることになったので、onResumeから分離)
      */
     private void getUserInfoStart() {
         DTVTLogger.start();
-
         //ユーザー情報リクエストをリセット
         mUserInfoGetRequest = false;
-
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
-
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
         if (mUserInfoDataProvider.isUserInfoTimeOut()
                 && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
@@ -456,11 +375,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             DTVTLogger.debug("getDaccount="
                     + SharedPreferencesUtils.getSharedPreferencesDaccountId(this));
             DTVTLogger.debug("userInfo Timeout?=" + mUserInfoDataProvider.isUserInfoTimeOut());
-
             if (!mIsSearchDone) {
                 //dアカウントが取れていないので、取得後のコールバックにユーザー情報取得を依頼する
                 mUserInfoGetRequest = true;
-
                 //起動時はプログレスダイアログを表示
                 requestHomeData();
             } else {
@@ -479,49 +396,40 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onDaccountOttGetComplete(final boolean result) {
         //dアカウントの取得が終わった際に呼ばれるコールバック
         super.onDaccountOttGetComplete(result);
-
         DTVTLogger.start("this is home. result = " + result
                 + "/mUserInfoGetRequest = " + mUserInfoGetRequest);
         DTVTLogger.debug("onDaccountOttGetComplete daccount = "
                 + SharedPreferencesUtils.getSharedPreferencesDaccountId(
                 getApplicationContext()));
-
         //ユーザー情報取得依頼をチェック
         if (mUserInfoGetRequest && result) {
             //依頼が出ているので、dアカウントの取得に成功していればユーザー情報の取得を開始
             getUserInfo();
         } else if (!result) {
             DTVTLogger.debug("onDaccountOttGetComplete result=false");
-
             //dアカウントが取得できない事が確定したので、バナーの表示を行う
             mIsDaccountGetNg = true;
-
             //バナー表示の更新の為、UIタスクに処理を移譲
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     DTVTLogger.debug("onDaccountOttGetComplete call showHomeBanner");
                     showHomeBanner();
-
                     //dアカウントコントロールクラスを呼び出す
                     DaccountControl daccountControl = getDAccountControl();
-
                     //レイアウトの表示件数のチェックとエラーのチェックを行う
                     if (checkMainLayout() && daccountControl != null
                             && daccountControl.getResult() == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
                         //dアカウントアプリ実行不能時点でtrueにしたプログレス表示を
                         setShowProgessBarEnabled(false);
-
                         //この時点で表示が無いと言う事は、dアカウント設定アプリが無く、データが読めなかったので改めて呼び出す
                         requestHomeData();
                     }
                 }
             });
         }
-
         //ユーザー情報取得依頼フラグをクリア（ユーザー情報取得側でも行っているが、dアカウント取得に失敗した時の為にここでもクリア）
         mUserInfoGetRequest = false;
-
         DTVTLogger.end();
     }
 
@@ -541,7 +449,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private boolean checkMainLayout() {
         //表示状況がGONEでは無い物の数
         int notVisibleCounter = 0;
-
         //レイアウトに登録されているビューの個数だけ回る（先頭は数えないので1から始める）
         for (int counter = 1; counter < mLinearLayout.getChildCount(); counter++) {
             //子ビューの表示状態を見る
@@ -550,14 +457,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 notVisibleCounter++;
             }
         }
-
-        if (notVisibleCounter == 0) {
-            //先頭以外のビューが全て非表示だった
-            return true;
-        }
-
-        //表示しているビューが存在したのでfalse
-        return false;
+        return notVisibleCounter == 0;
     }
 
 
@@ -566,6 +466,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onStartCommunication();
         DTVTLogger.start();
         //通信を再開
+        if (mScaledDownProgramListDataProvider != null) {
+            mScaledDownProgramListDataProvider.enableConnect();
+        }
         if (mHomeDataProvider != null) {
             mHomeDataProvider.enableConnect();
         }
@@ -581,15 +484,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLastTimeOnPause = DateUtils.getNowTimeFormatEpoch();
         //通信を止める
         if (mHomeDataProvider != null) {
-            StopHomeDataConnect stopHomeDataConnect = new StopHomeDataConnect();
-            stopHomeDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mHomeDataProvider);
+            new StopHomeDataConnect().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mHomeDataProvider);
         }
-
         if (mUserInfoDataProvider != null) {
-            StopUserInfoDataConnect stopUserInfoDataConnect = new StopUserInfoDataConnect();
-            stopUserInfoDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUserInfoDataProvider);
+            new StopUserInfoDataConnect().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUserInfoDataProvider);
         }
-
+        if (mScaledDownProgramListDataProvider != null) {
+            new StopScaledProListDataConnect().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
+        }
         //ホーム画面の終了を判定する
         if (isFinishing()) {
             //終了後はログアウトダイアログの優先表示は必要ないので、falseを設定
@@ -599,7 +501,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 契約情報取得後のホーム画面用データ取得開始.
-     *
      * 先行取得データの削除を行ってから、ホーム画面用データを取得する
      */
     private void requestHomeDataClearPrecedingData() {
@@ -607,7 +508,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (mHomeDataProvider != null) {
             mHomeDataProvider.clearPrecedingData();
         }
-
         //あとは通常の処理に移譲する
         requestHomeData();
     }
@@ -713,7 +613,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-
         //レイアウトを非表示にする
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
         mLinearLayout.setVisibility(View.GONE);
@@ -731,7 +630,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
         }
-
         //グローバルメニューを非活性にする
         setMenuIconEnabled(false);
     }
@@ -744,7 +642,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void setMenuIconEnabled(final boolean enableSwitch) {
         //グローバルメニューのアイコンを取得
         View menuIcon = getMenuImageViewForBase();
-
         //指定された値を設定する
         if (menuIcon != null) {
             //表示非表示の制御をこちらに移設した
@@ -762,10 +659,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void initScrollView() {
         //スクロール実行フラグの初期化
         mAlreadyScroll = false;
-
         //スクロールビューの取得
         mScrollView = findViewById(R.id.home_main_layout_scroll_view);
-
         //スクロール検知の実装
         mScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -782,7 +677,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                             //スクロールを行ったスイッチをセット。以後のスクロール位置補正は、最上段にはならない
                             mAlreadyScroll = true;
                         }
-
                         //今の位置を代入する
                         mOldScrollPosition = view.getScrollY();
                         break;
@@ -956,8 +850,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         if (tvClipList != null && tvClipList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
+            List<ContentsData> newTvClipList = tvClipList;
+            if (mChannels != null) {
+                newTvClipList = ContentUtils.getContentsDataAddChannelNameByPlala(tvClipList, mChannels);
+            }
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, newTvClipList);
             mHandler.sendMessage(msg);
+            HomeActivity.this.tvClipList = tvClipList;
         } else {
             showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_TV_CLIP);
         }
@@ -1020,8 +919,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
                 if (redChList != null && redChList.size() > 0) {
-                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
+                    List<ContentsData> newRedChList = redChList;
+                    if (mChannels != null) {
+                        newRedChList = ContentUtils.getContentsDataAddChannelNameByRecommend(redChList, mChannels);
+                    }
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, newRedChList);
                     mHandler.sendMessage(msg);
+                    HomeActivity.this.redChList = redChList;
                 } else {
                     showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_RECOMMEND_PROGRAM);
                 }
@@ -1083,7 +987,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     getUserInfo();
                 }
             });
-
             failedRecordingReservationDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
                 @Override
                 public void onCancelCallback() {
@@ -1141,7 +1044,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * network状態確認.
-     *
      * @return ネットワーク状態フラグ
      */
     private boolean networkCheck() {
@@ -1154,9 +1056,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    /**
+     * CH一覧情報取得.
+     */
+    private void getChannelListData() {
+        DTVTLogger.start();
+        mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(HomeActivity.this, this);
+        mScaledDownProgramListDataProvider.setAreaCode(UserInfoUtils.getAreaCode(this));
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+        DTVTLogger.end();
+    }
+
     @Override
-    public void userInfoListCallback(final boolean isDataChange,
-        final List<UserInfoList> userList, final boolean isContractChange) {
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        DTVTLogger.start();
+        if (null == channels) {
+            return;
+        }
+        mChannels = channels;
+        if (channels.size() > 0) {
+            if (redChList != null) {
+                redChList = ContentUtils.getContentsDataAddChannelNameByRecommend(redChList, mChannels);
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
+                mHandler.sendMessage(msg);
+            }
+            if (tvClipList != null) {
+                tvClipList = ContentUtils.getContentsDataAddChannelNameByPlala(tvClipList, mChannels);
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
+                mHandler.sendMessage(msg);
+            }
+        }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> userList, final boolean isContractChange) {
+        getChannelListData();
         startTvProgramIntentService();
         runOnUiThread(new Runnable() {
             @Override
@@ -1210,7 +1145,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             //UserInfo取得済み
             requestHomeData();
         }
-
         //ユーザー情報の取得が終わり、状況が確定したので、メニューボタンを有効化
         enableGlobalMenuIconHome(true);
     }
