@@ -993,7 +993,7 @@ public class ContentUtils {
                 //メタレスポンス「tv_service」が「1」
                 if (TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
                     //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
-                    if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
+                    if (!TextUtils.isEmpty(metaServiceIdUniq) && metaServiceIdUniq.equals(channelServiceIdUniq)) {
                         //チャンネルメタレスポンス「ch_type」が「kihon_ch」、「basic_ch」、「trial_free」
                         if (CH_TYPE_KIHON.equals(chType)
                                 || CH_TYPE_BASIC.equals(chType)
@@ -1004,15 +1004,11 @@ public class ContentUtils {
                                 //視聴可能
                                 return ViewIngType.ENABLE_WATCH;
                                 //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」
-                            } else if (publishStartDate > nowDate
-                                    || nowDate >= publishEndDate) {
+                            } else {
                                 //視聴不可(放送時間外のため再生導線を非表示)
                                 return ViewIngType.DISABLE_WATCH_AND_PLAY;
-                            } else {
-                                //視聴可否判定外
-                                return ViewIngType.NONE_STATUS;
                             }
-                            //チャンネルメタレスポンス「ch_type」が「premium_ch」
+                        //チャンネルメタレスポンス「ch_type」が「premium_ch」
                         } else if (CH_TYPE_PREMIUM.equals(chType)) {
                             //購入済み判定開始
                             return ViewIngType.PREMIUM_CHECK_START;
@@ -1063,20 +1059,15 @@ public class ContentUtils {
                     //メタレスポンス「tv_service」が「3」
                 } else if (TV_SERVICE_FLAG_TTB.equals(tvService)) {
                     //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
-                    if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
+                    if (!TextUtils.isEmpty(metaServiceIdUniq) && metaServiceIdUniq.equals(channelServiceIdUniq)) {
                         //チャンネルメタレスポンス「ch_type」が「kihon_ch」
                         if (publishStartDate <= nowDate
                                 && nowDate < publishEndDate) {
                             //視聴可能
                             return ViewIngType.ENABLE_WATCH;
                             //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」
-                        } else if (publishStartDate > nowDate
-                                || nowDate >= publishEndDate) {
-                            //視聴不可(放送時間外のため再生導線を非表示)
-                            return ViewIngType.DISABLE_WATCH_AND_PLAY;
                         } else {
-                            //視聴可否判定外
-                            return ViewIngType.NONE_STATUS;
+                            return ViewIngType.DISABLE_WATCH_AND_PLAY;
                         }
                     } else {
                         //取得したチャンネル情報が不正の場合
@@ -1088,29 +1079,22 @@ public class ContentUtils {
                     if (CH_TYPE_PREMIUM.equals(chType)) {
                         //サムネイル領域文言 「本チャンネル（有料）はテレビで視聴できます。\nチャンネルの契約状態はテレビでご確認ください。」
                         return ViewIngType.BS_PREMIUM_CH;
-                    } else if (CH_TYPE_KIHON.equals(chType)) {
+                    } else {
                         //メタレスポンスの「service_id_uniq」とCH一覧取得IFで取得したチャンネルの「service_id_uniq」で番組に紐づくチャンネルを特定する
-                        if (metaServiceIdUniq.equals(channelServiceIdUniq)) {
+                        if (!TextUtils.isEmpty(metaServiceIdUniq) && metaServiceIdUniq.equals(channelServiceIdUniq)) {
                             if (publishStartDate <= nowDate
                                     && nowDate < publishEndDate) {
                                 //視聴可能
                                 return ViewIngType.ENABLE_WATCH;
                                 //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」
-                            } else if (publishStartDate > nowDate
-                                    || nowDate >= publishEndDate) {
+                            } else {
                                 //視聴不可(放送時間外のため再生導線を非表示)
                                 return ViewIngType.DISABLE_WATCH_AND_PLAY;
-                            } else {
-                                //視聴可否判定外
-                                return ViewIngType.NONE_STATUS;
-                            }
+                            } 
                         } else {
                             //取得したチャンネル情報が不正の場合
                             return ViewIngType.NONE_STATUS;
                         }
-                    } else {
-                        //取得したチャンネル情報が不正の場合
-                        return ViewIngType.NONE_STATUS;
                     }
                 } else {
                     //視聴可否範囲外
