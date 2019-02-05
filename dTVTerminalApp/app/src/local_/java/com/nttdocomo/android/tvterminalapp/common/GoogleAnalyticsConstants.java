@@ -8,8 +8,13 @@ package com.nttdocomo.android.tvterminalapp.common;
  * ローカルGoogleアナリティクス.
  */
 public class GoogleAnalyticsConstants {
+    /** Googleアナリティクス用のID.*/
+    private static final String GOOGLE_ANALYTICS_ID_DEVELOP = "UA-117255147-1";
     /**
-     * Googleアナリティクス用のID.
+     * アナリティクストラキングID取得.
+     * @return トラキングID
      */
-    public static final String GOOGLE_ANALYTICS_ID = "UA-117255147-1";
+    public static String getGoogleAnalyticsId() {
+        return GOOGLE_ANALYTICS_ID_DEVELOP;
+    }
 }

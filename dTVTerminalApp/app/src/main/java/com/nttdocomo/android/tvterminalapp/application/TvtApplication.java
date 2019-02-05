@@ -137,7 +137,7 @@ public class TvtApplication extends Application implements Application.ActivityL
     synchronized public Tracker getDefaultTracker() {
         //トラッカーがヌルならば新たに取得
        if (sTracker == null) {
-            sTracker = sAnalytics.newTracker(GoogleAnalyticsConstants.GOOGLE_ANALYTICS_ID);
+            sTracker = sAnalytics.newTracker(GoogleAnalyticsConstants.getGoogleAnalyticsId());
         }
         return sTracker;
     }
