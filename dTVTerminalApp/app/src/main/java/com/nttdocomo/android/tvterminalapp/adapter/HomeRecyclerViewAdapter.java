@@ -402,7 +402,23 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
         //URLによって、サムネイル取得
         if (!mIsDownloadStop) {
-            viewHolder.mImage.setTag(thumbnail);
+            if (mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM) {
+                if (ContentUtils.isBsOrTtbProgramOther(contentsData)) {
+                    viewHolder.mImage.setTag(R.id.tag_key, thumbnail);
+                } else {
+                    viewHolder.mImage.setTag(thumbnail);
+                }
+            } else if (mIndex == HOME_CONTENTS_SORT_TV_CLIP
+                    || mIndex == HOME_CONTENTS_SORT_TODAY
+                    || mIndex == RANKING_CONTENTES_WEEK_SORT) {
+                if (ContentUtils.isBsOrTtbProgramPlala(contentsData)) {
+                    viewHolder.mImage.setTag(R.id.tag_key, thumbnail);
+                } else {
+                    viewHolder.mImage.setTag(thumbnail);
+                }
+            } else {
+                viewHolder.mImage.setTag(thumbnail);
+            }
             mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
             if (bitmap != null) {

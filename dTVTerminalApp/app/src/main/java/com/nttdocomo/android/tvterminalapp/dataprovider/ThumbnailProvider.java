@@ -90,17 +90,18 @@ public class ThumbnailProvider {
 
 		// メモリから取得
 		Bitmap bitmap = null;
-		if (!TextUtils.isEmpty(imageUrl) && mImageSizeType != ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL) {
-			bitmap = thumbnailCacheManager.getBitmapFromMem(imageUrl);
-		}
-		if (bitmap != null) {
-			DTVTLogger.debug("image exists in memory");
-			return bitmap;
+		if (imageView.getTag() != null) {
+			if (!TextUtils.isEmpty(imageUrl) && mImageSizeType != ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL) {
+				bitmap = thumbnailCacheManager.getBitmapFromMem(imageUrl);
+			}
+			if (bitmap != null) {
+				DTVTLogger.debug("image exists in memory");
+				return bitmap;
+			}
 		}
 
 		if (!mIsCancel) {
 			// サーバからQueueで取得
-            imageView.setTag(imageUrl);
             //queue処理を追加
             if (MAX_QUEUE_COUNT > mCurrentQueueCount) {
                 ++mCurrentQueueCount;

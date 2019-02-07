@@ -799,7 +799,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL);
             }
             if (!mIsDownloadStop) {
-                mThumbnail.setTag(url);
+                if (mDetailFullData != null && (ContentUtils.TV_SERVICE_FLAG_TTB.equals(mDetailFullData.getmTv_service())
+                        || ContentUtils.TV_SERVICE_FLAG_BS.equals(mDetailFullData.getmTv_service()))) {
+                    mThumbnail.setTag(R.id.tag_key, url);
+                } else {
+                    mThumbnail.setTag(url);
+                }
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
                 if (bitmap != null) {
                     //サムネイル取得失敗時は取得失敗画像をセットする

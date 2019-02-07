@@ -49,7 +49,6 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         /**チャンネル一覧.*/
         CHANNEL,
     }
-
     /** サムネイルのURL. */
     private String mImageUrl;
     /** 取得したサムネイルを表示するImageView. */
@@ -78,7 +77,6 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         mThumbnailProvider = thumbnailProvider;
         mImageSizeType = type;
         mContext = context.getApplicationContext();
-
         //コネクション蓄積が存在しなければ作成する
         if (mUrlConnections == null) {
             mUrlConnections = new ArrayList<>();
@@ -95,12 +93,14 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 return null;
             }
             Bitmap bitmap = null;
-            if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
-                bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl, mImageSizeType);
-            }
-            if (bitmap != null) {
-                mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
-                return bitmap;
+            if (mImageView.getTag() != null) {
+                if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
+                    bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl, mImageSizeType);
+                }
+                if (bitmap != null) {
+                    mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                    return bitmap;
+                }
             }
 
             //圏外等の判定
@@ -144,17 +144,20 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 }
 
                 if (bitmap != null) {
-                    if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
-                        // ディスクにプッシュする（詳細画面除外）
-                        if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
+                    // ディスクにプッシュする（詳細画面除外）
+                    if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
+                        if (mImageView.getTag() != null) {
                             mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
                         }
-
+                    }
+                    if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
                         bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
                     }
                     // メモリにプッシュする（詳細画面除外）
                     if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
-                        mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                        if (mImageView.getTag() != null) {
+                            mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                        }
                     }
                 }
             }
@@ -195,13 +198,17 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             if (TextUtils.isEmpty(mImageUrl)) {
                 setErrorImageResource(mImageView);
             } else {
+                Object imageTag = mImageView.getTag();
+                if (imageTag == null) {
+                    imageTag = mImageView.getTag(R.id.tag_key);
+                }
                 if (result != null) {
                     // 画像のpositionをズレないよう
-                    if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
+                    if (imageTag != null && mImageUrl.equals(imageTag.toString())) {
                         mImageView.setImageBitmap(result);
                     }
                 } else { // 画像取得失敗
-                    if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
+                    if (imageTag != null && mImageUrl.equals(imageTag.toString())) {
                         setErrorImageResource(mImageView);
                     }
                 }

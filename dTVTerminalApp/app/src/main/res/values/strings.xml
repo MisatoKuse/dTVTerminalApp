@@ -503,6 +503,8 @@
     <string name="tutorial_show_agreement">規約を表示</string>
     <string name="tutorial_agreement_button">規約に同意して利用を開始</string>
 
+    <item type="id" name="tag_key"> </item>
+
     <!-- Google Analytics スクリーン名 -->
     <string name="google_analytics_screen_name_splash">スプラッシュ</string>
     <string name="google_analytics_screen_name_home">ホーム</string>
