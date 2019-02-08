@@ -42,7 +42,6 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadData;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
-import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -205,12 +204,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
-        boolean isRunning = isDownloadServiceRunning();
-        if (!isRunning) {
-//            DlnaProvDownload.uninitGlobalDl();
-        }
     }
 
     @Override
@@ -559,7 +553,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(RecordedListActivity.this);
                         // 未ペアリング時
                         if (dlnaDmsItem.mControlUrl.isEmpty()) {
-                            clearFragment(0);
+                            clearFragment();
                             setProgressBarGone();
                             setVideoBrows(null, false);
                         } else {
@@ -568,7 +562,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case HOME_IN:
                                 case HOME_OUT_CONNECT:
                                     if (mRequestIndex == 0 && !mIsLoading) {
-                                        clearFragment(0);
+                                        clearFragment();
                                         setRecordedTakeOutContents();
                                     }
                                     mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
@@ -579,7 +573,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                         setRecordedTakeOutContents();
                                         setVideoBrows(mDlnaRecVideoItems, true);
                                     } else {
-                                        clearFragment(0);
+                                        clearFragment();
                                         setRecordedTakeOutContents();
                                         setVideoBrows(null, false);
                                     }
@@ -587,7 +581,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                     break;
                                 case NONE_PAIRING:
                                 default:
-                                    clearFragment(0);
+                                    clearFragment();
                                     setVideoBrows(null, false);
                                     setProgressBarGone();
                                     break;
@@ -653,16 +647,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     /**
      * フラグメントをクリア.
-     *
-     * @param tabNo タブナンバー
      */
-    private void clearFragment(final int tabNo) {
+    private void clearFragment() {
         DTVTLogger.start();
         if (null != mViewPager) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo);
+                    RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(0);
                     baseFragment.clear();
                     baseFragment.setIsUiRunning(false);
                     baseFragment.notifyDataSetChanged();
@@ -683,15 +675,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         });
-    }
-
-    /**
-     * ダウンロードが動作しているか.
-     *
-     * @return ダウンロードが動作しているか
-     */
-    private boolean isDownloadServiceRunning() {
-        return DownloadService.isDownloadServiceRunning();
     }
 
     /**
@@ -984,7 +967,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             } else if (DownloadService.DOWNLOAD_ON_FAIL.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DOWNLOAD_PARAM_STRING);
-                int error = intent.getIntExtra(DownloadService.DOWNLOAD_PARAM_INT, DownloadListener.DownLoadError.DLError_NoError.ordinal());
                 baseFragment.onDownloadFailByBg(fullPath);
             } else if (DownloadService.DOWNLOAD_ON_LOW_STORAGE_SPACE.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
@@ -1110,8 +1092,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private boolean checkDataIsExist(final String itemID, final RecordedBaseFragment baseFragment) {
         boolean isExist = false;
         if (TextUtils.isEmpty(itemID)) {
-            isExist = true;
-            return isExist;
+            return true;
         }
         for (int i = 0; i < baseFragment.getContentsListSize(); i++) {
             RecordedContentsDetailData detailDataInList = baseFragment.getContentsListElement(i);

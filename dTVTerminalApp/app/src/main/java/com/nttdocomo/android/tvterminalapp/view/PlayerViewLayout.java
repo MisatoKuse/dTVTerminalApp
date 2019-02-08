@@ -98,6 +98,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         PLAYER_CONTROL_FULL_SCREEN
     }
 
+    /**コントローラービュー操作タイプ.*/
     public enum PlayerEventType {
         /**再生・一時停止ボタンタップ.*/
         PLAY_PAUSE_TAP,
@@ -358,7 +359,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * プレイヤー初期化.
      * @param playerEventType プレイヤーイベント
      */
-    public void setPlayerEventType(PlayerEventType playerEventType) {
+    public void setPlayerEventType(final PlayerEventType playerEventType) {
         this.mPlayerEventType = playerEventType;
     }
 
@@ -666,7 +667,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     public void onError(final MediaPlayerController mediaPlayerController, final int what, final long arg) {
         DTVTLogger.debug("Player Error what:" + what + " arg:" + arg);
         if (mPlayerController != null && isSeekable()) {
-            if (!mIsCompleted && isSeekable() && mReconnectStartTime == 0) {
+            if (!mIsCompleted && mReconnectStartTime == 0) {
                 mPlayStartPosition = getCurrentPosition();
                 mIsCompleted = true;
             }
@@ -777,7 +778,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     }
 
     /**
-     * 横画面視聴中にバックキーボタンをタップした際に、縦画面に戻る処理
+     * 横画面視聴中にバックキーボタンをタップした際に、縦画面に戻る処理.
      */
     public void tapBackKey() {
         mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -883,7 +884,6 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         this.getKeepScreenOn();
         mRecordCtrlView = (RelativeLayout) View.inflate(mContext, R.layout.tv_player_ctrl_video_record, null);
         mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
-        RelativeLayout mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
         mVideoPlay = mRecordCtrlView.findViewById(R.id.tv_player_control_play);
         mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
         mVideoPause = mRecordCtrlView.findViewById(R.id.tv_player_control_pause);
@@ -1060,11 +1060,13 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             }
             if (playerParams.width < getScreenNavWidth()) {
                 playerParams.width = getScreenNavWidth();
-                int ratio = mPlayerController.getVideoAspectRatio();
-                if (ratio == SecureVideoView.RATIO_4x3) {
-                    playerParams.height = (getScreenNavWidth() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4);
-                } else {
-                    playerParams.height = (getScreenNavWidth() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16);
+                if (mPlayerController != null) {
+                    int ratio = mPlayerController.getVideoAspectRatio();
+                    if (ratio == SecureVideoView.RATIO_4x3) {
+                        playerParams.height = (getScreenNavWidth() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4);
+                    } else {
+                        playerParams.height = (getScreenNavWidth() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16);
+                    }
                 }
             }
             setPlayerProgressView(false);
@@ -1249,6 +1251,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     /**
      * initView player.
      * @param playStartPosition 再生開始ポジション
+     * @return 初期化結果
      */
     public boolean initSecurePlayer(final int playStartPosition) {
         DTVTLogger.start();
@@ -1349,6 +1352,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
 
     /**
      * コンテンツ再生開始時と終了および10秒バック、30秒スキップ後、フルスクリーンボタンタップ後の表示処理.
+     * @param playerEventType プレイヤーイベント
      */
     private void showControlViewAfterPlayerEvent(final PlayerEventType playerEventType) {
         showControlView();
@@ -1565,8 +1569,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 && touchY >= mVideoFast30.getY() && touchY <= mVideoFast30.getY() + mVideoFast30.getHeight()) {
             controlType = PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP;
         } else if (touchX >= mVideoFullScreen.getX() && touchX <= mVideoFullScreen.getX() + mVideoFullScreen.getWidth()
-                && touchY >= mVideoFullScreen.getY() && touchY <= mVideoFullScreen.getY() + mVideoFullScreen.getHeight())
+                && touchY >= mVideoFullScreen.getY() && touchY <= mVideoFullScreen.getY() + mVideoFullScreen.getHeight()) {
             controlType = PlayerControlType.PLAYER_CONTROL_FULL_SCREEN;
+        }
         return controlType;
     }
 
@@ -1786,9 +1791,16 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      */
     private void release() {
         setCanPlay(false);
-        mPlayerController.setCaptionDataListener(null);
-        mPlayerController.release();
-        mPlayerController = null;
+        if (mPlayerController != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mPlayerController.setCaptionDataListener(null);
+                    mPlayerController.release();
+                    mPlayerController = null;
+                }
+            }).start();
+        }
     }
 
     /**
@@ -1808,15 +1820,6 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         if (!mIsVideoBroadcast) {
             release();
         }
-    }
-
-    /**
-     * 前回の再生位置取得.
-     *
-     * @return 前回の再生位置
-     */
-    public int getPlayStartPosition() {
-        return mPlayStartPosition;
     }
 
     /**
