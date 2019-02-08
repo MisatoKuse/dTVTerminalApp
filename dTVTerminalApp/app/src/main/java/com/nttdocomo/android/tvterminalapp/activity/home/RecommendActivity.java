@@ -345,7 +345,7 @@ public class RecommendActivity extends BaseActivity implements
         }
 
         baseFragment.clear();
-
+        baseFragment.setProgressBarFlag(false);
         if (resultInfoList == null) {
             baseFragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
         } else if (resultInfoList.isEmpty() || resultInfoList.size() <= 0) {
@@ -416,6 +416,7 @@ public class RecommendActivity extends BaseActivity implements
                 fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
                 //プログレスは消す
                 fragment.showProgressBar(false);
+                fragment.setProgressBarFlag(false);
             }
         }
         showErrorMessage(mRecommendViewPager.getCurrentItem());

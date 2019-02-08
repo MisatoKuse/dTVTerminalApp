@@ -64,6 +64,10 @@ public class RecommendBaseFragment extends Fragment implements AdapterView.OnIte
      */
     private TextView mNoDataMessage = null;
     /**
+     * プログレスバーの再表示フラグ.
+     */
+    private boolean mIsShowProgressBar = true;
+    /**
      * アダプター.
      */
     private ContentsAdapter mRecommendListBaseAdapter = null;
@@ -184,7 +188,6 @@ public class RecommendBaseFragment extends Fragment implements AdapterView.OnIte
         DTVTLogger.end();
     }
 
-
     /**
      * データの更新.
      *
@@ -257,6 +260,16 @@ public class RecommendBaseFragment extends Fragment implements AdapterView.OnIte
         }
     }
 
+    /**
+     * プログレスバーの再表示フラグセット.
+     * @param isShowProgressBar
+     */
+    public void setProgressBarFlag(final boolean isShowProgressBar) {
+        // すでにコールバックされた場合はBG→FGでプログレスバーを表示しない
+        // BG→FG後に再取得処理はないため、BG→FG後は再表示しない
+        mIsShowProgressBar = isShowProgressBar;
+    }
+
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         ContentsData info = mData.get(i);
@@ -288,6 +301,12 @@ public class RecommendBaseFragment extends Fragment implements AdapterView.OnIte
      */
     public void enableContentsAdapterCommunication() {
         DTVTLogger.start();
+        // 情報取得のコールバックがなかった場合は、一律プログレスバーを表示
+        if (mIsShowProgressBar) {
+            if (mData == null || mData.size() == 0) {
+                showProgressBar(true);
+            }
+        }
         if (mRecommendListBaseAdapter != null) {
             mRecommendListBaseAdapter.enableConnect();
         }

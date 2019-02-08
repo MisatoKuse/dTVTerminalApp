@@ -730,9 +730,9 @@ public class SearchTopActivity extends BaseActivity
         ErrorState errorState = mSearchDataProvider.getError();
         if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getErrorMessage();
-            if (!TextUtils.isEmpty(message)) {
-                showGetDataFailedToast(message);
-            }
+            showGetDataFailedToast(message);
+        } else {
+            showGetDataFailedToast();
         }
     }
 

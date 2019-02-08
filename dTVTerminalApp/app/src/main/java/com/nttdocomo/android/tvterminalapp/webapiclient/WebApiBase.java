@@ -74,14 +74,26 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
             //通信キャンセル呼び出し
             getOtt.cancelConnection();
         }
+        ottGetAuthSwitch.setNowAuth(true);
         getOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムパスワードの取得後に呼び出す
                 DTVTLogger.debug("”execDaccountGetOTT” getRecommendSearch getOttCallBack");
-                //TODO CiRCUS経由で検レコサーバへの接続する際に、OTTを使用したサーバ連携については現在申請中のため、OTTを付与した状態での確認は別BLとする
-                mHttpThread = new HttpThread(url, webApiBase, context, "", null);
-                mHttpThread.start();
+                if (result == IDimDefines.RESULT_USER_CANCEL) {
+                    //認証画面でキャンセルされたので、ログアウトダイアログを呼ぶ
+                    ottGetAuthSwitch.showLogoutDialog();
+                } else if (result == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                    //dアカウント設定アプリが見つからなかったので、見つからないダイアログを出す
+                    ottGetAuthSwitch.showDAccountApliNotFoundDialog();
+                } else if (result == IDimDefines.RESULT_INTERNAL_ERROR) {
+                    callback.onFinish("");
+                } else {
+                    DTVTLogger.debug("”execDaccountGetOTT” getRecommendSearch getOttCallBack");
+                    //ワンタイムパスワードの取得後に呼び出す
+                    mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword, getOtt);
+                    mHttpThread.start();
+                }
             }
         });
     }
@@ -107,6 +119,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
 
         //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
         final DaccountGetOtt getOtt = new DaccountGetOtt();
+        ottGetAuthSwitch.setNowAuth(true);
         getOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
