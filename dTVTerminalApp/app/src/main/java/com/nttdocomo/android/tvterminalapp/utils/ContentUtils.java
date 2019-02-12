@@ -2135,12 +2135,12 @@ public class ContentUtils {
 
     /**
      * 地デジまたはBS番組.
-     * @param contentsData ContentsData
+     * @param tvService tvService
      * @return true
      */
-    public static boolean isBsOrTtbProgramPlala(final ContentsData contentsData) {
-        return CH_TYPE_TV_SERVICE_TTB.equals(contentsData.getTvService())
-                || CH_TYPE_TV_SERVICE_BS.equals(contentsData.getTvService());
+    public static boolean isBsOrTtbProgramPlala(final String tvService) {
+        return CH_TYPE_TV_SERVICE_TTB.equals(tvService)
+                || CH_TYPE_TV_SERVICE_BS.equals(tvService);
     }
     /**
      * 地デジまたはBS番組.

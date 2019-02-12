@@ -854,7 +854,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     || mType == ActivityTypeItem.TYPE_WEEKLY_RANK
                     || mType == ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV
                     || mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
-                if (ContentUtils.isBsOrTtbProgramPlala(listContentInfo)) {
+                if (TextUtils.isEmpty(listContentInfo.getTvService()) || ContentUtils.isBsOrTtbProgramPlala(listContentInfo.getTvService())) {
                     holder.iv_thumbnail.setTag(R.id.tag_key, thumbnail);
                 } else {
                     holder.iv_thumbnail.setTag(thumbnail);

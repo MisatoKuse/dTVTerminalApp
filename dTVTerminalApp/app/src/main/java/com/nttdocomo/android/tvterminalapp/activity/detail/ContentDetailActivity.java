@@ -799,8 +799,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL);
             }
             if (!mIsDownloadStop) {
-                if (mDetailFullData != null && (ContentUtils.TV_SERVICE_FLAG_TTB.equals(mDetailFullData.getmTv_service())
-                        || ContentUtils.TV_SERVICE_FLAG_BS.equals(mDetailFullData.getmTv_service()))) {
+                if (mDetailFullData != null && (TextUtils.isEmpty(mDetailFullData.getmTv_service())
+                        || ContentUtils.isBsOrTtbProgramPlala(mDetailFullData.getmTv_service()))) {
                     mThumbnail.setTag(R.id.tag_key, url);
                 } else {
                     mThumbnail.setTag(url);
