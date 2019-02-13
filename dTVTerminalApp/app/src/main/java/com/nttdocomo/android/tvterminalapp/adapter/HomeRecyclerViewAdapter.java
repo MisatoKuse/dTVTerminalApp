@@ -410,7 +410,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 }
             } else if (mIndex == HOME_CONTENTS_SORT_TV_CLIP
                     || mIndex == HOME_CONTENTS_SORT_TODAY
-                    || mIndex == RANKING_CONTENTES_WEEK_SORT) {
+                    || mIndex == RANKING_CONTENTES_WEEK_SORT
+                    || mIndex == HOME_CONTENTS_SORT_CHANNEL) {
                 if (TextUtils.isEmpty(contentsData.getTvService()) || ContentUtils.isBsOrTtbProgramPlala(contentsData.getTvService())) {
                     viewHolder.mImage.setTag(R.id.tag_key, thumbnail);
                 } else {

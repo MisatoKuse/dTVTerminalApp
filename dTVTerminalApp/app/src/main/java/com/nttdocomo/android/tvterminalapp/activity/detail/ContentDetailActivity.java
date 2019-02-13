@@ -972,6 +972,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             mViewPager.setCurrentItem(position);
+            if (mChannelFragment != null && position == 1) {
+                if (mDetailFullData != null && (TextUtils.isEmpty(mDetailFullData.getmTv_service())
+                        || ContentUtils.isBsOrTtbProgramPlala(mDetailFullData.getmTv_service()))) {
+                    if (mChannelFragment.getContentsData() != null && mChannelFragment.getContentsData().size() > 0) {
+                        mChannelFragment.setNotifyDataChanged();
+                    }
+                }
+            }
         }
         DTVTLogger.end();
     }
