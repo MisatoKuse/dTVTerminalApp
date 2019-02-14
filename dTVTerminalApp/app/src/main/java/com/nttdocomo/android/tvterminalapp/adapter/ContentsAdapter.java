@@ -846,8 +846,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.rl_thumbnail.setVisibility(View.VISIBLE);
             if (mType == ActivityTypeItem.TYPE_RECOMMEND_LIST || mType == ActivityTypeItem.TYPE_SEARCH_LIST) {
                 if (ContentUtils.isBsOrTtbProgramOther(listContentInfo)) {
+                    holder.iv_thumbnail.setTag(null);
                     holder.iv_thumbnail.setTag(R.id.tag_key, thumbnail);
                 } else {
+                    holder.iv_thumbnail.setTag(R.id.tag_key, null);
                     holder.iv_thumbnail.setTag(thumbnail);
                 }
             } else if (mType == ActivityTypeItem.TYPE_DAILY_RANK
@@ -855,8 +857,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     || mType == ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV
                     || mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 if (TextUtils.isEmpty(listContentInfo.getTvService()) || ContentUtils.isBsOrTtbProgramPlala(listContentInfo.getTvService())) {
+                    holder.iv_thumbnail.setTag(null);
                     holder.iv_thumbnail.setTag(R.id.tag_key, thumbnail);
                 } else {
+                    holder.iv_thumbnail.setTag(R.id.tag_key, null);
                     holder.iv_thumbnail.setTag(thumbnail);
                 }
             } else {

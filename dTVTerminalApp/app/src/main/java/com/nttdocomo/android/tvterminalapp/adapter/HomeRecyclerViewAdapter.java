@@ -404,8 +404,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (!mIsDownloadStop) {
             if (mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM) {
                 if (ContentUtils.isBsOrTtbProgramOther(contentsData)) {
+                    viewHolder.mImage.setTag(null);
                     viewHolder.mImage.setTag(R.id.tag_key, thumbnail);
                 } else {
+                    viewHolder.mImage.setTag(R.id.tag_key, null);
                     viewHolder.mImage.setTag(thumbnail);
                 }
             } else if (mIndex == HOME_CONTENTS_SORT_TV_CLIP
@@ -413,8 +415,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                     || mIndex == RANKING_CONTENTES_WEEK_SORT
                     || mIndex == HOME_CONTENTS_SORT_CHANNEL) {
                 if (TextUtils.isEmpty(contentsData.getTvService()) || ContentUtils.isBsOrTtbProgramPlala(contentsData.getTvService())) {
+                    viewHolder.mImage.setTag(null);
                     viewHolder.mImage.setTag(R.id.tag_key, thumbnail);
                 } else {
+                    viewHolder.mImage.setTag(R.id.tag_key, null);
                     viewHolder.mImage.setTag(thumbnail);
                 }
             } else {
