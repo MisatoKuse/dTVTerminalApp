@@ -333,6 +333,9 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
+        if (mState == SearchState.canceled) {
+            mState = SearchState.running;
+        }
     }
 
     /**

@@ -284,6 +284,9 @@ public class SearchTopActivity extends BaseActivity
                                                             mTimer.cancel();
                                                             mTimer = null;
                                                         }
+                                                        // コールバックが来る前にリクエストする場合もあるので、リクエスト前にキャンセルする
+                                                        cancelDataProvider();
+                                                        setSearchStart(false);
                                                         setSearchData(inputText);
                                                         mBeforeText = inputText;
                                                     } else {
@@ -544,7 +547,7 @@ public class SearchTopActivity extends BaseActivity
         if (mSearchDataProvider != null) {
             mSearchDataProvider.stopConnect();
             mSearchDataProvider.setSearchDataProviderListener(null);
-            //キャンセル後に mRankingDataProvider の使いまわしを防ぐため初期化する
+            //キャンセル後に mSearchDataProvider の使いまわしを防ぐため初期化する
             mSearchDataProvider = null;
             mSearchDataProvider = new SearchDataProvider();
         }
@@ -682,6 +685,9 @@ public class SearchTopActivity extends BaseActivity
      */
     private String searchChannelName(final String channelId, final String serviceId, final String categoryId) {
         getChannelListData();
+        if (mSearchViewPager == null) {
+            return "";
+        }
         if (mSearchViewPager.getCurrentItem() != TAB_INDEX_TV
                 && mSearchViewPager.getCurrentItem() != TAB_INDEX_DTV_CHANNEL) {
             return "";
@@ -730,9 +736,9 @@ public class SearchTopActivity extends BaseActivity
         ErrorState errorState = mSearchDataProvider.getError();
         if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getErrorMessage();
-            if (!TextUtils.isEmpty(message)) {
-                showGetDataFailedToast(message);
-            }
+            showGetDataFailedToast(message);
+        } else {
+            showGetDataFailedToast();
         }
     }
 
