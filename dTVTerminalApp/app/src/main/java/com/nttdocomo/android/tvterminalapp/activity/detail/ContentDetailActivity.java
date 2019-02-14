@@ -799,7 +799,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL);
             }
             if (!mIsDownloadStop) {
-                mThumbnail.setTag(url);
+                if (mDetailFullData != null && (TextUtils.isEmpty(mDetailFullData.getmTv_service())
+                        || ContentUtils.isBsOrTtbProgramPlala(mDetailFullData.getmTv_service()))) {
+                    mThumbnail.setTag(R.id.tag_key, url);
+                } else {
+                    mThumbnail.setTag(url);
+                }
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
                 if (bitmap != null) {
                     //サムネイル取得失敗時は取得失敗画像をセットする
@@ -967,6 +972,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             mViewPager.setCurrentItem(position);
+            if (mChannelFragment != null && position == 1) {
+                if (mDetailFullData != null && (TextUtils.isEmpty(mDetailFullData.getmTv_service())
+                        || ContentUtils.isBsOrTtbProgramPlala(mDetailFullData.getmTv_service()))) {
+                    if (mChannelFragment.getContentsData() != null && mChannelFragment.getContentsData().size() > 0) {
+                        mChannelFragment.setNotifyDataChanged();
+                    }
+                }
+            }
         }
         DTVTLogger.end();
     }

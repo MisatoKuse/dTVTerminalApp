@@ -2132,4 +2132,27 @@ public class ContentUtils {
         }
         return contentsDataList;
     }
+
+    /**
+     * 地デジまたはBS番組.
+     * @param tvService tvService
+     * @return true
+     */
+    public static boolean isBsOrTtbProgramPlala(final String tvService) {
+        return CH_TYPE_TV_SERVICE_TTB.equals(tvService)
+                || CH_TYPE_TV_SERVICE_BS.equals(tvService);
+    }
+    /**
+     * 地デジまたはBS番組.
+     * @param contentsData ContentsData
+     * @return true
+     */
+    public static boolean isBsOrTtbProgramOther(final ContentsData contentsData) {
+        if (DataBaseUtils.isNumber(contentsData.getServiceId())) {
+            return DTV_HIKARI_CONTENTS_SERVICE_ID == Integer.parseInt(contentsData.getServiceId())
+                    && (RECOMMEND_CATEGORY_ID_ONE.equals(contentsData.getCategoryId())
+                    || RECOMMEND_CATEGORY_ID_TWO.equals(contentsData.getCategoryId()));
+        }
+        return false;
+    }
 }

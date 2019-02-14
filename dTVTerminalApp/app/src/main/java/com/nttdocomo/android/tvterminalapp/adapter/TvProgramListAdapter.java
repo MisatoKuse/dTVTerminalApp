@@ -29,7 +29,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfoComparator;
@@ -132,6 +131,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private int mProgramScrollY = 0;
     /** クリップ非活性フラグ. */
     private boolean mIsScheduleClickEnable = true;
+    /**タブ名.*/
+    private String mProgramTabName;
 
     /**
      * コンストラクタ.
@@ -140,11 +141,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param channels 番組表リスト
      * @param mDateTitleText 番組表タイトル日付
      */
-    public TvProgramListAdapter(final Context mContext, final ArrayList<ChannelInfo> channels, final String mDateTitleText) {
+    public TvProgramListAdapter(final Context mContext, final ArrayList<ChannelInfo> channels, final String mDateTitleText, final String programTabName) {
         DTVTLogger.start();
         this.mProgramList = channels;
         this.mContext = mContext;
         this.mDateTitleText = mDateTitleText;
+        this.mProgramTabName = programTabName;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
         mAgeReq = userInfoDataProvider.getUserAge();
@@ -730,7 +732,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     //URLによって、サムネイル取得
                     String thumbnailURL = itemViewHolder.mThumbnailURL;
                     if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop && mThumbnailProvider != null) {
-                        itemViewHolder.mThumbnail.setTag(thumbnailURL);
+                        if (mContext.getString(R.string.common_dtb_channel).equals(mProgramTabName)
+                                || mContext.getString(R.string.common_bs_channel).equals(mProgramTabName)) {
+                            itemViewHolder.mThumbnail.setTag(R.id.tag_key, thumbnailURL);
+                        } else {
+                            itemViewHolder.mThumbnail.setTag(thumbnailURL);
+                        }
                         Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                         if (bitmap != null) {
                             itemViewHolder.mThumbnail.setImageBitmap(bitmap);
