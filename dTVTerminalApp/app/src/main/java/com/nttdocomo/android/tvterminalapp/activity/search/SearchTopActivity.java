@@ -491,7 +491,9 @@ public class SearchTopActivity extends BaseActivity
                 String totalCountText = getResultString();
                 baseFragment.notifyDataSetChanged(totalCountText, mTabIndex);
                 if (!baseFragment.isProgressBarShowing()) {
-                    baseFragment.showProgressBar(true);
+                    if (!baseFragment.showProgressBar(true)) {
+                        showProgress(View.VISIBLE);
+                    }
                 }
                 setPageNumber(0);
                 setPagingStatus(false);
@@ -502,6 +504,14 @@ public class SearchTopActivity extends BaseActivity
             mIsEndPage = false;
         }
         mSearchDataProvider.startSearchWith(sCurrentSearchText, mSearchNarrowCondition, mTabIndex, mSearchSortKind, mPageNumber, this);
+    }
+
+    /**
+     * 進捗バーを表示.
+     * @param visible 表示
+     */
+    private void showProgress(final int visible) {
+        findViewById(R.id.fl_searched_progress).setVisibility(visible);
     }
 
     /**
@@ -633,6 +643,7 @@ public class SearchTopActivity extends BaseActivity
 
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (null == baseFragment) {
+            showProgress(View.GONE);
             return;
         }
 
@@ -671,6 +682,7 @@ public class SearchTopActivity extends BaseActivity
             mIsEndPage = true;
         }
         baseFragment.showProgressBar(false);
+        showProgress(View.GONE);
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
     }
@@ -715,6 +727,7 @@ public class SearchTopActivity extends BaseActivity
         mIsLoading = false;
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         baseFragment.showProgressBar(false);
+        showProgress(View.GONE);
         baseFragment.displayLoadMore(false);
         if (mPageNumber == 0 && baseFragment.getContentDataSize() == 0) {
             baseFragment.setResultTextVisibility(false);

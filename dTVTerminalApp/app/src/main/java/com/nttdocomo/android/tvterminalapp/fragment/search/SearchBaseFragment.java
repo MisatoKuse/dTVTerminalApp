@@ -155,25 +155,25 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      *
      * @param showProgressBar プロセスバーを表示するかどうか
      */
-    public void showProgressBar(final boolean showProgressBar) {
+    public boolean showProgressBar(final boolean showProgressBar) {
         //Activityから直接呼び出されるためここでNullチェック
         if (mTvFragmentView == null) {
-            return;
+            return false;
         }
         mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
         mRelativeLayout = mTvFragmentView.findViewById(R.id.lv_searched_progress);
         if (showProgressBar) {
             //オフライン時は表示しない
-            if (!NetWorkUtils.isOnline(getActivity())) {
-                return;
+            if (NetWorkUtils.isOnline(getActivity())) {
+                mTvListView.setVisibility(View.GONE);
+                mTvListView.smoothScrollToPosition(0);
+                mRelativeLayout.setVisibility(View.VISIBLE);
             }
-            mTvListView.setVisibility(View.GONE);
-            mTvListView.smoothScrollToPosition(0);
-            mRelativeLayout.setVisibility(View.VISIBLE);
         } else {
             mTvListView.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
         }
+        return true;
     }
 
     /**
