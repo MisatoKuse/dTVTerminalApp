@@ -241,6 +241,7 @@ public class SearchTopActivity extends BaseActivity
                             }
                             // 検索処理実行
                             initSearchedResultView();
+                            mBeforeText = inputText;
                             setSearchData(inputText);
                             mSearchView.clearFocus();
                             return false;
@@ -287,8 +288,8 @@ public class SearchTopActivity extends BaseActivity
                                                         // コールバックが来る前にリクエストする場合もあるので、リクエスト前にキャンセルする
                                                         cancelDataProvider();
                                                         setSearchStart(false);
-                                                        setSearchData(inputText);
                                                         mBeforeText = inputText;
+                                                        setSearchData(inputText);
                                                     } else {
                                                         // nop.
                                                         DTVTLogger.debug("Don't Start IncrementalSearch I=" + inputText + ":B=" + mBeforeText);
