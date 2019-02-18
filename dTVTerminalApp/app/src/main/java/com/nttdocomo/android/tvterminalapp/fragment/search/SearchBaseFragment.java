@@ -157,7 +157,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      */
     public boolean showProgressBar(final boolean showProgressBar) {
         //Activityから直接呼び出されるためここでNullチェック
-        if (mTvFragmentView == null) {
+        if (mTvFragmentView == null || getActivity() == null) {
             return false;
         }
         mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
