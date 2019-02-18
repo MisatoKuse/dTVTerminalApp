@@ -241,6 +241,7 @@ public class SearchTopActivity extends BaseActivity
                             }
                             // 検索処理実行
                             initSearchedResultView();
+                            mBeforeText = inputText;
                             setSearchData(inputText);
                             mSearchView.clearFocus();
                             return false;
@@ -287,8 +288,8 @@ public class SearchTopActivity extends BaseActivity
                                                         // コールバックが来る前にリクエストする場合もあるので、リクエスト前にキャンセルする
                                                         cancelDataProvider();
                                                         setSearchStart(false);
-                                                        setSearchData(inputText);
                                                         mBeforeText = inputText;
+                                                        setSearchData(inputText);
                                                     } else {
                                                         // nop.
                                                         DTVTLogger.debug("Don't Start IncrementalSearch I=" + inputText + ":B=" + mBeforeText);
@@ -491,7 +492,9 @@ public class SearchTopActivity extends BaseActivity
                 String totalCountText = getResultString();
                 baseFragment.notifyDataSetChanged(totalCountText, mTabIndex);
                 if (!baseFragment.isProgressBarShowing()) {
-                    baseFragment.showProgressBar(true);
+                    if (!baseFragment.showProgressBar(true)) {
+                        showProgress(View.VISIBLE);
+                    }
                 }
                 setPageNumber(0);
                 setPagingStatus(false);
@@ -502,6 +505,14 @@ public class SearchTopActivity extends BaseActivity
             mIsEndPage = false;
         }
         mSearchDataProvider.startSearchWith(sCurrentSearchText, mSearchNarrowCondition, mTabIndex, mSearchSortKind, mPageNumber, this);
+    }
+
+    /**
+     * 進捗バーを表示.
+     * @param visible 表示
+     */
+    private void showProgress(final int visible) {
+        findViewById(R.id.fl_searched_progress).setVisibility(visible);
     }
 
     /**
@@ -617,10 +628,12 @@ public class SearchTopActivity extends BaseActivity
         DTVTLogger.start("position = " + position);
         mTabIndex = position;
         if (null != mSearchViewPager) {
-            DTVTLogger.debug("viewpager not null");
-            SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
-            baseFragment.showProgressBar(true);
-            mSearchViewPager.setCurrentItem(position);
+            if (mSearchViewPager.getCurrentItem() != position) {
+                DTVTLogger.debug("viewpager not null");
+                SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
+                baseFragment.showProgressBar(true);
+                mSearchViewPager.setCurrentItem(position);
+            }
         }
         DTVTLogger.end();
     }
@@ -633,6 +646,7 @@ public class SearchTopActivity extends BaseActivity
 
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (null == baseFragment) {
+            showProgress(View.GONE);
             return;
         }
 
@@ -671,6 +685,7 @@ public class SearchTopActivity extends BaseActivity
             mIsEndPage = true;
         }
         baseFragment.showProgressBar(false);
+        showProgress(View.GONE);
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
     }
@@ -715,6 +730,7 @@ public class SearchTopActivity extends BaseActivity
         mIsLoading = false;
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         baseFragment.showProgressBar(false);
+        showProgress(View.GONE);
         baseFragment.displayLoadMore(false);
         if (mPageNumber == 0 && baseFragment.getContentDataSize() == 0) {
             baseFragment.setResultTextVisibility(false);
