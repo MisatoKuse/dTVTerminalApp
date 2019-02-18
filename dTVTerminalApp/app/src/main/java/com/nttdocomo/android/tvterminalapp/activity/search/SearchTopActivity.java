@@ -627,10 +627,12 @@ public class SearchTopActivity extends BaseActivity
         DTVTLogger.start("position = " + position);
         mTabIndex = position;
         if (null != mSearchViewPager) {
-            DTVTLogger.debug("viewpager not null");
-            SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
-            baseFragment.showProgressBar(true);
-            mSearchViewPager.setCurrentItem(position);
+            if (mSearchViewPager.getCurrentItem() != position) {
+                DTVTLogger.debug("viewpager not null");
+                SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
+                baseFragment.showProgressBar(true);
+                mSearchViewPager.setCurrentItem(position);
+            }
         }
         DTVTLogger.end();
     }
