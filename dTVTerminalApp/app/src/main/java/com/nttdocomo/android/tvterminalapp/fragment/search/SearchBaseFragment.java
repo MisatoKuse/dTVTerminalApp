@@ -168,6 +168,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
                 mTvListView.setVisibility(View.GONE);
                 mTvListView.smoothScrollToPosition(0);
                 mRelativeLayout.setVisibility(View.VISIBLE);
+                setNoDataMessageVisibility(false);
             }
         } else {
             mTvListView.setVisibility(View.VISIBLE);
