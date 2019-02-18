@@ -166,7 +166,8 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             //オフライン時は表示しない
             if (NetWorkUtils.isOnline(getActivity())) {
                 mTvListView.setVisibility(View.GONE);
-                mTvListView.smoothScrollToPosition(0);
+                mTvListView.setAdapter(mContentsAdapter);
+                mTvListView.setSelection(0);
                 mRelativeLayout.setVisibility(View.VISIBLE);
                 setNoDataMessageVisibility(false);
             }
