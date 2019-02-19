@@ -1792,14 +1792,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     private void release() {
         setCanPlay(false);
         if (mPlayerController != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mPlayerController.setCaptionDataListener(null);
-                    mPlayerController.release();
-                    mPlayerController = null;
-                }
-            }).start();
+            mPlayerController.setCaptionDataListener(null);
+            mPlayerController.release();
+            mPlayerController = null;
         }
     }
 
