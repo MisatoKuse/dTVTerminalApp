@@ -166,6 +166,8 @@ public class ContentUtils {
     private static final int PLATFORM_REMOTE_TTB = 2;
     /** 予約されたサービス BS.*/
     private static final int PLATFORM_REMOTE_BS = 3;
+    /** スターブサーバー.*/
+    public static final String LOCAL_SIGNED_ON = "local_signed_on";
     //endregion
 
     /**

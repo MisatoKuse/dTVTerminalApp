@@ -12,11 +12,13 @@ import android.text.TextUtils;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
+import com.nttdocomo.android.tvterminalapp.BuildConfig;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -1455,13 +1457,19 @@ public class WebApiBasePlala {
             boolean isTimeout = false;
             long startTime = System.currentTimeMillis();
 
-            HttpsURLConnection urlConnection = null;
+            HttpURLConnection urlConnection = null;
             try {
                 //指定された名前でURLを作成する
                 URL url = new URL(newUrlString);
 
-                //指定された名前で開く
-                urlConnection = (HttpsURLConnection) url.openConnection();
+                String buildTarget = BuildConfig.FLAVOR + BuildConfig.BUILD_TYPE;
+                if (ContentUtils.LOCAL_SIGNED_ON.equals(buildTarget)) {
+                    //指定された名前で開く
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                } else {
+                    //指定された名前で開く
+                    urlConnection = (HttpsURLConnection) url.openConnection();
+                }
 
                 //事前設定パラメータのセット
                 setParametersRedirect(urlConnection);
@@ -1648,7 +1656,7 @@ public class WebApiBasePlala {
          *
          * @param urlConnection 書き込み対象のコネクション
          */
-        void setPostDataRedirect(final HttpsURLConnection urlConnection) {
+        void setPostDataRedirect(final HttpURLConnection urlConnection) {
             if (urlConnection == null) {
                 return;
             }

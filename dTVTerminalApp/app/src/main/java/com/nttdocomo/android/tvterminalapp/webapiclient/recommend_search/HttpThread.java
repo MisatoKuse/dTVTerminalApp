@@ -11,10 +11,12 @@ import android.text.TextUtils;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
+import com.nttdocomo.android.tvterminalapp.BuildConfig;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
@@ -103,7 +105,7 @@ public class HttpThread extends Thread {
     /**
      * HTTPURLConnection.
      */
-    private HttpsURLConnection mHttpUrlConn;
+    private HttpURLConnection mHttpUrlConn;
     /**
      * ワンタイムパスワード.
      */
@@ -308,7 +310,12 @@ public class HttpThread extends Thread {
             String srcUrl = addUrlPassword(this.mUrl);
             URL url = new URL(srcUrl);
 
-            mHttpUrlConn = (HttpsURLConnection) url.openConnection();
+            String buildTarget = BuildConfig.FLAVOR + BuildConfig.BUILD_TYPE;
+            if (ContentUtils.LOCAL_SIGNED_ON.equals(buildTarget)) {
+                mHttpUrlConn = (HttpURLConnection) url.openConnection();
+            } else {
+                mHttpUrlConn = (HttpsURLConnection) url.openConnection();
+            }
 
             //接続タイムアウト
             mHttpUrlConn.setConnectTimeout(DtvtConstants.SERVER_CONNECT_TIMEOUT);

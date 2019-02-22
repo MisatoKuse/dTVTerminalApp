@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.common;
 
 import com.nttdocomo.android.tvterminalapp.BuildConfig;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * dアカウント連携用の固定値を格納する.
@@ -91,6 +92,12 @@ public class DaccountConstants {
             return SERVICE_KEY_COM;
         } else if ("signed_off".equals(BuildConfig.BUILD_TYPE)
                 || "signed_on".equals(BuildConfig.BUILD_TYPE)) {
+
+            String buildTarget = BuildConfig.FLAVOR + BuildConfig.BUILD_TYPE;
+            if (ContentUtils.LOCAL_SIGNED_ON.equals(buildTarget)) {
+                // 検証向き開発署名向け.
+                return SERVICE_KEY_TEST_DEBUG;
+            }
             // 商用向き開発署名向け.
             return SERVICE_KEY_COM_DEBUG;
         } else {
