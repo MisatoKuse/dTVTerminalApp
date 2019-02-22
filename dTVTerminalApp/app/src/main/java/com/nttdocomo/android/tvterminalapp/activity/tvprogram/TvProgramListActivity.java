@@ -495,7 +495,7 @@ public class TvProgramListActivity extends BaseActivity implements
             int offsetY = calcCurTimeOffsetY();
             mTimeScrollView.smoothScrollTo(0, offsetY);
             mProgramScrollViewParent.smoothScrollTo(0, offsetY);
-
+            mNoDataMessage.setVisibility(View.GONE);
             getChannelData();
         }
         DTVTLogger.end();
@@ -1001,6 +1001,8 @@ public class TvProgramListActivity extends BaseActivity implements
                     String message = errorState.getErrorMessage();
                     //メッセージの有無で処理を分ける
                     showGetDataFailedToast(message);
+                    mNoDataMessage.setText(R.string.common_failed_data_message);
+                    mNoDataMessage.setVisibility(View.VISIBLE);
                 }
             } else {
                 if (channels.size() > 0) {
@@ -1041,20 +1043,23 @@ public class TvProgramListActivity extends BaseActivity implements
                 if (errorState != null) {
                     String message = errorState.getErrorMessage();
                     //メッセージの有無で処理を分ける
-                    if (!TextUtils.isEmpty(message)) {
-                        showGetDataFailedToast(message);
-                    }
-                }
-                if (mProgramChannelAdapter == null) {
-                    //この時点でチャンネル名表示Adapterが生成できていない場合はコンテンツ取得失敗メッセージを表示
+                    showGetDataFailedToast(message);
+                    mNoDataMessage.setText(R.string.common_failed_data_message);
                     mNoDataMessage.setVisibility(View.VISIBLE);
                 } else {
-                    ArrayList<String> displayChannels = mProgramChannelAdapter.getChannelList();
-                    //既に表示されているチャンネルリストがない場合のみコンテンツ取得失敗メッセージを表示
-                    if (displayChannels != null || displayChannels.size() < 1) {
+                    if (mProgramChannelAdapter == null) {
+                        //この時点でチャンネル名表示Adapterが生成できていない場合はコンテンツ取得失敗メッセージを表示
+                        mNoDataMessage.setText(R.string.common_empty_data_message);
                         mNoDataMessage.setVisibility(View.VISIBLE);
                     } else {
-                        mNoDataMessage.setVisibility(View.GONE);
+                        ArrayList<String> displayChannels = mProgramChannelAdapter.getChannelList();
+                        //既に表示されているチャンネルリストがない場合のみコンテンツ取得失敗メッセージを表示
+                        if (displayChannels == null || displayChannels.size() < 1) {
+                            mNoDataMessage.setText(R.string.common_empty_data_message);
+                            mNoDataMessage.setVisibility(View.VISIBLE);
+                        } else {
+                            mNoDataMessage.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
