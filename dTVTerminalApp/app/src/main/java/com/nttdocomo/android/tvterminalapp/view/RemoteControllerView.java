@@ -358,11 +358,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             paddingtb = (int) (height - (BASE_HEIGHT * density));
         }
         if (paddinglr != 0 || paddingtb != 0) {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+            LayoutParams params = new LayoutParams(
                     (int) (width - (BASE_LEFT_RIGHT_PADDING * BASE_LEFT_RIGHT * density)), //padding除く
                     (int) (height - (BASE_TITLE * density))); //タイトル除く
             mViewPager.setLayoutParams(params);
-            RelativeLayout.LayoutParams childLayoutParams = new RelativeLayout.LayoutParams(
+            LayoutParams childLayoutParams = new LayoutParams(
                     LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT);
             inflate1.setPadding(paddinglr, BASE_PADDING_TOP, paddinglr, paddingtb);
@@ -604,11 +604,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（地デジ）
      *
-     * @param chno チャンネルナンバー
+     * @param serviceId サービスID
      */
-    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno) {
+    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(final String serviceId) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(chno, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(serviceId, mContext);
         DTVTLogger.end();
     }
 
@@ -616,11 +616,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（BS）
      *
-     * @param chno チャンネルナンバー
+     * @param serviceId サービスID
      */
-    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(final String chno) {
+    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(final String serviceId) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(chno, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(serviceId, mContext);
         DTVTLogger.end();
     }
 

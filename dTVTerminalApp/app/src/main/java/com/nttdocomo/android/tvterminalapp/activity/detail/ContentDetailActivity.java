@@ -1882,7 +1882,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //「tv_service」が「1」の場合 ひかりTVの番組
             if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
                 //ひかりTVの番組
-                requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmChno());
+                requestStartApplicationHikariTvCategoryIptv(mDetailFullData.getmChno());
                 //「tv_service」が「2」の場合
             } else if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                 //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
@@ -1910,6 +1910,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 } else {
                     showStartStbProgress(View.GONE);
+                }
+            } else if (ContentUtils.isBsOrTtbProgramPlala(mDetailFullData.getmTv_service())) {
+                if (TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+                    showStartStbProgress(View.GONE);
+                    showErrorDialog(getString(R.string.common_failed_get_info));
+                } else {
+                    if (ContentUtils.TV_SERVICE_FLAG_TTB.equals(mDetailFullData.getmTv_service())) {
+                        requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmService_id());
+                    } else if (ContentUtils.TV_SERVICE_FLAG_BS.equals(mDetailFullData.getmTv_service())) {
+                        requestStartApplicationHikariTvCategorySatelliteBs(mDetailFullData.getmService_id());
+                    }
                 }
             } else {
                 showStartStbProgress(View.GONE);
