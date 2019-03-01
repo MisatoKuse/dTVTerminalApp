@@ -834,13 +834,9 @@ public class RecommendActivity extends BaseActivity implements
             //チャンネルリストが取得できなければ表示上不都合（チャンネル名が一切表示できない）なのでダイアログ表示で戻る
             //エラーメッセージを取得する
             String message = mScaledDownProgramListDataProvider.
-                    getChannelError().getApiErrorMessage(this);
+                    getChannelError().getErrorMessage();
             //有無で処理を分ける
-            if (TextUtils.isEmpty(message)) {
-                showDialogToClose(this);
-            } else {
-                showDialogToClose(this, message);
-            }
+            showGetDataFailedToast(message);
             DTVTLogger.end();
             return;
         }
