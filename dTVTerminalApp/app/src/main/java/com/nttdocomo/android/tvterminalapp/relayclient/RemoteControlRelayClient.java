@@ -314,6 +314,20 @@ public class RemoteControlRelayClient {
     static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
     /**アプリケーション起動.*/
     static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
+    /**汎用STB内アプリ連携　キー.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION = "START_STB_APPLICATION";
+    /**汎用STB内アプリ連携　リクエストキー.*/
+    private static final String RELAY_REQUEST_KEY = "REQUEST_KEY";
+    /**汎用STB内アプリ連携 action.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION = "setAction";
+    /**汎用STB内アプリ連携 package.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_PACKAGE_NAME = "package";
+    /**汎用STB内アプリ連携 地デジ・BS action 値.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_ON_REQUEST = "ON_REQUEST";
+    /** 汎用STB内アプリ連携 URL. */
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_SET_DATA = "setData";
+    /**汎用STB内アプリ連携 h4d package name.*/
+    private static final String STB_APPLICATION_PACKAGE_HIKARITV = "com.nttdocomo.hikaritv_docomo";
     /**ユーザーアカウント存在.*/
     static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     /**電源キー.*/
@@ -387,7 +401,13 @@ public class RemoteControlRelayClient {
      */
     private static final String RELAY_COMMAND_ARGUMENT_URL_SCHEME_HIKARITV =
             "hikaritv-ford://com.nttdocomo.hikaritv_docomo:Service/ExtraKeyListenerService?reason=launchIPTVContent&type=hikaritv&purchaseId=%s&cid=%s&crid=%s&startResume=1"; // licenseId, cid, crid
-
+    /** ひかりTVの地デジ・BSの場合にサービスアプリ連携を行うURLスキーム.*/
+    private static final String RELAY_COMMAND_ARGUMENT_URL_SCHEME_TTB_BS =
+            "hikaritv-ford://com.nttdocomo.hikaritv_docomo:Service/ExtraKeyListenerService?reason=epgTune&broadcastType=%s&service_id=%s"; // broadcastType, serviceId
+    /**broadcastType 地デジ.*/
+    private static final String BROADCASTTYPE_TTB = "1";
+    /**broadcastType BS.*/
+    private static final String BROADCASTTYPE_BS = "2";
     /**result.*/
     private static final String RELAY_RESULT = "RESULT";
     /**result_ok.*/
@@ -873,14 +893,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（地デジ）
      *
-     * @param chno    チャンネル番号
+     * @param serviceId サービスID
      * @param context コンテキスト
      * @return リクエスト成否
      */
-    public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno,
-                                                                             final Context context) {
+    public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String serviceId, final Context context) {
         return startApplicationHikariTvCategoryRequest(
-                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL, context, setCommandArgumentServiceRef(chno));
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL, context, String.format(RELAY_COMMAND_ARGUMENT_URL_SCHEME_TTB_BS,
+                        rfc3986UrlEncode(BROADCASTTYPE_TTB), rfc3986UrlEncode(serviceId)));
     }
 
     /**
@@ -888,14 +908,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（BS）
      *
-     * @param chno    チャンネル番号
+     * @param serviceId サービスID
      * @param context コンテキスト
      * @return リクエスト成否
      */
-    public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String chno,
-                                                                      final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
-                context, setCommandArgumentServiceRef(chno));
+    public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String serviceId, final Context context) {
+        return startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS, context, String.format(RELAY_COMMAND_ARGUMENT_URL_SCHEME_TTB_BS,
+                        rfc3986UrlEncode(BROADCASTTYPE_BS), rfc3986UrlEncode(serviceId)));
     }
 
     /**
@@ -1582,6 +1602,7 @@ public class RemoteControlRelayClient {
         String serviceRef = "";
         String urlSchemaHikariTvVod = "";
         String episodeId = "";
+        String ttbBsUrlSchema = "";
 
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
@@ -1591,6 +1612,13 @@ public class RemoteControlRelayClient {
             switch (serviceCategoryType) {
                 case H4D_CATEGORY_TERRESTRIAL_DIGITAL: // ひかりTVの番組（地デジ）
                 case H4D_CATEGORY_SATELLITE_BS: // ひかりTVの番組（BS）
+                    ttbBsUrlSchema = args[0];
+                    requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_STB_APPLICATION);
+                    requestJson.put(RELAY_REQUEST_KEY, RELAY_COMMAND_TITLE_DETAIL);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_PACKAGE_NAME, STB_APPLICATION_PACKAGE_HIKARITV);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION, RELAY_COMMAND_START_STB_APPLICATION_ON_REQUEST);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_DATA, ttbBsUrlSchema);
+                    break;
                 case H4D_CATEGORY_IPTV: // ひかりTVの番組（IPTV）
                     serviceRef = args[0];
                     requestJson.put(RELAY_COMMAND_ARGUMENT_SERVICE_REF_HIKARITV_ARG3, serviceRef);
@@ -1636,8 +1664,8 @@ public class RemoteControlRelayClient {
         } catch (JSONException e) {
             DTVTLogger.debug(e);
             DTVTLogger.debug(String.format("serviceCategoryType:[%s] probably, the argument is insufficient"
-                            + "service_ref:[%s] crid[%s] chno[%s] urlSchemaHikariTvVod[%s] episode_id[%s]",
-                    serviceCategoryType, serviceRef, crid, chno, urlSchemaHikariTvVod, episodeId));
+                            + "service_ref:[%s] crid[%s] chno[%s] urlSchemaHikariTvVod[%s] episode_id[%s] ttbBsUrlSchema[%s]",
+                    serviceCategoryType, serviceRef, crid, chno, urlSchemaHikariTvVod, episodeId, ttbBsUrlSchema));
         }
         return request;
     }

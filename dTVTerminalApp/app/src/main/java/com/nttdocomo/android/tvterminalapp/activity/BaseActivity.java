@@ -1753,20 +1753,20 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTVの番組 (地デジ)
      *
-     * @param chno チャンネル番号
+     * @param serviceId サービスId
      */
-    protected void requestStartApplicationHikariTvCategoryTerrestrialDigital(final String chno) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(chno);
+    protected void requestStartApplicationHikariTvCategoryTerrestrialDigital(final String serviceId) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(serviceId);
     }
 
     /**
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTVの番組 （BS）
      *
-     * @param chno チャンネル番号
+     * @param serviceId サービスId
      */
-    protected void requestStartApplicationHikariTvCategorySatelliteBs(final String chno) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategorySatelliteBsRequest(chno);
+    protected void requestStartApplicationHikariTvCategorySatelliteBs(final String serviceId) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategorySatelliteBsRequest(serviceId);
     }
 
     /**
