@@ -316,6 +316,8 @@ public class RemoteControlRelayClient {
     static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     /**汎用STB内アプリ連携　キー.*/
     private static final String RELAY_COMMAND_START_STB_APPLICATION = "START_STB_APPLICATION";
+    /**汎用STB内アプリ連携　リクエストキー.*/
+    private static final String RELAY_REQUEST_KEY = "REQUEST_KEY";
     /**汎用STB内アプリ連携 action.*/
     private static final String RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION = "setAction";
     /**汎用STB内アプリ連携 package.*/
@@ -1612,6 +1614,7 @@ public class RemoteControlRelayClient {
                 case H4D_CATEGORY_SATELLITE_BS: // ひかりTVの番組（BS）
                     ttbBsUrlSchema = args[0];
                     requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_STB_APPLICATION);
+                    requestJson.put(RELAY_REQUEST_KEY, RELAY_COMMAND_TITLE_DETAIL);
                     requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_PACKAGE_NAME, STB_APPLICATION_PACKAGE_HIKARITV);
                     requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION, RELAY_COMMAND_START_STB_APPLICATION_ON_REQUEST);
                     requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_DATA, ttbBsUrlSchema);
