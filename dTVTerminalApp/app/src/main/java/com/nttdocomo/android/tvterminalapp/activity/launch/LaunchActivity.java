@@ -14,11 +14,15 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+
+import com.nttdocomo.android.tvterminalapp.BuildConfig;
 
 /**
  * アプリ起動時に最初に呼び出されるActivity.
@@ -81,10 +85,38 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         sIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
 
+        if (sIsFirstRun) {
+            SharedPreferencesUtils.setCacheDataVersion(this, DtvtConstants.newCacheDataVersion);
+            SharedPreferencesUtils.setAppVersion(this, BuildConfig.VERSION_NAME);
+        } else {
+            checkCacheDataVersion();
+            checkAppVersion();
+        }
+
         //次に遷移する画面を選択する
         selectScreenTransition();
         // dアカウント処理は不要
         setUnnecessaryDaccountRegistService();
+    }
+
+    private void checkCacheDataVersion() {
+        int savedCacheDataVersion = SharedPreferencesUtils.getCacheDataVersion(this);
+        if (savedCacheDataVersion < DtvtConstants.newCacheDataVersion) {
+            clearCacheKey();
+            SharedPreferencesUtils.setCacheDataVersion(this, DtvtConstants.newCacheDataVersion);
+        }
+    }
+
+    private void clearCacheKey() {
+        DateUtils.clearTvScheduleDate(this);
+        DateUtils.clearDataSave(this);
+    }
+
+    private void checkAppVersion() {
+        String savedAppVersion = SharedPreferencesUtils.getAppVersion(this);
+        if (savedAppVersion.compareTo(BuildConfig.VERSION_NAME) == -1) {
+            SharedPreferencesUtils.setAppVersion(this, BuildConfig.VERSION_NAME);
+        }
     }
 
     @Override

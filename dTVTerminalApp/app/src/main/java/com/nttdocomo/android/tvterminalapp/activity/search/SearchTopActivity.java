@@ -365,7 +365,7 @@ public class SearchTopActivity extends BaseActivity
         //チャンネル情報を受け取る
         DTVTLogger.start();
         if (null == channels) {
-            String message = mScaledDownProgramListDataProvider.getChannelError().getApiErrorMessage(this);
+            String message = mScaledDownProgramListDataProvider.getChannelError().getErrorMessage();
             showGetDataFailedToast(message);
             DTVTLogger.end();
             return;

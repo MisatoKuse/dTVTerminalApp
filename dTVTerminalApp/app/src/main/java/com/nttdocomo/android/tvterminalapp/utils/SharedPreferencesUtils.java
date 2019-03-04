@@ -181,6 +181,19 @@ public class SharedPreferencesUtils {
             = "D_ACCOUNT_UNCERTIFIED_DACCOUNT";
 
     /**
+     * キャッシュデータのバージョン
+     */
+    private static final String CACHE_DATA_VERSION = "CACHE_DATA_VERSION";
+    /**
+     * アプリのバージョン
+     */
+    private static final String APP_VERSION = "APP_VERSION";
+    /**
+     * バージョンのPreferenceの名前
+     */
+    private static final String VERSION_PREFERENCES_NAME = "VERSION_PREFERENCES_NAME";
+
+    /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
      * 新しい物を追加した場合は、基本的にこの配列に名前を追加してください。
      * (チュートリアル表示済み判定以外は全て消すことになった。アプリ再起動フラグは自動で消えるので対象外).
@@ -1373,5 +1386,55 @@ public class SharedPreferencesUtils {
 
         //保存したdアカウント未認証状態を返却
         return data.getBoolean(D_ACCOUNT_UNCERTIFIED_DACCOUNT, false);
+    }
+
+    /**
+     * キャッシュデータのバージョンを取得
+     *
+     * @param context コンテキスト
+     */
+    public static int getCacheDataVersion(final Context context) {
+        SharedPreferences data = context.getSharedPreferences(VERSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return data.getInt(CACHE_DATA_VERSION, 0) ;
+    }
+
+    /**
+     * キャッシュデータのバージョンを設定
+     *
+     * @param context   コンテキスト
+     * @param cacheDataVersion キャッシュデータのバージョン
+     */
+    public static void setCacheDataVersion(final Context context, final int cacheDataVersion) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(VERSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(CACHE_DATA_VERSION, cacheDataVersion);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * アプリのバージョンを取得
+     *
+     * @param context コンテキスト
+     */
+    public static String getAppVersion(final Context context) {
+        SharedPreferences data = context.getSharedPreferences(VERSION_PREFERENCES_NAME, context.MODE_PRIVATE);
+        return data.getString(APP_VERSION, "");
+    }
+
+    /**
+     * キャッシュデータのバージョンを設定
+     *
+     * @param context   コンテキスト
+     * @param appVersion アプリのバージョン
+     */
+    public static void setAppVersion(final Context context, final String appVersion) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(VERSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(APP_VERSION, appVersion);
+        editor.apply();
+        DTVTLogger.end();
     }
 }

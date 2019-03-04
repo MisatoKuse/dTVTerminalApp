@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -121,6 +122,9 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
      * @return パース後のデータ
      */
     private RecommendChannelList getRecommendWebList(final String responseData) {
+        if (TextUtils.isEmpty(responseData)) {
+            return null;
+        }
         DTVTLogger.debugHttp(responseData);
         RecommendChannelList redChContents = null;
         List<Map<String, String>> redChContentList = null;

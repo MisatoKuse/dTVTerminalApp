@@ -84,6 +84,9 @@ public class DtvtConstants {
     public static final int REQUEST_LIMIT_50 = 50;
     /** STBに対するDLNAデータ取得時のlimit. */
     public static final int REQUEST_DLNA_LIMIT_50 = 50;
+    /** cache dataの最新バージョン */
+    public static final int newCacheDataVersion = 1;
+
     //==================================== 定数定義 End ===================================
 
     /**
