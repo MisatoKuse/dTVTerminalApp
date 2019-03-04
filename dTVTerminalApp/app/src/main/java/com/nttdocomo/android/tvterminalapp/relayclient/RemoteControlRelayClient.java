@@ -1618,6 +1618,7 @@ public class RemoteControlRelayClient {
                     requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_PACKAGE_NAME, STB_APPLICATION_PACKAGE_HIKARITV);
                     requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION, RELAY_COMMAND_START_STB_APPLICATION_ON_REQUEST);
                     requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_DATA, ttbBsUrlSchema);
+                    requestJson.put(STB_SERVICE_APPLICATION_CODE, HIKARITV_VALID_VERSION);
                     break;
                 case H4D_CATEGORY_IPTV: // ひかりTVの番組（IPTV）
                     serviceRef = args[0];
