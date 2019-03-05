@@ -1079,6 +1079,9 @@ public class BaseActivity extends FragmentActivity implements
                 //中継アプリからの応答待ち中に新しい要求を行った場合
                 showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_busy_error_message));
                 break;
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:// 中継アプリの内部エラー
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
             default:
                 break;
         }
