@@ -759,7 +759,7 @@ public class TvProgramListActivity extends BaseActivity implements
         if (tabName != null) {
             if (tabName.equals(getString(R.string.common_my_channel))) {
                 index = JsonConstants.CH_SERVICE_TYPE_INDEX_ALL;
-            } else if (tabName.equals(getString(R.string.common_hikari_tv_for_docomo))) {
+            } else if (tabName.equals(getString(R.string.common_professional_channnel))) {
                 index = JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI;
             } else if (tabName.equals(getString(R.string.common_dtv_channel))) {
                 index = JsonConstants.CH_SERVICE_TYPE_INDEX_DCH;

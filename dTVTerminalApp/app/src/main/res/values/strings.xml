@@ -60,7 +60,7 @@
     <string name="common_switch_user_account_server_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-18）</string>
     <string name="common_switch_user_account_internal_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-19）</string>
     <string name="common_my_channel">マイ番組表</string>
-    <string name="common_hikari_tv_for_docomo">ひかりＴＶ for docomo</string>
+    <string name="common_professional_channnel">専門ch</string>
     <string name="common_dtv_channel">dTVチャンネル</string>
     <string name="common_dtb_channel">地デジ</string>
     <string name="common_bs_channel">BS</string>
@@ -166,7 +166,7 @@
 
     <!-- チャンネルリスト AreaCodeが取得できた時-->
     <string-array name="channel_list_tab_names">
-        <item>ひかりＴＶ for docomo</item>
+        <item>専門ch</item>
         <item>地デジ</item>
         <item>BS</item>
         <item>dTVチャンネル</item>
@@ -174,7 +174,7 @@
 
     <!-- チャンネルリスト AreaCodeが取得できなかった時 -->
     <string-array name="channel_list_tab_names_no_paring">
-        <item>ひかりＴＶ for docomo</item>
+        <item>専門ch</item>
         <item>BS</item>
         <item>dTVチャンネル</item>
     </string-array>
@@ -185,25 +185,25 @@
 
     <!-- TvProgram -->
     <string-array name="tv_program_list_no_login_tab_names">
-        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_professional_channnel</item>
         <item>@string/common_bs_channel</item>
         <item>@string/common_dtv_channel</item>
     </string-array>
     <string-array name="tv_program_list_no_area_code_tab_names">
         <item>@string/common_my_channel</item>
-        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_professional_channnel</item>
         <item>@string/common_bs_channel</item>
         <item>@string/common_dtv_channel</item>
     </string-array>
     <string-array name="tv_program_list_area_code_tab_names">
-        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_professional_channnel</item>
         <item>@string/common_dtb_channel</item>
         <item>@string/common_bs_channel</item>
         <item>@string/common_dtv_channel</item>
     </string-array>
     <string-array name="tv_program_list_all_tab_names">
         <item>@string/common_my_channel</item>
-        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_professional_channnel</item>
         <item>@string/common_dtb_channel</item>
         <item>@string/common_bs_channel</item>
         <item>@string/common_dtv_channel</item>
