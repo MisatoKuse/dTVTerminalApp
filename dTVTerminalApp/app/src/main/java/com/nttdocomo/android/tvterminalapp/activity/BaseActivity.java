@@ -3566,7 +3566,7 @@ public class BaseActivity extends FragmentActivity implements
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
         clipKeyListDataProvider.clipResultInsert(mClipRequestData);
 
-        mClipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
+        mClipButton.setImageResource(R.drawable.common_clip_active_selector);
         mClipButton.setTag(CLIP_ACTIVE_STATUS);
         showClipToast(R.string.clip_regist_result_message);
         sendEvent(getString(R.string.google_analytics_category_service_name_h4d),
@@ -3585,7 +3585,7 @@ public class BaseActivity extends FragmentActivity implements
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
         clipKeyListDataProvider.clipResultDelete(mClipRequestData);
 
-        mClipButton.setBackgroundResource(R.drawable.common_clip_normal_selector);
+        mClipButton.setImageResource(R.drawable.common_clip_normal_selector);
         showClipToast(R.string.clip_delete_result_message);
         mClipButton.setTag(CLIP_OPACITY_STATUS);
         sendEvent(getString(R.string.google_analytics_category_service_name_h4d),

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -428,7 +429,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             int idx0 = mQueueIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
             View view = mRecordedListView.getChildAt(idx0);
             if (view != null) {
-                view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.drawable.icon_circle_normal_download_check_selector);
+                ImageView clipImageView = view.findViewById(R.id.item_common_result_clip_tv);
+                clipImageView.setImageResource(R.drawable.icon_circle_normal_download_check_selector);
                 setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
 				restoreChannelAndTime();
             }
@@ -502,10 +504,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         view = mRecordedListView.getChildAt(idx - mRecordedListView.getFirstVisiblePosition());
         if (view != null) {
-            View tvView = view.findViewById(R.id.item_common_result_clip_tv);
-            if (null != tvView) {
-                tvView.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
-                setDownloadStatusClear(tvView);
+            ImageView clipImageView = view.findViewById(R.id.item_common_result_clip_tv);
+            if (null != clipImageView) {
+                clipImageView.setImageResource(R.drawable.icon_circle_normal_download_selector);
+                setDownloadStatusClear(clipImageView);
             }
         }
         restoreChannelAndTime();
@@ -602,7 +604,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         switch (mContentsData.get(index).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
                 if (textView != null) {
-                    view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.drawable.icon_circle_active_cancel_selector);
+                    ImageView clipImageView =  view.findViewById(R.id.item_common_result_clip_tv);
+                    clipImageView.setImageResource(R.drawable.icon_circle_active_cancel_selector);
                 }
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
@@ -973,7 +976,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                         noticeActDel(path.toString());
                     }
                     setDownloadStatusClear(view);
-                    view.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
+                    ImageView clipImageView = view.findViewById(R.id.item_common_result_clip_tv);
+                    clipImageView.setImageResource(R.drawable.icon_circle_normal_download_selector);
                     ContentsData contentsData = mContentsData.get((int) view.getTag());
                     boolean isDownload = ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == contentsData.getDownloadFlg();
                     contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);

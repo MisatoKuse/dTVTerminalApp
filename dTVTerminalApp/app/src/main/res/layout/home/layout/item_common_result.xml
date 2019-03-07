@@ -73,8 +73,7 @@
                 android:clickable="true"
                 android:layout_marginStart="@dimen/watch_listen_rating_margin_top"
                 android:layout_marginEnd="@dimen/watch_listen_text_size"
-                android:background="@color/list_item_background" />
-
+                android:padding="@dimen/item_common_clip_button_padding" />
             <TextView
                 android:id="@+id/item_common_result_recording_reservation_status"
                 android:layout_width="@dimen/recording_reservation_list_status_width"

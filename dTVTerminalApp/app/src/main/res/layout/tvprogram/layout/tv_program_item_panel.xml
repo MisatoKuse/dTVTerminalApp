@@ -30,9 +30,10 @@
 			android:layout_centerHorizontal="true"
 			android:layout_marginTop="@dimen/panel_clip_margin_top"
 			android:clickable="true"
+			android:padding="@dimen/item_common_clip_button_padding"
 			android:contentDescription="@null"
 			android:scaleType="fitCenter"
-			android:background="@drawable/common_clip_normal_selector"/>
+			android:src="@drawable/common_clip_normal_selector"/>
 	</RelativeLayout>
 
 	<RelativeLayout

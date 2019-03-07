@@ -251,13 +251,13 @@ public class DtvContentsDetailFragment extends Fragment {
                 clipButton.setVisibility(View.VISIBLE);
                 if (!UserInfoUtils.getClipActive(mContext)) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
-                    clipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
+                    clipButton.setImageResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
                     if (mOtherContentsDetailData.isClipStatus()) {
-                        clipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
+                        clipButton.setImageResource(R.drawable.common_clip_active_selector);
                         clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                     } else {
-                        clipButton.setBackgroundResource(R.drawable.common_clip_normal_selector);
+                        clipButton.setImageResource(R.drawable.common_clip_normal_selector);
                         clipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                     }
 
@@ -698,12 +698,12 @@ public class DtvContentsDetailFragment extends Fragment {
                         //放送開始時間が2時間以内なら録画ボタン非表示
                         mRecordButton.setVisibility(View.GONE);
                     } else {
-                        mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
+                        mRecordButton.setImageResource(R.mipmap.icon_tap_circle_normal_rec);
                         mRecordButton.setVisibility(View.VISIBLE);
                         mRecordButton.setOnClickListener(null);
                     }
                 } else {
-                    mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
+                    mRecordButton.setImageResource(R.drawable.recording_reservation_rec_icon_selector);
                     mRecordButton.setVisibility(View.VISIBLE);
                 }
             }
