@@ -3,7 +3,9 @@
  */
 package com.nttdocomo.android.tvterminalapp.activity.search;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,15 +14,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -81,6 +86,10 @@ public class SearchTopActivity extends BaseActivity
     private ViewPager mSearchViewPager = null;
     /** 検索窓.*/
     private SearchView mSearchView = null;
+    /** サーチビュー.*/
+    private TextView searchAutoComplete;
+    /** サーチアイコン.*/
+    private ImageView searchIcon;
     /** グローバルメニューからの表示かどうか.*/
     private Boolean mIsMenuLaunch = false;
     /** 検索用データプロパイダ.*/
@@ -117,6 +126,16 @@ public class SearchTopActivity extends BaseActivity
     private int mTabIndex = 0;
     /** 最後に表示したタブindex.*/
     private static final String TAB_INDEX = "tabIndex";
+    /** search_edit_frame.*/
+    private static final String SEARCH_EDIT_FRAME = "android:id/search_edit_frame";
+    /** search_plate.*/
+    private static final String SEARCH_PLATE = "android:id/search_plate";
+    /** search_src_text.*/
+    private static final String SEARCH_SRC_TEXT = "android:id/search_src_text";
+    /** search_mag_icon.*/
+    private static final String SEARCH_MAG_ICON = "android:id/search_mag_icon";
+    /** search_close_btn.*/
+    private static final String SEARCH_CLOSE_BTN = "android:id/search_close_btn";
     /** 最後に表示した検索キーワード.*/
     private CharSequence mCharSequence = null;
     /** 最後に表示した検索キーワード.*/
@@ -210,9 +229,7 @@ public class SearchTopActivity extends BaseActivity
      */
     private void setSearchViewState() {
         mSearchView.setIconifiedByDefault(false);
-        SearchView.SearchAutoComplete searchAutoComplete
-                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        //mSearchView.set
+        initSearchView();
         mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
@@ -220,6 +237,7 @@ public class SearchTopActivity extends BaseActivity
                 mIsFocus = isFocus;
                 if (isFocus) {
                     DTVTLogger.debug("SearchView Focus");
+                    showInput();
                     setEditTextFocus();
                     // フォーカスが当たった時
                     mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -345,6 +363,59 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
+     * サーチビュー.
+     */
+    private void initSearchView() {
+        int imgIconId = mSearchView.getContext().getResources().getIdentifier(SEARCH_MAG_ICON, null, null);
+        int searchCloseId = mSearchView.getContext().getResources().getIdentifier(SEARCH_CLOSE_BTN, null, null);
+        ImageView closeIcon = mSearchView.findViewById(searchCloseId);
+        closeIcon.setPadding(0, (int) getResources().getDimension(R.dimen.search_form_close_btn_padding),
+                (int) getResources().getDimension(R.dimen.search_form_close_btn_padding),
+                (int) getResources().getDimension(R.dimen.search_form_close_btn_padding));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                (int) getResources().getDimension(R.dimen.search_form_close_btn_area_width), LinearLayout.LayoutParams.MATCH_PARENT);
+        closeIcon.setLayoutParams(layoutParams);
+        closeIcon.setScaleType(ImageView.ScaleType.FIT_END);
+        searchIcon = mSearchView.findViewById(imgIconId);
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        searchIcon.setLayoutParams(layoutParams);
+        searchIcon.setPadding((int) getResources().getDimension(R.dimen.search_form_search_btn_padding_left),
+                (int) getResources().getDimension(R.dimen.search_form_search_btn_padding_other),
+                0, (int) getResources().getDimension(R.dimen.search_form_search_btn_padding_other));
+        int searchFrameId = mSearchView.getContext().getResources().getIdentifier(SEARCH_EDIT_FRAME, null, null);
+        LinearLayout searchEditFrame = mSearchView.findViewById(searchFrameId);
+        int searchPlateId = mSearchView.getContext().getResources().getIdentifier(SEARCH_PLATE, null, null);
+        LinearLayout searchPlate = mSearchView.findViewById(searchPlateId);
+        searchPlate.setBackgroundColor(Color.TRANSPARENT);
+        int imgId = mSearchView.getContext().getResources().getIdentifier(SEARCH_SRC_TEXT, null, null);
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        searchAutoComplete = mSearchView.findViewById(imgId);
+        searchAutoComplete.setLayoutParams(layoutParams);
+        layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) getResources().getDimension(R.dimen.search_form_height));
+        searchEditFrame.setLayoutParams(layoutParams);
+        searchPlate.setLayoutParams(layoutParams);
+        searchPlate.setWeightSum(1);
+    }
+
+    /**
+     * キーボード表示.
+     */
+    private void showInput() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    /**
+     * キーボード非表示.
+     */
+    private void ifShowHideInput() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
+    }
+
+    /**
      * CH一覧情報取得.
      */
     private void getChannelListData() {
@@ -393,9 +464,6 @@ public class SearchTopActivity extends BaseActivity
      * 入力エリア非Focus設定.
      */
     private void setEditTextUnFocus() {
-        SearchView.SearchAutoComplete searchAutoComplete
-                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
         CharSequence query = mSearchView.getQuery();
         DTVTLogger.debug("" + searchAutoComplete.isFocused());
         // 入力文字があれば白背景基調、またはテキスト入力にFocusがあれば白背景基調
@@ -405,6 +473,11 @@ public class SearchTopActivity extends BaseActivity
             searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
             searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
             searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+            int width = mSearchView.getMeasuredWidth() - searchIcon.getMeasuredWidth()
+                    - (int) getResources().getDimension(R.dimen.search_form_close_btn_area_width);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
+            searchAutoComplete.setLayoutParams(layoutParams);
+            searchAutoComplete.setMaxWidth(width);
         } else {
             // 入力文字がなければグレー背景基調
             searchIcon.setImageResource(R.mipmap.icon_normal_search);
@@ -412,6 +485,9 @@ public class SearchTopActivity extends BaseActivity
             searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_unfocus));
             searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
             searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            searchAutoComplete.setLayoutParams(layoutParams);
         }
     }
 
@@ -419,10 +495,17 @@ public class SearchTopActivity extends BaseActivity
      * 入力エリアFocus設定.
      */
     private void setEditTextFocus() {
-        SearchView.SearchAutoComplete searchAutoComplete
-                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
-
+        LinearLayout.LayoutParams layoutParams;
+        CharSequence query = mSearchView.getQuery();
+        if (query != null && query.length() > 0) {
+            int width = mSearchView.getMeasuredWidth() - searchIcon.getMeasuredWidth()
+                    - (int) getResources().getDimension(R.dimen.search_form_close_btn_area_width);
+            layoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
+        } else {
+            layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        }
+        searchAutoComplete.setLayoutParams(layoutParams);
         // Focus時は固定で白背景基調
         searchIcon.setImageResource(R.mipmap.icon_graylight_search);
         mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
@@ -926,6 +1009,7 @@ public class SearchTopActivity extends BaseActivity
             mTimer.cancel();
             mTimer = null;
         }
+        ifShowHideInput();
         //検索の通信を止める
         StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
         stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSearchDataProvider);

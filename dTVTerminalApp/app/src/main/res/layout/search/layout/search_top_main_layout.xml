@@ -5,7 +5,7 @@
               android:background="@color/keyword_search_header_background"
               android:orientation="vertical">
 
-	<android.support.v7.widget.SearchView
+	<SearchView
 		android:id="@+id/keyword_search_form"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/search_form_height"
