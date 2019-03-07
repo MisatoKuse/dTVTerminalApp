@@ -332,6 +332,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     setRemotePlayArrow(mPlayerData);
                 } else {
                     if (mPlayerData.isIsLive()) {
+                        mPlayerViewLayout.setVisibility(View.VISIBLE);
                         if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
                             showPlayerView();
                         } else {
