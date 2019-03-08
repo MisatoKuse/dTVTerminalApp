@@ -55,6 +55,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private OtherContentsDetailData mOtherContentsDetailData = null;
     /** スタッフビュー.*/
     private LinearLayout mStaffLayout = null;
+    /** コピーライト.*/
+    private TextView mTxtCopyright = null;
     /** タイトル/詳細一部文字.*/
     private TextView mTxtTitleShortDetail = null;
     /** タイトル/詳細全文字.*/
@@ -191,6 +193,8 @@ public class DtvContentsDetailFragment extends Fragment {
         mTxtMoreText = mView.findViewById(R.id.dtv_contents_detail_fragment_more_button);
         //スタッフ情報
         mStaffLayout = mView.findViewById(R.id.dtv_contents_detail_fragment_staff);
+        //コピーライト
+        mTxtCopyright = mView.findViewById(R.id.dtv_contents_detail_fragment_copyright);
         mTxtMoreText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -382,6 +386,7 @@ public class DtvContentsDetailFragment extends Fragment {
         }
         setClipButton(mClipButton);
         showDescription();
+        showCopyRight();
     }
 
     /**
@@ -638,6 +643,20 @@ public class DtvContentsDetailFragment extends Fragment {
             final String replaceString = contentsDetailInfo.replace("\\n", "\n");
             mTxtTitleShortDetail.setText(replaceString);
             mTxtTitleAllDetail.setText(replaceString);
+        }
+    }
+
+    /**
+     * コピーライトの更新.
+     */
+    private void showCopyRight() {
+        String copyRight = mOtherContentsDetailData.getCopyRight();
+        if (!TextUtils.isEmpty(copyRight)) {
+            mTxtCopyright.setVisibility(View.VISIBLE);
+            final String replaceString = copyRight.replace("\\n", "\n");
+            mTxtCopyright.setText(replaceString);
+        } else {
+            mTxtCopyright.setVisibility(View.GONE);
         }
     }
 

@@ -116,6 +116,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String mRvalue = "";
     /**コンテンツ種別.*/
     private ContentUtils.ContentsType mContentCategory = null;
+    /**コピーライト.*/
+    private String mCopyRight = null;
 
     /**
      * 日付取得.
@@ -915,6 +917,22 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mContentCategory = mContentCategory;
     }
 
+    /**
+     * コピーライト取得.
+     * @return コピーライト
+     */
+    public String getCopyRight() {
+        return mCopyRight;
+    }
+
+    /**
+     * コピーライト設定.
+     * @param copyRight コピーライト
+     */
+    public void setCopyRight(final String copyRight) {
+        this.mCopyRight = copyRight;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -974,6 +992,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mCopy);
         dest.writeString(this.mRvalue);
         dest.writeInt(this.mContentCategory == null ? -1 : this.mContentCategory.ordinal());
+        dest.writeString(this.mCopyRight);
     }
 
     /**コンストラクタ.*/
@@ -1038,6 +1057,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mRvalue = in.readString();
         int tmpMContentCategory = in.readInt();
         this.mContentCategory = tmpMContentCategory == -1 ? null : ContentUtils.ContentsType.values()[tmpMContentCategory];
+        this.mCopyRight = in.readString();
     }
 
     /**CREATOR構造初期化.*/

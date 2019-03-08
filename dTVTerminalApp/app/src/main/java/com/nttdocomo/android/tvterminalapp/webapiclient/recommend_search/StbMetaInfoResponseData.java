@@ -60,7 +60,7 @@ public class StbMetaInfoResponseData {
         /** 制作年.*/
         String mProductionYear;
         /** コピーライト.*/
-        String mCopyright;
+        public String mCopyright;
         /** コンテンツ長.*/
         int mContentsLength;
         /** 視聴エリアコード.*/
