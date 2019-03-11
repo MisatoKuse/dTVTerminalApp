@@ -632,29 +632,29 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     //未ログイン又は未契約時はクリップボタンを非活性にする
                     if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
                         // 放送終了
-                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip_schedule_end);
+                        itemViewHolder.mClipButton.setImageResource(R.mipmap.icon_tap_circle_normal_clip_schedule_end);
                     } else {
-                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
+                        itemViewHolder.mClipButton.setImageResource(R.mipmap.icon_tap_circle_normal_clip);
                     }
                 } else {
                     if (itemSchedule.isClipStatus()) {
                         if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW
                                 && !(MISS_CUT_OUT.equals(itemSchedule.getContentType()) || MISS_COMPLETE.equals(itemSchedule.getContentType()))) {
                             // 放送終了
-                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_active_selector);
+                            itemViewHolder.mClipButton.setImageResource(R.drawable.tv_program_schedule_end_clip_active_selector);
                             itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_SCHEDULE_END_ACTIVE_STATUS);
                         } else {
-                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
+                            itemViewHolder.mClipButton.setImageResource(R.drawable.common_clip_active_selector);
                             itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                         }
                     } else {
                         if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW
                                 && !(MISS_CUT_OUT.equals(itemSchedule.getContentType()) || MISS_COMPLETE.equals(itemSchedule.getContentType()))) {
                             // 放送終了
-                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_normal_selector);
+                            itemViewHolder.mClipButton.setImageResource(R.drawable.tv_program_schedule_end_clip_normal_selector);
                             itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_SCHEDULE_END_OPACITY_STATUS);
                         } else {
-                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.tv_program_schedule_clip_normal_selector);
+                            itemViewHolder.mClipButton.setImageResource(R.drawable.tv_program_schedule_clip_normal_selector);
                             itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                         }
                     }

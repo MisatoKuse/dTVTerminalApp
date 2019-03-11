@@ -140,9 +140,12 @@ public class ClipKeyListInsertDataManager {
      * 条件に一致する行を削除する.
      *
      * @param crId      コンテンツ識別子
+     * @param serviceId サービスID
+     * @param eventId イベントID
      * @param titleId   タイトルID
      */
-    public void deleteRowSqlStart(final String crId, final String titleId) {
+    public void deleteRowSqlStart(final String crId, final String serviceId,
+                                   final String eventId, final String titleId) {
         DTVTLogger.start();
 
         DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
@@ -158,10 +161,18 @@ public class ClipKeyListInsertDataManager {
                 stringBuilder.append("=?");
                 String[] columns;
                 if (!TextUtils.isEmpty(titleId)) {
-                    stringBuilder.append(" AND ");
+                    stringBuilder.append(" OR ");
                     stringBuilder.append(JsonConstants.META_RESPONSE_TITLE_ID);
                     stringBuilder.append("=?");
                     columns = new String[]{crId, titleId};
+                } else if (!TextUtils.isEmpty(serviceId) && !TextUtils.isEmpty(eventId)) {
+                    stringBuilder.append(" OR ");
+                    stringBuilder.append(JsonConstants.META_RESPONSE_SERVICE_ID);
+                    stringBuilder.append("=?");
+                    stringBuilder.append(" AND ");
+                    stringBuilder.append(JsonConstants.META_RESPONSE_EVENT_ID);
+                    stringBuilder.append("=?");
+                    columns = new String[]{crId, serviceId, eventId};
                 } else {
                     columns = new String[]{crId};
                 }

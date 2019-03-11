@@ -1236,12 +1236,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         //クリップ状態が1以外の時は、非活性クリップボタンを表示
                         if (listContentInfo.isClipExec()) {
                             if (!UserInfoUtils.getClipActive(mContext)) {
-                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
+                                holder.tv_clip.setImageResource(R.mipmap.icon_tap_circle_normal_clip);
                             } else {
                                 if (listContentInfo.isClipStatus()) {
-                                    holder.tv_clip.setBackgroundResource(R.drawable.common_clip_active_selector);
+                                    holder.tv_clip.setImageResource(R.drawable.common_clip_active_selector);
                                 } else {
-                                    holder.tv_clip.setBackgroundResource(R.drawable.common_clip_normal_selector);
+                                    holder.tv_clip.setImageResource(R.drawable.common_clip_normal_selector);
                                 }
                             }
                             holder.tv_clip.setVisibility(View.VISIBLE);
@@ -1274,13 +1274,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             } else {
                 switch (listContentInfo.getDownloadFlg()) {
                     case DOWNLOAD_STATUS_ALLOW:
-                        holder.tv_clip.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
+                        holder.tv_clip.setImageResource(R.drawable.icon_circle_normal_download_selector);
                         break;
                     case DOWNLOAD_STATUS_LOADING:
-                        holder.tv_clip.setBackgroundResource(R.drawable.icon_circle_active_cancel_selector);
+                        holder.tv_clip.setImageResource(R.drawable.icon_circle_active_cancel_selector);
                         break;
                     case DOWNLOAD_STATUS_COMPLETED:
-                        holder.tv_clip.setBackgroundResource(R.drawable.icon_circle_normal_download_check_selector);
+                        holder.tv_clip.setImageResource(R.drawable.icon_circle_normal_download_check_selector);
                         break;
                     default:
                         break;

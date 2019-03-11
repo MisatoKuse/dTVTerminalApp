@@ -1430,10 +1430,10 @@ public class TvProgramListActivity extends BaseActivity implements
             if ((DateUtils.getHyphenEpochTime(clipRequestData.getLinearEndDate()) < DateUtils.getNowTimeFormatEpoch())
                     && (clipButton.getTag() != null && clipButton.getTag().equals(CLIP_SCHEDULE_END_OPACITY_STATUS))) {
                 // 放送が終了しているためクリップボタンを放送終了用アイコンに変更
-                clipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_active_selector);
+                clipButton.setImageResource(R.drawable.tv_program_schedule_end_clip_active_selector);
                 clipButton.setTag(CLIP_SCHEDULE_END_ACTIVE_STATUS);
             } else {
-                clipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
+                clipButton.setImageResource(R.drawable.common_clip_active_selector);
                 clipButton.setTag(CLIP_ACTIVE_STATUS);
             }
             showClipToast(R.string.clip_regist_result_message);
@@ -1460,10 +1460,10 @@ public class TvProgramListActivity extends BaseActivity implements
             if ((DateUtils.getHyphenEpochTime(clipRequestData.getLinearEndDate()) < DateUtils.getNowTimeFormatEpoch())
                     && (clipButton.getTag() != null && clipButton.getTag().equals(CLIP_SCHEDULE_END_ACTIVE_STATUS))) {
                 // 放送が終了しているためクリップボタンを放送終了用アイコンに変更
-                clipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_normal_selector);
+                clipButton.setImageResource(R.drawable.tv_program_schedule_end_clip_normal_selector);
                 clipButton.setTag(CLIP_SCHEDULE_END_OPACITY_STATUS);
             } else {
-                clipButton.setBackgroundResource(R.drawable.tv_program_schedule_clip_normal_selector);
+                clipButton.setImageResource(R.drawable.tv_program_schedule_clip_normal_selector);
                 clipButton.setTag(CLIP_OPACITY_STATUS);
             }
             showClipToast(R.string.clip_delete_result_message);

@@ -32,7 +32,8 @@
     <dimen name="launch_stb_start_up_icon2_width">163dp</dimen>
     <dimen name="launch_stb_account_error_margin_top">40dp</dimen>
 
-    <dimen name="clip_button_size">30dp</dimen>
+    <dimen name="clip_button_size">44dp</dimen>
+    <dimen name="item_common_clip_button_padding">7dp</dimen>
 
     <dimen name="search_load_more_margin">10dp</dimen>
 
@@ -125,7 +126,8 @@
     <dimen name="contents_detail_contents_text_size">14dp</dimen>
     <dimen name="contents_detail_staff_text_size">15dp</dimen>
     <dimen name="contents_detail_staff_margin_top">16dp</dimen>
-    <dimen name="contents_detail_icon_size">36dp</dimen>
+    <dimen name="contents_detail_icon_size">44dp</dimen>
+    <dimen name="contents_detail_icon_padding">4dp</dimen>
     <dimen name="contents_detail_icon_margin">8dp</dimen>
     <dimen name="contents_detail_staff_margin">32dp</dimen>
     <dimen name="contents_detail_contract_leading_text_width">310dp</dimen>
@@ -185,8 +187,8 @@
     <dimen name="watch_listen_thumbnail_width">71dp</dimen>
     <dimen name="watch_listen_thumbnail_margin_top_bottom">10dp</dimen>
     <dimen name="watch_listen_thumbnail_margin_left">16dp</dimen>
-    <dimen name="watch_listen_rating_margin_top">8dp</dimen>
-    <dimen name="watch_listen_text_size">10dp</dimen>
+    <dimen name="watch_listen_rating_margin_top">1dp</dimen>
+    <dimen name="watch_listen_text_size">3dp</dimen>
     <dimen name="watch_listen_rank_num_high">18dp</dimen>
     <dimen name="watch_listen_rank_num_width">24dp</dimen>
     <dimen name="watch_listen_rank_num_margin_start">20dp</dimen>
@@ -293,7 +295,7 @@
     <dimen name="tv_program_item_panel_margin_right">8dp</dimen>
     <dimen name="tv_program_item_panel_content_title_text_size">13dp</dimen>
     <dimen name="tv_program_item_panel_content_detail_text_size">11dp</dimen>
-    <dimen name="panel_clip_margin_top">8dp</dimen>
+    <dimen name="panel_clip_margin_top">1dp</dimen>
     <dimen name="panel_content_des_margin_top">12dp</dimen>
     <dimen name="panel_content_thumbnail_width">122dp</dimen>
     <dimen name="panel_content_thumbnail_height">69dp</dimen>
@@ -303,7 +305,7 @@
     <dimen name="panel_content_detail_margin_top">4dp</dimen>
     <dimen name="tv_program_list_main_layout_calendar_arrow_width">24dp</dimen>
     <dimen name="tv_program_list_main_layout_calendar_arrow_height">24dp</dimen>
-    <dimen name="tv_program_item_panel_clip_button_size">16dp</dimen>
+    <dimen name="tv_program_item_panel_clip_button_size">30dp</dimen>
     <dimen name="tv_program_item_panel_clip_side">30dp</dimen>
     <dimen name="tv_program_channel_height">56dp</dimen>
 
