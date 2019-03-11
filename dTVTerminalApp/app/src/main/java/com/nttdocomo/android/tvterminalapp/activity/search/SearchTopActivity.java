@@ -3,8 +3,10 @@
  */
 package com.nttdocomo.android.tvterminalapp.activity.search;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,7 +89,7 @@ public class SearchTopActivity extends BaseActivity
     /** 検索窓.*/
     private SearchView mSearchView = null;
     /** サーチビュー.*/
-    private TextView searchAutoComplete;
+    private TextView mSearchAutoComplete;
     /** サーチアイコン.*/
     private ImageView searchIcon;
     /** グローバルメニューからの表示かどうか.*/
@@ -122,10 +124,22 @@ public class SearchTopActivity extends BaseActivity
     private static final int TAB_INDEX_DAZN = 4;
     /** タブインデックス　dアニメストア.*/
     private static final int TAB_INDEX_DANIME = 5;
+    /** キーボード表示delay.*/
+    private static final int SHOW_DELAY_TIME = 200;
     /** 最後に表示したタブindex.*/
     private int mTabIndex = 0;
+    /** searchView 幅さ.*/
+    private int mSearchViewWidth = 0;
+    /** search_icon 幅さ.*/
+    private int mSearchIconWidth = 0;
     /** 最後に表示したタブindex.*/
     private static final String TAB_INDEX = "tabIndex";
+    /** キーボード表示フラグindex.*/
+    private static final String KEYBOARD_STATUS = "keyboard_status";
+    /** searchView 幅さ index.*/
+    private static final String SEARCH_WIDTH = "search_width";
+    /** search_icon 幅さ index.*/
+    private static final String SEARCH_ICON_WIDTH = "search_icon_width";
     /** search_edit_frame.*/
     private static final String SEARCH_EDIT_FRAME = "android:id/search_edit_frame";
     /** search_plate.*/
@@ -156,6 +170,8 @@ public class SearchTopActivity extends BaseActivity
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
     /** チャンネル一覧.*/
     private ArrayList<ChannelInfo> mChannels = null;
+    /** キーボード表示フラグ.*/
+    private boolean mIsShowed = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -163,7 +179,10 @@ public class SearchTopActivity extends BaseActivity
         setContentView(R.layout.search_top_main_layout);
         if (savedInstanceState != null) {
             mTabIndex = savedInstanceState.getInt(TAB_INDEX);
+            mIsShowed = savedInstanceState.getBoolean(KEYBOARD_STATUS);
             mCharSequence = savedInstanceState.getCharSequence(CHAR_SEQUENCE);
+            mSearchViewWidth = savedInstanceState.getInt(SEARCH_WIDTH);
+            mSearchIconWidth = savedInstanceState.getInt(SEARCH_ICON_WIDTH);
             savedInstanceState.clear();
         }
         //Headerの設定
@@ -180,6 +199,16 @@ public class SearchTopActivity extends BaseActivity
         setSearchViewState();
     }
 
+    /**
+     * キーボード表示チェック.
+     */
+    private void ifShowKeyboard() {
+        if (mIsShowed) {
+            mSearchAutoComplete.requestFocus();
+            mIsShowed = false;
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -194,12 +223,16 @@ public class SearchTopActivity extends BaseActivity
                 sendScreenViewForPosition(mTabIndex, false);
             }
         }
+        ifShowKeyboard();
     }
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(TAB_INDEX, mTabIndex);
+        outState.putBoolean(KEYBOARD_STATUS, mIsShowed);
+        outState.putInt(SEARCH_WIDTH, mSearchView.getMeasuredWidth());
+        outState.putInt(SEARCH_ICON_WIDTH, searchIcon.getMeasuredWidth());
         CharSequence query = mSearchView.getQuery();
         outState.putCharSequence(CHAR_SEQUENCE, query);
     }
@@ -354,12 +387,19 @@ public class SearchTopActivity extends BaseActivity
         });
         mSearchView.setFocusable(false);
         //ユーザー操作の簡略化のため、遷移時キーボードを表示する
-        searchAutoComplete.requestFocus();
-        searchAutoComplete.setHint(R.string.keyword_search_hint);
+        mSearchAutoComplete.requestFocus();
+        mSearchAutoComplete.setHint(R.string.keyword_search_hint);
         if (mCharSequence != null && mCharSequence.length() > 0) {
-            searchAutoComplete.setText(mCharSequence.toString());
+            mSearchAutoComplete.setText(mCharSequence.toString());
+            if (mSearchViewWidth > 0 && mSearchIconWidth > 0) {
+                int width = mSearchViewWidth - mSearchIconWidth
+                        - (int) getResources().getDimension(R.dimen.search_form_close_btn_area_width);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
+                mSearchAutoComplete.setLayoutParams(layoutParams);
+                mSearchAutoComplete.setMaxWidth(width);
+            }
         }
-        searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
+        mSearchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
     }
 
     /**
@@ -391,8 +431,8 @@ public class SearchTopActivity extends BaseActivity
         int imgId = mSearchView.getContext().getResources().getIdentifier(SEARCH_SRC_TEXT, null, null);
         layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        searchAutoComplete = mSearchView.findViewById(imgId);
-        searchAutoComplete.setLayoutParams(layoutParams);
+        mSearchAutoComplete = mSearchView.findViewById(imgId);
+        mSearchAutoComplete.setLayoutParams(layoutParams);
         layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) getResources().getDimension(R.dimen.search_form_height));
         searchEditFrame.setLayoutParams(layoutParams);
         searchPlate.setLayoutParams(layoutParams);
@@ -403,8 +443,13 @@ public class SearchTopActivity extends BaseActivity
      * キーボード表示.
      */
     private void showInput() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        }, SHOW_DELAY_TIME);
     }
 
     /**
@@ -413,6 +458,10 @@ public class SearchTopActivity extends BaseActivity
     private void ifShowHideInput() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
+        if (mSearchAutoComplete.isFocused()) {
+            mSearchView.clearFocus();
+            mIsShowed = true;
+        }
     }
 
     /**
@@ -465,29 +514,29 @@ public class SearchTopActivity extends BaseActivity
      */
     private void setEditTextUnFocus() {
         CharSequence query = mSearchView.getQuery();
-        DTVTLogger.debug("" + searchAutoComplete.isFocused());
+        DTVTLogger.debug("" + mSearchAutoComplete.isFocused());
         // 入力文字があれば白背景基調、またはテキスト入力にFocusがあれば白背景基調
-        if ((query != null && query.length() > 0) || searchAutoComplete.isFocused()) {
+        if ((query != null && query.length() > 0) || mSearchAutoComplete.isFocused()) {
             searchIcon.setImageResource(R.mipmap.icon_graylight_search);
             mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
-            searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
-            searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
-            searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+            mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
+            mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+            mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
             int width = mSearchView.getMeasuredWidth() - searchIcon.getMeasuredWidth()
                     - (int) getResources().getDimension(R.dimen.search_form_close_btn_area_width);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
-            searchAutoComplete.setLayoutParams(layoutParams);
-            searchAutoComplete.setMaxWidth(width);
+            mSearchAutoComplete.setLayoutParams(layoutParams);
+            mSearchAutoComplete.setMaxWidth(width);
         } else {
             // 入力文字がなければグレー背景基調
             searchIcon.setImageResource(R.mipmap.icon_normal_search);
             mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_unfocus));
-            searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_unfocus));
-            searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
-            searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
+            mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_unfocus));
+            mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
+            mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            searchAutoComplete.setLayoutParams(layoutParams);
+            mSearchAutoComplete.setLayoutParams(layoutParams);
         }
     }
 
@@ -505,13 +554,13 @@ public class SearchTopActivity extends BaseActivity
             layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         }
-        searchAutoComplete.setLayoutParams(layoutParams);
+        mSearchAutoComplete.setLayoutParams(layoutParams);
         // Focus時は固定で白背景基調
         searchIcon.setImageResource(R.mipmap.icon_graylight_search);
         mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
-        searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+        mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
+        mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+        mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
     }
 
     /**
@@ -937,12 +986,38 @@ public class SearchTopActivity extends BaseActivity
         }
     }
 
+    /**
+     * ステータスバーの高さを取得する.
+     * @param activity アクティビティ
+     * @return ステータスバーの高さ
+     */
+    public static int getStatusBarHeight(final Activity activity) {
+        int result = 0;
+        Resources res = activity.getResources();
+        int resourceId = res.getIdentifier(
+                res.getString(R.string.status_bar_height_name),
+                res.getString(R.string.status_bar_height_deftype),
+                res.getString(R.string.status_bar_height_defpackage));
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
     @Override
     public boolean dispatchTouchEvent(final MotionEvent event) {
         View currentView = getCurrentFocus();
-        if (currentView == null || !(currentView instanceof SearchView)) {
-            //検索ボックス以外タッチならキーボードを消す
-            mSearchView.clearFocus();
+        if (currentView == null || mSearchView != null) {
+            float x = event.getX();
+            float y = event.getY();
+            float statusBarHeight = getStatusBarHeight(this);
+            float headerHeight = (int) getResources().getDimension(R.dimen.main_header_height);
+            if ((x < mSearchView.getX() || x > (mSearchView.getX() + mSearchView.getWidth())
+                    || (y < headerHeight  + statusBarHeight + mSearchView.getY()
+                    || y > (headerHeight + statusBarHeight + mSearchView.getY() + mSearchView.getHeight())))) {
+                //検索ボックス以外タッチならキーボードを消す
+                mSearchView.clearFocus();
+            }
         }
         return super.dispatchTouchEvent(event);
     }
