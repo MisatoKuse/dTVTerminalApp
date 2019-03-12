@@ -427,6 +427,7 @@ public class ContentDetailUtils {
         detailData.setM4kflg(mDetailFullData.getM4kflg());
         detailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
         detailData.setContentCategory(mDetailFullData.getContentsType());
+        detailData.setCopyRight(mDetailFullData.getCopyright());
     }
 
     /**
@@ -467,6 +468,7 @@ public class ContentDetailUtils {
         detailData.setChannelId(content.mChannelId);
         detailData.setContentsId(content.mContentsId);
         detailData.setContentCategory(ContentUtils.getRecommendContentsType(detailData.getServiceId(), content.mCategoryId));
+        detailData.setCopyRight(content.mCopyright);
         //履歴送信用
         detailData.setRecommendFlg(mDetailData.getRecommendFlg());
         detailData.setGroupId(mDetailData.getGroupId());

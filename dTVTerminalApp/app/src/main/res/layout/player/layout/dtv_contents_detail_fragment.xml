@@ -184,6 +184,17 @@
                     android:textSize="@dimen/contents_detail_staff_text_size"
                     android:textStyle="bold" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/dtv_contents_detail_fragment_copyright"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/contents_detail_staff_margin"
+                android:layout_marginBottom="@dimen/contents_text_info_margin"
+                android:textColor="@color/common_tab_select_text_color"
+                android:textSize="@dimen/contents_detail_copyright_text_size"
+                android:visibility="gone" />
+
         </LinearLayout>
     </ScrollView>
 

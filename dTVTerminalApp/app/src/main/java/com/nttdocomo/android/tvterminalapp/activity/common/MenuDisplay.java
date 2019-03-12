@@ -291,11 +291,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
             mActivity.startActivity(intent);
-        } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_anime_copyright))) {
-            //dアニメストアのコピーライト表記サイトを表示する為、外部ブラウザを呼び出す
-            Uri uri = Uri.parse(UrlConstants.WebUrl.D_ANIME_COPYRIGHT_SITE_URL);
-            intent = new Intent(Intent.ACTION_VIEW, uri);
-            mActivity.startActivity(intent);
         } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
             mActivity.setRemoteProgressVisible(View.VISIBLE);
             // TVアプリ起動導線(ひかりTV)
@@ -593,10 +588,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
-        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
-
-        //dアニメストアコピーライト表記
-        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_d_anime_copyright));
         mMenuItemCount.add(INT_NONE_COUNT_STATUS);
     }
 }

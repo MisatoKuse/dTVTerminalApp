@@ -128,6 +128,8 @@
     <dimen name="contents_detail_staff_margin_top">16dp</dimen>
     <dimen name="contents_detail_icon_size">44dp</dimen>
     <dimen name="contents_detail_icon_padding">4dp</dimen>
+    <dimen name="contents_detail_copyright_text_size">11dp</dimen>
+    <dimen name="contents_detail_icon_size">36dp</dimen>
     <dimen name="contents_detail_icon_margin">8dp</dimen>
     <dimen name="contents_detail_staff_margin">32dp</dimen>
     <dimen name="contents_detail_contract_leading_text_width">310dp</dimen>
