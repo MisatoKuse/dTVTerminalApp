@@ -332,6 +332,10 @@
 
 
     <!-- 検索画面 -->
+    <dimen name="search_form_close_btn_padding">8dp</dimen>
+    <dimen name="search_form_search_btn_padding_left">11dp</dimen>
+    <dimen name="search_form_close_btn_area_width">44dp</dimen>
+    <dimen name="search_form_search_btn_padding_other">10dp</dimen>
     <dimen name="search_form_height">40dp</dimen>
     <dimen name="search_form_margin_top">16dp</dimen>
     <dimen name="search_form_margin_bottom">16dp</dimen>
