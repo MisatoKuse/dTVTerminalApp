@@ -21,13 +21,11 @@
         android:textColor="@color/white_text"
         android:textSize="@dimen/contents_detail_channel_sub_title_txt_size"
         android:visibility="gone"/>
-
     <RelativeLayout
         android:id="@+id/item_common_result_item_rl"
         android:layout_below="@id/item_common_result_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <RelativeLayout
             android:id="@+id/item_common_result_thumbnail_rl"
             android:layout_width="wrap_content"
@@ -62,7 +60,7 @@
         <RelativeLayout
             android:id="@+id/item_common_result_show_status_area"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true">
 
@@ -70,6 +68,7 @@
                 android:id="@+id/item_common_result_clip_tv"
                 android:layout_width="@dimen/clip_button_size"
                 android:layout_height="@dimen/clip_button_size"
+                android:layout_centerVertical="true"
                 android:clickable="true"
                 android:layout_marginStart="@dimen/watch_listen_rating_margin_top"
                 android:layout_marginEnd="@dimen/watch_listen_text_size"
@@ -82,6 +81,7 @@
                 android:layout_marginTop="@dimen/list_divider_height"
                 android:background="@color/list_item_background"
                 android:gravity="center_vertical|center_horizontal"
+                android:layout_centerVertical="true"
                 android:textSize="@dimen/list_item_recording_reservation_status_text_size"
                 android:visibility="gone" />
         </RelativeLayout>
