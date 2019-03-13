@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -274,7 +273,9 @@ public class DtvContentsDetailFragment extends Fragment {
                             } else {
                                 data.setClipStatus(false);
                             }
-                            ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
+                            if (getContext() != null) {
+                                ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
+                            }
                         }
                     });
                 }
