@@ -430,13 +430,15 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 requestData.setIsNotify(dispType, contentsType, vodMetaFullData.getmVod_start_date(), tvService, dTv);
                 requestData.setDispType(dispType);
                 requestData.setContentType(contentsType);
+                requestData.setTvService(tvService);
+                requestData.setVodStartDate(vodMetaFullData.getmVod_start_date());
                 data.setRequestData(requestData);
 
                 if (mRequiredClipKeyList) {
                     // クリップ状態をコンテンツリストに格納
                     data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                             requestData.getCrid(), requestData.getServiceId(),
-                            requestData.getEventId(), requestData.getTitleId(), tvService));
+                            requestData.getEventId(), requestData.getTitleId(), tvService, vodMetaFullData.getmVod_start_date()));
                 }
 
                 list.add(data);

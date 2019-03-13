@@ -37,6 +37,10 @@ public class ClipRequestData {
     private String mDispType = null;
     /**コンテンツタイプ.*/
     private String mContentType = null;
+    /**tv_service.*/
+    private String mTvService = null;
+    /**vodStartDate.*/
+    private long mVodStartDate;
     /**テーブルタイプ.*/
     private ClipKeyListDao.TableTypeEnum mTableType = null;
     /**視聴通知判定.*/
@@ -254,6 +258,38 @@ public class ClipRequestData {
      */
     public void setContentType(final String mContentType) {
         this.mContentType = mContentType;
+    }
+
+    /**
+     * tvService取得する.
+     * @return vodStartDate
+     */
+    public String getTvService() {
+        return mTvService;
+    }
+
+    /**
+     * tvService設定する.
+     * @param mTvService tvService
+     */
+    public void setTvService(final String mTvService) {
+        this.mTvService = mTvService;
+    }
+
+    /**
+     * vodStartDate取得する.
+     * @return vodStartDate
+     */
+    public long getVodStartDate() {
+        return mVodStartDate;
+    }
+
+    /**
+     * vodStartDate設定する.
+     * @param mVodStartDate mVodStartDate
+     */
+    public void setVodStartDate(final long mVodStartDate) {
+        this.mVodStartDate = mVodStartDate;
     }
 
     /**

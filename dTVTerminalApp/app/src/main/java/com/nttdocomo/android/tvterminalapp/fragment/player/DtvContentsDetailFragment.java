@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -307,6 +308,8 @@ public class DtvContentsDetailFragment extends Fragment {
             requestData.setLinearStartDate(String.valueOf(metaFullData.getPublish_start_date()));
             requestData.setLinearEndDate(String.valueOf(metaFullData.getPublish_end_date()));
             requestData.setSearchOk(metaFullData.getmSearch_ok());
+            requestData.setTvService(metaFullData.getmTv_service());
+            requestData.setVodStartDate(metaFullData.getmVod_start_date());
             requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
                     metaFullData.getmVod_start_date(), metaFullData.getmTv_service(), metaFullData.getDtv());
         }

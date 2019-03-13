@@ -325,6 +325,7 @@ public class TvScheduleInsertDataManager {
         values.put(JsonConstants.META_RESPONSE_CONTENT_TYPE, scheduleInfo.getContentType());
         values.put(JsonConstants.META_RESPONSE_DTV, scheduleInfo.getDtv());
         values.put(JsonConstants.META_RESPONSE_TV_SERVICE, scheduleInfo.getTvService());
+        values.put(JsonConstants.META_RESPONSE_VOD_START_DATE, scheduleInfo.getVodStartDate());
         values.put(JsonConstants.META_RESPONSE_DTV_TYPE, scheduleInfo.getDtvType());
         values.put(JsonConstants.META_RESPONSE_SYNOP, scheduleInfo.getDetail());
         return values;
