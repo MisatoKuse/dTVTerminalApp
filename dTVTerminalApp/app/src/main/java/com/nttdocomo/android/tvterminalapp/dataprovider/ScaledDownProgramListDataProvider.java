@@ -518,6 +518,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     public static ClipRequestData setClipData(final Map<String, String> map) {
         String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
         String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+        String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
         ClipRequestData requestData = new ClipRequestData();
         requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
         requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
@@ -530,10 +531,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         requestData.setSearchOk(map.get(JsonConstants.META_RESPONSE_SEARCH_OK));
         requestData.setIsNotify(dispType, contentsType,
                 DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)),
-                map.get(JsonConstants.META_RESPONSE_TV_SERVICE), map.get(JsonConstants.META_RESPONSE_DTV));
+                tvService, map.get(JsonConstants.META_RESPONSE_DTV));
         requestData.setDispType(dispType);
         requestData.setContentType(contentsType);
-//        requestData.setTableType(decisionTableType(contentsType, contentsType));
+        requestData.setTvService(tvService);
+        long vodStartDate = DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE));
+        requestData.setVodStartDate(vodStartDate);
         return requestData;
     }
 

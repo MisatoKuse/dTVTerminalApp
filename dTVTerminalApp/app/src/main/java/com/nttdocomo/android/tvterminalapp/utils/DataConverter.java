@@ -148,6 +148,7 @@ public class DataConverter {
         String titleId = map.get(JsonConstants.META_RESPONSE_TITLE_ID);
         String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
         String serviceIdUniq = map.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ);
+        String vodStartDate = map.get(JsonConstants.META_RESPONSE_VOD_START_DATE);
         mSchedule.setStartTime(startDate);
         mSchedule.setEndTime(endDate);
         mSchedule.setImageUrl(thumb);
@@ -172,6 +173,7 @@ public class DataConverter {
         mSchedule.setContentType(contentType);
         mSchedule.setTitleId(titleId);
         mSchedule.setTvService(tvService);
+        mSchedule.setVodStartDate(vodStartDate);
         mSchedule.setClipStatus(ClipUtils.setClipStatusScheduleInfo(mSchedule, clipKeyList));
         return mSchedule;
     }

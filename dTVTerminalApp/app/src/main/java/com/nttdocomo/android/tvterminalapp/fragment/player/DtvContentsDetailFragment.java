@@ -277,7 +277,9 @@ public class DtvContentsDetailFragment extends Fragment {
                             } else {
                                 data.setClipStatus(false);
                             }
-                            ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
+                            if (getContext() != null) {
+                                ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
+                            }
                         }
                     });
                 }
@@ -311,6 +313,8 @@ public class DtvContentsDetailFragment extends Fragment {
             requestData.setLinearStartDate(String.valueOf(metaFullData.getPublish_start_date()));
             requestData.setLinearEndDate(String.valueOf(metaFullData.getPublish_end_date()));
             requestData.setSearchOk(metaFullData.getmSearch_ok());
+            requestData.setTvService(metaFullData.getmTv_service());
+            requestData.setVodStartDate(metaFullData.getmVod_start_date());
             requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
                     metaFullData.getmVod_start_date(), metaFullData.getmTv_service(), metaFullData.getDtv());
         }

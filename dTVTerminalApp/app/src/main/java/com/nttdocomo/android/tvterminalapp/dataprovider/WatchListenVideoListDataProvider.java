@@ -247,13 +247,15 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             requestData.setIsNotify(dispType, contentsType, contentInfo.getVodStartDate(), tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
+            requestData.setTvService(tvService);
+            requestData.setVodStartDate(contentInfo.getVodStartDate());
             contentInfo.setRequestData(requestData);
 
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId(), tvService));
+                        requestData.getEventId(), requestData.getTitleId(), tvService, contentInfo.getVodStartDate()));
             }
 
             rankingContentsDataList.add(contentInfo);

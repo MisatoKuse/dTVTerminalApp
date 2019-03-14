@@ -690,7 +690,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 setChannelInfo(map, rankingContentInfo, channels);
                 rankingContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
                 rankingContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
-                rankingContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+                long vodStartDate = DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE));
+                rankingContentInfo.setVodStartDate(vodStartDate);
                 rankingContentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
                 //クリップリクエストデータ作成
                 ClipRequestData requestData = new ClipRequestData();
@@ -702,7 +703,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 requestData.setIsNotify(dispType, contentsType, rankingContentInfo.getVodStartDate(), tvService, dTv);
                 requestData.setDispType(dispType);
                 requestData.setContentType(contentsType);
-                requestData.setTableType(decisionTableType(contentsType, contentsType));
+                requestData.setTvService(tvService);
+                requestData.setVodStartDate(vodStartDate);
+                requestData.setTableType(decisionTableType(tvService, dispType, contentsType, vodStartDate));
                 if (mRequiredClipKeyList) {
                     // クリップ状態をコンテンツリストに格納
                     boolean clipStatus = ClipUtils.setClipStatusContentsData(rankingContentInfo, clipKeyList);

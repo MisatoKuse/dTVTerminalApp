@@ -375,19 +375,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     @SuppressWarnings("OverlyLongMethod")
     private void setMarginLayout(final int position, final ViewHolder holder, final View contentView) {
-        RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         int textMargin;
-        int clipMargin;
         switch (mType) {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST:
                 textMargin = STATUS_MARGIN_TOP17;
-                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
-                setClipMargin(clipMargin, contentView);
                 break;
             case TYPE_VIDEO_RANK:
             case TYPE_VIDEO_CONTENT_LIST:
@@ -395,17 +390,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_CLIP_LIST_MODE_VIDEO:
                 textMargin = TITLE_MARGIN_TOP17;
                 setTextMargin(textMargin, holder, contentView);
-                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
-                layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
-                contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RENTAL_RANK:
             case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
                 textMargin = STATUS_MARGIN_TOP10;
                 setTextMargin(textMargin, holder, contentView);
-                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
-                layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
-                contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST:
                 //録画予約一覧用余白設定
@@ -448,13 +437,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setTabContentMargin(final ViewHolder holder, final View contentView) {
         int textMargin;
-        int clipMargin;
         switch (mTabType) {
             case TAB_TV:
                 textMargin = STATUS_MARGIN_TOP10;
-                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
-                setClipMargin(clipMargin, contentView);
                 break;
             case TAB_VIDEO:
             case TAB_D_CHANNEL:
@@ -462,32 +448,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_DAZN:
             case TAB_D_TV:
                 textMargin = TITLE_MARGIN_TOP20;
-                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
-                setClipMargin(clipMargin, contentView);
                 break;
             case TAB_DEFAULT:
             default:
                 break;
         }
-    }
-
-    /**
-     * クリップボタンレイアウト設定.
-     *
-     * @param clipMargin マージン
-     * @param view       View
-     */
-    private void setClipMargin(final int clipMargin, final View view) {
-        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
-        float density = DisplayMetrics.density;
-
-        RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParamsClip.setMargins(THUMBNAIL_MARGIN0 * (int) density, clipMargin * (int) density,
-                THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
-        layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
-        view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
     }
 
     /**

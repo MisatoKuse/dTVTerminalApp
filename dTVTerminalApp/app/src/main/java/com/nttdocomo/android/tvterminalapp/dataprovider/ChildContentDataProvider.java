@@ -365,13 +365,15 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             requestData.setIsNotify(dispType, contentsType, vodMetaFullData.getmVod_start_date(), tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
+            requestData.setVodStartDate(vodMetaFullData.getmVod_start_date());
+            requestData.setTvService(tvService);
             data.setRequestData(requestData);
 
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId(), tvService));
+                        requestData.getEventId(), requestData.getTitleId(), tvService, vodMetaFullData.getmVod_start_date()));
             }
 
             list.add(data);

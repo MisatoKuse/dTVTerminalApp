@@ -41,6 +41,8 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -325,19 +327,40 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     /**
      * 使用テーブル判定 TV or VOD.
-     *
+     * @param tvService   tvService
      * @param dispType    dispType
-     * @param contentType contentType
+     * @param contentsType contentsType
+     * @param vodStartDate vodStartDate
      * @return テーブル種別
      */
-    ClipKeyListDao.TableTypeEnum decisionTableType(
-            final String dispType, final String contentType) {
+    ClipKeyListDao.TableTypeEnum decisionTableType(final String tvService, final String dispType, final String contentsType, final long vodStartDate) {
         if (dispType == null) {
             return null;
         }
-        if ((contentType == null || contentType.isEmpty())
-                && ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)) {
-            return ClipKeyListDao.TableTypeEnum.TV;
+        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)) {
+            if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(tvService)
+                    || ContentUtils.TV_SERVICE_FLAG_TTB.equals(tvService)
+                    || ContentUtils.TV_SERVICE_FLAG_BS.equals(tvService)) {
+                return ClipKeyListDao.TableTypeEnum.TV;
+            }
+            if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
+                if (ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
+                    return ClipKeyListDao.TableTypeEnum.VOD;
+                } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(contentsType)
+                        || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(contentsType)) {
+                    Calendar cal = Calendar.getInstance();
+                    Date nowDate = cal.getTime();
+                    cal.setTimeInMillis(vodStartDate * 1000);
+                    Date startDate = cal.getTime();
+                    if (startDate.getTime() <= nowDate.getTime()) {
+                        return ClipKeyListDao.TableTypeEnum.VOD;
+                    } else {
+                        return ClipKeyListDao.TableTypeEnum.TV;
+                    }
+                } else {
+                    return ClipKeyListDao.TableTypeEnum.TV;
+                }
+            }
         }
         return ClipKeyListDao.TableTypeEnum.VOD;
     }
@@ -429,7 +452,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                     dataManager.deleteRowSqlStart(crid, serviceId, eventId, titleId);
                     break;
                 case CLIP_ROW_INSERT:
-                    ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentType);
+                    long vodStartDate = data.getVodStartDate();
+                    String tvService = data.getTvService();
+                    ClipKeyListDao.TableTypeEnum tableType = decisionTableType(tvService, dispType, contentType, vodStartDate);
                     if (tableType != null) {
                         dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                         break;
@@ -476,14 +501,15 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param eventId      eventId
      * @param titleId      titleId
      * @param tvService    tvService
+     * @param vodStartDate vodStartDate
      * @return クリップ状態
      */
     boolean getClipStatus(
             final String dispType, final String contentsType, final String dTv, final String crid,
-            final String serviceId, final String eventId, final String titleId, final String tvService) {
+            final String serviceId, final String eventId, final String titleId, final String tvService, final long vodStartDate) {
         boolean clipStatus = false;
         ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(dispType, dTv, tvService);
-        ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentsType);
+        ClipKeyListDao.TableTypeEnum tableType = decisionTableType(tvService, dispType, contentsType, vodStartDate);
         if (contentType != null && tableType != null) {
             switch (contentType) {
                 case SERVICE_ID_AND_EVENT_ID_REFERENCE:
@@ -690,6 +716,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, contentInfo.getVodStartDate(), tvService, dTv);
             setRequestType(requestData, dispType, contentsType);
+            requestData.setVodStartDate(contentInfo.getVodStartDate());
+            requestData.setTvService(tvService);
             contentInfo.setRequestData(requestData);
             DTVTLogger.debug("RankingContentInfo " + contentInfo.getRank());
             contentInfo.setClipStatus(ClipUtils.setClipStatusContentsData(contentInfo, clipMapList));

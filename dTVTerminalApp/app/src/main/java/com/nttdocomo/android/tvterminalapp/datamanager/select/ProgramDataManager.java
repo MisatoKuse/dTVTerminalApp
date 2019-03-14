@@ -192,7 +192,8 @@ public class ProgramDataManager {
                     JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV,
                     JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_DTV_TYPE,
                     JsonConstants.META_RESPONSE_SYNOP, JsonConstants.META_RESPONSE_CID,
-                    JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ};
+                    JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ,
+                    JsonConstants.META_RESPONSE_VOD_START_DATE};
 
 
             //Daoクラス使用準備

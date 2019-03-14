@@ -206,6 +206,8 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             requestData.setIsNotify(dispType, contentsType, contentsData.getVodStartDate(), tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
+            requestData.setVodStartDate(contentsData.getVodStartDate());
+            requestData.setTvService(tvService);
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentsData.setRequestData(requestData);
 
@@ -213,7 +215,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
                 // クリップ状態をコンテンツリストに格納
                 contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId(), tvService));
+                        requestData.getEventId(), requestData.getTitleId(), tvService, contentsData.getVodStartDate()));
             }
 
             videoContentsDataList.add(contentsData);

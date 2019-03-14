@@ -182,7 +182,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     // region super class
 
     @Override
-    public void onContentsDetailJsonParsed(ContentsDetailGetResponse contentsDetailLists, final ErrorState jsonParseError) {
+    public void onContentsDetailJsonParsed(final ContentsDetailGetResponse contentsDetailLists, final ErrorState jsonParseError) {
         if (contentsDetailLists != null && jsonParseError == null) {
             if (contentsDetailLists.getStatus().equals(mContext.getString(R.string.contents_detail_response_ok))) {
                 ArrayList<VodMetaFullData> detailListInfo = contentsDetailLists.getVodMetaFullData();
@@ -675,7 +675,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 metaFullData.getCrid(),
                 metaFullData.getmService_id(),
                 metaFullData.getmEvent_id(),
-                metaFullData.getTitle_id(), metaFullData.getmTv_service());
+                metaFullData.getTitle_id(),
+                metaFullData.getmTv_service(),
+                metaFullData.getmVod_start_date());
     }
 
     /**
@@ -685,7 +687,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      */
     private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
         DTVTLogger.start();
-        ClipKeyListDao.TableTypeEnum tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
         mTvClipKeyListResponse = false;
         mVodClipKeyListResponse = false;
         //番組でも見逃し等VODデータが入ってい来ることがあるので、全件取得する

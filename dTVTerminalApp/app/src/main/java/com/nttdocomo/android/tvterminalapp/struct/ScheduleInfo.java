@@ -51,6 +51,8 @@ public class ScheduleInfo {
     private String mContentType = null;
     /** TVサービス種別.*/
     private String mTvService = null;
+    /** vodStartDate.*/
+    private String mVodStartDate = null;
     /** サービスID.*/
     private String mServiceId = null;
     /** サービスIDユニーク.*/
@@ -361,6 +363,22 @@ public class ScheduleInfo {
      */
     public void setTvService(final String mTvService) {
         this.mTvService = mTvService;
+    }
+
+    /**
+     * VodStartDate取得.
+     * @return VodStartDate
+     */
+    public String getVodStartDate() {
+        return mVodStartDate;
+    }
+
+    /**
+     * VodStartDate種別設定.
+     * @param mVodStartDate mVodStartDate
+     */
+    public void setVodStartDate(final String mVodStartDate) {
+        this.mVodStartDate = mVodStartDate;
     }
 
     /**
