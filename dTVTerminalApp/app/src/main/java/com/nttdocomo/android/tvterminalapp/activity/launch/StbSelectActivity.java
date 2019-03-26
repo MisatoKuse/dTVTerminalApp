@@ -6,19 +6,19 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
+import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -88,10 +88,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private int mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
     /**
-     * 次回表示しないフラグ.
-     */
-    private boolean mIsNextTimeHide = false;
-    /**
      * dアカウントアプリインストールフラグ.
      */
     private boolean mIsAppDL = false;
@@ -108,10 +104,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private ImageView mPairingImage;
     /**
-     * チェックボックス.
-     */
-    private CheckBox mCheckBox = null;
-    /**
      * ペアリングしないでアプリを利用するTextView.
      */
     private TextView mParingTextView = null;
@@ -119,14 +111,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * ペアリングされたデバイス名を表示するためのTextView.
      */
     private TextView mParingDevice;
-    /**
-     * 次回表示しないTextView.
-     */
-    private TextView mCheckboxText;
-    /**
-     * 次回表示しないTextView表示フラグ.
-     */
-    private boolean mIsShowCheckboxText = false;
     /**
      * DMSリストビュー.
      */
@@ -143,21 +127,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * TextView.
      */
     private TextView mDeviceSelectText;
-
-    /**
-     * ステータス表示の高さの初期値.
-     */
-    private int mFirstStatusHeight = 0;
-
     /**
      * 新dアカウント設定フラグ.
      */
     private boolean mNewDaccountGet = false;
-
-    /**
-     * ステータス表示の高さの補正値.
-     */
-    private final double ANDROID_4_4_FIX_SIZE = 1.2;
     /**
      * 起動モードキー名.
      */
@@ -218,6 +191,18 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * dアカウント単純起動中フラグ.
      */
     private boolean mIsDAccountAppStarting = false;
+    /**
+     * 最大30sほどかかります.
+     */
+    private TextView mIsSearchingTextView;
+    /**
+     * STB検出ステータス.
+     */
+    private  TextView mStatusTextView;
+    /**
+     * STB検出エラータイプ.
+     */
+    public static final  String ERROR_TYPE = "ERROR_TYPE ";
 
     /**
      * タイマーステータス.
@@ -260,6 +245,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
+        setTitleText(getString(R.string.str_stb_paring_setting_title));
         Intent intent = getIntent();
         if (intent != null) {
             mStartMode = intent.getIntExtra(FROM_WHERE, -1);
@@ -315,30 +301,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setOnItemClickListener(this);
         mDeviceListView.setVisibility(View.VISIBLE);
         mLoadMoreView = findViewById(R.id.stb_device_progress);
-        mCheckBox = findViewById(R.id.checkBoxSTBSelectActivity);
-        mCheckboxText = findViewById(R.id.launch_select_check_box_text);
-        mCheckBox.setVisibility(View.VISIBLE);
-        mCheckboxText.setVisibility(View.VISIBLE);
-        mCheckBox.setOnClickListener(this);
-        mCheckboxText.setOnClickListener(this);
-        mCheckBox.setChecked(false);
-        mCheckBox.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
-                        mIsNextTimeHide = isChecked;
-                        if (isChecked) {
-                            mCheckBox.setBackgroundResource(R.drawable.
-                                    ic_check_box_white_24dp);
-                        } else {
-                            mCheckBox.setBackgroundResource(R.drawable.
-                                    ic_check_box_outline_blank_white_24dp);
-                        }
-                    }
-                });
-        mParingTextView = findViewById(
-                R.id.useWithoutPairingSTBParingInvitation);
+        mParingTextView = findViewById(R.id.useWithoutPairingButton);
+        mParingTextView.setPaintFlags(mParingTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mParingTextView.setOnClickListener(this);
+        mParingTextView.setVisibility(View.VISIBLE);
+        mStatusTextView = findViewById(R.id.stb_select_status_text);
+        mIsSearchingTextView = findViewById(R.id.stb_select_latency_text);
     }
 
     @Override
@@ -354,23 +322,19 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Launch.ordinal())) {
             //初回起動時
             enableHeaderBackIcon(false);
-            setTitleText(getString(R.string.str_app_title));
             enableGlobalMenuIcon(false);
-            setImageLayoutParams(dip2px(70), dip2px(36));
             mPairingImage.setImageResource(R.mipmap.startup_icon_01);
             return;
         } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {
-            RelativeLayout pairingRelativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
+            ImageView pairingImageView = findViewById(R.id.paring_search_image_setting);
             TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
-            if (pairingRelativeLayout.getVisibility() == View.VISIBLE && statusSetting.getVisibility() == View.VISIBLE) {
-                pairingRelativeLayout.setVisibility(View.GONE);
+            if (pairingImageView.getVisibility() == View.VISIBLE && statusSetting.getVisibility() == View.VISIBLE) {
+                pairingImageView.setVisibility(View.GONE);
                 statusSetting.setVisibility(View.GONE);
             }
-            mParingTextView.setVisibility(View.VISIBLE);
             mLoadMoreView = findViewById(R.id.stb_device_setting_progressbar);
             //設定画面からの遷移
             enableHeaderBackIcon(true);
-            setTitleText(getString(R.string.str_stb_paring_setting_title));
             enableStbStatusIcon(true);
             enableGlobalMenuIcon(true);
 
@@ -422,20 +386,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
 
-    /**
-     * setImageLayoutParams.
-     * @param width width
-     * @param height height
-     */
-    private void setImageLayoutParams(final int width, final int height) {
-        RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(width, height);
-        imageLayoutParams.setMargins(0, 0, 0, dip2px(16));
-        imageLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        imageLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        imageLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE | RelativeLayout.ALIGN_BOTTOM);
-        mPairingImage.setLayoutParams(imageLayoutParams);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -456,6 +406,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(StbSelectActivity.this));
         }
         initResumeView();
+        startDlnaSearch();
 
         //dアカウント変更コールバックの設定
         DaccountReceiver.setDaccountChangedCallBackForStb(this);
@@ -469,28 +420,16 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void initResumeView() {
         DTVTLogger.start();
         mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
-
+        mParingTextView.setVisibility(View.VISIBLE);
         initView();
-        TextView statusTextView = findViewById(R.id.stb_select_status_text);
-
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
             mIsAppDL = false;
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-
-                //Android5.0未満の表示問題対策
-                fixStatusTextView(statusTextView);
-
                 mPairingImage.setImageResource(R.mipmap.startup_icon_01);
-                statusTextView.setText(R.string.str_stb_select_result_text_search);
-                mCheckBox.setVisibility(View.VISIBLE);
-                mCheckboxText.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
-                mParingTextView.setText(R.string.str_stb_no_pair_use_text);
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
             } else {
-                RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
-                relativeLayout.setVisibility(View.GONE);
                 mPairingImage.setVisibility(View.GONE);
                 TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
                 statusSetting.setVisibility(View.GONE);
@@ -499,24 +438,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mDeviceListView.setVisibility(View.VISIBLE);
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
             }
-        } else {
-            if (mLoadMoreView != null && mLoadMoreView.getVisibility() == View.VISIBLE) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
-            } else {
-                if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
-                } else {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
-                }
-            }
         }
+        DTVTLogger.end();
+    }
 
-        if (mIsShowCheckboxText) {
-            //次回表示しないTextView再表示する
-            mIsShowCheckboxText = false;
-            mCheckBox.setVisibility(View.VISIBLE);
-            mCheckboxText.setVisibility(View.VISIBLE);
-        }
+    /**
+     * DMP検索スタート.
+     */
+    private void startDlnaSearch() {
         DlnaManager.shared().StopDmp();
         DlnaManager.shared().mDlnaManagerListener = null;
         //STB検索開始
@@ -525,13 +454,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             DlnaManager.shared().setContext(getApplicationContext());
         }
         DlnaManager.shared().StartDmp();
-
-        //STB検索メッセージの出力
-        showSearchingView();
-
         //デバイスリストの更新
         updateDeviceList(null, false);
-        DTVTLogger.end();
     }
 
     @Override
@@ -541,7 +465,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         leaveActivity();
         displayMoreData(false);
 
-        if(isFinishing()) {
+        if (isFinishing()) {
             //dアカウント受け取りコールバックの解除
             DaccountReceiver.setDaccountChangedCallBackForStb(null);
         }
@@ -576,16 +500,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         // STB検索中文言表示
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            TextView statusTextView = findViewById(R.id.stb_select_status_text);
-
-            //Android5.0未満の表示問題対策
-            fixStatusTextView(statusTextView);
-
-            statusTextView.setText(R.string.str_stb_select_result_text_search);
-
-            // STBが見つかるまで非表示
-            TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
-            checkBoxText.setVisibility(View.VISIBLE);
+            mStatusTextView.setText(getString(R.string.str_stb_select_result_text_search));
+            mIsSearchingTextView.setVisibility(View.VISIBLE);
             super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             //プログレスビューを初期状態に戻る
@@ -600,8 +516,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 layoutParams.addRule(RelativeLayout.END_OF, R.id.paring_device_select_text);
                 mLoadMoreView.setLayoutParams(layoutParams);
             }
-            DTVTLogger.end();
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -611,21 +528,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         // STB検索中文言表示
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            TextView statusTextView = findViewById(R.id.stb_select_status_text);
-
-            //Android5.0未満の表示問題対策
-            fixStatusTextView(statusTextView);
-
-            statusTextView.setText(R.string.str_stb_select_result_text);
-
-            // STBが見つかったため表示する
-            TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
-            checkBoxText.setVisibility(View.VISIBLE);
+            mStatusTextView.setText(getString(R.string.str_stb_select_result_text));
+            mIsSearchingTextView.setVisibility(View.GONE);
             mDeviceListView.setVisibility(View.VISIBLE);
         } else {
-            // STBが見つかったため表示する
-            RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
-            relativeLayout.setVisibility(View.GONE);
             mPairingImage.setVisibility(View.GONE);
             TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
             statusSetting.setVisibility(View.GONE);
@@ -637,49 +543,17 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * Android5.0未満で発生する文字表示欠けを予防する.
-     *
-     * @param statusTextView 文字の欠けるテキストビュー
-     */
-    private void fixStatusTextView(final TextView statusTextView) {
-        //ヌルかAndroid5.0以上ならば帰る
-        if (statusTextView == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return;
-        }
-
-        //現在の縦サイズを取得する
-        ViewGroup.LayoutParams layoutParams = statusTextView.getLayoutParams();
-
-        //既に補正済みならば帰る
-        if (mFirstStatusHeight != 0 && mFirstStatusHeight != layoutParams.height) {
-            return;
-        }
-
-        //Android5.0未満の場合、行間を1.5倍にする設定の悪影響で一部文字表示が欠けるので、
-        //防止用に現在の縦サイズを取得して、1.2倍に拡大する
-        mFirstStatusHeight = layoutParams.height;
-        layoutParams.height = (int) (mFirstStatusHeight * ANDROID_4_4_FIX_SIZE);
-        statusTextView.setLayoutParams(layoutParams);
-        statusTextView.requestLayout();
-    }
-
-    /**
      * ペアリング中画面表示を設定.
      */
     private void showParingView() {
         DTVTLogger.start();
         //ペアリングしてるので、タイマーを解除する.
         stopCallbackTimer();
-        setImageLayoutParams(dip2px(162), dip2px(44));
         mPairingImage.setImageResource(R.mipmap.startup_icon_03);
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            TextView statusTextView = findViewById(R.id.stb_select_status_text);
-            statusTextView.setText(R.string.str_stb_pairing);
+            mIsSearchingTextView.setVisibility(View.GONE);
+            mStatusTextView.setText(getString(R.string.str_stb_pairing));
             super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_connect), null);
-            mCheckBox.setVisibility(View.GONE);
-            mCheckboxText.setVisibility(View.GONE);
-            //次回表示しないTextView表示フラグをTRUEにする
-            mIsShowCheckboxText = true;
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             if (mParingDevice.getVisibility() == View.VISIBLE && mCheckMark.getVisibility() == View.VISIBLE) {
                 mCheckMark.setVisibility(View.GONE);
@@ -689,12 +563,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             enableStbStatusIcon(false);
             enableGlobalMenuIcon(false);
             TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
-            //Android5.0未満の表示問題対策
-            fixStatusTextView(statusSetting);
 
             statusSetting.setVisibility(View.VISIBLE);
-            RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
-            relativeLayout.setVisibility(View.VISIBLE);
             mDeviceSelectText.setVisibility(View.GONE);
             mTextDivider1.setVisibility(View.GONE);
             mTextDivider2.setVisibility(View.GONE);
@@ -713,7 +583,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 newLayout.addView(mLoadMoreView);
             }
         }
-        mParingTextView.setVisibility(View.INVISIBLE);
+        mParingTextView.setVisibility(View.GONE);
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
         DTVTLogger.end();
@@ -729,16 +599,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (v.equals(mParingTextView)) {
             if (mParingTextView.getText().equals(
-                    getString(R.string.str_stb_no_pair_use_text))
+                    getString(R.string.str_stb_to_set_later_text))
                     || mParingTextView.getText().equals(
                     getString(R.string.str_stb_paring_cancel_text))) {
                 onUseWithoutPairingButton();
-            }
-        } else if (v.getId() == R.id.launch_select_check_box_text) {
-            if (!mCheckBox.isChecked()) {
-                mCheckBox.setChecked(true);
-            } else {
-                mCheckBox.setChecked(false);
             }
         } else if (v.getId() == R.id.stb_paring_failed_red_help) {
             // ペアリングヘルプ画面へ遷移
@@ -753,32 +617,54 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * ペアリングしないでアプリを利用するボタンタップ.
+     * ペアリング状態を解除し、キャシューデータを削除する.
+     */
+    private void releaseParingStation() {
+        DTVTLogger.start();
+        SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
+        StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);
+        DlnaManager.shared().setStop();
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        DTVTLogger.end();
+    }
+    /**
+     * あとで設定するボタンタップ.
      */
     private void onUseWithoutPairingButton() {
         DTVTLogger.start();
         DlnaManager.shared().mDlnaManagerListener = null;
-        //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
+            //あとで設定する
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
-            if (mParingDevice.getVisibility() == View.VISIBLE) {
-                //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
-                SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
-                StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);
-                DlnaManager.shared().setStop();
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } else {
-                //ペアリングししないで利用する場合、設定画面に戻る
-                finish();
+            //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
+            if (!isFinishing()) {
+                createParingReleaseDialog();
             }
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * ペアリング解除警告ダイアログを表示する.
+     */
+    private void createParingReleaseDialog() {
+        DTVTLogger.start();
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        customDialog.setOnTouchOutside(false);
+        customDialog.setConfirmText(R.string.main_setting_paring_release_text);
+        customDialog.setContent(getString(R.string.main_setting_paring_release_dialog_confirm_text));
+        customDialog.setCancelable(false);
+        customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                releaseParingStation();
+            }
+        });
+        customDialog.showDialog();
         DTVTLogger.end();
     }
 
@@ -832,6 +718,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         //ダイアログを閉じたらSTB選択画面に戻る.
                         resetDmpForResume();
                         initResumeView();
+                        startDlnaSearch();
                     }
                 });
                 errorDialog.setCancelable(false);
@@ -1000,6 +887,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 if (mContentsList.size() <= 0) {
                     mDeviceAdapter.notifyDataSetChanged();
                     displayMoreData(true);
+                    showSearchingView();
                     startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
                 } else if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_EXECUTION) { // 30秒以内にSTBの通知あり
@@ -1029,14 +917,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start("displayMoreData:" + b);
         if (b) {
             mLoadMoreView.setVisibility(View.VISIBLE);
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
         } else {
             mLoadMoreView.setVisibility(View.GONE);
-            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
-            } else {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
-            }
         }
         DTVTLogger.end();
     }
@@ -1046,8 +928,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void startCallbackTimer() {
         DTVTLogger.start();
-        //STB検索メッセージの出力
-        showSearchingView();
 
         if (mCallbackTimer == null
                 || mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_CANCEL) {
@@ -1072,6 +952,16 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
+     * エラータイプ切り分け.
+     */
+   public enum ErrorType {
+        /**検出タイムアウトエラー.*/
+        TIME_OUT_ERROR,
+        /**WiFi未接続エラー.*/
+        WIFI_NO_CONNECT_ERROR
+    }
+
+    /**
      * タイムアウト時の画面表示.
      */
     private void showTimeoutView() {
@@ -1079,9 +969,17 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         DlnaManager.shared().mDlnaManagerListener = null;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            Intent stbSelectErrorIntent = new Intent(this, StbSelectErrorActivity.class);
-            stbSelectErrorIntent.putExtra(FROM_WHERE, mStartMode);
-            startActivity(stbSelectErrorIntent);
+            if (isWifiConnected(this)) {
+                //Wifi接続の場合、検出エラー画面を表示する
+                Intent stbSelectErrorIntent = new Intent(this, StbSelectErrorActivity.class);
+                stbSelectErrorIntent.putExtra(StbSelectActivity.ERROR_TYPE, ErrorType.TIME_OUT_ERROR.ordinal());
+                startActivity(stbSelectErrorIntent);
+            } else {
+                //Wifi未接続に場合、ネットワークエラー画面表示する
+                Intent stbSelectErrorIntent = new Intent(this, StbSelectErrorActivity.class);
+                stbSelectErrorIntent.putExtra(StbSelectActivity.ERROR_TYPE, ErrorType.WIFI_NO_CONNECT_ERROR.ordinal());
+                startActivity(stbSelectErrorIntent);
+            }
         } else {
             // リストを非表示
             mDeviceListView.setVisibility(View.GONE);
@@ -1097,6 +995,22 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             stbSearchHelp.setOnClickListener(this);
         }
         DTVTLogger.end();
+
+    }
+
+    /**
+     * Wifi接続状態.
+     * @param context コンテキスト
+     * @return true
+     */
+    public static boolean isWifiConnected(final Context context) {
+        boolean isWifiConnected = false;
+        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMan.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnected() && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+            isWifiConnected = true;
+        }
+        return isWifiConnected;
     }
 
     /**
@@ -1218,21 +1132,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
                 D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
         try {
-
-            //dカウント登録状態チェック
-//            boolean isDAccountFlag = checkDAccountLogin();
-
-//            if (isDAccountFlag) {
-//                setRelayClientHandler();
-//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
-//                storeSTBData();
-//            } else {
-                //端末内にdアカウントアプリがある場合はアプリ起動
-                mIsDAccountAppStarting = true;
-                startActivity(intent);
-                mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
-                mDaccountFlag = true;
-//            }
+            mIsDAccountAppStarting = true;
+            startActivity(intent);
+            mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
+            mDaccountFlag = true;
             //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
         } catch (ActivityNotFoundException e) {
             revertSelectStbState();
@@ -1321,7 +1224,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 Intent dAccountResetIntent = new Intent(this, DaccountResettingActivity.class);
                                 dAccountResetIntent.putExtra(FROM_WHERE, mStartMode);
                                 startActivity(dAccountResetIntent);
-                                mParingTextView.setText(R.string.str_stb_no_pair_use_text);
+                                mParingTextView.setVisibility(View.VISIBLE);
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 Intent homeIntent = new Intent(this, HomeActivity.class);
@@ -1372,6 +1275,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //初期状態に戻る
             resetDmpForResume();
             initResumeView();
+            startDlnaSearch();
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                 initLaunchView();
             }
@@ -1396,6 +1300,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 //初期状態に戻る
                 resetDmpForResume();
                 initResumeView();
+                startDlnaSearch();
                 if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                     initLaunchView();
                 }
@@ -1557,6 +1462,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     //ダイアログを閉じたらSTB選択画面に戻る.
                     resetDmpForResume();
                     initResumeView();
+                    startDlnaSearch();
                 }
             });
             errorDialog.setCancelable(false);
@@ -1589,6 +1495,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mDlnaDmsInfo.size() <= 0 && mIsDAccountErrorDialogShowing) {
             mIsDAccountErrorDialogShowing = false;
             startCallbackTimer();
+            showSearchingView();
         } else {
             //dアカウントエラーダイアログ以外の場合はそのまま閉じる
             super.allDismissCallback();

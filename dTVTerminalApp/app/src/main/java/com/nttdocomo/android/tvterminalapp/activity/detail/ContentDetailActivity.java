@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.InitialSettingDoorActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
@@ -2590,8 +2590,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         @Override
                         public void onClick(final View v) {
                             //ペアリング設定
-                            Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                            intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
+                            Intent intent = new Intent(getApplicationContext(), InitialSettingDoorActivity.class);
+                            intent.putExtra("LAUNCH_STB_BACK_KEY", true);
                             startActivity(intent);
                         }
                     });
@@ -2736,8 +2736,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                    intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
+                    Intent intent = new Intent(getApplicationContext(), InitialSettingDoorActivity.class);
+                    intent.putExtra("LAUNCH_STB_BACK_KEY", true);
                     startActivity(intent);
                 }
             });

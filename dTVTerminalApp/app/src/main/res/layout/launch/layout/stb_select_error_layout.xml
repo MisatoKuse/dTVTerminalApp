@@ -3,106 +3,94 @@
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stb_select_background_color">
+    android:background="@color/stb_select_background_color"
+    android:fillViewport="true">
 
-    <RelativeLayout
-        android:id="@+id/stb_icon_relative_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:gravity="center|bottom"
-        android:layout_height="@dimen/launch_relative_layout_high_size">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/paring_search_image"
-            android:layout_width="@dimen/launch_stb_start_up_icon2_width"
-            android:layout_height="@dimen/launch_stb_start_up_icon2_high"
-            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/launch_stb_icon_margin_top_size"
             android:layout_marginBottom="@dimen/launch_image_bottom_margin"
-            android:baselineAlignBottom="true"
             android:src="@mipmap/startup_icon_02" />
 
-    </RelativeLayout>
-    <TextView
-        android:id="@+id/stb_select_status_error_text"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_stb_paring_result_layout"
-        android:text="@string/str_stb_select_result_text_failed"
-        android:textColor="@color/stb_select_white_color"
-        android:lineSpacingMultiplier="1.5"
-        android:gravity="center"
-        android:textSize="@dimen/launch_text_size"
-        android:layout_below="@+id/stb_icon_relative_layout"
-        android:layout_alignParentStart="true" />
-    <TextView
-        android:id="@+id/stb_paring_failed_help"
-        android:layout_below="@id/stb_select_status_error_text"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_text_layout_high_size"
-        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
-        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:layout_marginTop="@dimen/launch_stb_account_error_margin_top"
-        android:background="@color/stb_select_white_color"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:text="@string/paring_setting_search_help_text"
-        android:textSize="@dimen/launch_device_search_error_help_button_text"
-        android:textColor="@color/stb_select_black_color" />
-    <TextView
-        android:id="@+id/stb_search_failed_paring_again"
-        android:layout_below="@id/stb_paring_failed_help"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_text_layout_high_size"
-        android:layout_marginTop="@dimen/launch_stb_checkbox_top_margin"
-        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
-        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:background="@color/stb_select_white_color"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:text="@string/str_stb_again_pairing"
-        android:textSize="@dimen/launch_device_search_error_help_button_text"
-        android:textColor="@color/stb_select_black_color" />
-    <CheckBox
-        android:id="@+id/stb_select_error_checkBox"
-        android:layout_width="@dimen/launch_stb_checkbox_high"
-        android:layout_height="@dimen/launch_stb_checkbox_high"
-        android:layout_marginStart="@dimen/launch_stb_checkbox_start_margin"
-        android:button="@null"
-        android:background="@drawable/ic_check_box_outline_blank_white_24dp"
-        android:layout_marginBottom="@dimen/launch_stb_checkbox_bottom_margin"
-        android:layout_marginTop="@dimen/launch_stb_checkbox_top_margin"
-        android:layout_above="@+id/use_without_paring" />
+        <TextView
+            android:id="@+id/stb_select_status_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+            android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"
+            android:text="@string/str_stb_select_result_text_failed"
+            android:textColor="@color/stb_select_white_color"
+            android:textSize="@dimen/launch_text_size"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/launch_select_error_check_box_text"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_stb_checkbox_high"
-        android:text="@string/str_stb_next_not_display_text"
-        android:textSize="@dimen/launch_text_size"
-        android:paddingStart="@dimen/launch_stb_checkbox_right_margin"
-        android:paddingEnd="@dimen/launch_text_end_padding"
-        android:gravity="center|start"
-        android:textColor="@color/stb_select_white_color"
-        android:layout_toEndOf="@+id/stb_select_error_checkBox"
-        android:layout_above="@+id/use_without_paring"
-        android:layout_marginBottom="@dimen/launch_stb_checkbox_bottom_margin" />
+        <TextView
+            android:id="@+id/launch_stb_paring_power_and_wifi_check_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+            android:layout_marginTop="@dimen/launch_stb_paring_wifi_check_margin_top"
+            android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"
+            android:text="@string/str_stb_select_power_and_wifi_check"
+            android:textColor="@color/stb_select_white_color"
+            android:textSize="@dimen/launch_text_size" />
 
+        <TextView
+            android:id="@+id/stb_search_failed_paring_again"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/launch_text_layout_high_size"
+            android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+            android:layout_marginTop="@dimen/launch_stb_account_error_margin_top"
+            android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+            android:background="@color/stb_select_white_color"
+            android:gravity="center"
+            android:text="@string/str_stb_again_pairing"
+            android:textColor="@color/stb_select_black_color"
+            android:textSize="@dimen/launch_device_search_error_help_button_text"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/use_without_paring"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_text_layout_high_size"
-        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
-        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:background="@color/stb_select_white_color"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:text="@string/str_stb_no_pair_use_text"
-        android:textColor="@color/stb_select_black_color"
-        android:textSize="@dimen/launch_text_size"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/launch_image_bottom_margin"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+            android:layout_marginTop="@dimen/launch_stb_checkbox_top_margin"
+            android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+            android:layout_marginBottom="@dimen/launch_image_bottom_margin"
+            android:gravity="bottom"
+            android:orientation="vertical">
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/network_set_help_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/launch_text_layout_high_size"
+                android:gravity="center"
+                android:text="@string/str_stb_select_network_set_help"
+                android:textColor="@color/stb_select_white_color"
+                android:textSize="@dimen/launch_text_size" />
+
+            <TextView
+                android:id="@+id/use_without_paring"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/launch_text_layout_high_size"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/str_stb_to_set_later_text"
+                android:textColor="@color/stb_select_white_color"
+                android:textSize="@dimen/launch_text_size" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -4,7 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -22,13 +25,13 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
  */
 public class DaccountInductionActivity extends BaseActivity {
     /**
-     *Dアカウントダウンロードボタン.
+     * Dアカウントアプリパッケージ名.
      */
-    private TextView mDownLoadTextView;
+    private static final   String D_ACCOUNT_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     /**
-     *ログインしないで利用するボタン.
+     * Dアカウントアプリ Activity名.
      */
-    private TextView mUseWithoutLogIn;
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
     /**
      *DアカウントアプリURI.
      */
@@ -51,13 +54,14 @@ public class DaccountInductionActivity extends BaseActivity {
      *画面っ上に表示するコンテンツをセット.
      */
     private void setContents() {
-        setTitleText(getString(R.string.str_app_title));
+        setTitleText(getString(R.string.str_stb_paring_setting_title));
         findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
-        mDownLoadTextView = findViewById(R.id.d_account_application_download);
-        mUseWithoutLogIn = findViewById(R.id.use_without_login_induction);
+        TextView downLoadTextView = findViewById(R.id.d_account_application_download);
+        TextView useWithoutLogIn = findViewById(R.id.use_without_login_induction);
+        useWithoutLogIn.setPaintFlags(useWithoutLogIn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
-        mDownLoadTextView.setOnClickListener(this);
-        mUseWithoutLogIn.setOnClickListener(this);
+        downLoadTextView.setOnClickListener(this);
+        useWithoutLogIn.setOnClickListener(this);
 
     }
 
@@ -67,23 +71,30 @@ public class DaccountInductionActivity extends BaseActivity {
      */
     @Override
     public void onClick(final View view) {
-        if (view.equals(mDownLoadTextView)) {
-            //Playストアへ誘導
-            CustomDialog dAccountInstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-            dAccountInstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
-            dAccountInstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                @Override
-                public void onOKCallback(final boolean isOK) {
-                    Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-            //ダイアログの枠外の操作の無効化
-            dAccountInstallDialog.setOnTouchOutside(false);
-            dAccountInstallDialog.showDialog();
-        } else if (view.equals(mUseWithoutLogIn)) {
+        if (view.getId() == R.id.d_account_application_download) {
+            Intent intent = new Intent();
+            intent.setClassName(D_ACCOUNT_PACKAGE_NAME,
+                    D_ACCOUNT_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
+            try {
+                //ダウンロードされていれば起動する
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                //ダウンロードされてないので、Playストアへ誘導
+                CustomDialog dAccountInstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                dAccountInstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
+                dAccountInstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(final boolean isOK) {
+                        Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                });
+                //ダイアログの枠外の操作の無効化
+                dAccountInstallDialog.setOnTouchOutside(false);
+                dAccountInstallDialog.showDialog();
+            }
+        } else if (view.getId() == R.id.use_without_login_induction) {
             //dアカウント未登録時の"ログインしないで使用する"ボタン
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

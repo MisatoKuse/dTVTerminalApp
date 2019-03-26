@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stb_select_background_color">
+
+    <RelativeLayout
+        android:id="@+id/launch_stb_paring_set_relative_layout"
+        android:layout_width="match_parent"
+        android:gravity="center|bottom"
+        android:layout_height="@dimen/launch_relative_layout_high_size">
+
+        <ImageView
+            android:id="@+id/paring_search_image"
+            android:layout_width="@dimen/launch_stb_start_up_icon2_width"
+            android:layout_height="@dimen/launch_stb_start_up_icon2_high"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/launch_image_bottom_margin"
+            android:baselineAlignBottom="true"
+            android:src="@mipmap/startup_icon_02" />
+
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/launch_initial_setting_door_text"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:text="@string/launch_initial_setting_door_string"
+        android:textColor="@color/stb_select_white_color"
+        android:lineSpacingMultiplier="1.5"
+        android:gravity="center"
+        android:textSize="@dimen/launch_text_size"
+        android:layout_below="@+id/launch_stb_paring_set_relative_layout"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/launch_initial_setting_paring_setting"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_below="@+id/launch_initial_setting_door_text"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:background="@color/white_text"
+        android:text="@string/launch_initial_setting_door_paring_string"
+        android:textColor="@color/basic_text_color_black"
+        android:textSize="@dimen/launch_text_size" />
+
+
+    <TextView
+        android:id="@+id/launch_to_set_later_text"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/launch_text_layout_high_size"
+        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+        android:layout_marginBottom="@dimen/launch_image_bottom_margin"
+        android:gravity="center"
+        android:text="@string/str_stb_to_set_later_text"
+        android:textColor="@color/stb_select_white_color"
+        android:background="@drawable/launch_set_paring_paring_later_corner_button"
+        android:textSize="@dimen/launch_text_size"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

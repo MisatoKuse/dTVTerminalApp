@@ -114,6 +114,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/STBTheme"
             android:exported="false" />
+        <activity android:name=".activity.launch.InitialSettingDoorActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
         <!-- ======================================  Launch グループ End ====================================== -->
 
 

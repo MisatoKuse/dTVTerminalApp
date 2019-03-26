@@ -99,13 +99,16 @@ a:link {
           transform: rotate(315deg);
 }
 .ListLabel {
-  margin: 24px 0 0 16px;
+  margin: 40px 0 0 16px;
   padding-bottom: 10px;
   border-bottom: 1px solid #333;
-  color: #ccc;
+  color: #999;
   font-size: 12px;
   font-weight: bold;
   line-height: 14px;
+}
+.ListLabel:first-of-type {
+  margin-top: 24px;
 }
 .ShoulderTitle {
   margin-bottom: 8px;
