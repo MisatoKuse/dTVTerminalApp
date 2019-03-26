@@ -367,4 +367,56 @@
     <dimen name="launch_terms_of_service_open_icon_margin">6dp</dimen>
     <dimen name="launch_terms_of_service_margin_top">18dp</dimen>
     <dimen name="launch_terms_of_service_button_corner">5.0dp</dimen>
+
+    <!--//STB初期設定扉-->
+    <dimen name ="stb_launch_text_size">14dp</dimen>
+    <dimen name ="stb_launch_btn_height">44dp</dimen>
+    <dimen name ="stb_launch_image_margin_top">60dp</dimen>
+    <dimen name ="stb_launch_title_margin_top">12dp</dimen>
+    <dimen name ="stb_launch_comment_margin_top">15dp</dimen>
+    <dimen name ="stb_launch_btn_margin_top">32dp</dimen>
+    <dimen name ="stb_launch_padding_start_end">16dp</dimen>
+
+    <!--//ペアリング設定（wifi接続状態）-->
+    <dimen name ="stb_wifi_set_title_txt_size">14dp</dimen>
+    <dimen name ="stb_wifi_set_comment_text_size">12dp</dimen>
+    <dimen name ="stb_wifi_set_start_end">16dp</dimen>
+    <dimen name ="stb_wifi_set_btn_height">44dp</dimen>
+    <dimen name ="stb_wifi_set_image_margin_top">58dp</dimen>
+    <dimen name ="stb_wifi_set_title_margin_top">24dp</dimen>
+    <dimen name ="stb_wifi_set_comment_margin_top">12dp</dimen>
+    <dimen name ="stb_wifi_set_state_txt_margin_top">32dp</dimen>
+    <dimen name ="stb_wifi_set_next_btn_margin_top">12dp</dimen>
+    <dimen name ="stb_wifi_set_tx_margin_bottom">16dp</dimen>
+
+    <!--//リモート視聴設定-->
+    <dimen name ="stb_remote_set_image_margin_top">60dp</dimen>
+    <dimen name ="stb_remote_text_size">14dp</dimen>
+    <dimen name ="stb_remote_set_start_end">16dp</dimen>
+    <dimen name ="stb_remote_set_title_margin_start">12dp</dimen>
+    <dimen name ="stb_remote_set_btn_height">44dp</dimen>
+    <dimen name ="stb_remote_set_btn_margin_top">40dp</dimen>
+    <dimen name ="stb_remote_set_tx_margin_bottom">16dp</dimen>
+    <dimen name ="stb_remote_set_link_height">44dp</dimen>
+
+    <!--//リモート視聴設定確認-->
+    <dimen name ="stb_remote_introduce_image_margin_top">60dp</dimen>
+    <dimen name ="stb_remote_introduce_logo_margin_top">25dp</dimen>
+    <dimen name ="stb_remote_introduce_title_margin_start">12dp</dimen>
+    <dimen name ="stb_remote_introduce_title_margin_top">24dp</dimen>
+    <dimen name ="stb_remote_introduce_title_text_size">14dp</dimen>
+    <dimen name ="stb_remote_introduce_comment_text_size">12dp</dimen>
+    <dimen name ="stb_remote_introduce_comment_margin_top">13dp</dimen>
+    <dimen name ="stb_remote_introduce_logo_width">80dp</dimen>
+    <dimen name ="stb_remote_introduce_title1_margin_top">20dp</dimen>
+    <dimen name ="stb_remote_introduce_title2_margin_top">21dp</dimen>
+    <dimen name ="stb_remote_introduce_title3_margin_top">21dp</dimen>
+    <dimen name ="stb_remote_introduce_picture_margin_top">12dp</dimen>
+    <dimen name ="stb_remote_introduce_picture3_margin_top">20dp</dimen>
+    <dimen name ="stb_remote_introduce_set_btn_margin_top">24dp</dimen>
+    <dimen name ="stb_remote_introduce_set_tx_margin_top">6dp</dimen>
+    <dimen name ="stb_remote_introduce_set_set_btn_margin_start_end">0dp</dimen>
+    <dimen name ="stb_remote_introduce_set_tx_margin_bottom">25dp</dimen>
+    <dimen name ="stb_remote_introduce_height">44dp</dimen>
+    <dimen name ="stb_remote_introduce_start_end">16dp</dimen>
 </resources>

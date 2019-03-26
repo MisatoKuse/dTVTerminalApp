@@ -12,61 +12,43 @@ import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-import java.util.List;
-
 /**
  * カスタムダイアログ.
  */
-public class CustomDialog implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener,
-        DialogInterface.OnDismissListener {
+public class CustomDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
 
     /** コンテキスト. */
-    private Context mContext = null;
+    private Context mContext;
     /** ダイアログ. */
     private AlertDialog mDialog = null;
     /** ダイアログ種別. */
-    private DialogType mDialogType = null;
+    private DialogType mDialogType;
     /** タイトル. */
     private String mTitle = null;
     /** 本文. */
     private String mContent = null;
-    /** リスト表示時のリスト. */
-    private List<String> mList = null;
     /** OK押下時のコールバック. */
     private ApiOKCallback mApiOKCallback = null;
     /** Cancel押下時のコールバック. */
     private ApiCancelCallback mApiCancelCallback = null;
-    /** リスト押下時のコールバック. */
-    private ApiSelectCallback mApiSelectCallback = null;
-    /** リストアイテム押下時のコールバック. */
-    private ApiItemSelectCallback mApiItemSelectCallback = null;
+    /** Neutral押下時のコールバック. */
+    private ApiNeutralCallback mApiNeutralCallback = null;
     /** ボタンタップ以外でダイアログが閉じた時のコールバック. */
     private DismissCallback mDialogDismissCallback = null;
     /** OKボタンに表示する文字列. */
     private String mConfirmText = null;
     /** Cancelボタンに表示する文字列. */
     private String mCancelText = null;
+    /** leftボタンに表示する文字列. */
+    private String mLeftText = null;
     /** ダイアログのcancelable設定値. */
     private boolean mCancelable = true;
-    /** ダイアログのOKボタン. */
-    private TextView mOkButton = null;
-    /** ダイアログのキャンセルボタン. */
-    private TextView mCancelButton = null;
-    /** OKボタンの表示/非表示判定. */
-    private int mConfirmVisibility = View.VISIBLE;
-    /** Cancelボタンの表示/非表示判定. */
-    private int mCancelVisibility = View.VISIBLE;
     /** ボタンタップフラグ. **/
     private boolean mIsButtonTap = false;
 
@@ -106,28 +88,13 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * SELECTを返却するためのコールバック.
+     * Neutralボタン押下を返却するためのコールバック.
      */
-    public interface ApiSelectCallback {
+    public interface ApiNeutralCallback {
         /**
-         * リスト選択時のコールバック.
-         *
-         * @param position 押下されたリストアイテム
+         * Neutralボタン押下時のコールバック.
          */
-        void onSelectCallback(int position);
-    }
-
-    /**
-     * SELECTを返却するためのコールバック.
-     */
-    public interface ApiItemSelectCallback {
-        /**
-         * リストアイテムが選択時のコールバック.
-         *
-         * @param dialog   ダイアログ
-         * @param position 押下されたリストアイテム
-         */
-        void onItemSelectCallback(AlertDialog dialog, int position);
+        void onNeutralCallback();
     }
 
     /**
@@ -159,21 +126,12 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * リスト選択時のコールバック..
+     * Neutralボタン押下を返却するためのコールバック.
      *
-     * @param apiSelectCallback リスト選択時のコールバック
+     * @param apiNeutralCallback Neutralボタン押下を返却するためのコールバック
      */
-    public void setSelectCallBack(final ApiSelectCallback apiSelectCallback) {
-        this.mApiSelectCallback = apiSelectCallback;
-    }
-
-    /**
-     * リストアイテムが選択時のコールバック.
-     *
-     * @param callback リストアイテムが選択時のコールバック
-     */
-    public void setItemSelectCallback(final ApiItemSelectCallback callback) {
-        this.mApiItemSelectCallback = callback;
+    public void setApiNeutralCallback(final ApiNeutralCallback apiNeutralCallback) {
+        this.mApiNeutralCallback = apiNeutralCallback;
     }
 
     /**
@@ -224,15 +182,6 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * ダイアログに表示するリストを設定.
-     *
-     * @param list リスト
-     */
-    public void setSelectData(final List<String> list) {
-        this.mList = list;
-    }
-
-    /**
      * ダイアログタイプ.
      */
     public enum DialogType {
@@ -277,20 +226,9 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
                 dialogBuilder.setPositiveButton(mConfirmText, this);
                 break;
             case SELECT:
-                if (mConfirmVisibility == View.VISIBLE) {
-                    dialogBuilder.setPositiveButton(mConfirmText, this);
-                }
-                if (mCancelVisibility == View.VISIBLE) {
-                    dialogBuilder.setNegativeButton(mCancelText, this);
-                }
-                if (mList != null) {
-                    ListView listView = new ListView(mContext);
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mContext,
-                            android.R.layout.simple_list_item_1, mList);
-                    listView.setAdapter(arrayAdapter);
-                    listView.setOnItemClickListener(this);
-                    dialogBuilder.setView(listView);
-                }
+                dialogBuilder.setPositiveButton(mConfirmText, this);
+                dialogBuilder.setNeutralButton(mLeftText, this);
+                dialogBuilder.setNegativeButton(mCancelText, this);
                 break;
             case CONFIRM:
                 dialogBuilder.setPositiveButton(mConfirmText, this);
@@ -303,7 +241,6 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         mDialog.setCancelable(mCancelable);
         mDialog.setCanceledOnTouchOutside(mCancelableOutside);
         mDialog.setOnKeyListener(sKeyListener);
-
         if (TextUtils.isEmpty(mTitle)) {
             Window window = mDialog.getWindow();
             if (window != null) {
@@ -325,21 +262,21 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
             if (baseActivity.isFinishing()) {
                 //該当アクティビティが既に終わっているならば、ダイアログ表示をスキップする
-                DTVTLogger.debug("initView: already activity("+ mContext.getClass() +") finish or pause:" + mContent);
+                DTVTLogger.debug("initView: already activity(" + mContext.getClass() + ") finish or pause:" + mContent);
                 return;
             }
 
-            DTVTLogger.debug("initView: show dialog(" + mContext.getClass() + "):"+mContent);
+            DTVTLogger.debug("initView: show dialog(" + mContext.getClass() + "):" + mContent);
 
             //ダイアログを表示する
             mDialog.show();
         } else {
             //ベースアクティビティ以外の場合のフェールセーフ処理
             //本アプリのアクティビティは全てBaseアクティビティを継承しているのここは実行されない筈
-            DTVTLogger.debug("initView: not BaseActivity (" + mContext.getClass() + "):"+mContent);
+            DTVTLogger.debug("initView: not BaseActivity (" + mContext.getClass() + "):" + mContent);
 
             //アクティビティかつ終了していないならばダイアログを表示する
-            if (mContext instanceof BaseActivity && !((Activity)mContext).isFinishing()) {
+            if (mContext instanceof BaseActivity && !((Activity) mContext).isFinishing()) {
                 //ダイアログを表示する
                 mDialog.show();
             }
@@ -384,18 +321,15 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
                     mApiCancelCallback.onCancelCallback();
                 }
                 break;
+            case AlertDialog.BUTTON_NEUTRAL:
+                dismissDialog();
+                if (mApiNeutralCallback != null) {
+                    mIsButtonTap = true;
+                    mApiNeutralCallback.onNeutralCallback();
+                }
+                break;
             default:
                 break;
-        }
-    }
-
-    @Override
-    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        if (mApiSelectCallback != null) {
-            mApiSelectCallback.onSelectCallback(position);
-        }
-        if (mApiItemSelectCallback != null) {
-            mApiItemSelectCallback.onItemSelectCallback(mDialog, position);
         }
     }
 
@@ -447,6 +381,15 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
+     * DialogType.CONFIRMのNeutralテキストを変更.
+     * @param resId リソースID
+     */
+    public void setLeftText(final int resId) {
+        Resources resources = mContext.getResources();
+        mLeftText = resources.getString(resId);
+    }
+
+    /**
      * Dialogのcancelableを変更.
      *
      * @param cancelable キャンセル可否設定
@@ -455,52 +398,12 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         this.mCancelable = cancelable;
     }
 
-    /**
-     * confirmの表示/非表示を設定.
-     *
-     * @param visibility 表示/非表示設定
-     */
-    public void setConfirmVisibility(final int visibility) {
-        mConfirmVisibility = visibility;
-    }
-
-    /**
-     * cancelの表示/非表示を設定.
-     *
-     * @param visibility 表示/非表示設定
-     */
-    public void setCancelVisibility(final int visibility) {
-        mCancelVisibility = visibility;
-    }
-
-    /**
-     * OKボタンの表示文言を変更する.
-     *
-     * @param text 表示文言
-     */
-    public void setOkButtonText(final String text) {
-        if (mConfirmText != null) {
-            mConfirmText = text;
-        }
-    }
-
-    /**
-     * CANCELボタンの表示文言を変更する.
-     *
-     * @param text 表示文言
-     */
-    public void setCancelButtonText(final String text) {
-        if (mCancelText != null) {
-            mCancelText = text;
-        }
-    }
-
     @Override
     public void onDismiss(final DialogInterface dialogInterface) {
         if (mDialogDismissCallback != null) {
             //バックキーをキャンセルとして扱うスイッチが有効で、最後に押されたキーがバックボタンならば、
             //キーではなくキャンセルボタンとして扱う
-            if(mBackKeyAsCancel && mLastKeyCode == KeyEvent.KEYCODE_BACK) {
+            if (mBackKeyAsCancel && mLastKeyCode == KeyEvent.KEYCODE_BACK) {
                 mIsButtonTap = true;
             }
 
@@ -544,19 +447,19 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * ボタンが押されたかどうかの情報をセット
+     * ボタンが押されたかどうかの情報をセット.
      * @param isButton ボタンで押されていた場合はtrue
      */
-    public void setButtonTap(boolean isButton) {
+    public void setButtonTap(final boolean isButton) {
         mIsButtonTap = isButton;
     }
 
     /**
-     * バックキーでのダイアログキャンセルを、ダイアログのキャンセルボタンとして扱うか否かを指定する
+     * バックキーでのダイアログキャンセルを、ダイアログのキャンセルボタンとして扱うか否かを指定する.
      *
      * @param setSwitch trueを指定すると、バックキーでのキャンセルがダイアログのキャンセルボタンと同じ扱いになる
      */
-    public void setBackKeyAsCancel(boolean setSwitch) {
+    public void setBackKeyAsCancel(final boolean setSwitch) {
         mBackKeyAsCancel = setSwitch;
     }
 }

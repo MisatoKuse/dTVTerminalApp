@@ -382,11 +382,9 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
             startActivity(intent);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
-            // STB選択画面へ遷移
-            Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-            intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
-            startActivity(intent);
-            DTVTLogger.debug("Start StbSelectActivity");
+            // 初期設定扉画面へ遷移
+            startActivity(new Intent(getApplicationContext(), LaunchStbActivity.class));
+            DTVTLogger.debug("Start LaunchStbActivity");
         }
         DTVTLogger.end();
     }

@@ -49,6 +49,10 @@
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.LaunchStbActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.StbWifiSetActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.RemoteSetActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.RemoteSetIntroduceActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.LaunchTermsOfServiceActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity" rename-class="true"/>

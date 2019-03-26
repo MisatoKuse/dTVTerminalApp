@@ -251,7 +251,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             mNextActivity = new Intent(getApplicationContext(), HomeActivity.class);
             mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             DTVTLogger.debug("ParingOK Start HomeActivity");
-        } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
+        } else if (SharedPreferencesUtils.getSharedPreferencesShowLauchStbStatus(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
@@ -259,9 +259,18 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
-            // STB選択画面へ遷移
-            mNextActivity = new Intent(getApplicationContext(), StbSelectActivity.class);
-            mNextActivity.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
+            // 初期設定扉画面へ遷移(初期表示)
+            if (!SharedPreferencesUtils.getSharedPreferencesStbLauchFirst(this)) {
+                mNextActivity = new Intent(getApplicationContext(), LaunchStbActivity.class);
+            } else {
+                // wifiチェック(未接続の場合)
+                if (isWifiOn()) {
+                    mNextActivity = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                } else {
+                    mNextActivity = new Intent(getApplicationContext(), HomeActivity.class);
+                }
+            }
+            mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             DTVTLogger.debug("Start StbSelectActivity");
         }
 

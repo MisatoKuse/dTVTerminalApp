@@ -26,9 +26,13 @@ public class SharedPreferencesUtils {
      */
     private static final String SHARED_KEY_PAIRING_INFOMATION = "pairing_info";
     /**
-     * STB選択画面"次回以降表示しない" 選択保存キー.
+     * 初期設定扉画面"次回以降表示しない" 選択保存キー.
      */
-    private static final String SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
+    private static final String SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
+    /**
+     * 初期表示（初期設定扉画面）.
+     */
+    private static final String SHARED_KEY_STB_LAUNCH_FIST_TIME = "stb_launch_fist_time";
     /**
      * STB接続画面 接続成功 保存キー.
      */
@@ -202,7 +206,7 @@ public class SharedPreferencesUtils {
             // SharedPreferences ペアリング情報保存キー 親キー
             SHARED_KEY_PAIRING_INFOMATION,
             // STB選択画面"次回以降表示しない" 選択保存キー
-            SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME,
+            SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME,
             // STB接続画面 接続成功 保存キー
             SHARED_KEY_STB_CONNECT_SUCCESS,
             // ペアリング勧誘画面表示済み判定情報 保存キー
@@ -282,7 +286,7 @@ public class SharedPreferencesUtils {
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
-        editor.putBoolean(SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME, selectedUnnecessary);
+        editor.putBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, selectedUnnecessary);
         editor.apply();
         DTVTLogger.end();
     }
@@ -350,8 +354,59 @@ public class SharedPreferencesUtils {
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
 
-        return data.getBoolean(SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME, false);
+        return data.getBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, false);
 
+    }
+
+
+    /**
+     * 初期設定扉画面"次回以降表示しない" 状態を保存.
+     * @param context             コンテキスト
+     * @param selectedUnnecessary true:チェック済み false:チェックなし
+     */
+    public static void setSharedPreferencesShowLauchStbStatus(final Context context, final boolean selectedUnnecessary) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, selectedUnnecessary);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 初期表示状態を保存.
+     * @param context             コンテキスト
+     * @param fistFlg true:表示済み false:未表示
+     */
+    public static void setSharedPreferencesStbLauchFirst(final Context context, final boolean fistFlg) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(SHARED_KEY_STB_LAUNCH_FIST_TIME, fistFlg);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 初期設定扉画面"次回以降表示しない" 状態を取得.
+     * @param context コンテキスト
+     * @return true:表示なし false:表示
+     */
+    public static boolean getSharedPreferencesShowLauchStbStatus(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+        return data.getBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, false);
+    }
+
+    /**
+     * 初期表示状態を取得.
+     * @param context コンテキスト
+     * @return true:表示済み false:未表示
+     */
+    public static boolean getSharedPreferencesStbLauchFirst(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+        return data.getBoolean(SHARED_KEY_STB_LAUNCH_FIST_TIME, false);
     }
 
     /**

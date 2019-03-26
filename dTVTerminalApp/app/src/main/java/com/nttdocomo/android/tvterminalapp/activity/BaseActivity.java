@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,11 +59,15 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActi
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchStbActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchTermsOfServiceActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.RemoteSetActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.RemoteSetIntroduceActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectErrorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbWifiSetActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.TutorialActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
@@ -815,6 +821,10 @@ public class BaseActivity extends FragmentActivity implements
                 || this instanceof LaunchActivity
                 || this instanceof StbConnectActivity
                 || this instanceof TutorialActivity
+                || this instanceof LaunchStbActivity
+                || this instanceof StbWifiSetActivity
+                || this instanceof RemoteSetActivity
+                || this instanceof RemoteSetIntroduceActivity
                 || this instanceof StbSelectErrorActivity
                 || this instanceof DaccountResettingActivity
                 || this instanceof PairingHelpActivity
@@ -2644,7 +2654,6 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setCancelable(false);
         dialog.setOnTouchOutside(false);
         dialog.setConfirmText(R.string.transoceanic_communication_dialog_confirm);
-        dialog.setConfirmVisibility(View.VISIBLE);
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -2687,7 +2696,6 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setOnTouchOutside(false);
         dialog.setOnTouchBackkey(false);
         dialog.setConfirmText(R.string.permission_detail_dialog_confirm);
-        dialog.setConfirmVisibility(View.VISIBLE);
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -3775,5 +3783,21 @@ public class BaseActivity extends FragmentActivity implements
             return true;
         }
         return false;
+    }
+
+    /**
+     * WiFi状態取得.
+     * @return true or false
+     */
+    protected boolean isWifiOn() {
+        boolean result = false;
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wm.getConnectionInfo();
+        if (wm.isWifiEnabled()) {
+            if (wifiInfo.getNetworkId() != -1) {
+                result = true;
+            }
+        }
+        return result;
     }
 }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/default_layout_style"
+    android:id="@+id/stb_wifi_set_main_layout_parent"
+    android:paddingStart="@dimen/stb_wifi_set_start_end"
+    android:paddingEnd="@dimen/stb_wifi_set_start_end"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stb_wifi_set_black_color">
+
+    <ImageView
+        android:id="@+id/stb_wifi_set_main_layout_iv"
+        android:layout_marginTop="@dimen/stb_wifi_set_image_margin_top"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@null"
+        android:src="@mipmap/startup_icon_05" />
+
+    <LinearLayout
+        android:id="@+id/stb_wifi_set_main_layout_bottom_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/stb_wifi_set_tx_margin_bottom"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/stb_wifi_set_main_layout_help_link"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/stb_remote_set_link_height"
+            android:gravity="center"
+            android:text="@string/stb_wifi_set_network_help_link_txt"
+            android:textColor="@color/stb_wifi_set_white_color"
+            android:autoLink="all"
+            android:textSize="@dimen/stb_remote_text_size"/>
+        <TextView
+            android:id="@+id/stb_wifi_set_main_layout_tv_link"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/stb_remote_set_link_height"
+            android:gravity="center"
+            android:text="@string/stb_wifi_set_link_txt"
+            android:textColor="@color/stb_wifi_set_white_color"
+            android:autoLink="all"
+            android:textSize="@dimen/stb_remote_text_size" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/stb_wifi_set_main_layout_tv_title"
+        android:layout_below="@id/stb_wifi_set_main_layout_iv"
+        android:layout_marginTop="@dimen/stb_wifi_set_title_margin_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/stb_wifi_set_white_color"
+        android:textStyle="bold"
+        android:textSize="@dimen/stb_wifi_set_title_txt_size" />
+
+    <TextView
+        android:id="@+id/stb_wifi_set_main_layout_tv_comment"
+        android:layout_below="@id/stb_wifi_set_main_layout_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stb_wifi_set_comment_margin_top"
+        android:text="@string/stb_wifi_set_comment"
+        android:textColor="@color/stb_wifi_set_comment_color"
+        android:textSize="@dimen/stb_wifi_set_comment_text_size"/>
+
+    <TextView
+        android:id="@+id/stb_wifi_set_main_layout_tv_wifi_state_txt"
+        android:layout_below="@id/stb_wifi_set_main_layout_tv_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/stb_wifi_set_wifi_state_color"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/stb_wifi_set_state_txt_margin_top"
+        android:textSize="@dimen/stb_wifi_set_title_txt_size"/>
+
+    <TextView
+        android:id="@+id/stb_wifi_set_main_layout_set_next_btn"
+        android:layout_below="@id/stb_wifi_set_main_layout_tv_wifi_state_txt"
+        android:layout_marginTop="@dimen/stb_wifi_set_next_btn_margin_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/stb_wifi_set_btn_height"
+        android:text="@string/stb_wifi_set_next_btn_txt"
+        android:background="@drawable/startup_btn_normal"
+        android:textColor="@color/stb_wifi_set_black_color"
+        android:textSize="@dimen/stb_wifi_set_comment_text_size"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+</RelativeLayout>

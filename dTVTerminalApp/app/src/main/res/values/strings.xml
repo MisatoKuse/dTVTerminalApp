@@ -654,4 +654,47 @@
     <!-- ログアウト -->
     <string name="logout_message">ログアウトしますか</string>
 
+    <!-- STB初期設定扉 -->
+    <string name="launch_stb_tv_title">ドコモテレビターミナルと連携したテレビ操作などの機能を利用するには接続設定（ペアリング）を行う必要があります。</string>
+    <string name="launch_stb_tv_comment">以下を確認の上、設定を開始してください。\n・ドコモテレビターミナルと同じネットワークにWi-Fi接続されている。\n・ドコモテレビターミナルに本スマートフォン・タブレットと同じdアカウントが登録されている。</string>
+    <string name="launch_stb_bt_txt">接続設定（ペアリング）を行う</string>
+    <string name="launch_stb_bottom_txt">接続しないで利用する</string>
+    <string name="launch_stb_select_dialog_title">本アプリからのテレビ操作、ひかりＴＶ for docomoの放送番組の視聴や録画予約などの機能を利用するにはドコモテレビターミナルとの接続設定（ペアリング）を行ってください。\n
+あとで設定する場合は、ホーム画面上部の「接続設定」および「設定＞ペアリング設定」から行えます。</string>
+    <string name="launch_stb_select_dialog_txt1">あとで設定する</string>
+    <string name="launch_stb_select_dialog_txt2">次回以降ペアリング設定を表示しない</string>
+    <string name="launch_stb_select_dialog_txt3">キャンセル</string>
+    <string-array name="launch_stb_select_tabs">
+        <item>@string/launch_stb_select_dialog_txt1</item>
+        <item>@string/launch_stb_select_dialog_txt2</item>
+        <item>@string/launch_stb_select_dialog_txt3</item>
+    </string-array>
+
+    <!-- ペアリング設定（wifi接続状態確認） -->
+    <string name="stb_wifi_set_header">ペアリング設定</string>
+    <string name="stb_wifi_set_title_wifi_on">本スマートフォン・タブレットがドコモテレビターミナルと同じネットワークにWi-Fi接続されているか確認してください。</string>
+    <string name="stb_wifi_set_title_wifi_off">本スマートフォン・タブレットがWi-Fi接続されていません。\nドコモテレビターミナルと同じネットワークにWi-Fi接続してください。</string>
+    <string name="stb_wifi_set_comment">※ドコモテレビターミナルは有線接続でも問題ありません。</string>
+    <string name="stb_wifi_set_next_btn_txt">次へ</string>
+    <string name="stb_wifi_set_network_help_link_txt">ネットワーク設定のヘルプ</string>
+    <string name="stb_wifi_set_link_txt">あとで設定する</string>
+    <string name="stb_wifi_set_wifi_on_txt">Wi-Fi接続中</string>
+    <string name="stb_wifi_set_wifi_off_txt">Wi-Fi未接続</string>
+    <string name="stb_wifi_set_wifi_state_hyphen_txt">" - "</string>
+
+    <!-- リモート視聴設定 -->
+    <string name="remote_set_title">ひかりＴＶ for docomoをご利用の方で、外出先で放送番組を視聴するには設定が必要です。</string>
+    <string name="remote_set_bt_txt">設定をする</string>
+    <string name="remote_set_bottom_txt">今は利用しない</string>
+
+    <!-- リモート視聴設定確認 -->
+    <string name="remote_introduce_header">リモート視聴設定</string>
+    <string name="remote_introduce_title">ドコモテレビターミナルのひかりＴＶ for docomoアプリを起動して、以下の設定を行なってください。</string>
+    <string name="remote_introduce_comment">※本スマートフォン・タブレットのユーザー（dアカウント）で起動してください。</string>
+    <string name="remote_introduce_header_title1">1.「設定・お知らせ」で「ホームサーバ設定」を選択</string>
+    <string name="remote_introduce_header_title2">2.「ホームサーバ設定」で「ホームサーバ機能設定」を選択</string>
+    <string name="remote_introduce_header_title3">3.「ホームサーバ機能設定」で「自宅内/外出先で有効」を選択</string>
+    <string name="remote_introduce_bt_txt">設定を行った</string>
+    <string name="remote_introduce_bottom_txt">あとで設定する</string>
+    <string name="remote_introduce_dialog_txt">あとから設定する場合は「設定＞リモート視聴設定」より行なってください</string>
 </resources>

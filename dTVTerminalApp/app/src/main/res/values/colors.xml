@@ -104,6 +104,26 @@
     <color name ="stb_select_white_color">#ffffff</color>
     <color name="stb_select_background_color">#1d1d1d</color>
 
+    <!--//STB初期設定扉-->
+    <color name ="stb_launch_white_color">@color/basic_text_color_white</color>
+    <color name ="stb_launch_black_color">@color/basic_text_color_black</color>
+
+    <!--//ペアリング設定（wifi接続状態）-->
+    <color name ="stb_wifi_set_white_color">@color/basic_text_color_white</color>
+    <color name ="stb_wifi_set_comment_color">#CCCCCC</color>
+    <color name ="stb_wifi_set_black_color">@color/basic_text_color_black</color>
+    <color name ="stb_wifi_set_wifi_state_color">#FFBB4E</color>
+
+    <!--//リモート視聴設定-->
+    <color name ="stb_remote_set_white_color">@color/basic_text_color_white</color>
+    <color name ="stb_remote_set_comment_color">#CCCCCC</color>
+    <color name ="stb_remote_set_black_color">@color/basic_text_color_black</color>
+
+    <!--//リモート視聴設定確認-->
+    <color name ="stb_remote_introduce_white_color">@color/basic_text_color_white</color>
+    <color name ="stb_remote_introduce_comment_color">#CCCCCC</color>
+    <color name ="stb_remote_introduce_black_color">@color/basic_text_color_black</color>
+
     <!--//リモコン画面-->
     <drawable name="color_little_gray">#E5E5E5</drawable>
     <color name="remote_watch_by_tv_bottom_corners_dtv">#D3052C</color>

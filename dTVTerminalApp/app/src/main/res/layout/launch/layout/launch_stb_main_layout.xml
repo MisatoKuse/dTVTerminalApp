@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/default_layout_style"
+    android:paddingStart="@dimen/stb_launch_padding_start_end"
+    android:paddingEnd="@dimen/stb_launch_padding_start_end"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stb_launch_black_color">
+
+    <ImageView
+        android:id="@+id/launch_stb_main_layout_iv"
+        android:layout_marginTop="@dimen/stb_launch_image_margin_top"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@mipmap/startup_icon_07" />
+
+    <TextView
+        android:id="@+id/launch_stb_main_layout_tv_title"
+        android:layout_below="@id/launch_stb_main_layout_iv"
+        android:layout_marginTop="@dimen/stb_launch_title_margin_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/launch_stb_tv_title"
+        android:textColor="@color/stb_launch_white_color"
+        android:textStyle="bold"
+        android:textSize="@dimen/stb_launch_text_size" />
+
+    <TextView
+        android:id="@+id/launch_stb_main_layout_tv_comment"
+        android:layout_below="@id/launch_stb_main_layout_tv_title"
+        android:layout_marginTop="@dimen/stb_launch_comment_margin_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/launch_stb_tv_comment"
+        android:textColor="@color/stb_launch_white_color"
+        android:textSize="@dimen/stb_launch_text_size" />
+
+    <TextView
+        android:id="@+id/launch_stb_main_layout_tv_btn"
+        android:layout_below="@id/launch_stb_main_layout_tv_comment"
+        android:layout_marginTop="@dimen/stb_launch_btn_margin_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/stb_launch_btn_height"
+        android:text="@string/launch_stb_bt_txt"
+        android:background="@drawable/startup_btn_normal"
+        android:textColor="@color/stb_launch_black_color"
+        android:textSize="@dimen/stb_launch_text_size"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/launch_stb_main_layout_tv_link"
+        android:layout_marginBottom="@dimen/stb_launch_padding_start_end"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/launch_stb_bottom_txt"
+        android:textColor="@color/stb_launch_white_color"
+        android:autoLink="all"
+        android:textSize="@dimen/stb_launch_text_size" />
+</RelativeLayout>

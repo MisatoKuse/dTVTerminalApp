@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.nttdocomo.android.tvterminalapp">
 
@@ -79,6 +83,22 @@
 
 
         <!-- ===================================== Launch グループ Begin ===================================== -->
+        <activity
+            android:name=".activity.launch.LaunchStbActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".activity.launch.StbWifiSetActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".activity.launch.RemoteSetActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".activity.launch.RemoteSetIntroduceActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <activity
             android:name=".activity.launch.DaccountResettingActivity"
             android:screenOrientation="portrait"
