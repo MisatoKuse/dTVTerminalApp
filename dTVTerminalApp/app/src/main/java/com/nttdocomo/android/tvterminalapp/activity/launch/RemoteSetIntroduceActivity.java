@@ -26,7 +26,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 /**
- * リモート視聴設定確認.
+ * リモート視聴設定.
  */
 public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnClickListener, DlnaManager.LocalRegisterListener {
 
@@ -38,10 +38,14 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     private static final int IMAGE_WIDTH_PERCENT_100 = 100;
     /** タブレット幅（スクリーンの67％）.*/
     private static final int IMAGE_WIDTH_PERCENT_67 = 67;
+    /** launchからの遷移.*/
+    private boolean mIsFromLaunch = true;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        mIsFromLaunch = intent.getBooleanExtra(ContentUtils.LAUNCH_REMOTE_SETTING, true);
         setContentView(R.layout.remote_introduce_main_layout);
         setTitleText(getString(R.string.remote_introduce_header));
         enableHeaderBackIcon(false);
@@ -112,9 +116,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        startTransition();
                     }
                 });
                 setRemoteProgressVisible(View.GONE);
@@ -138,15 +140,28 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        startTransition();
                     }
                 });
                 resultDialog.showDialog();
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 遷移もとによって画面遷移を行う.
+     */
+    private void  startTransition() {
+        if (mIsFromLaunch) {
+            //Launchからの場合ホーム画面に遷移する
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            //設定画面からの場合、前画面に戻る
+            finish();
         }
     }
 
@@ -165,6 +180,9 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!mIsFromLaunch) {
+                finish();
+            }
             return false;
         }
         return super.onKeyDown(keyCode, event);

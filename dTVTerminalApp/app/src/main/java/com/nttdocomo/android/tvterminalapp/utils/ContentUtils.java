@@ -79,6 +79,8 @@ public class ContentUtils {
     public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
     /**STB初期設定扉バックキー.*/
     public static final String LAUNCH_STB_BACK_KEY = "launch_stb_back_key";
+    /**初期リモート視聴設定.*/
+    public static final String LAUNCH_REMOTE_SETTING = "launch_remote_setting";
     /** disp_type(tv_program).*/
     public static final String TV_PROGRAM = "tv_program";
     /** disp_type(video_program).*/

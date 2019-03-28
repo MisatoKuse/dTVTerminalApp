@@ -55,6 +55,8 @@
         android:layout_marginTop="@dimen/stb_wifi_set_title_margin_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.5"
         android:textColor="@color/stb_wifi_set_white_color"
         android:textStyle="bold"
         android:textSize="@dimen/stb_wifi_set_title_txt_size" />

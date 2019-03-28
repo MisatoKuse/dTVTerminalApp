@@ -2584,17 +2584,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                     //未ペアリング契約有かつ視聴可否判定OK
                 } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)) {
-                    Button button = setThumbnailMessage(getString(R.string.contents_detail_pairing_request),
-                            getString(R.string.contents_detail_pairing_button), true, true);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            //ペアリング設定
-                            Intent intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
-                            intent.putExtra(ContentUtils.LAUNCH_STB_BACK_KEY, true);
-                            startActivity(intent);
-                        }
-                    });
+                    startLaunchStbActivity();
                 } else {
                     Button button = setThumbnailMessage(getString(R.string.contents_detail_no_agreement),
                             getString(R.string.contents_detail_contract_leading_button), true, true);
@@ -2647,6 +2637,23 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 初期扉画面に遷移する.
+     */
+    private void startLaunchStbActivity() {
+        Button button = setThumbnailMessage(getString(R.string.contents_detail_pairing_request),
+                getString(R.string.contents_detail_pairing_button), true, true);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                //ペアリング設定
+                Intent intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                intent.putExtra(ContentUtils.LAUNCH_STB_BACK_KEY, true);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -2731,16 +2738,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void hikariTvThumbnailDisplay(final ContentUtils.ContentsDetailUserType detailUserType, final ContentUtils.ViewIngType viewIngType) {
         if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)
                 && ContentUtils.isEnableDisplay(viewIngType)) {
-            Button button = setThumbnailMessage(getString(R.string.contents_detail_pairing_request),
-                    getString(R.string.contents_detail_pairing_button), true, true);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    Intent intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
-                    intent.putExtra(ContentUtils.LAUNCH_STB_BACK_KEY, true);
-                    startActivity(intent);
-                }
-            });
+            startLaunchStbActivity();
         } else {
             Button button = setThumbnailMessage(getString(R.string.contents_detail_no_agreement),
                     getString(R.string.contents_detail_contract_leading_button), true, true);

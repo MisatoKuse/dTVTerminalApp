@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchStbActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.RemoteSetIntroduceActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
@@ -201,8 +202,10 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
             if (isSettingPossible(true, tappedItemName)) {
-                //ローカルレジストレーションを促すダイアログを表示
-                showRemoteConfirmDialog();
+                //リモート視聴設定画面に遷移する
+                Intent intent = new Intent(getApplicationContext(), RemoteSetIntroduceActivity.class);
+                intent.putExtra(ContentUtils.LAUNCH_REMOTE_SETTING, false);
+                startActivity(intent);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
             if (isSettingPossible(true, tappedItemName)) {
@@ -369,33 +372,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 break;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    /**
-     * ローカルレジストレーションを促すダイアログを表示.
-     */
-    private void showRemoteConfirmDialog() {
-        CustomDialog remoteConfirmDialog = DlnaUtils.getRemoteConfirmDialog(SettingActivity.this);
-        remoteConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                if (isOK) {
-                    setRemoteProgressVisible(View.VISIBLE);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            DlnaUtils.ExcuteLocalRegistrationErrorType errorType =
-                                    DlnaUtils.excuteLocalRegistration(getApplicationContext(), SettingActivity.this);
-                            boolean result = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE.equals(errorType);
-                            if (!result) {
-                                showRegistResultDialog(false, errorType);
-                            }
-                        }
-                    }).start();
-                }
-            }
-        });
-        remoteConfirmDialog.showDialog();
     }
 
     @Override

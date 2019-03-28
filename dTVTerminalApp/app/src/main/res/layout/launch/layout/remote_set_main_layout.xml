@@ -39,6 +39,8 @@
         android:layout_marginTop="@dimen/stb_remote_set_title_margin_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:lineSpacingMultiplier="1.5"
+        android:gravity="center"
         android:text="@string/remote_set_title"
         android:textColor="@color/stb_remote_set_white_color"
         android:textStyle="bold"

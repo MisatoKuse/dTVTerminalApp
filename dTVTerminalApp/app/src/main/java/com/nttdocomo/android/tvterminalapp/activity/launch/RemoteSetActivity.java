@@ -14,9 +14,10 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 /**
- * リモート視聴設定.
+ * リモート視聴確認.
  */
 public class RemoteSetActivity extends BaseActivity implements View.OnClickListener {
 
@@ -42,17 +43,35 @@ public class RemoteSetActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(final View view) {
-        Intent intent = null;
         switch (view.getId()) {
             case R.id.remote_set_main_layout_set_btn:
-                intent = new Intent(getApplicationContext(), RemoteSetIntroduceActivity.class);
+                Intent remoteSetIntent = new Intent(getApplicationContext(), RemoteSetIntroduceActivity.class);
+                startIntentActivity(remoteSetIntent);
                 break;
             case R.id.remote_set_main_layout_tv_link:
-                intent = new Intent(getApplicationContext(), HomeActivity.class);
+                CustomDialog resultDialog = new CustomDialog(RemoteSetActivity.this, CustomDialog.DialogType.CONFIRM);
+                resultDialog.setOnTouchOutside(false);
+                resultDialog.setCancelable(false);
+                resultDialog.setOnTouchBackkey(false);
+                resultDialog.setContent(getString(R.string.remote_introduce_dialog_txt));
+                resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(final boolean isOK) {
+                    Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                    startIntentActivity(homeIntent);
+                    }
+                });
+                resultDialog.showDialog();
                 break;
             default:
                 break;
         }
+    }
+    /**
+     * Activity起動.
+     * @param intent intent
+     */
+    private void startIntentActivity(final Intent intent) {
         if (intent != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

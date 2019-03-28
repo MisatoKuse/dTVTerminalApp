@@ -95,6 +95,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         TextView connectResult = findViewById(R.id.connect_result_text);
         connectResult.setVisibility(View.VISIBLE);
         connectResult.setText(R.string.str_stb_connect_success_text);
+        SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
         //契約情報確認、契約情報再取得要
         checkContractInfo(true);
         DTVTLogger.end();
@@ -105,8 +106,6 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    StbConnectActivity.this, true);
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

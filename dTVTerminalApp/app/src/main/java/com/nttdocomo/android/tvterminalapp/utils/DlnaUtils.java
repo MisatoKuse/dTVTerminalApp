@@ -449,23 +449,6 @@ public class DlnaUtils {
         return builder.build();
     }
 
-
-    /**
-     * ローカルレジストレーション確認ダイアログ取得.
-     *  @param context コンテキスト
-     *  @return リモート視聴設定ダイアログ
-     */
-    public static CustomDialog getRemoteConfirmDialog(final Context context) {
-        CustomDialog remoteConfirmDialog = new CustomDialog(context, CustomDialog.DialogType.CONFIRM);
-        remoteConfirmDialog.setContent(context.getString(R.string.main_setting_remote_confirm_message_first_start));
-        remoteConfirmDialog.setConfirmText(R.string.custom_dialog_ok);
-        remoteConfirmDialog.setCancelText(R.string.custom_dialog_cancel);
-        remoteConfirmDialog.setOnTouchOutside(false);
-        remoteConfirmDialog.setCancelable(false);
-        remoteConfirmDialog.setOnTouchBackkey(false);
-        return remoteConfirmDialog;
-    }
-
     /**
      * ローカルレジストレーションの処理結果.
      *
