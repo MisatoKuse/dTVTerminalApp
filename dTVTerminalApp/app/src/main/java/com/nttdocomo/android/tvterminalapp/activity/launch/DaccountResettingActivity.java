@@ -72,12 +72,7 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
            mStartMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
         }
         //Headerの設定
-
-        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            setTitleText(getString(R.string.str_app_title));
-        } else {
-            setTitleText(getString(R.string.str_stb_paring_setting_title));
-        }
+        setTitleText(getString(R.string.str_stb_paring_setting_title));
         enableHeaderBackIcon(false);
         enableGlobalMenuIcon(false);
 
@@ -116,16 +111,16 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void onClick(final View v) {
-        if (v.equals(mDAccountRegistrationhelp)) {
+        if (v.getId() == R.id.d_account_registration_help) {
             // ヘルプ画面に遷移
             onDAccountRegButton();
-        } else if (v.equals(mDAccountInputActivationCode)) {
+        } else if (v.getId() == R.id.d_account_input_activation_code) {
             // アカウントアプリを起動する
             onDAccountRegton();
-        } else if (v.equals(mDAccountAgainPairing)) {
+        } else if (v.getId() == R.id.d_account_again_pairing) {
             // 再度ペアリング
             onReturnButton();
-        } else if (v.equals(mDAccountLoginOtherAccount)) {
+        } else if (v.getId() == R.id.d_account_login_other_account) {
             // アカウントアプリを起動する
             onDAccountRegton();
         }

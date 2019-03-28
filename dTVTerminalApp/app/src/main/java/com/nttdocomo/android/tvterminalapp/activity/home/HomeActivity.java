@@ -91,8 +91,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /** 表示するコンテンツを内包するLinearLayout.*/
     private LinearLayout mLinearLayout = null;
-    /** 未契約者導線.*/
-    private LinearLayout mAgreementRl = null;
+    /** 未ペアリング導線.*/
+    private LinearLayout mNoParingLayout = null;
     /** ホーム画面のスクロール部.*/
     private ScrollView mScrollView = null;
     /** エラーダイアログが表示されているかのフラグ.*/
@@ -263,7 +263,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //ユーザー状況の判定
         if (userState == UserState.CONTRACT_OK_PARING_OK
                 || userState == UserState.CONTRACT_OK_PAIRING_NG
-                || mAgreementRl.getVisibility() == View.VISIBLE) {
+                || mNoParingLayout.getVisibility() == View.VISIBLE) {
             //契約済みか契約無しを検知したか、未ログインが確定して誘導バナーが表示されたならば、この時点でメニューを活性化する
             setMenuIconEnabled(true);
             //以後はshowProgessBarでの制御も有効となる
@@ -531,30 +531,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void showHomeBanner() {
         //dアカウント未認証状態の取得
-        boolean uncertified = SharedPreferencesUtils.isUncertifiedDaccount(
+        boolean isParingSettled = SharedPreferencesUtils.getSharedPreferencesDecisionParingSettled(
                 getApplicationContext());
 
         UserState userState = UserInfoUtils.getUserState(this);
         switch (userState) {
             case LOGIN_OK_CONTRACT_NG:
                 DTVTLogger.debug("showHomeBanner_LOGIN_OK_CONTRACT_NG");
-                if (uncertified) {
-                    DTVTLogger.debug("LOGIN_OK_CONTRACT_NG & uncertified");
-                    //未認証の場合、契約情報の取得は行えず、契約の有無は不明になるので、契約のバナーは隠す
-                    mAgreementRl.setVisibility(View.GONE);
-                } else {
-                    DTVTLogger.debug("LOGIN_OK_CONTRACT_NG & certified");
-                    //認証が行われているので、契約のバナーを出す
-                    mAgreementRl.setVisibility(View.VISIBLE);
+                if (!isParingSettled) {
+                    mNoParingLayout.setVisibility(View.VISIBLE);
                 }
                 break;
             case CONTRACT_OK_PAIRING_NG:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PAIRING_NG");
-                mAgreementRl.setVisibility(View.GONE);
+                mNoParingLayout.setVisibility(View.VISIBLE);
                 break;
             case CONTRACT_OK_PARING_OK:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PARING_OK");
-                mAgreementRl.setVisibility(View.GONE);
+                mNoParingLayout.setVisibility(View.GONE);
                 break;
             case LOGIN_NG:
                 DTVTLogger.debug("showHomeBanner_LOGIN_NG");
@@ -563,8 +557,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     DTVTLogger.debug("showHomeBanner_mIsDaccountGetNg");
                     //バナーのテキストを書き換える
                     TextView textView = findViewById(R.id.home_main_layout_top_wire_area_text);
-                    textView.setText(getString(R.string.home_no_login_info_text));
-                    TextView loginButton = findViewById(R.id.home_main_layout_kytv);
+                    textView.setText(getString(R.string.home_no_paring_info_text));
+                    TextView loginButton = findViewById(R.id.home_main_layout_paring_text_view);
                     loginButton.setText(getString(R.string.home_login_button));
                     loginButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -574,7 +568,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         }
                     });
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
-                    mAgreementRl.setVisibility(View.VISIBLE);
+                    mNoParingLayout.setVisibility(View.VISIBLE);
 
                     //dアカウント設定アプリ未インストールの場合、ここに来るのが早すぎてメニュー活性化が早すぎるので、チェックを行う
                     DaccountControl daccountControl = getDAccountControl();
@@ -589,7 +583,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             default:
                 DTVTLogger.debug("showHomeBanner_default");
                 //情報の取得前は各バナーは表示しないように変更
-                mAgreementRl.setVisibility(View.GONE);
+                mNoParingLayout.setVisibility(View.GONE);
                 break;
         }
     }
@@ -598,8 +592,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(final View view) {
         super.onClick(view);
         switch (view.getId()) {
-            case R.id.home_main_layout_kytv:
-                startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
+            case R.id.home_main_layout_paring_text_view:
+                //TODO 初期扉画面に遷移
+//               Intent intent = new Intent(this, LaunchStbActivity.class);
+//               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//               startActivity(intent);
                 break;
             default:
                 break;
@@ -616,10 +613,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //レイアウトを非表示にする
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
         mLinearLayout.setVisibility(View.GONE);
-        TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
-        mAgreementRl = findViewById(R.id.home_main_layout_kyrl);
-        mAgreementRl.setVisibility(View.GONE);
-        agreementTextView.setOnClickListener(this);
+        TextView toParingTextView = findViewById(R.id.home_main_layout_paring_text_view);
+        mNoParingLayout = findViewById(R.id.home_main_layout_paring_layout);
+        mNoParingLayout.setVisibility(View.GONE);
+        toParingTextView.setOnClickListener(this);
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
             final View view = setContentsView(i);

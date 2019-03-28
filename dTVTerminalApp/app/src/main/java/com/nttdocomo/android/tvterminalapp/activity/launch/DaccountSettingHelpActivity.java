@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.webkit.WebSettings;
@@ -45,20 +44,7 @@ public class DaccountSettingHelpActivity extends BaseActivity {
         webSettings.setTextZoom(100);
         webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         dAccountHelpPageWebView.loadUrl(UrlConstants.WebUrl.STB_REGIST_D_ACCOUNT_URL);
-
-
-        Intent intent = getIntent();
-        int startMode = 0;
-        if (intent != null) {
-            startMode = intent.getIntExtra(DaccountResettingActivity.FROM_WHERE, -1);
-        }
-
-        //Headerの設定
-        if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            setTitleText(getString(R.string.str_app_title));
-        } else {
-            setTitleText(getString(R.string.str_stb_paring_setting_title));
-        }
+        setTitleText(getString(R.string.str_stb_paring_setting_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(false);
     }

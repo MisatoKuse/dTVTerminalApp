@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.setting;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.InitialSettingDoorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
@@ -179,8 +181,17 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
             if (isSettingPossible(false, tappedItemName)) {
                 //ペアリング設定
-                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
+                Intent intent;
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+                if (TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
+                    // 未ペアリング時
+                    intent = new Intent(getApplicationContext(), InitialSettingDoorActivity.class);
+                    intent.putExtra("LAUNCH_STB_BACK_KEY", false);
+                } else {
+                    //ペアリング時
+                    intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                    intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
+                }
                 startActivity(intent);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_MY_PROGRAM])) {

@@ -18,7 +18,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/home_main_layout_kyrl"
+                android:id="@+id/home_main_layout_paring_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/home_no_contract_info_height"
                 android:background="@color/home_no_contract_info_background_color"
@@ -36,12 +36,12 @@
                     android:maxLines="2"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="@string/home_no_contract_info_text"
+                    android:text="@string/home_no_paring_info_text"
                     android:textColor="@color/home_no_contract_info_text_color"
                     android:textSize="@dimen/home_no_contract_text_size"/>
 
                 <TextView
-                    android:id="@+id/home_main_layout_kytv"
+                    android:id="@+id/home_main_layout_paring_text_view"
                     android:layout_width="@dimen/home_contract_button_width"
                     android:layout_height="32dp"
                     android:layout_marginTop="@dimen/home_contract_button_top_margin"

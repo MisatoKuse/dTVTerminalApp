@@ -5,6 +5,7 @@
 <resources>
 
     <dimen name="launch_relative_layout_high_size">116dp</dimen>
+    <dimen name="launch_stb_icon_margin_top_size">60dp</dimen>
     <dimen name="launch_text_layout_high_size">44dp</dimen>
     <dimen name="launch_image_bottom_margin">16dp</dimen>
     <dimen name="launch_text_size">14dp</dimen>
@@ -13,6 +14,7 @@
     <dimen name="launch_stb_checkbox_bottom_margin">27dp</dimen>
     <dimen name="launch_stb_checkbox_top_margin">6dp</dimen>
     <dimen name="launch_stb_paring_result_layout">48dp</dimen>
+    <dimen name="launch_stb_paring_wifi_check_margin_top">25dp</dimen>
     <dimen name="launch_text_left_padding">24dp</dimen>
     <dimen name="launch_text_right_padding">0dp</dimen>
     <dimen name="launch_text_end_padding">0dp</dimen>
@@ -23,7 +25,7 @@
     <dimen name="launch_stb_device_font_size">14dp</dimen>
     <dimen name="launch_stb_checkbox_high">18dp</dimen>
     <dimen name="launch_stb_margin_top">40dp</dimen>
-    <dimen name="launch_stb_progress_bar_margin_top">84dp</dimen>
+    <dimen name="launch_stb_progress_bar_margin_top">78dp</dimen>
     <dimen name="launch_stb_start_up_icon1_high">36dp</dimen>
     <dimen name="launch_stb_start_up_icon1_width">70dp</dimen>
     <dimen name="launch_stb_text_margin_top">6dp</dimen>
@@ -83,8 +85,8 @@
     <dimen name="home_contract_button_right_margin">16dp</dimen>
     <dimen name="home_contract_button_top_margin">18dp</dimen>
     <dimen name="home_contract_button_bottom_margin">18dp</dimen>
-    <dimen name="home_contract_button_padding_left">24px</dimen>
-    <dimen name="home_contract_button_padding_right">24px</dimen>
+    <dimen name="home_contract_button_padding_left">24dp</dimen>
+    <dimen name="home_contract_button_padding_right">24dp</dimen>
     <dimen name="home_contents_item_name_top_margin">23dp</dimen>
     <dimen name="home_contents_item_name_bottom_margin">16dp</dimen>
     <dimen name="home_contents_left_margin">16dp</dimen>
@@ -277,9 +279,10 @@
     <dimen name="paring_setting_progressbar_size">16dp</dimen>
     <dimen name="paring_setting_progressbar_margin_start">9dp</dimen>
     <dimen name="paring_setting_progressbar_margin_top">23dp</dimen>
-    <dimen name="paring_setting_search_help_margin_top">8dp</dimen>
+    <dimen name="paring_setting_search_help_margin_top">12dp</dimen>
     <dimen name="paring_setting_search_image_margin_top">17dp</dimen>
     <dimen name="pairing_setting_search_failed_text_size">35dp</dimen>
+    <dimen name="paring_setting_search_result_margin_top">20dp</dimen>
 
     <!--縮小番組表-->
     <dimen name="tv_program_list_time_scrollview_width">35dp</dimen>
@@ -368,6 +371,7 @@
     <dimen name="launch_terms_of_service_margin_top">18dp</dimen>
     <dimen name="launch_terms_of_service_button_corner">5.0dp</dimen>
 
+
     <!--//STB初期設定扉-->
     <dimen name ="stb_launch_text_size">14dp</dimen>
     <dimen name ="stb_launch_btn_height">44dp</dimen>
@@ -419,4 +423,5 @@
     <dimen name ="stb_remote_introduce_set_tx_margin_bottom">25dp</dimen>
     <dimen name ="stb_remote_introduce_height">44dp</dimen>
     <dimen name ="stb_remote_introduce_start_end">16dp</dimen>
+    <dimen name="launch_set_paring_paring_later_corner_button">2.0dp</dimen>
 </resources>

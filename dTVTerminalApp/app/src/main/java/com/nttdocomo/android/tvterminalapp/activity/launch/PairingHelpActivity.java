@@ -4,7 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -62,14 +65,14 @@ public class PairingHelpActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
         webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
-        if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
-            setTitleText(getString(R.string.str_app_title));
-            firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
-        } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
-            setTitleText(getString(R.string.str_stb_paring_setting_title));
+        setTitleText(getString(R.string.str_stb_paring_setting_title));
+        if (isNetworkAvailable(this)) {
             webSettings.setAllowUniversalAccessFromFileURLs(false);
             webSettings.setAllowFileAccessFromFileURLs(false);
             firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
+        } else {
+            //ローカルhtmlを表示する.
+            firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
         }
 
         //Headerの設定
@@ -102,5 +105,22 @@ public class PairingHelpActivity extends BaseActivity {
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * ネットワーク利用できるか.
+     * @param context context
+     * @return true
+     */
+    private static boolean isNetworkAvailable(final Context context) {
+        boolean isConnected = false;
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                isConnected = true;
+            }
+        }
+        return isConnected;
     }
 }
