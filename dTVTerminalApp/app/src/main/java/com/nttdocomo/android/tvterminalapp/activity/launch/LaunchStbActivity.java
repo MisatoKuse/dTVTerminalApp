@@ -22,6 +22,8 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
  * STB初期設定扉.
  */
 public class LaunchStbActivity extends BaseActivity implements View.OnClickListener {
+    /**戻るアイコン表示.*/
+    private boolean mIsShowBackKey = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -29,10 +31,8 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.launch_stb_main_layout);
         setTitleText(getString(R.string.str_stb_paring_setting_title));
         Intent intent = getIntent();
-        boolean isShowBackKey = intent.getBooleanExtra(ContentUtils.LAUNCH_STB_BACK_KEY, false);
-        if (!isShowBackKey) {
-            enableHeaderBackIcon(false);
-        }
+        mIsShowBackKey = intent.getBooleanExtra(ContentUtils.LAUNCH_STB_BACK_KEY, false);
+        enableHeaderBackIcon(mIsShowBackKey);
         initView();
         if (!SharedPreferencesUtils.getSharedPreferencesStbLauchFirst(LaunchStbActivity.this)) {
             SharedPreferencesUtils.setSharedPreferencesStbLauchFirst(LaunchStbActivity.this, true);
@@ -45,7 +45,7 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
     private void initView() {
         TextView connectBtn = findViewById(R.id.launch_stb_main_layout_tv_btn);
         TextView linkBtn = findViewById(R.id.launch_stb_main_layout_tv_link);
-        linkBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        linkBtn.setPaintFlags(linkBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         connectBtn.setOnClickListener(this);
         linkBtn.setOnClickListener(this);
     }
@@ -93,7 +93,11 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
                 startActivity(new Intent(this, StbWifiSetActivity.class));
                 break;
             case R.id.launch_stb_main_layout_tv_link:
-                showSelectDialog();
+                if (mIsShowBackKey) {
+                    finish();
+                } else {
+                    showSelectDialog();
+                }
                 break;
             case R.id.header_layout_back:
                 super.onClick(view);
@@ -106,6 +110,9 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mIsShowBackKey) {
+                finish();
+            }
             return false;
         }
         return super.onKeyDown(keyCode, event);

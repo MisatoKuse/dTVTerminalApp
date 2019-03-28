@@ -40,7 +40,7 @@
         android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginRight="@dimen/launch_stb_list_start_margin"
         android:layout_marginBottom="@dimen/launch_stb_list_start_margin"
-        android:background="@color/stb_select_white_color"
+        android:background="@drawable/startup_btn_normal"
         android:gravity="center"
         android:textStyle="bold"
         android:layout_above="@+id/use_without_login_induction"

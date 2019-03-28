@@ -9,7 +9,7 @@
     android:paddingEnd="@dimen/stb_launch_padding_start_end"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stb_launch_black_color">
+    android:background="@color/stb_select_background_color">
 
     <ImageView
         android:id="@+id/launch_stb_main_layout_iv"

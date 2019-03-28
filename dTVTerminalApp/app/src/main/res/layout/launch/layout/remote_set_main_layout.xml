@@ -9,7 +9,7 @@
     android:paddingEnd="@dimen/stb_remote_set_start_end"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stb_remote_set_black_color">
+    android:background="@color/stb_select_background_color">
 
     <ImageView
         android:id="@+id/remote_set_main_layout_iv"

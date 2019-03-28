@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchStbActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
@@ -593,10 +594,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onClick(view);
         switch (view.getId()) {
             case R.id.home_main_layout_paring_text_view:
-                //TODO 初期扉画面に遷移
-//               Intent intent = new Intent(this, LaunchStbActivity.class);
-//               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//               startActivity(intent);
+               Intent intent = new Intent(this, LaunchStbActivity.class);
+               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+               startActivity(intent);
                 break;
             default:
                 break;

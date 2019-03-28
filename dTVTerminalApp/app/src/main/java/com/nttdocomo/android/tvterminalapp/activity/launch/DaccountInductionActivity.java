@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;

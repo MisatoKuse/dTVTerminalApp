@@ -35,7 +35,7 @@ public class RemoteSetActivity extends BaseActivity implements View.OnClickListe
     private void initView() {
         TextView setBtn = findViewById(R.id.remote_set_main_layout_set_btn);
         TextView linkBtn = findViewById(R.id.remote_set_main_layout_tv_link);
-        linkBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        linkBtn.setPaintFlags(linkBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         setBtn.setOnClickListener(this);
         linkBtn.setOnClickListener(this);
     }

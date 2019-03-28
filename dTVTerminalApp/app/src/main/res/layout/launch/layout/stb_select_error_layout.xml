@@ -56,10 +56,10 @@
             android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
             android:layout_marginTop="@dimen/launch_stb_account_error_margin_top"
             android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-            android:background="@color/stb_select_white_color"
+            android:background="@drawable/startup_btn_normal"
             android:gravity="center"
             android:text="@string/str_stb_again_pairing"
-            android:textColor="@color/stb_select_black_color"
+            android:textColor="@color/stb_launch_black_color"
             android:textSize="@dimen/launch_device_search_error_help_button_text"
             android:textStyle="bold" />
 

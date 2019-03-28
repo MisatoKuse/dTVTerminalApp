@@ -273,24 +273,6 @@ public class SharedPreferencesUtils {
             //dアカウント未認証状態
             D_ACCOUNT_UNCERTIFIED_DACCOUNT,
     };
-
-
-    /**
-     * STB選択画面"次回以降表示しない" 状態を保存.
-     *
-     * @param context             コンテキスト
-     * @param selectedUnnecessary true:チェック済み false:チェックなし
-     */
-    public static void setSharedPreferencesStbSelect(final Context context, final boolean selectedUnnecessary) {
-        DTVTLogger.start();
-        SharedPreferences data = context.getSharedPreferences(
-                SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = data.edit();
-        editor.putBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, selectedUnnecessary);
-        editor.apply();
-        DTVTLogger.end();
-    }
-
     /**
      * STB接続完了状態を保存.
      *
@@ -342,22 +324,6 @@ public class SharedPreferencesUtils {
         editor.apply();
         DTVTLogger.end();
     }
-
-    /**
-     * STB選択画面"次回以降表示しない" 状態を取得.
-     *
-     * @param context コンテキスト
-     * @return true:表示なし false:表示
-     */
-    public static boolean getSharedPreferencesStbSelect(final Context context) {
-        DTVTLogger.debug("getSharedPreferencesStbSelect");
-        SharedPreferences data = context.getSharedPreferences(
-                SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
-
-        return data.getBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, false);
-
-    }
-
 
     /**
      * 初期設定扉画面"次回以降表示しない" 状態を保存.

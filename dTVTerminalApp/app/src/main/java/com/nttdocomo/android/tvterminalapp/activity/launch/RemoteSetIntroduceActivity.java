@@ -55,7 +55,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         LinearLayout.LayoutParams layoutParams;
         TextView setBtn = findViewById(R.id.remote_introduce_main_layout_set_btn);
         TextView linkBtn = findViewById(R.id.remote_introduce_main_layout_tv_link);
-        linkBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        linkBtn.setPaintFlags(linkBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         setBtn.setOnClickListener(this);
         linkBtn.setOnClickListener(this);
         for (int i = 0; i < mImagResource.length; i++) {

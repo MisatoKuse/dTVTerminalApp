@@ -23,24 +23,6 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
  * 端末に登録されているdアカウントとSTBに登録されているdアカウントが一致しなかった場合に表示される.
  */
 public class DaccountResettingActivity extends BaseActivity implements View.OnClickListener {
-
-    /**
-     * STBにdアカウントを登録するには.
-     */
-    private TextView mDAccountRegistrationhelp = null;
-    /**
-     * アクティベーションコードを入力する.
-     */
-    private TextView mDAccountInputActivationCode = null;
-    /**
-     * 再度ペアリングを実行する.
-     */
-    private TextView mDAccountAgainPairing = null;
-    /**
-     * 別のdアカウントを実行する.
-     */
-    private TextView mDAccountLoginOtherAccount = null;
-
     /**
      * Dアカウントアプリ Package名.
      */
@@ -96,17 +78,17 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
      */
     private void setContents() {
 
-        mDAccountRegistrationhelp = findViewById(R.id.d_account_registration_help);
-        mDAccountRegistrationhelp.setOnClickListener(this);
+        TextView dAccountRegistrationHelp = findViewById(R.id.d_account_registration_help);
+        dAccountRegistrationHelp.setOnClickListener(this);
 
-        mDAccountInputActivationCode = findViewById(R.id.d_account_input_activation_code);
-        mDAccountInputActivationCode.setOnClickListener(this);
+        TextView dAccountInputActivationCode = findViewById(R.id.d_account_input_activation_code);
+        dAccountInputActivationCode.setOnClickListener(this);
 
-        mDAccountAgainPairing = findViewById(R.id.d_account_again_pairing);
-        mDAccountAgainPairing.setOnClickListener(this);
+        TextView dAccountAgainPairing = findViewById(R.id.d_account_again_pairing);
+        dAccountAgainPairing.setOnClickListener(this);
 
-        mDAccountLoginOtherAccount = findViewById(R.id.d_account_login_other_account);
-        mDAccountLoginOtherAccount.setOnClickListener(this);
+        TextView dAccountLoginOtherAccount = findViewById(R.id.d_account_login_other_account);
+        dAccountLoginOtherAccount.setOnClickListener(this);
     }
 
     @Override

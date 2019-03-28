@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.InitialSettingDoorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchStbActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
@@ -185,8 +185,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
                 if (TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
                     // 未ペアリング時
-                    intent = new Intent(getApplicationContext(), InitialSettingDoorActivity.class);
-                    intent.putExtra("LAUNCH_STB_BACK_KEY", false);
+                    intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                    intent.putExtra(ContentUtils.LAUNCH_STB_BACK_KEY, false);
                 } else {
                     //ペアリング時
                     intent = new Intent(getApplicationContext(), StbSelectActivity.class);

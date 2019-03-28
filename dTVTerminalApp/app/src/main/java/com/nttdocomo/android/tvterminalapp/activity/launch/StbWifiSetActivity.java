@@ -52,8 +52,8 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
         TextView mNextBtn = findViewById(R.id.stb_wifi_set_main_layout_set_next_btn);
         TextView linkNextBtn = findViewById(R.id.stb_wifi_set_main_layout_tv_link);
         mLinkHelpBtn = findViewById(R.id.stb_wifi_set_main_layout_help_link);
-        linkNextBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-        mLinkHelpBtn.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        linkNextBtn.setPaintFlags(linkNextBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        mLinkHelpBtn.setPaintFlags(mLinkHelpBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         linkNextBtn.setOnClickListener(this);
         mLinkHelpBtn.setOnClickListener(this);
         mNextBtn.setOnClickListener(this);

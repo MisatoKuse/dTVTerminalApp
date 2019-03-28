@@ -373,14 +373,6 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             DTVTLogger.debug("ParingOK Start HomeActivity");
-        } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
-            // 次回から表示しないをチェック済み
-            // 未ペアリング HOME画面遷移
-            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // 初期設定扉画面へ遷移
             startActivity(new Intent(getApplicationContext(), LaunchStbActivity.class));

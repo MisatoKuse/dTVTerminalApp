@@ -20,13 +20,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
  * STB選択エラーActivity.
  */
 public class StbSelectErrorActivity extends BaseActivity {
-    /** 再ペアリングボタン.*/
-    private TextView mParingAgain;
-    /** ペアリングをしないで利用するボタン.*/
-    private TextView mWithoutParing;
-    /** ネットーワーク設定ヘルプ.*/
-    private TextView mNetWorkSetHelp;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,15 +50,15 @@ public class StbSelectErrorActivity extends BaseActivity {
             timeOutTextView.setText(getString(R.string.str_stb_select_wifi_not_connect));
             wifiNotTheCommonTextView.setVisibility(View.GONE);
         }
-        mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
-        mNetWorkSetHelp = findViewById(R.id.network_set_help_text_view);
-        mNetWorkSetHelp.setPaintFlags(mNetWorkSetHelp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        TextView mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
+        TextView netWorkSetHelp = findViewById(R.id.network_set_help_text_view);
+        netWorkSetHelp.setPaintFlags(netWorkSetHelp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         findViewById(R.id.header_layout_back).setVisibility(View.GONE);
-        mWithoutParing = findViewById(R.id.use_without_paring);
-        mWithoutParing.setPaintFlags(mWithoutParing.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        mNetWorkSetHelp.setOnClickListener(this);
+        TextView withoutParing = findViewById(R.id.use_without_paring);
+        withoutParing.setPaintFlags(withoutParing.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        netWorkSetHelp.setOnClickListener(this);
         mParingAgain.setOnClickListener(this);
-        mWithoutParing.setOnClickListener(this);
+        withoutParing.setOnClickListener(this);
     }
 
     @Override

@@ -6,12 +6,9 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -969,7 +966,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         DlnaManager.shared().mDlnaManagerListener = null;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            if (isWifiConnected(this)) {
+            if (isWifiOn()) {
                 //Wifi接続の場合、検出エラー画面を表示する
                 Intent stbSelectErrorIntent = new Intent(this, StbSelectErrorActivity.class);
                 stbSelectErrorIntent.putExtra(StbSelectActivity.ERROR_TYPE, ErrorType.TIME_OUT_ERROR.ordinal());
@@ -996,21 +993,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         }
         DTVTLogger.end();
 
-    }
-
-    /**
-     * Wifi接続状態.
-     * @param context コンテキスト
-     * @return true
-     */
-    public static boolean isWifiConnected(final Context context) {
-        boolean isWifiConnected = false;
-        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = conMan.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnected() && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            isWifiConnected = true;
-        }
-        return isWifiConnected;
     }
 
     /**

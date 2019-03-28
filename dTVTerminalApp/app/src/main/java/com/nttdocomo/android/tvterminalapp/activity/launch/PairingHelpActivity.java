@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
@@ -66,7 +67,7 @@ public class PairingHelpActivity extends BaseActivity {
         webSettings.setTextZoom(100);
         webSettings.setUserAgentString(UserAgentUtils.getCustomUserAgent());
         setTitleText(getString(R.string.str_stb_paring_setting_title));
-        if (isNetworkAvailable(this)) {
+        if ((NetWorkUtils.isOnline(this))) {
             webSettings.setAllowUniversalAccessFromFileURLs(false);
             webSettings.setAllowFileAccessFromFileURLs(false);
             firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
@@ -105,22 +106,5 @@ public class PairingHelpActivity extends BaseActivity {
             return false;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    /**
-     * ネットワーク利用できるか.
-     * @param context context
-     * @return true
-     */
-    private static boolean isNetworkAvailable(final Context context) {
-        boolean isConnected = false;
-        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity != null) {
-            NetworkInfo info = connectivity.getActiveNetworkInfo();
-            if (info != null && info.isConnected()) {
-                isConnected = true;
-            }
-        }
-        return isConnected;
     }
 }
