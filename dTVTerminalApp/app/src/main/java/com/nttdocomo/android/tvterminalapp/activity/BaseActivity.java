@@ -466,21 +466,11 @@ public class BaseActivity extends FragmentActivity implements
      * @param text 設定する文字列
      */
     protected void setTitleText(final CharSequence text) {
-        if (this instanceof LaunchActivity
-                || (this instanceof StbConnectActivity && getString(R.string.str_app_title).equals(text))
-                || (this instanceof StbSelectActivity && getString(R.string.str_app_title).equals(text)
-                || (this instanceof StbSelectErrorActivity && getString(R.string.str_app_title).equals(text))
-                || (this instanceof PairingHelpActivity && getString(R.string.str_app_title).equals(text))
-                || this instanceof HomeActivity
-                || this instanceof DaccountInductionActivity
-                || (this instanceof DaccountResettingActivity && getString(R.string.str_app_title).equals(text))
-                || (this instanceof DaccountSettingHelpActivity && getString(R.string.str_app_title).equals(text)))) {
+        if (this instanceof HomeActivity) {
             if (mTitleImageView != null) {
                 //ヘッダーに「ドコモテレビターミナル」画像を表示する対応
                 mTitleTextView.setVisibility(View.GONE);
                 mTitleImageView.setVisibility(View.VISIBLE);
-            }
-            if (this instanceof HomeActivity) {
                 changeTitlePosition(mTitleImageView, mStatusLinearLayout);
             }
         } else if (mTitleTextView != null) {

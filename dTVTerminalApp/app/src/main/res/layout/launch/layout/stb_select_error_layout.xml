@@ -43,7 +43,6 @@
             android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
             android:layout_marginTop="@dimen/launch_stb_paring_wifi_check_margin_top"
             android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-            android:gravity="center"
             android:lineSpacingMultiplier="1.5"
             android:text="@string/str_stb_select_power_and_wifi_check"
             android:textColor="@color/stb_select_white_color"

@@ -1206,7 +1206,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 Intent dAccountResetIntent = new Intent(this, DaccountResettingActivity.class);
                                 dAccountResetIntent.putExtra(FROM_WHERE, mStartMode);
                                 startActivity(dAccountResetIntent);
-                                mParingTextView.setVisibility(View.VISIBLE);
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 Intent homeIntent = new Intent(this, HomeActivity.class);
