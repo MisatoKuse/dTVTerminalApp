@@ -66,6 +66,7 @@
         android:layout_below="@id/stb_wifi_set_main_layout_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_marginTop="@dimen/stb_wifi_set_comment_margin_top"
         android:text="@string/stb_wifi_set_comment"
         android:textColor="@color/stb_wifi_set_comment_color"

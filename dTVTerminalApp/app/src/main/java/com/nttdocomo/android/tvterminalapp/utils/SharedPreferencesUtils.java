@@ -28,7 +28,7 @@ public class SharedPreferencesUtils {
     /**
      * 初期設定扉画面"次回以降表示しない" 選択保存キー.
      */
-    private static final String SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
+    private static final String SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME = "launch_stb_show_next_time";
     /**
      * 初期表示（初期設定扉画面）.
      */
@@ -330,7 +330,7 @@ public class SharedPreferencesUtils {
      * @param context             コンテキスト
      * @param selectedUnnecessary true:チェック済み false:チェックなし
      */
-    public static void setSharedPreferencesShowLauchStbStatus(final Context context, final boolean selectedUnnecessary) {
+    public static void setSharedPreferencesShowLaunchStbStatus(final Context context, final boolean selectedUnnecessary) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
@@ -344,7 +344,7 @@ public class SharedPreferencesUtils {
      * @param context             コンテキスト
      * @param fistFlg true:表示済み false:未表示
      */
-    public static void setSharedPreferencesStbLauchFirst(final Context context, final boolean fistFlg) {
+    public static void setSharedPreferencesStbLaunchFirst(final Context context, final boolean fistFlg) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
@@ -358,7 +358,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @return true:表示なし false:表示
      */
-    public static boolean getSharedPreferencesShowLauchStbStatus(final Context context) {
+    public static boolean getSharedPreferencesShowLaunchStbStatus(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         return data.getBoolean(SHARED_KEY_STB_LAUNCH_UNNECESSARY_NEXT_TIME, false);
@@ -369,7 +369,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @return true:表示済み false:未表示
      */
-    public static boolean getSharedPreferencesStbLauchFirst(final Context context) {
+    public static boolean getSharedPreferencesStbLaunchFirst(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         return data.getBoolean(SHARED_KEY_STB_LAUNCH_FIST_TIME, false);

@@ -34,8 +34,8 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         mIsShowBackKey = intent.getBooleanExtra(ContentUtils.LAUNCH_STB_BACK_KEY, false);
         enableHeaderBackIcon(mIsShowBackKey);
         initView();
-        if (!SharedPreferencesUtils.getSharedPreferencesStbLauchFirst(LaunchStbActivity.this)) {
-            SharedPreferencesUtils.setSharedPreferencesStbLauchFirst(LaunchStbActivity.this, true);
+        if (!SharedPreferencesUtils.getSharedPreferencesStbLaunchFirst(LaunchStbActivity.this)) {
+            SharedPreferencesUtils.setSharedPreferencesStbLaunchFirst(LaunchStbActivity.this, true);
         }
     }
 
@@ -71,7 +71,7 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         selectDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                SharedPreferencesUtils.setSharedPreferencesShowLauchStbStatus(LaunchStbActivity.this, true);
+                SharedPreferencesUtils.setSharedPreferencesShowLaunchStbStatus(LaunchStbActivity.this, true);
                 startToHome();
             }
         });

@@ -251,7 +251,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             mNextActivity = new Intent(getApplicationContext(), HomeActivity.class);
             mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             DTVTLogger.debug("ParingOK Start HomeActivity");
-        } else if (SharedPreferencesUtils.getSharedPreferencesShowLauchStbStatus(this)) {
+        } else if (SharedPreferencesUtils.getSharedPreferencesShowLaunchStbStatus(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
@@ -260,7 +260,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // 初期設定扉画面へ遷移(初期表示)
-            if (!SharedPreferencesUtils.getSharedPreferencesStbLauchFirst(this)) {
+            if (!SharedPreferencesUtils.getSharedPreferencesStbLaunchFirst(this)) {
                 mNextActivity = new Intent(getApplicationContext(), LaunchStbActivity.class);
             } else {
                 // wifiチェック(未接続の場合)
