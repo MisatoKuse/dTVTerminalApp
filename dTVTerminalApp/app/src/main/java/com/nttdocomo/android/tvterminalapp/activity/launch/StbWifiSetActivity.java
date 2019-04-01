@@ -4,11 +4,17 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -33,6 +39,8 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
     private TextView mWifiStateTxt = null;
     /** ヘルプリンク.*/
     private TextView mLinkHelpBtn;
+    /** UNKNOWN_SSID.*/
+    private static final String UNKNOWN_SSID = "<unknown ssid>";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -69,12 +77,9 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
             String wifiStateTxt = getString(R.string.stb_wifi_set_wifi_on_txt);
             StringBuilder sb = new StringBuilder();
             sb.append(wifiStateTxt);
-            WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-            WifiInfo wifiInfo = wm.getConnectionInfo();
-            String ssId = wifiInfo.getSSID();
+            String ssId = getWiFiSSID();
             if (!TextUtils.isEmpty(ssId)) {
                 sb.append(getString(R.string.stb_wifi_set_wifi_state_hyphen_txt));
-                ssId = ssId.replace("\"", "");
                 sb.append(ssId);
             }
             SpannableString spannableString = new SpannableString(sb.toString());
@@ -87,6 +92,40 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
             mWifiTitleTxt.setText(getString(R.string.stb_wifi_set_title_wifi_off));
             mWifiStateTxt.setText(getString(R.string.stb_wifi_set_wifi_off_txt));
         }
+    }
+
+    /**
+     * SSID取得.
+     * @return SSID
+     */
+    private String getWiFiSSID() {
+        String ssId = "";
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1) {
+            ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+            if (networkInfo.isConnected()) {
+                ssId = networkInfo.getExtraInfo();
+                if (ssId != null) {
+                    return ssId.replace("\"", "");
+                }
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return ssId;
+                }
+            }
+            WifiManager mWifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            WifiInfo info = mWifiManager.getConnectionInfo();
+            ssId = info.getSSID();
+            if (ssId != null) {
+                ssId = ssId.replace("\"", "");
+            }
+        }
+        if (UNKNOWN_SSID.equals(ssId)) {
+            ssId = "";
+        }
+        return ssId;
     }
 
     @Override

@@ -4,9 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +28,8 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 public class LaunchStbActivity extends BaseActivity implements View.OnClickListener {
     /**戻るアイコン表示.*/
     private boolean mIsShowBackKey = false;
+    /** リクエストコード.*/
+    private static final int LOCATION = 1;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -37,6 +43,24 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         if (!SharedPreferencesUtils.getSharedPreferencesStbLaunchFirst(LaunchStbActivity.this)) {
             SharedPreferencesUtils.setSharedPreferencesStbLaunchFirst(LaunchStbActivity.this, true);
         }
+        requestPermission();
+    }
+
+    /**
+     * パーミッションのリクエスト.
+     */
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION);
+            }
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        requestPermission();
     }
 
     /**
