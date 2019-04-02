@@ -2583,7 +2583,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setThumbnailMessage(getString(R.string.contents_detail_thumbnail_text), "", true, false);
                     }
                     //未ペアリング契約有かつ視聴可否判定OK
-                } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)) {
+                } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)
+                        || detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_NO_CONTRACT)) {
                     startLaunchStbActivity();
                 } else {
                     Button button = setThumbnailMessage(getString(R.string.contents_detail_no_agreement),
@@ -2650,7 +2651,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             public void onClick(final View v) {
                 //ペアリング設定
                 Intent intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
-                intent.putExtra(ContentUtils.LAUNCH_STB_BACK_KEY, true);
+                intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
                 startActivity(intent);
             }
         });
@@ -2738,6 +2739,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void hikariTvThumbnailDisplay(final ContentUtils.ContentsDetailUserType detailUserType, final ContentUtils.ViewIngType viewIngType) {
         if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)
                 && ContentUtils.isEnableDisplay(viewIngType)) {
+            startLaunchStbActivity();
+        } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_NO_CONTRACT)) {
             startLaunchStbActivity();
         } else {
             Button button = setThumbnailMessage(getString(R.string.contents_detail_no_agreement),

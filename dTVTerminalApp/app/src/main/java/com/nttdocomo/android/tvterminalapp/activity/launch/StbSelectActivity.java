@@ -1497,7 +1497,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * @param dAccount 送られてきたdアカウント
      */
     @Override
-    public void onChangeAndSendDaccount(String dAccount) {
+    public void onChangeAndSendDaccount(final String dAccount) {
         //dアカウントが変更された際に送信されてくる
         DTVTLogger.start("new dacount =" + dAccount);
         //新しいdアカウントが来たことを知らせ、onResumeでSTB選択画面の再起動をさせる
@@ -1513,6 +1513,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
             }
         }
-        return super.onKeyDown(keyCode, event);
+        return false;
     }
 }

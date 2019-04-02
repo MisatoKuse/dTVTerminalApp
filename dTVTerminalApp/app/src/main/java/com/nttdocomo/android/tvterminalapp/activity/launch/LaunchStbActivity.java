@@ -26,8 +26,8 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
  * STB初期設定扉.
  */
 public class LaunchStbActivity extends BaseActivity implements View.OnClickListener {
-    /**戻るアイコン表示.*/
-    private boolean mIsShowBackKey = false;
+    /**遷移元.*/
+    private int mLaunchStbFrom = -1;
     /** リクエストコード.*/
     private static final int LOCATION = 1;
 
@@ -37,8 +37,8 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.launch_stb_main_layout);
         setTitleText(getString(R.string.str_stb_paring_setting_title));
         Intent intent = getIntent();
-        mIsShowBackKey = intent.getBooleanExtra(ContentUtils.LAUNCH_STB_BACK_KEY, false);
-        enableHeaderBackIcon(mIsShowBackKey);
+        mLaunchStbFrom = intent.getIntExtra(ContentUtils.LAUNCH_STB_FROM, -1);
+        enableHeaderBackIcon(mLaunchStbFrom == ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
         initView();
         if (!SharedPreferencesUtils.getSharedPreferencesStbLaunchFirst(LaunchStbActivity.this)) {
             SharedPreferencesUtils.setSharedPreferencesStbLaunchFirst(LaunchStbActivity.this, true);
@@ -114,10 +114,12 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.launch_stb_main_layout_tv_btn:
-                startActivity(new Intent(this, StbWifiSetActivity.class));
+                Intent intent = new Intent(this, StbWifiSetActivity.class);
+                intent.putExtra(ContentUtils.LAUNCH_STB_FROM, mLaunchStbFrom);
+                startActivity(intent);
                 break;
             case R.id.launch_stb_main_layout_tv_link:
-                if (mIsShowBackKey) {
+                if (mLaunchStbFrom == ContentUtils.LAUNCH_STB_CONTENT_DETAIL) {
                     finish();
                 } else {
                     showSelectDialog();
@@ -134,10 +136,11 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mIsShowBackKey) {
+            if (mLaunchStbFrom == -1) {
+               return false;
+            } else {
                 finish();
             }
-            return false;
         }
         return super.onKeyDown(keyCode, event);
     }

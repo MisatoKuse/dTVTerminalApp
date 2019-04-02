@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * ペアリング設定（wifi接続状態）.
@@ -41,11 +42,15 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
     private TextView mLinkHelpBtn;
     /** UNKNOWN_SSID.*/
     private static final String UNKNOWN_SSID = "<unknown ssid>";
+    /** 遷移元.*/
+    private int mLaunchStbFrom = -1;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_wifi_set_main_layout);
+        Intent intent = getIntent();
+        mLaunchStbFrom = intent.getIntExtra(ContentUtils.LAUNCH_STB_FROM, -1);
         setTitleText(getString(R.string.stb_wifi_set_header));
         enableHeaderBackIcon(false);
         initView();
@@ -149,6 +154,7 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
                 return;
             case R.id.stb_wifi_set_main_layout_set_next_btn:
                 intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
                 break;
             default:
@@ -163,7 +169,11 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return false;
+            if (mLaunchStbFrom == -1) {
+                return false;
+            } else {
+                finish();
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

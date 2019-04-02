@@ -77,8 +77,14 @@ public class ContentUtils {
     public static final String SEARCH_INFO_BUNDLE_KEY = "searchInfoKey";
     /**ぷらら情報キー.*/
     public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
-    /**STB初期設定扉バックキー.*/
-    public static final String LAUNCH_STB_BACK_KEY = "launch_stb_back_key";
+    /**STB初期設定扉.*/
+    public static final String LAUNCH_STB_FROM = "launch_stb_from";
+    /**コンテンツ詳細画面からの遷移.*/
+    public static final int LAUNCH_STB_CONTENT_DETAIL = 0;
+    /**設定画面からの遷移.*/
+    public static final int LAUNCH_STB_SETTING = 1;
+    /**ホーム画面からの遷移.*/
+    public static final int LAUNCH_STB_HOME = 2;
     /**初期リモート視聴設定.*/
     public static final String LAUNCH_REMOTE_SETTING = "launch_remote_setting";
     /** disp_type(tv_program).*/

@@ -187,7 +187,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 if (TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
                     // 未ペアリング時
                     intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
-                    intent.putExtra(ContentUtils.LAUNCH_STB_BACK_KEY, false);
+                    intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_SETTING);
                 } else {
                     //ペアリング時
                     intent = new Intent(getApplicationContext(), StbSelectActivity.class);

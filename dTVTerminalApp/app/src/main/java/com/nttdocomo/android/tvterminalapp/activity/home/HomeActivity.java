@@ -595,7 +595,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         switch (view.getId()) {
             case R.id.home_main_layout_paring_text_view:
                Intent intent = new Intent(this, LaunchStbActivity.class);
-               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+               intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_HOME);
                startActivity(intent);
                 break;
             default:
