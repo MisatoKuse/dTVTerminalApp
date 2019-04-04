@@ -9,6 +9,7 @@ import android.app.Application;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -41,6 +42,7 @@ public class TvtApplication extends Application implements Application.ActivityL
         super.onCreate();
         //Googleアナリティクスの情報収集
         sAnalytics = GoogleAnalytics.getInstance(this);
+        reportUncaughtExceptions();
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
     }
@@ -141,4 +143,17 @@ public class TvtApplication extends Application implements Application.ActivityL
         }
         return sTracker;
     }
+
+    /**
+    * 捕捉されなかった例外を自動的に送信する処理
+    *
+    */
+    public void reportUncaughtExceptions() {
+        Thread.UncaughtExceptionHandler myHandler = new ExceptionReporter(
+                getDefaultTracker(),
+                Thread.getDefaultUncaughtExceptionHandler(),
+                this);
+        Thread.setDefaultUncaughtExceptionHandler(myHandler);
+    }
+
 }
