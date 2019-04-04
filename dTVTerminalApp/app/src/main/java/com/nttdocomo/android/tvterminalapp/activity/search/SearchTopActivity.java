@@ -73,7 +73,7 @@ public class SearchTopActivity extends BaseActivity
     /** 検索結果件数.*/
     private int mSearchTotalCount = 0;
     /** 検索結果ページ数.*/
-    private int mPageNumber = 0;
+    private int mPageNumber = 1;
     /** ページング中判定フラグ.*/
     private boolean mIsPaging = false;
     /** 検索中判定フラグ.*/
@@ -775,7 +775,7 @@ public class SearchTopActivity extends BaseActivity
         mIsLoading = false;
         TotalSearchContentInfo content = resultType.getResultType();
         mSearchTotalCount = content.getTotalCount();
-
+        setPageNumber(mPageNumber + 1);
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (null == baseFragment) {
             showProgress(View.GONE);
@@ -851,6 +851,7 @@ public class SearchTopActivity extends BaseActivity
             for (int i = 0; i < sum; ++i) {
                 SearchBaseFragment baseFragment = mFragmentFactory.createFragment(i, this);
                 baseFragment.setResultTextVisibility(false);
+                baseFragment.displayLoadMore(false);
                 baseFragment.clear(this);
             }
         }
@@ -866,9 +867,6 @@ public class SearchTopActivity extends BaseActivity
         baseFragment.displayLoadMore(false);
         if (mPageNumber == 0 && baseFragment.getContentDataSize() == 0) {
             baseFragment.setResultTextVisibility(false);
-        }
-        if (mPageNumber > 0) {
-            mPageNumber--;
         }
         baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
         sendScreenViewForPosition(mTabIndex, false);
@@ -912,7 +910,6 @@ public class SearchTopActivity extends BaseActivity
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
                     && absListView.getLastVisiblePosition() == fragment.getContentDataSize() - 1
                     && !mIsLoading) {
-                setPageNumber(mPageNumber + 1);
                 setPagingStatus(true);
                 fragment.displayLoadMore(true);
 
@@ -1061,8 +1058,9 @@ public class SearchTopActivity extends BaseActivity
         super.onStartCommunication();
         DTVTLogger.start();
         if (mIsSearching) {
-            //検索中にバックグラウンドに遷移した場合はページ数を補正する
-            setPageNumber(mPageNumber - 1);
+            // BG→FG、あるいはコンテンツ詳細から戻った際に、検索中のステータスであれば、再検索可能状態にする
+            mIsLoading = false;
+            mIsEndPage = false;
             setSearchStart(false);
         }
         if (mSearchDataProvider != null) {
@@ -1088,7 +1086,7 @@ public class SearchTopActivity extends BaseActivity
         //検索の通信を止める
         StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
         stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSearchDataProvider);
-
+        mIsLoading = false;
         //FragmentにContentsAdapterの通信を止めるように通知する
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (baseFragment != null) {
