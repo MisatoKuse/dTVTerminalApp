@@ -423,7 +423,7 @@
     <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
     <string name="main_setting_application_info_header">アプリケーション情報</string>
     <string name="main_setting_quality_status">status</string>
-    <string name="main_setting_remote_paring_request">ペアリングしてください</string>
+    <string name="main_setting_remote_paring_request">「ペアリング設定」からペアリングしてください</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_stb_application_launch_fail_id_notexist">本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください</string>
     <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリを最新バージョンにアップデートしてください</string>
@@ -433,7 +433,7 @@
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZN for docomoアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_connect_error_message">ドコモテレビターミナルとの通信に失敗しました</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
-    <string name="main_setting_logon_request_error_message">ログインしてください</string>
+    <string name="main_setting_logon_request_error_message">「dアカウント設定」からログインしてください</string>
     <string name="main_setting_h4d_not_signed_message">ひかりＴＶ for docomoの契約状態が確認できないため\nご利用になれません</string>
     <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルが接続されているWi-Fiに接続した状態で再度実施してください</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
