@@ -120,9 +120,8 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
         DTVTLogger.start();
         switch (view.getId()) {
             case R.id.agree_to_terms_start_use_button:
-                Intent intent = new Intent(this, StbSelectActivity.class);
+                Intent intent = new Intent(this, LaunchStbActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
                 SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this, true);
                 startActivity(intent);
                 break;
