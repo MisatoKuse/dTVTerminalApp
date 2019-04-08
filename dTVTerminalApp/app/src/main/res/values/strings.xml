@@ -135,8 +135,8 @@
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
-        <item>DAZN</item>
         <item>dアニメストア</item>
+        <item>DAZN</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
     <string name="recording_reservation_status_accepting">受付中</string>
@@ -278,8 +278,8 @@
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
-        <item>DAZN</item>
         <item>dアニメストア</item>
+        <item>DAZN</item>
     </string-array>
 
     <!-- Ranking -->

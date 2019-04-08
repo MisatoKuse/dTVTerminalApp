@@ -54,10 +54,10 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 2;
     /** dTVチャンネルtab.*/
     private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 3;
-    /** DAZNtab.*/
-    private static final int PAGE_NO_OF_SERVICE_DAZN = PAGE_NO_OF_SERVICE_TELEVISION + 4;
     /** dアニメtab.*/
-    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 5;
+    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
+    /** DAZNtab.*/
+    private static final int PAGE_NO_OF_SERVICE_DAZN = PAGE_NO_OF_SERVICE_TELEVISION + 5;
     /** dアニメ作品種別(アニメ（映像）).*/
     public static final String D_ANIME_STORE_SONG_CONTENTS = "1";
 

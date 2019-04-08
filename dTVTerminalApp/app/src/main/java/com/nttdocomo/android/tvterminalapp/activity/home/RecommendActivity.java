@@ -109,13 +109,13 @@ public class RecommendActivity extends BaseActivity implements
      */
     private static final int TAB_INDEX_DTV_CHANNEL = 3;
     /**
-     * タブインデックス　DAZN.
-     */
-    private static final int TAB_INDEX_DAZN = 4;
-    /**
      * タブインデックス　dアニメストア.
      */
-    private static final int TAB_INDEX_DANIME = 5;
+    private static final int TAB_INDEX_DANIME = 4;
+    /**
+     * タブインデックス　DAZN.
+     */
+    private static final int TAB_INDEX_DAZN = 5;
     /**
      * 表示中タブのインデックス.
      */
