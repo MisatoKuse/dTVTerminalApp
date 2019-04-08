@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
@@ -23,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 /**
  * STB初期設定扉.
@@ -80,17 +80,17 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
      * 選択ダイアログ表示.
      */
     private void showSelectDialog() {
-        final Dialog dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
+        final CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.SELECT);
         View inflate = LayoutInflater.from(this).inflate(R.layout.use_no_paring_dialog_layout, null);
-        dialog.setContentView(inflate);
-        dialog.setCanceledOnTouchOutside(false);
+        customDialog.setContentView(inflate);
+        customDialog.setOnTouchOutside(false);
         Button cancelButton = inflate.findViewById(R.id.btn_cancel);
         Button setLaterButton = inflate.findViewById(R.id.btn_set_later);
         Button notAppearButton = inflate.findViewById(R.id.btn_paring_set_not_appear_next_time);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                dialog.dismiss();
+                customDialog.dismissDialog();
             }
         });
         setLaterButton.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +106,7 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
                 startToHome();
             }
         });
-        dialog .show();
+        customDialog.showDialog();
     }
     /**
      * ホーム画面へ遷移.

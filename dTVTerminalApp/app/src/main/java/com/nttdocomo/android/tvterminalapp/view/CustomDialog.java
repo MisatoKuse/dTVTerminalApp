@@ -12,6 +12,7 @@ import android.content.DialogInterface.OnKeyListener;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -58,6 +59,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     private boolean mBackKeyAsCancel = false;
     /** バックキータップの可能／不可. */
     private boolean mEnableBackkey = true;
+    /**独自レイアウトView.*/
+    private View mCustomView;
 
     /**
      * 最後に扱ったキーコード.
@@ -209,6 +212,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     }
 
     /**
+     * 独自レイアウトViewを受け取る.
+     * @param view view
+     */
+    public void setContentView(final View view) {
+        this.mCustomView = view;
+    }
+
+    /**
      * ダイアログビューの初期化.
      *
      * @param dialogBuilder スクリーン
@@ -226,9 +237,6 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
                 dialogBuilder.setPositiveButton(mConfirmText, this);
                 break;
             case SELECT:
-                dialogBuilder.setPositiveButton(mConfirmText, this);
-                dialogBuilder.setNeutralButton(mLeftText, this);
-                dialogBuilder.setNegativeButton(mCancelText, this);
                 break;
             case CONFIRM:
                 dialogBuilder.setPositiveButton(mConfirmText, this);
@@ -237,22 +245,27 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
             default:
                 break;
         }
+        if (mCustomView != null) {
+            dialogBuilder.setView(mCustomView);
+        }
         mDialog = dialogBuilder.create();
         mDialog.setCancelable(mCancelable);
         mDialog.setCanceledOnTouchOutside(mCancelableOutside);
         mDialog.setOnKeyListener(sKeyListener);
-        if (TextUtils.isEmpty(mTitle)) {
-            Window window = mDialog.getWindow();
-            if (window != null) {
-                window.requestFeature(Window.FEATURE_NO_TITLE);
+        if (mCustomView == null) {
+            if (TextUtils.isEmpty(mTitle)) {
+                Window window = mDialog.getWindow();
+                if (window != null) {
+                    window.requestFeature(Window.FEATURE_NO_TITLE);
+                }
+            } else {
+                mDialog.setTitle(mTitle);
             }
-        } else {
-            mDialog.setTitle(mTitle);
-        }
-        if (TextUtils.isEmpty(mContent)) {
-            mDialog.setMessage("");
-        } else {
-            mDialog.setMessage(mContent);
+            if (TextUtils.isEmpty(mContent)) {
+                mDialog.setMessage("");
+            } else {
+                mDialog.setMessage(mContent);
+            }
         }
 
         //コンテキストがベースアクティビティから継承された物かどうかの判定
