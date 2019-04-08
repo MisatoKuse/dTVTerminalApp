@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:topLeftRadius="@dimen/stb_launch_btn_all_corner_radius"
+        android:topRightRadius="@dimen/stb_launch_btn_all_corner_radius">
+    </corners>
+    <solid android:color="#fff" />
+</shape>

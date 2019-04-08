@@ -49,8 +49,6 @@
                     android:layout_marginStart="@dimen/home_contract_button_left_margin"
                     android:layout_marginEnd="@dimen/home_contract_button_right_margin"
                     android:layout_gravity="center_vertical"
-                    android:paddingStart="@dimen/home_contract_button_padding_left"
-                    android:paddingEnd="@dimen/home_contract_button_padding_right"
                     android:background="@color/home_contract_button_background_color"
                     android:gravity="center"
                     android:text="@string/home_contract_button_text"
