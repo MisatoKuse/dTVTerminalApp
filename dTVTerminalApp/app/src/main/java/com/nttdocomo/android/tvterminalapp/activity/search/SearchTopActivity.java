@@ -120,10 +120,10 @@ public class SearchTopActivity extends BaseActivity
     private static final int TAB_INDEX_DTV = 2;
     /** タブインデックス　dTVチャンネル.*/
     private static final int TAB_INDEX_DTV_CHANNEL = 3;
-    /** タブインデックス　DAZN.*/
-    private static final int TAB_INDEX_DAZN = 4;
     /** タブインデックス　dアニメストア.*/
-    private static final int TAB_INDEX_DANIME = 5;
+    private static final int TAB_INDEX_DANIME = 4;
+    /** タブインデックス　DAZN.*/
+    private static final int TAB_INDEX_DAZN = 5;
     /** キーボード表示delay.*/
     private static final int SHOW_DELAY_TIME = 200;
     /** 最後に表示したタブindex.*/
