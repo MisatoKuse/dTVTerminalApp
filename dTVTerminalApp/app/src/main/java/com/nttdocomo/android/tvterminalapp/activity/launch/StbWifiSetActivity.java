@@ -145,7 +145,6 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
     private void registerBroadcast() {
         if (mFilter == null) {
             mFilter = new IntentFilter();
-            mFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
             mFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
             registerReceiver(mWifiBroadcastReceiver, mFilter);
         }
@@ -158,25 +157,14 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
         @Override
         public void onReceive(final Context context, final Intent intent) {
             String action = intent.getAction();
-            if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-                int states = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
-                switch (states) {
-                    case WifiManager.WIFI_STATE_DISABLED:
-                        showWifiStateChangeView();
-                        break;
-                    case WifiManager.WIFI_STATE_ENABLED:
-                    case WifiManager.WIFI_STATE_ENABLING:
-                    case WifiManager.WIFI_STATE_DISABLING:
-                    case WifiManager.WIFI_STATE_UNKNOWN:
-                    default:
-                        break;
-                }
-            } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
                 Parcelable parcelableExtra = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (null != parcelableExtra) {
                     NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
                     NetworkInfo.State state = networkInfo.getState();
                     if (state == NetworkInfo.State.CONNECTED) {
+                        showWifiStateChangeView();
+                    } else if (state == NetworkInfo.State.DISCONNECTED) {
                         showWifiStateChangeView();
                     }
                 }
