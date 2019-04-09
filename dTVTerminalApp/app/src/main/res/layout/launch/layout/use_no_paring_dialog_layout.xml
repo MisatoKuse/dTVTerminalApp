@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_task_progress"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+    android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingStart="@dimen/stb_launch_padding_all"
+        android:paddingEnd="@dimen/stb_launch_padding_all"
+        android:paddingTop="@dimen/stb_launch_padding_all"
+        android:paddingBottom="@dimen/stb_launch_title_margin_top"
+        android:text="@string/launch_stb_select_dialog_title"
+        android:textColor="@color/basic_text_color_black"
+        android:textSize="@dimen/stb_launch_text_size" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btn_set_later"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/launch_stb_select_dialog_txt1"
+            android:gravity="center"
+            android:textSize="@dimen/stb_launch_text_size"
+            android:textColor="@drawable/color_black"/>
+        <Button
+            android:id="@+id/btn_paring_set_not_appear_next_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/launch_stb_select_dialog_txt2"
+            android:textSize="@dimen/stb_launch_text_size"
+            android:textColor="@drawable/color_black" />
+        <Button
+            android:gravity="center"
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/launch_stb_select_dialog_txt3"
+            android:textSize="@dimen/stb_launch_text_size"
+            android:textColor="@drawable/color_black" />
+    </LinearLayout>
+</LinearLayout>

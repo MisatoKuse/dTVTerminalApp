@@ -381,6 +381,9 @@
     <dimen name ="stb_launch_comment_margin_top">15dp</dimen>
     <dimen name ="stb_launch_btn_margin_top">32dp</dimen>
     <dimen name ="stb_launch_padding_start_end">16dp</dimen>
+    <dimen name ="stb_launch_padding_all">20dp</dimen>
+    <dimen name="stb_launch_btn_divider_margin_top">1dp</dimen>
+    <dimen name="stb_launch_btn_all_corner_radius">2dp</dimen>
 
     <!--//ペアリング設定（wifi接続状態）-->
     <dimen name ="stb_wifi_set_title_txt_size">14dp</dimen>

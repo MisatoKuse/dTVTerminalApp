@@ -12,7 +12,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -78,28 +80,33 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
      * 選択ダイアログ表示.
      */
     private void showSelectDialog() {
-        CustomDialog selectDialog = new CustomDialog(LaunchStbActivity.this, CustomDialog.DialogType.SELECT);
-        selectDialog.setOnTouchOutside(false);
-        selectDialog.setCancelable(false);
-        selectDialog.setOnTouchBackkey(false);
-        selectDialog.setContent(getString(R.string.launch_stb_select_dialog_title));
-        selectDialog.setConfirmText(R.string.launch_stb_select_dialog_txt1);
-        selectDialog.setCancelText(R.string.launch_stb_select_dialog_txt2);
-        selectDialog.setLeftText(R.string.launch_stb_select_dialog_txt3);
-        selectDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+        final CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.SELECT);
+        View inflate = LayoutInflater.from(this).inflate(R.layout.use_no_paring_dialog_layout, null);
+        customDialog.setContentView(inflate);
+        customDialog.setOnTouchOutside(false);
+        Button cancelButton = inflate.findViewById(R.id.btn_cancel);
+        Button setLaterButton = inflate.findViewById(R.id.btn_set_later);
+        Button notAppearButton = inflate.findViewById(R.id.btn_paring_set_not_appear_next_time);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onOKCallback(final boolean isOK) {
+            public void onClick(final View v) {
+                customDialog.dismissDialog();
+            }
+        });
+        setLaterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
                 startToHome();
             }
         });
-        selectDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+        notAppearButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancelCallback() {
+            public void onClick(final View v) {
                 SharedPreferencesUtils.setSharedPreferencesShowLaunchStbStatus(LaunchStbActivity.this, true);
                 startToHome();
             }
         });
-        selectDialog.showDialog();
+        customDialog.showDialog();
     }
     /**
      * ホーム画面へ遷移.

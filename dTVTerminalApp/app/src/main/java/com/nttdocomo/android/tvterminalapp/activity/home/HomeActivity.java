@@ -558,7 +558,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     DTVTLogger.debug("showHomeBanner_mIsDaccountGetNg");
                     //バナーのテキストを書き換える
                     TextView textView = findViewById(R.id.home_main_layout_top_wire_area_text);
-                    textView.setText(getString(R.string.home_no_paring_info_text));
+                    textView.setText(getString(R.string.home_no_login_info_text));
                     TextView loginButton = findViewById(R.id.home_main_layout_paring_text_view);
                     loginButton.setText(getString(R.string.home_login_button));
                     loginButton.setOnClickListener(new View.OnClickListener() {

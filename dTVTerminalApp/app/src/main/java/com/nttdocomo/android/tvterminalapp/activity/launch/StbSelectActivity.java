@@ -635,6 +635,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             //あとで設定する
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
