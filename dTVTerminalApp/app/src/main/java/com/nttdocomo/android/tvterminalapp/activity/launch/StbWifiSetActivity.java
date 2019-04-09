@@ -5,7 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.net.ConnectivityManager;
@@ -14,6 +17,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
@@ -44,6 +48,8 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
     private static final String UNKNOWN_SSID = "<unknown ssid>";
     /** 遷移元.*/
     private int mLaunchStbFrom = -1;
+    /** フィルター.*/
+    private IntentFilter mFilter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -133,10 +139,43 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
         return ssId;
     }
 
+    /**
+     * SSID取得.
+     */
+    private void registerBroadcast() {
+        if (mFilter == null) {
+            mFilter = new IntentFilter();
+            mFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+            registerReceiver(mWifiBroadcastReceiver, mFilter);
+        }
+    }
+
+    /**
+     * Wifi監視レシーバー.
+     */
+    private BroadcastReceiver mWifiBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            String action = intent.getAction();
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
+                Parcelable parcelableExtra = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if (null != parcelableExtra) {
+                    NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
+                    NetworkInfo.State state = networkInfo.getState();
+                    if (state == NetworkInfo.State.CONNECTED) {
+                        showWifiStateChangeView();
+                    } else if (state == NetworkInfo.State.DISCONNECTED) {
+                        showWifiStateChangeView();
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
-        showWifiStateChangeView();
+        registerBroadcast();
     }
 
     @Override
@@ -164,6 +203,13 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mWifiBroadcastReceiver);
+        mFilter = null;
     }
 
     @Override
