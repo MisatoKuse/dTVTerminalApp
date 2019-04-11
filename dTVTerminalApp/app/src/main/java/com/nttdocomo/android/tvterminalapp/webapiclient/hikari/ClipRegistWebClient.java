@@ -292,7 +292,7 @@ public class ClipRegistWebClient
             //isNotifyは事実上無いことが無い
             jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
 
-            answerText = jsonObject.toString().replace("\\", "");
+            answerText = jsonObject.toString();
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする

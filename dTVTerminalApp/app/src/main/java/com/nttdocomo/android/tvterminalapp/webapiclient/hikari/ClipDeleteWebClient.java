@@ -178,7 +178,7 @@ public class ClipDeleteWebClient
             JSONArray jsonListObject = new JSONArray();
             jsonListObject.put(0, listItemJsonObject);
             jsonObject.put(JsonConstants.META_RESPONSE_LIST, jsonListObject);
-            answerText = jsonObject.toString().replace("\\", "");
+            answerText = jsonObject.toString();
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする
