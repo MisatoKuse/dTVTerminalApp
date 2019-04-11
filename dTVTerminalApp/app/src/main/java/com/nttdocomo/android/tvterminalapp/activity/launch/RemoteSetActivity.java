@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 /**
@@ -84,5 +85,12 @@ public class RemoteSetActivity extends BaseActivity implements View.OnClickListe
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_remote_confirm),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(RemoteSetActivity.this) : null);
     }
 }

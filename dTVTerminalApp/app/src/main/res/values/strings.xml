@@ -582,7 +582,6 @@
     <string name="google_analytics_screen_name_setting_application_info">設定＞アプリケーション情報</string>
     <string name="google_analytics_screen_name_tutorial">チュートリアル</string>
     <string name="google_analytics_screen_name_stb_select">STB選択</string>
-    <string name="google_analytics_screen_name_stb_select_fail">STB選択エラー</string>
     <string name="google_analytics_screen_name_stb_connect">STB接続</string>
     <string name="google_analytics_screen_name_stb_paring_help">STBペアリングヘルプ</string>
     <string name="google_analytics_screen_name_paring_invitation">ペアリング勧誘</string>
@@ -590,10 +589,19 @@
     <string name="google_analytics_screen_name_daccount_resetting">dアカウント再設定</string>
     <string name="google_analytics_screen_name_daccount_login_help">dアカウント登録ヘルプ</string>
     <string name="google_analytics_screen_name_stb_paring_help_first_time">STBペアリングヘルプ_初回起動時</string>
-    <string name="google_analytics_screen_name_paring_completed">ペアリング完了画面</string>
-    <string name="google_analytics_screen_name_stb_select_loading">STB選択ローディング</string>
+    <string name="google_analytics_screen_name_paring_completed">ペアリング完了</string>
+    <string name="google_analytics_screen_name_stb_select_loading">STBローディング</string>
     <string name="google_analytics_screen_name_agreement">初回起動時に表示する規約画面</string>
     <string name="google_analytics_screen_name_contract">契約ページ</string>
+    <string name="google_analytics_screen_name_remote_confirm">リモート視聴設定確認</string>
+    <string name="google_analytics_screen_name_remote_set">リモート視聴設定</string>
+    <string name="google_analytics_screen_name_paring_wifi_cut">ペアリングWiFi切断エラー</string>
+    <string name="google_analytics_screen_name_paring_wifi_connection">ペアリング前WiFi接続</string>
+    <string name="google_analytics_screen_name_paring_wifi_disconnected">ペアリング前WiFi未接続</string>
+    <string name="google_analytics_screen_name_paring_description">ペアリング前説明</string>
+    <string name="google_analytics_screen_name_unpaired_stb_select">未ペアリングSTB選択</string>
+    <string name="google_analytics_screen_name_unpaired_stb_detection_error">未ペアリングSTB検出エラー</string>
+    <string name="google_analytics_screen_name_stb_not_detected">STB未検出エラー</string>
 
     <!-- Google Analytics イベントカテゴリ -->
     <string name="google_analytics_category_service_name_h4d">ひかりTV for docomo</string>
@@ -603,6 +611,8 @@
     <string name="google_analytics_category_service_name_dazn">DAZN</string>
     <string name="google_analytics_category_service_name_remote_control">リモコンエミュレート</string>
     <string name="google_analytics_category_service_name_contract">契約状態変更</string>
+    <string name="google_analytics_category_service_name_transparent_from_paring_description">ペアリング前説明からの遷移</string>
+    <string name="google_analytics_category_service_name_remote_viewing_settings">リモート視聴設定</string>
 
     <!-- Google Analytics イベントアクション -->
     <string name="google_analytics_category_action_watch_tv">テレビで視聴するをタップ</string>
@@ -618,6 +628,13 @@
     <string name="google_analytics_category_action_clip_delete">解除</string>
     <string name="google_analytics_category_action_remote_control_power">電源タップ</string>
     <string name="google_analytics_category_action_remote_contract_get_success">契約状態取得完了</string>
+    <string name="google_analytics_category_action_paring_connection_set">接続設定（ペアリング）を行う</string>
+    <string name="google_analytics_category_action_set_later">あとで設定する</string>
+    <string name="google_analytics_category_action_no_display_next_time">次回以降表示しない</string>
+    <string name="google_analytics_category_action_action_remote_activation_error">リモート視聴設定アクティベートエラー</string>
+    <string name="google_analytics_category_action_remote_success">リモート視聴設定成功</string>
+    <string name="google_analytics_category_action_remote_device_over_error">リモート視聴設定台数超過エラー</string>
+    <string name="google_analytics_category_action_remote_other_error"> リモート視聴設定その他エラー</string>
 
     <!-- Google Analytics カスタムディメンション名 契約種別 -->
     <string name="google_analytics_custom_dimension_hikari_contract_ing">ひかりTV契約中</string>
@@ -625,7 +642,7 @@
     <string name="google_analytics_custom_dimension_hikari_no_contract_dch_no_contract">ひかりTV・dTVチャンネル契約無し</string>
 
     <!-- Google Analytics カスタムディメンション名 ペアリング -->
-    <string name="google_analytics_custom_dimension_pairing_ok">ペアリング済み接続中</string>
+    <string name="google_analytics_custom_dimension_pairing_ok">ペアリング済み</string>
     <string name="google_analytics_custom_dimension_no_pairing">未ペアリング</string>
 
     <!-- Google Analytics カスタムディメンション名 ログイン -->
@@ -652,6 +669,16 @@
     <string name="google_analytics_custom_dimension_contents_type2_live">放送</string>
     <string name="google_analytics_custom_dimension_contents_type2_void">VOD</string>
     <string name="google_analytics_custom_dimension_contents_type2_record">録画</string>
+
+    <!-- Google Analytics カスタムディメンション 遷移元画面-->
+    <string name="google_analytics_custom_dimension_from_content_detail">コンテンツ詳細</string>
+    <string name="google_analytics_custom_dimension_form_home">設定（未ペアリング）</string>
+    <string name="google_analytics_custom_dimension_from_setting">ホーム</string>
+    <string name="google_analytics_custom_dimension_from_launch">アプリ起動時</string>
+
+    <!-- Google Analytics カスタムディメンション リモート視聴設定-->
+    <string name="google_analytics_custom_dimension_remote_configured">リモート視聴設定済み</string>
+    <string name="google_analytics_custom_dimension_remote_not_set">リモート視聴未設定</string>
 
     <!-- リモート視聴設定（期限表示） -->
     <string name="remote_remaining_days_message_begin">リモート視聴の有効期限が残り</string>

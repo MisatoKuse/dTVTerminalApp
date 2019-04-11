@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -112,17 +113,65 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType);
+                final CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType);
                 resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
-                        startTransition();
+                        if (isSuccess) {
+                            startTransition();
+                        } else {
+                            resultDialog.dismissDialog();
+                        }
                     }
                 });
                 setRemoteProgressVisible(View.GONE);
+                sendRemoteEvent(isSuccess, errorType);
                 resultDialog.showDialog();
             }
         });
+    }
+
+    /**
+     * リモート視聴設定イベント送信.
+     * @param isSuccess isSuccess
+     * @param errorType errorType
+     */
+    private void sendRemoteEvent(final boolean isSuccess, final  DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+        if (isSuccess) {
+            sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                    getString(R.string.google_analytics_category_action_remote_success),
+                    null, null);
+        } else {
+            sendEventTrackingByErrorType(errorType);
+        }
+    }
+
+    /**
+     * イベント送信.
+     * @param errorType エラータイプ
+     */
+    private void sendEventTrackingByErrorType(final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+        switch (errorType) {
+            case ACTIVATION:
+                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                        getString(R.string.google_analytics_category_action_action_remote_activation_error),
+                        null, null);
+                break;
+            case DEVICE_OVER_ERROR:
+                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                        getString(R.string.google_analytics_category_action_remote_device_over_error),
+                        null, null);
+                break;
+            case START_DTCP:
+            case START_DIRAG:
+            case UNKOWN:
+            case NONE:
+            default:
+                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                        getString(R.string.google_analytics_category_action_remote_other_error),
+                        null, null);
+                break;
+        }
     }
 
     @Override
@@ -169,6 +218,14 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     protected void onResume() {
         super.onResume();
         DlnaManager.shared().StartDmp();
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_remote_set),
+                    ContentUtils.getParingAndLoginCustomDimensions(RemoteSetIntroduceActivity.this));
+        } else {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_REMOTE, ContentUtils.getRemoteSettingStatus(RemoteSetIntroduceActivity.this));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_remote_set), customDimensions);
+        }
     }
 
     @Override
