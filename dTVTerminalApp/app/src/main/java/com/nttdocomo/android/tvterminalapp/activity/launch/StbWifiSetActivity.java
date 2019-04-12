@@ -76,6 +76,7 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
         linkNextBtn.setOnClickListener(this);
         mLinkHelpBtn.setOnClickListener(this);
         mNextBtn.setOnClickListener(this);
+        showWifiStateChangeView();
     }
 
     /**
