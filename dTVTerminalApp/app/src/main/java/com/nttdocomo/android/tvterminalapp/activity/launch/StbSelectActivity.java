@@ -200,6 +200,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * STB検出エラータイプ.
      */
     public static final  String ERROR_TYPE = "ERROR_TYPE ";
+    /**
+     * スクリーン名送信フラグ.
+     */
+    private boolean mIsShowFlag = false;
 
     /**
      * タイマーステータス.
@@ -485,6 +489,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void showSearchingView() {
         DTVTLogger.start();
         // STB検索中文言表示
+        mIsShowFlag = false;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             mStatusTextView.setText(getString(R.string.str_stb_select_result_text_search));
             mIsSearchingTextView.setVisibility(View.VISIBLE);
@@ -516,10 +521,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         // STB検索中文言表示
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            //重複送信抑止
-            if (mContentsList.size() == 1) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
-            }
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
             mStatusTextView.setText(getString(R.string.str_stb_select_result_text));
             mIsSearchingTextView.setVisibility(View.GONE);
             mDeviceListView.setVisibility(View.VISIBLE);
@@ -529,9 +531,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             statusSetting.setVisibility(View.GONE);
             mDeviceSelectText.setVisibility(View.VISIBLE);
             mTextDivider2.setVisibility(View.VISIBLE);
-            if (mContentsList.size() == 1) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_unpaired_stb_select), null);
-            }
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_unpaired_stb_select), null);
         }
 
         DTVTLogger.end();
@@ -802,6 +802,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         item.mControlUrl = controlUrl;
         item.mHttp = host;
         if (mSelectDevice == SELECT_DEVICE_ITEM_DEFAULT) {
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbSelectActivity.this);
+            if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
+                if (dlnaDmsItem.mUdn.equals(item.mUdn)) {
+                   return;
+                }
+            }
             updateDeviceList(item, true);
         }
     }
@@ -891,7 +897,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 } else if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_EXECUTION) { // 30秒以内にSTBの通知あり
                     displayMoreData(false);
                     stopCallbackTimer();
-                    showResultCompleteView();
+                    if (!mIsShowFlag) {
+                        showResultCompleteView();
+                        mIsShowFlag = true;
+                    }
                     if (null != mDeviceAdapter) {
                         mDeviceAdapter.notifyDataSetChanged();
                     }
