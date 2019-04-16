@@ -20,6 +20,8 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
  * STB選択エラーActivity.
  */
 public class StbSelectErrorActivity extends BaseActivity {
+    /**エラータイプ.*/
+    private int mErrorType = 0;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +32,13 @@ public class StbSelectErrorActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_fail),
+        String screenName;
+        if (mErrorType == StbSelectActivity.ErrorType.WIFI_NO_CONNECT_ERROR.ordinal()) {
+            screenName = getString(R.string.google_analytics_screen_name_paring_wifi_cut);
+        } else {
+            screenName = getString(R.string.google_analytics_screen_name_stb_not_detected);
+        }
+        super.sendScreenView(screenName,
                 mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(StbSelectErrorActivity.this) : null);
     }
 
@@ -39,14 +47,13 @@ public class StbSelectErrorActivity extends BaseActivity {
      */
     private void setContents() {
         Intent intent = getIntent();
-        int errorType = 0;
         setTitleText(getString(R.string.str_stb_paring_setting_title));
         TextView timeOutTextView = findViewById(R.id.stb_select_status_error_text);
         TextView wifiNotTheCommonTextView = findViewById(R.id.launch_stb_paring_power_and_wifi_check_text);
         if (intent != null) {
-            errorType = intent.getIntExtra(StbSelectActivity.ERROR_TYPE, -1);
+            mErrorType = intent.getIntExtra(StbSelectActivity.ERROR_TYPE, -1);
         }
-        if (errorType == StbSelectActivity.ErrorType.WIFI_NO_CONNECT_ERROR.ordinal()) {
+        if (mErrorType == StbSelectActivity.ErrorType.WIFI_NO_CONNECT_ERROR.ordinal()) {
             timeOutTextView.setText(getString(R.string.str_stb_select_wifi_not_connect));
             wifiNotTheCommonTextView.setVisibility(View.GONE);
         }
@@ -67,8 +74,6 @@ public class StbSelectErrorActivity extends BaseActivity {
             finish();
         } else if (v.getId() == R.id.network_set_help_text_view) {
             Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
-            intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
-                    ParingHelpFromMode_Launch.ordinal());
             startActivity(intent);
         } else if (v.getId() == R.id.use_without_paring) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);

@@ -177,6 +177,13 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         registerBroadcast();
+        String screenName;
+        if (isWifiOn()) {
+            screenName = getString(R.string.google_analytics_screen_name_paring_wifi_connection);
+        } else {
+            screenName = getString(R.string.google_analytics_screen_name_paring_wifi_disconnected);
+        }
+        super.sendScreenView(screenName, mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(StbWifiSetActivity.this) : null);
     }
 
     @Override
@@ -188,8 +195,6 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.stb_wifi_set_main_layout_help_link:
                 intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
-                intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
-                        ParingHelpFromMode_Launch.ordinal());
                 startActivity(intent);
                 return;
             case R.id.stb_wifi_set_main_layout_set_next_btn:

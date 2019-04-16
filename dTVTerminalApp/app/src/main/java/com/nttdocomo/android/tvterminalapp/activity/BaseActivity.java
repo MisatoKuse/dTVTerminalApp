@@ -55,7 +55,6 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
@@ -89,7 +88,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
@@ -891,85 +889,85 @@ public class BaseActivity extends FragmentActivity implements
      */
     @SuppressWarnings("OverlyLongMethod")
     private void sendGoogleAnalyticsEvent(final boolean isFromMenu, final RemoteControlRelayClient.STB_APPLICATION_TYPES appType) {
-            String category = "";
-            String action = "";
-            String label = "";
-            String contentsType1 = "";
-            boolean isUnknownService = false;
-            switch (appType) {
-                case DTV:
-                    category = getString(R.string.google_analytics_category_service_name_dtv);
-                    if (isFromMenu) {
-                        action = getString(R.string.google_analytics_category_action_dtv);
-                    } else {
-                        contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
-                        action = getString(R.string.google_analytics_category_action_watch_tv);
-                        label = getTitleText().toString();
-                    }
-                    break;
-                case DANIMESTORE:
-                    category = getString(R.string.google_analytics_category_service_name_danime);
-                    if (isFromMenu) {
-                        action = getString(R.string.google_analytics_category_action_danime);
-                    } else {
-                        contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
-                        action = getString(R.string.google_analytics_category_action_watch_tv);
-                        label = getTitleText().toString();
-                    }
-                    break;
-                case DTVCHANNEL:
-                    category = getString(R.string.google_analytics_category_service_name_dtv_ch);
-                    if (isFromMenu) {
-                        action = getString(R.string.google_analytics_category_action_dtv_ch);
-                    } else {
-                        contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
-                        action = getString(R.string.google_analytics_category_action_watch_tv);
-                        label = getTitleText().toString();
-                    }
-                    break;
-                case HIKARITV:
-                    category = getString(R.string.google_analytics_category_service_name_h4d);
-                    if (isFromMenu) {
-                        action = getString(R.string.google_analytics_category_action_h4d);
-                    } else {
-                        contentsType1 = ContentUtils.getContentsType1(BaseActivity.this, mHikariType);
-                        action = getString(R.string.google_analytics_category_action_watch_tv);
-                        label = getTitleText().toString();
-                    }
-                    break;
-                case DAZN:
-                    category = getString(R.string.google_analytics_category_service_name_dazn);
-                    contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dazn);
-                    if (isFromMenu) {
-                        action = getString(R.string.google_analytics_category_action_dazn);
-                    } else {
-                        action = getString(R.string.google_analytics_category_action_watch_tv);
-                        label = getTitleText().toString();
-                    }
-                    break;
-                case UNKNOWN:
-                default:
-                    isUnknownService = true;
-                    break;
-            }
-            if (!isUnknownService) {
-                SparseArray<String> customDimensions = null;
-                if (!isFromMenu) {
-                    customDimensions = new SparseArray<>();
-                    customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
-                    switch (mContentsType) {
-                        case TV:
-                            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, getString(R.string.google_analytics_custom_dimension_contents_type2_live));
-                            break;
-                        case VOD:
-                            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, getString(R.string.google_analytics_custom_dimension_contents_type2_void));
-                            break;
-                        default:
-                            break;
-                    }
+        String category = "";
+        String action = "";
+        String label = "";
+        String contentsType1 = "";
+        boolean isUnknownService = false;
+        switch (appType) {
+            case DTV:
+                category = getString(R.string.google_analytics_category_service_name_dtv);
+                if (isFromMenu) {
+                    action = getString(R.string.google_analytics_category_action_dtv);
+                } else {
+                    contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
+                    action = getString(R.string.google_analytics_category_action_watch_tv);
+                    label = getTitleText().toString();
                 }
-                sendEvent(category, action, label, customDimensions);
+                break;
+            case DANIMESTORE:
+                category = getString(R.string.google_analytics_category_service_name_danime);
+                if (isFromMenu) {
+                    action = getString(R.string.google_analytics_category_action_danime);
+                } else {
+                    contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
+                    action = getString(R.string.google_analytics_category_action_watch_tv);
+                    label = getTitleText().toString();
+                }
+                break;
+            case DTVCHANNEL:
+                category = getString(R.string.google_analytics_category_service_name_dtv_ch);
+                if (isFromMenu) {
+                    action = getString(R.string.google_analytics_category_action_dtv_ch);
+                } else {
+                    contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
+                    action = getString(R.string.google_analytics_category_action_watch_tv);
+                    label = getTitleText().toString();
+                }
+                break;
+            case HIKARITV:
+                category = getString(R.string.google_analytics_category_service_name_h4d);
+                if (isFromMenu) {
+                    action = getString(R.string.google_analytics_category_action_h4d);
+                } else {
+                    contentsType1 = ContentUtils.getContentsType1(BaseActivity.this, mHikariType);
+                    action = getString(R.string.google_analytics_category_action_watch_tv);
+                    label = getTitleText().toString();
+                }
+                break;
+            case DAZN:
+                category = getString(R.string.google_analytics_category_service_name_dazn);
+                contentsType1 = getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dazn);
+                if (isFromMenu) {
+                    action = getString(R.string.google_analytics_category_action_dazn);
+                } else {
+                    action = getString(R.string.google_analytics_category_action_watch_tv);
+                    label = getTitleText().toString();
+                }
+                break;
+            case UNKNOWN:
+            default:
+                isUnknownService = true;
+                break;
+        }
+        if (!isUnknownService) {
+            SparseArray<String> customDimensions = null;
+            if (!isFromMenu) {
+                customDimensions = new SparseArray<>();
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+                switch (mContentsType) {
+                    case TV:
+                        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, getString(R.string.google_analytics_custom_dimension_contents_type2_live));
+                        break;
+                    case VOD:
+                        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, getString(R.string.google_analytics_custom_dimension_contents_type2_void));
+                        break;
+                    default:
+                        break;
+                }
             }
+            sendEvent(category, action, label, customDimensions);
+        }
     }
 
     /**
@@ -2927,10 +2925,10 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         if (isContractChange) {
             //データ変更があった場合は、ダイアログを表示して、その後にデータクリアとホームデータ更新を行う
-            showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change)
-                    , new CustomDialog.ApiOKCallback() {
+            showErrorDialogOfferAfterProcess(getString(R.string.h4d_agreement_change),
+                    new CustomDialog.ApiOKCallback() {
                         @Override
-                        public void onOKCallback(boolean isOK) {
+                        public void onOKCallback(final boolean isOK) {
                             //OKが押された場合は、データのクリアを行う
                             DateUtils.clearDataSave(getApplicationContext());
                             //ホーム画面の再表示を行う
@@ -3632,17 +3630,19 @@ public class BaseActivity extends FragmentActivity implements
      * @param customDimensions カスタム ディメンション
      */
     protected void sendScreenView(final String screenName, final SparseArray<String> customDimensions) {
-        DTVTLogger.start("sendScreenName: " + screenName);
+        DTVTLogger.start();
 
         TvtApplication app = (TvtApplication) getApplication();
         Tracker tracker = app.getDefaultTracker();
         tracker.setScreenName(screenName);
+        DTVTLogger.debug("[GA][SN]:" + screenName);
         HitBuilders.ScreenViewBuilder builder = new HitBuilders.ScreenViewBuilder();
         if (customDimensions != null) {
             for (int i = 0; i < customDimensions.size(); i++) {
                 int key = customDimensions.keyAt(i);
                 String value = customDimensions.get(key);
                 builder.setCustomDimension(key, value);
+                DTVTLogger.debug("[GA][CD]:" + key + ":" + value);
             }
         }
         tracker.send(builder.build());
@@ -3659,7 +3659,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param label ラベル
      */
     protected void sendEvent(final String category, final String action, final String label, final SparseArray<String> customDimensions) {
-        DTVTLogger.start("google sendEvent category: " + category + " action: " + action + " label: " + label);
+        DTVTLogger.start();
 
         TvtApplication app = (TvtApplication) getApplication();
         Tracker tracker = app.getDefaultTracker();
@@ -3671,12 +3671,14 @@ public class BaseActivity extends FragmentActivity implements
         } else {
             builder.setLabel("");
         }
+        DTVTLogger.debug("[GA][E]:" + " category: " + category + " action: " + action + " label: " + label + " eventValue: " + 1);
         builder.setValue(1);
         if (customDimensions != null) {
             for (int i = 0; i < customDimensions.size(); i++) {
                 int key = customDimensions.keyAt(i);
                 String value = customDimensions.get(key);
                 builder.setCustomDimension(key, value);
+                DTVTLogger.debug("[GA][CD]:" + key + ":" + value);
             }
         }
         tracker.send(builder.build());

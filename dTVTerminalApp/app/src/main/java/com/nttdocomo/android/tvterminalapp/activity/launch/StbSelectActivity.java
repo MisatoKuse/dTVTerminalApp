@@ -200,6 +200,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * STB検出エラータイプ.
      */
     public static final  String ERROR_TYPE = "ERROR_TYPE ";
+    /**
+     * スクリーン名送信フラグ.
+     */
+    private boolean mIsShowFlag = false;
 
     /**
      * タイマーステータス.
@@ -393,15 +397,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             return;
         }
         mIsDAccountAppStarting = false;
-        if (mIsFromBgFlg) {
-            String screenName;
-            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                screenName = getString(R.string.google_analytics_screen_name_stb_select);
-            } else {
-                screenName = getString(R.string.google_analytics_screen_name_setting_paring);
-            }
-            super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(StbSelectActivity.this));
-        }
         initResumeView();
         startDlnaSearch();
 
@@ -425,7 +420,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                 mPairingImage.setImageResource(R.mipmap.startup_icon_01);
                 mDeviceListView.setVisibility(View.VISIBLE);
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
             } else {
                 mPairingImage.setVisibility(View.GONE);
                 TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
@@ -433,7 +427,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mDeviceSelectText.setVisibility(View.VISIBLE);
                 mTextDivider2.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
             }
         }
         DTVTLogger.end();
@@ -496,10 +489,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void showSearchingView() {
         DTVTLogger.start();
         // STB検索中文言表示
+        mIsShowFlag = false;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             mStatusTextView.setText(getString(R.string.str_stb_select_result_text_search));
             mIsSearchingTextView.setVisibility(View.VISIBLE);
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), null);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading), mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(StbSelectActivity.this) : null);
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             //プログレスビューを初期状態に戻る
             RelativeLayout parentLayout = findViewById(R.id.paring_select_text_relative_layout);
@@ -513,7 +507,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 layoutParams.addRule(RelativeLayout.END_OF, R.id.paring_device_select_text);
                 mLoadMoreView.setLayoutParams(layoutParams);
             }
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), null);
+            if (mDlnaDmsInfo.size() == 0) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring), mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(StbSelectActivity.this) : null);
+            }
         }
         DTVTLogger.end();
     }
@@ -525,6 +521,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         // STB検索中文言表示
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select), null);
             mStatusTextView.setText(getString(R.string.str_stb_select_result_text));
             mIsSearchingTextView.setVisibility(View.GONE);
             mDeviceListView.setVisibility(View.VISIBLE);
@@ -534,6 +531,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             statusSetting.setVisibility(View.GONE);
             mDeviceSelectText.setVisibility(View.VISIBLE);
             mTextDivider2.setVisibility(View.VISIBLE);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_unpaired_stb_select), null);
         }
 
         DTVTLogger.end();
@@ -579,6 +577,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 RelativeLayout newLayout = findViewById(R.id.stb_device_list_relative_layout);
                 newLayout.addView(mLoadMoreView);
             }
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_connect), null);
         }
         mParingTextView.setVisibility(View.GONE);
         mDeviceListView.setVisibility(View.GONE);
@@ -604,11 +603,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         } else if (v.getId() == R.id.stb_paring_failed_red_help) {
             // ペアリングヘルプ画面へ遷移
             Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
-            intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
-                    ParingHelpFromMode_Setting.ordinal());
             startActivity(intent);
         } else if (v.getId() == R.id.header_layout_back) {
             finish();
+            overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
         }
         DTVTLogger.end();
     }
@@ -804,6 +802,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         item.mControlUrl = controlUrl;
         item.mHttp = host;
         if (mSelectDevice == SELECT_DEVICE_ITEM_DEFAULT) {
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbSelectActivity.this);
+            if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
+                if (dlnaDmsItem.mUdn.equals(item.mUdn)) {
+                   return;
+                }
+            }
             updateDeviceList(item, true);
         }
     }
@@ -886,12 +890,17 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     mDeviceAdapter.notifyDataSetChanged();
                     displayMoreData(true);
                     showSearchingView();
+                    mCallbackTimer.cancel();
+                    mCallbackTimer = null;
                     startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
                 } else if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_EXECUTION) { // 30秒以内にSTBの通知あり
                     displayMoreData(false);
                     stopCallbackTimer();
-                    showResultCompleteView();
+                    if (!mIsShowFlag) {
+                        showResultCompleteView();
+                        mIsShowFlag = true;
+                    }
                     if (null != mDeviceAdapter) {
                         mDeviceAdapter.notifyDataSetChanged();
                     }
@@ -991,6 +1000,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             stbSearchFailed.setVisibility(View.VISIBLE);
             stbSearchHelp.setVisibility(View.VISIBLE);
             stbSearchHelp.setOnClickListener(this);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_unpaired_stb_detection_error), null);
         }
         DTVTLogger.end();
 
@@ -1511,7 +1521,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
-                return !closeDrawerMenu() && super.onKeyDown(keyCode, event);
+                if (closeDrawerMenu()) {
+                    return false;
+                } else {
+                    finish();
+                    overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+                }
             }
         }
         return false;

@@ -150,6 +150,10 @@ public class ContentUtils {
     public static final int CUSTOMDIMENSION_KEYWORD = 8;
     /** ジャンル.*/
     public static final int CUSTOMDIMENSION_GENRE = 10;
+    /**リモート視聴設定.*/
+    public static final int CUSTOMDIMENSION_REMOTE = 11;
+    /**ペアリング操作.*/
+    public static final int CUSTOMDIMENSION_PARING_OPERATION = 12;
     /** tv_service(1).*/
     public static final String CH_TYPE_TV_SERVICE_H4D = "1";
     /** tv_service(2).*/
@@ -1603,7 +1607,19 @@ public class ContentUtils {
      */
     public static SparseArray<String> getParingAndLoginCustomDimensions(final Context context) {
         SparseArray<String> customDimensions = new SparseArray<>();
-        String pairingStatus;
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, getParingStatusString(context));
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, getLoginStatusString(context));
+        return customDimensions;
+    }
+
+    /**
+     * カスタムディメンション取得(ログイン).
+     *
+     * @param context コンテキスト
+     * @return ログインスのテータス
+     */
+    public static String getLoginStatusString(final Context context) {
+
         String loginStatus;
         UserState userState = UserInfoUtils.getUserState(context);
         if (UserState.LOGIN_NG.equals(userState)) {
@@ -1611,15 +1627,40 @@ public class ContentUtils {
         } else {
             loginStatus = context.getString(R.string.google_analytics_custom_dimension_login_ok);
         }
+        return loginStatus;
+    }
+
+    /**
+     * カスタムディメンション取得(ペアリング).
+     *
+     * @param context コンテキスト
+     * @return ペアリングのテータス
+     */
+    public static String getParingStatusString(final Context context) {
+        String pairingStatus;
         if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesStbInfo(context).mUdn)) {
             pairingStatus = context.getString(R.string.google_analytics_custom_dimension_no_pairing);
         } else {
             pairingStatus = context.getString(R.string.google_analytics_custom_dimension_pairing_ok);
         }
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, pairingStatus);
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, loginStatus);
-        return customDimensions;
+        return pairingStatus;
     }
+
+    /**
+     * リモート視聴設定取得.
+     * @param context コンテキスト
+     * @return リモート視聴設定済み
+     */
+    public static String getRemoteSettingStatus(final Context context) {
+        String remoteSettingString;
+        if (!TextUtils.isEmpty(SharedPreferencesUtils.getRemoteDeviceExpireDate(context))) {
+            remoteSettingString = context.getString(R.string.google_analytics_custom_dimension_remote_configured);
+        } else {
+            remoteSettingString = context.getString(R.string.google_analytics_custom_dimension_remote_not_set);
+        }
+        return remoteSettingString;
+    }
+
 
     /**
      * h4dタイプ取得.

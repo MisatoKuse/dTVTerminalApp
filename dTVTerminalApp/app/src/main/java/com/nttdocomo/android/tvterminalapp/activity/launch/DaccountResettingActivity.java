@@ -154,6 +154,7 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
                 D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
         try {
             startActivity(intent);
+            finish();
         } catch (ActivityNotFoundException e) {
             //　アプリが無ければインストール画面に誘導
             CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
@@ -165,6 +166,7 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
                     Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
+                    finish();
                 }
             });
             dAccountUninstallDialog.showDialog();

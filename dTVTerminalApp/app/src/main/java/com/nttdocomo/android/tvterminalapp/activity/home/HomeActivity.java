@@ -36,7 +36,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
@@ -347,8 +346,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         // dアカウントが未取得だった場合のユーザー情報再取得への流れを明確化する)
         getUserInfoStart();
         super.onResume();
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_home),
-                ContentUtils.getParingAndLoginCustomDimensions(HomeActivity.this));
+        SparseArray<String> customDimensions = new SparseArray<>();
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, ContentUtils.getParingStatusString(HomeActivity.this));
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, ContentUtils.getLoginStatusString(HomeActivity.this));
+        if (!mIsFromBgFlg) {
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_REMOTE, ContentUtils.getRemoteSettingStatus(HomeActivity.this));
+        }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_home), customDimensions);
         DlnaManager.shared().Start(getApplicationContext());
     }
 

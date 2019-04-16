@@ -35,16 +35,10 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     private static final int DELAYED_TIME = 3000;
     /**ハンドラー.*/
     private final Handler mHandler = new Handler();
-    /**起動モード.*/
-    private int mStartMode = 0;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
-        Intent intent = getIntent();
-        if (intent != null) {
-            mStartMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
-        }
         //SharedPreferenceにSTB接続完了をセット
         SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
         StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
@@ -55,21 +49,13 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     protected void onResume() {
         super.onResume();
         if (mIsFromBgFlg) {
-            String screenName;
-            if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                screenName = getString(R.string.google_analytics_screen_name_paring_completed);
-            } else {
-                screenName = getString(R.string.google_analytics_screen_name_setting_paring_completed);
-            }
-            super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(StbConnectActivity.this));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed),
+                    ContentUtils.getParingAndLoginCustomDimensions(StbConnectActivity.this));
         } else {
             SparseArray<String> customDimensions = new SparseArray<>();
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, getString(R.string.google_analytics_custom_dimension_pairing_ok));
-            if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed), customDimensions);
-            } else {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed), customDimensions);
-            }
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, ContentUtils.getParingStatusString(StbConnectActivity.this));
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_REMOTE, ContentUtils.getRemoteSettingStatus(StbConnectActivity.this));
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed), customDimensions);
         }
     }
 

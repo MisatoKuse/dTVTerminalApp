@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,13 +97,21 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         setLaterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                sendEvent(getString(R.string.google_analytics_category_service_name_transparent_from_paring_description),
+                        getString(R.string.google_analytics_category_action_set_later),
+                        null, null);
+                customDialog.dismissDialog();
                 startToHome();
             }
         });
         notAppearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                sendEvent(getString(R.string.google_analytics_category_service_name_transparent_from_paring_description),
+                        getString(R.string.google_analytics_category_action_no_display_next_time),
+                        null, null);
                 SharedPreferencesUtils.setSharedPreferencesShowLaunchStbStatus(LaunchStbActivity.this, true);
+                customDialog.dismissDialog();
                 startToHome();
             }
         });
@@ -121,6 +130,9 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.launch_stb_main_layout_tv_btn:
+                sendEvent(getString(R.string.google_analytics_category_service_name_transparent_from_paring_description),
+                        getString(R.string.google_analytics_category_action_paring_connection_set),
+                        null, null);
                 Intent intent = new Intent(this, StbWifiSetActivity.class);
                 intent.putExtra(ContentUtils.LAUNCH_STB_FROM, mLaunchStbFrom);
                 startActivity(intent);
@@ -150,5 +162,33 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_description),
+                    ContentUtils.getParingAndLoginCustomDimensions(LaunchStbActivity.this));
+        } else {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            String customString;
+            switch (mLaunchStbFrom) {
+                case ContentUtils.LAUNCH_STB_CONTENT_DETAIL:
+                    customString = getString(R.string.google_analytics_custom_dimension_from_content_detail);
+                    break;
+                case ContentUtils.LAUNCH_STB_SETTING:
+                    customString = getString(R.string.google_analytics_custom_dimension_form_home);
+                    break;
+                case ContentUtils.LAUNCH_STB_HOME:
+                    customString = getString(R.string.google_analytics_custom_dimension_from_setting);
+                    break;
+                default:
+                    customString = getString(R.string.google_analytics_custom_dimension_from_launch);
+                    break;
+            }
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_PARING_OPERATION, customString);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_description), customDimensions);
+        }
     }
 }
