@@ -365,6 +365,7 @@ public class SearchTopActivity extends BaseActivity
                                 findViewById(R.id.fl_search_result).setVisibility(View.GONE);
                                 // tabViewの非表示
                                 findViewById(R.id.rl_search_tab).setVisibility(View.GONE);
+                                showProgress(View.GONE);
                                 clearAllFragment();
                                 mSearchViewPager = null;
 
