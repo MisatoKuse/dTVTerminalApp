@@ -398,7 +398,9 @@ public class ContentUtils {
                 break;
             //ひかりTV for docomo
             case DTV_HIKARI_CONTENTS_SERVICE_ID:
-                if (RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
                         || RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId)) {
                     cType = ContentsType.TV;
                 } else if (RECOMMEND_CATEGORY_ID_FIVE.equals(categoryId)
