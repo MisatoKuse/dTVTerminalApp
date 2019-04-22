@@ -602,7 +602,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                 String categoryId = listContentInfo.getCategoryId();
                 if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
-                        && (ContentUtils.RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
+                        && (ContentUtils.RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)
+                        || ContentUtils.RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)
+                        || ContentUtils.RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
                         || ContentUtils.RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId))) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
                             listContentInfo.getEndViewing(), false)) {

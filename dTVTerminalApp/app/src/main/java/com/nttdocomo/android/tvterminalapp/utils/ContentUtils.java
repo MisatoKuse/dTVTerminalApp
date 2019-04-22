@@ -46,7 +46,7 @@ public class ContentUtils {
     /** レコメンドのCategoryId 01. **/
     public static final String RECOMMEND_CATEGORY_ID_ONE = "01";
     /** レコメンドのCategoryId 02. **/
-    private static final String RECOMMEND_CATEGORY_ID_TWO = "02";
+    public static final String RECOMMEND_CATEGORY_ID_TWO = "02";
     /** レコメンドのCategoryId 03. **/
     public static final String RECOMMEND_CATEGORY_ID_THREE = "03";
     /** レコメンドのCategoryId 04. **/
