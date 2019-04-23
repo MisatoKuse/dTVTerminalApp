@@ -3004,7 +3004,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             view.setVisibility(View.INVISIBLE);
             setRemoteProgressVisible(View.VISIBLE);
         } else {
-            if (!mIsScreenViewSent && !mIsH4dPlayer) {
+            if (!mIsScreenViewSent && !mIsH4dPlayer && mDetailFullData != null) {
                 sendScreenViewForPosition(ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION);
                 mIsScreenViewSent = true;
             }
