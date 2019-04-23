@@ -315,9 +315,10 @@ public class ContentDetailUtils {
      * スクリーン名マップを取得する.
      * @param contentType コンテンツタイプ
      * @param context コンテキスト
+     * @param mIsH4dPlayer 放送視聴可否
      * @return スクリーン名マップ
      */
-    public static HashMap<String, String> getScreenNameMap(final ContentTypeForGoogleAnalytics contentType, final Context context) {
+    public static HashMap<String, String> getScreenNameMap(final ContentTypeForGoogleAnalytics contentType, final Context context, final boolean mIsH4dPlayer) {
         HashMap<String, String> screenNameMap = new HashMap<>();
         screenNameMap.put(context.getString(R.string.contents_detail_tab_contents_info),
                 context.getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
@@ -325,11 +326,21 @@ public class ContentDetailUtils {
             screenNameMap.put(context.getString(R.string.contents_detail_tab_program_detail), context.getString(
                     R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
         } else {
-            screenNameMap.put(context.getString(R.string.contents_detail_tab_program_detail), context.getString(
-                    R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+            if (mIsH4dPlayer) {
+                screenNameMap.put(context.getString(R.string.contents_detail_tab_program_detail), context.getString(
+                        R.string.google_analytics_screen_name_player_h4d_broadcast_program_detail));
+            } else {
+                screenNameMap.put(context.getString(R.string.contents_detail_tab_program_detail), context.getString(
+                        R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+            }
         }
-        screenNameMap.put(context.getString(R.string.contents_detail_tab_channel), context.getString(
-                R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
+        if (mIsH4dPlayer) {
+            screenNameMap.put(context.getString(R.string.contents_detail_tab_channel), context.getString(
+                    R.string.google_analytics_screen_name_player_h4d_broadcast_channel));
+        } else {
+            screenNameMap.put(context.getString(R.string.contents_detail_tab_channel), context.getString(
+                    R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
+        }
         screenNameMap.put(context.getString(R.string.contents_detail_tab_episode),
                 context.getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_episode));
         return screenNameMap;

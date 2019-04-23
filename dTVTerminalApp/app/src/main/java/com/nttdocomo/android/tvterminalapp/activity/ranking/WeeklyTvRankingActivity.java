@@ -114,8 +114,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("WeeklyRankingActivity::Clip Status Update");
             }
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking),
-                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(WeeklyTvRankingActivity.this) : null);
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking),
+                    ContentUtils.getParingAndLoginCustomDimensions(WeeklyTvRankingActivity.this));
+        }
         DTVTLogger.end();
     }
 
@@ -220,6 +222,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                     }
                     WeeklyTvRankingActivity.this.initTab();
                 } else {
+                    sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking), null);
                     //エラーメッセージを取得する
                     ErrorState errorState = mVideoGenreProvider.getGenreListError();
                     //ジャンル取得失敗時はタブ構成できないためエラーダイアログを表示して画面を閉じる

@@ -515,7 +515,9 @@
     <!-- Google Analytics スクリーン名 -->
     <string name="google_analytics_screen_name_splash">スプラッシュ</string>
     <string name="google_analytics_screen_name_home">ホーム</string>
-    <string name="google_analytics_screen_name_player">プレイヤー</string>
+    <string name="google_analytics_screen_name_player_h4d_broadcast_program_detail">プレイヤー_ひかりTVコンテンツ_放送_番組詳細</string>
+    <string name="google_analytics_screen_name_player_h4d_broadcast_channel">プレイヤー_ひかりTVコンテンツ_放送_チャンネル</string>
+    <string name="google_analytics_screen_name_player_recording">プレイヤー_録画</string>
     <string name="google_analytics_screen_name_content_detail_h4d_broadcast_program_detail">コンテンツ詳細_ひかりTVコンテンツ_放送_番組詳細</string>
     <string name="google_analytics_screen_name_content_detail_h4d_broadcast_channel">コンテンツ詳細_ひかりTVコンテンツ_放送_チャンネル</string>
     <string name="google_analytics_screen_name_content_detail_h4d_vod_program_detail">コンテンツ詳細_ひかりTVコンテンツ_VOD_番組詳細</string>
@@ -524,7 +526,7 @@
     <string name="google_analytics_screen_name_content_detail_other_dtv_ch">コンテンツ詳細_pure dTVチャンネル</string>
     <string name="google_analytics_screen_name_content_detail_other_danime">コンテンツ詳細_pure dアニメストア</string>
     <string name="google_analytics_screen_name_content_detail_other_dazn">コンテンツ詳細_pure DAZN</string>
-    <string name="google_analytics_screen_name_recording_list">録画一覧</string>
+    <string name="google_analytics_screen_name_recording_list">録画一覧_すべて</string>
     <string name="google_analytics_screen_name_recording_list_takeout">録画一覧_持ち出し</string>
     <string name="google_analytics_screen_name_recording_reservation">録画予約</string>
     <string name="google_analytics_screen_name_watching_video">視聴中ビデオ</string>
@@ -535,15 +537,15 @@
     <string name="google_analytics_screen_name_clip_video">クリップ_ビデオ</string>
     <string name="google_analytics_screen_name_clip_key_word">クリップ_キーワード</string>
     <string name="google_analytics_screen_name_program_list_mine">番組表_マイ番組表</string>
-    <string name="google_analytics_screen_name_program_list_h4d">番組表_ひかりTV</string>
+    <string name="google_analytics_screen_name_program_list_h4d">番組表_専門ch</string>
     <string name="google_analytics_screen_name_program_list_ttb_channel">番組表_地デジ</string>
     <string name="google_analytics_screen_name_program_list_bs_channel">番組表_BS</string>
     <string name="google_analytics_screen_name_program_list_dtv_channel">番組表_dTVチャンネル</string>
     <string name="google_analytics_screen_name_channel_detail">チャンネル詳細</string>
     <string name="google_analytics_screen_name_channel_edit_menu">番組表編集メニュー</string>
     <string name="google_analytics_screen_name_channel_edit_menu_channel_select">番組表編集メニュー_チャンネル選択</string>
-    <string name="google_analytics_screen_name_channel_list_h4d">チャンネルリスト_ひかりTV</string>
-    <string name="google_analytics_screen_name_channel_list_ter">チャンネルリスト_地上波</string>
+    <string name="google_analytics_screen_name_channel_list_h4d">チャンネルリスト_専門ch</string>
+    <string name="google_analytics_screen_name_channel_list_ter">チャンネルリスト_地デジ</string>
     <string name="google_analytics_screen_name_channel_list_bs">チャンネルリスト_BS</string>
     <string name="google_analytics_screen_name_channel_list_dtv">チャンネルリスト_dTVチャンネル</string>
     <string name="google_analytics_screen_name_channel_detail_watching_only">チャンネル詳細（視聴のみ）・宅内/宅外</string>

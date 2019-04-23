@@ -241,6 +241,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ContentDetailUtils.TabType tabType;
     /** pure dchチャンネル名取得.*/
     private boolean mIsOtherServiceDtvChLoading = false;
+    /** スクリーン名送信済区別.*/
+    private boolean mIsScreenViewSent = false;
     // endregion
 
     @Override
@@ -271,20 +273,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         switch (mDisplayState) {
             case ContentDetailUtils.PLAYER_ONLY:
                 if (mIsFromBgFlg) {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_player),
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_player_recording),
                             ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
                 }
                 break;
             case ContentDetailUtils.PLAYER_AND_CONTENTS_DETAIL:
                 if (mIsFromBgFlg) {
                     String screenName = null;
-                    if (mIsH4dPlayer) {
-                        screenName = getString(R.string.google_analytics_screen_name_player);
-                    } else {
-                        if (mViewPager != null) {
-                            String tabName = mTabNames[mViewPager.getCurrentItem()];
-                            screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this).get(tabName);
-                        }
+                    if (mViewPager != null) {
+                        String tabName = mTabNames[mViewPager.getCurrentItem()];
+                        screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this, mIsH4dPlayer).get(tabName);
                     }
                     if (screenName != null) {
                         super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
@@ -294,8 +292,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
                 if (mIsFromBgFlg && contentType != null && mViewPager != null) {
-                    String tabName = mTabNames[mViewPager.getCurrentItem()];
-                    String screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this).get(tabName);
+                    String screenName = null;
+                    if (mIsOtherService) {
+                        screenName = ContentUtils.getOtherServiceScreenName(ContentDetailActivity.this, mDetailData.getServiceId());
+                    } else {
+                        String tabName = mTabNames[mViewPager.getCurrentItem()];
+                        screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this, mIsH4dPlayer).get(tabName);
+                    }
                     if (screenName != null) {
                         super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(ContentDetailActivity.this));
                     }
@@ -578,7 +581,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!playerData.isIsLive()) {
                 showPlayerOnlyView(playerData);
             }
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_player), //録画再生カスタムディメンション送信
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_player_recording), //録画再生カスタムディメンション送信
                     ContentDetailUtils.getRecordPlayerCustomDimensions(ContentDetailActivity.this, playerData.getTitle()));
         }
         //ヘッダーの設定
@@ -1013,7 +1016,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         } else {
             String tabName = mTabNames[position];
-            screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this).get(tabName);
+            screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this, mIsH4dPlayer).get(tabName);
             serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
             contentsType1 = ContentUtils.getContentsType1(ContentDetailActivity.this, mHikariType);
             switch (contentType) {
@@ -1033,7 +1036,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         SparseArray<String> customDimensions = null;
         if (!TextUtils.isEmpty(contentsType1) && !TextUtils.isEmpty(contentsType2)) {
             String loginStatus = null;
-            if (!mIsOtherService) {
+            if (!mIsOtherService && !mIsH4dPlayer) {
                 UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
                 if (UserState.LOGIN_NG.equals(userState)) {
                     loginStatus = getString(R.string.google_analytics_custom_dimension_login_ng);
@@ -1190,9 +1193,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         contentType = ContentDetailUtils.ContentTypeForGoogleAnalytics.VOD;
                     }
                     mHikariType = ContentUtils.getHikariType(mDetailFullData);
-                    ContentDetailActivity.super.sendScreenView(ContentDetailUtils.getPlalaCallBackScreenName(contentType, ContentDetailActivity.this),
-                            ContentDetailUtils.getPlalaCallBackCustomDimensions(contentType, mHikariType,
-                                    ContentDetailActivity.this, mDetailFullData.getTitle()));
                     OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                     ContentDetailUtils.setContentsDetailData(mDetailFullData, detailData, clipStatus);
                     if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
@@ -2721,7 +2721,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (contentsType1 == null) {
             return;
         }
-        String screenName = getString(R.string.google_analytics_screen_name_player);
+        String screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this, mIsH4dPlayer).get(mTabNames[ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION]);
         String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
         String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
         String contentName = getTitleText().toString();
@@ -3004,6 +3004,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             view.setVisibility(View.INVISIBLE);
             setRemoteProgressVisible(View.VISIBLE);
         } else {
+            if (!mIsScreenViewSent && !mIsH4dPlayer) {
+                sendScreenViewForPosition(ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION);
+                mIsScreenViewSent = true;
+            }
             setRemoteProgressVisible(View.INVISIBLE);
             view.setVisibility(View.VISIBLE);
         }

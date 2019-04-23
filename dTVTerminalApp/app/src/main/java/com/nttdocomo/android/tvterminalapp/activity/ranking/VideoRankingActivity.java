@@ -103,8 +103,10 @@ public class VideoRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
             }
         }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking),
-                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(VideoRankingActivity.this) : null);
+        if (mIsFromBgFlg) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking),
+                    ContentUtils.getParingAndLoginCustomDimensions(VideoRankingActivity.this));
+        }
         DTVTLogger.end();
     }
 
@@ -295,6 +297,7 @@ public class VideoRankingActivity extends BaseActivity implements
                     }
                     initTab();
                 } else {
+                    sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking), null);
                     //エラーメッセージを取得する
                     ErrorState errorState = mVideoGenreProvider.getGenreListError();
                     //ジャンル取得失敗時はタブ構成できないためエラーダイアログを表示して画面を閉じる
