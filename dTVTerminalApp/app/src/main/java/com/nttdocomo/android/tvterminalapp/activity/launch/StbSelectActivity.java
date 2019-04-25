@@ -1213,7 +1213,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
-                                SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                 Intent dAccountResetIntent = new Intent(this, DaccountResettingActivity.class);
                                 dAccountResetIntent.putExtra(FROM_WHERE, mStartMode);
                                 startActivity(dAccountResetIntent);
@@ -1319,9 +1318,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     protected void restartMessageDialog(final String... message) {
-        //呼び出し用のアクティビティの退避
-        final Activity activity = this;
-
         //出力メッセージのデフォルトはdアカウント用
         String printMessage = getString(R.string.d_account_change_message);
 
