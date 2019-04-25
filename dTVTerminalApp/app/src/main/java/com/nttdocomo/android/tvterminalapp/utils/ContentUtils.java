@@ -1614,6 +1614,20 @@ public class ContentUtils {
     }
 
     /**
+     * カスタムディメンション取得(サービス、ジャンル).
+     *
+     * @param service サービス
+     * @param genre ジャンル
+     * @return 「サービス、ジャンル」のテータス
+     */
+    public static SparseArray<String> getGenreCustomDimensions(final String service, final String genre) {
+        SparseArray<String> customDimensions = new SparseArray<>();
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, service);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_GENRE, genre);
+        return customDimensions;
+    }
+
+    /**
      * カスタムディメンション取得(ログイン).
      *
      * @param context コンテキスト

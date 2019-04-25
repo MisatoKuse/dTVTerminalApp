@@ -113,6 +113,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 baseFragment.updateContentsList(list);
                 DTVTLogger.debug("WeeklyRankingActivity::Clip Status Update");
             }
+            sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking),
+                    ContentUtils.getGenreCustomDimensions(getString(R.string.google_analytics_custom_dimension_service_h4d),
+                            mTabNames[mViewPager.getCurrentItem()]));
         }
         if (mIsFromBgFlg) {
             super.sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking),
@@ -407,10 +410,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             } else {
                 mRankingDataProvider.getWeeklyRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
             }
-            SparseArray<String> customDimensions = new SparseArray<>();
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_GENRE, mTabNames[mViewPager.getCurrentItem()]);
-            sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking), customDimensions);
+            sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking),
+                    ContentUtils.getGenreCustomDimensions(getString(R.string.google_analytics_custom_dimension_service_h4d),
+                            mTabNames[mViewPager.getCurrentItem()]));
         }
         DTVTLogger.end();
     }

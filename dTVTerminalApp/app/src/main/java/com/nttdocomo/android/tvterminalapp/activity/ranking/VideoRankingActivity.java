@@ -102,6 +102,9 @@ public class VideoRankingActivity extends BaseActivity implements
                 baseFragment.updateContentsList(list);
                 DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
             }
+            sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking),
+                    ContentUtils.getGenreCustomDimensions(getString(R.string.google_analytics_custom_dimension_service_h4d),
+                            mTabNames[mViewPager.getCurrentItem()]));
         }
         if (mIsFromBgFlg) {
             super.sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking),
@@ -430,10 +433,9 @@ public class VideoRankingActivity extends BaseActivity implements
             } else {
                 mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
             }
-            SparseArray<String> customDimensions = new SparseArray<>();
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_GENRE, mTabNames[mViewPager.getCurrentItem()]);
-            sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking), customDimensions);
+            sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking),
+                    ContentUtils.getGenreCustomDimensions(getString(R.string.google_analytics_custom_dimension_service_h4d),
+                            mTabNames[mViewPager.getCurrentItem()]));
         }
     }
     /**
