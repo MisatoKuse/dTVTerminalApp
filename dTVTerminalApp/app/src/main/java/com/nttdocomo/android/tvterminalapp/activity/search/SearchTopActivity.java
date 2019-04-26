@@ -214,7 +214,8 @@ public class SearchTopActivity extends BaseActivity
         super.onResume();
         enableStbStatusIcon(true);
         if (mCurrentSearchText.isEmpty()) {
-            super.sendScreenView(getString(R.string.google_analytics_screen_name_search), null);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_search),
+                    mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(SearchTopActivity.this) : null);
         } else {
             sendScreenViewForPosition(mTabIndex, true, true);
         }
