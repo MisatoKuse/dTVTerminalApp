@@ -346,13 +346,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         // dアカウントが未取得だった場合のユーザー情報再取得への流れを明確化する)
         getUserInfoStart();
         super.onResume();
-        SparseArray<String> customDimensions = new SparseArray<>();
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, ContentUtils.getParingStatusString(HomeActivity.this));
-        customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, ContentUtils.getLoginStatusString(HomeActivity.this));
-        if (!mIsFromBgFlg) {
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_REMOTE, ContentUtils.getRemoteSettingStatus(HomeActivity.this));
-        }
-        super.sendScreenView(getString(R.string.google_analytics_screen_name_home), customDimensions);
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_home), ContentUtils.getParingAndLoginCustomDimensions(HomeActivity.this));
         DlnaManager.shared().Start(getApplicationContext());
     }
 

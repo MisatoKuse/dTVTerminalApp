@@ -81,7 +81,7 @@ public class SearchTopActivity extends BaseActivity
     /** タブ名.*/
     private String[] mTabNames = null;
     /** 現在の検索文字列.*/
-    private String sCurrentSearchText = "";
+    private String mCurrentSearchText = "";
     /** tabのレイアウト.*/
     private TabItemLayout mTabLayout = null;
     /** ViewPager.*/
@@ -213,15 +213,11 @@ public class SearchTopActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         enableStbStatusIcon(true);
-        if (mIsFromBgFlg) {
+        if (mCurrentSearchText.isEmpty()) {
             super.sendScreenView(getString(R.string.google_analytics_screen_name_search),
-                    ContentUtils.getParingAndLoginCustomDimensions(SearchTopActivity.this));
+                    mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(SearchTopActivity.this) : null);
         } else {
-            if (sCurrentSearchText.isEmpty()) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_search), null);
-            } else {
-                sendScreenViewForPosition(mTabIndex, false);
-            }
+            sendScreenViewForPosition(mTabIndex, true, true);
         }
         ifShowKeyboard();
     }
@@ -368,8 +364,7 @@ public class SearchTopActivity extends BaseActivity
                                 showProgress(View.GONE);
                                 clearAllFragment();
                                 mSearchViewPager = null;
-
-                                SearchTopActivity.super.sendScreenView(getString(R.string.google_analytics_screen_name_search), null);
+                                mCurrentSearchText = "";
                             }
                             //setSearchData(s);
                             return false;
@@ -632,12 +627,12 @@ public class SearchTopActivity extends BaseActivity
                 setPageNumber(0);
                 setPagingStatus(false);
             }
-            sCurrentSearchText = searchText;
+            mCurrentSearchText = searchText;
         }
         if (mPageNumber == 0) {
             mIsEndPage = false;
         }
-        mSearchDataProvider.startSearchWith(sCurrentSearchText, mSearchNarrowCondition, mTabIndex, mSearchSortKind, mPageNumber, this);
+        mSearchDataProvider.startSearchWith(mCurrentSearchText, mSearchNarrowCondition, mTabIndex, mSearchSortKind, mPageNumber, this);
     }
 
     /**
@@ -703,13 +698,14 @@ public class SearchTopActivity extends BaseActivity
      *
      * @param position タブ位置
      * @param isFromServerSuccess true:サーバ取得成功 false:その他
+     * @param isFromOnResume true:onResume false:その他
      */
-    private void sendScreenViewForPosition(final int position, final boolean isFromServerSuccess) {
+    private void sendScreenViewForPosition(final int position, final boolean isFromServerSuccess, final boolean isFromOnResume) {
         String screenName = "";
         SparseArray<String> customDimensions = null;
         if (isFromServerSuccess) {
             customDimensions = new SparseArray<>();
-            customDimensions.put(ContentUtils.CUSTOMDIMENSION_KEYWORD, sCurrentSearchText);
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_KEYWORD, mCurrentSearchText);
         }
         switch (position) {
             case TAB_INDEX_TV:
@@ -751,6 +747,9 @@ public class SearchTopActivity extends BaseActivity
             default:
                 break;
         }
+        if (mIsFromBgFlg && isFromOnResume) {
+            customDimensions = ContentUtils.getParingAndLoginCustomDimensions(SearchTopActivity.this);
+        }
         if (!TextUtils.isEmpty(screenName)) {
             super.sendScreenView(screenName, customDimensions);
         }
@@ -783,7 +782,7 @@ public class SearchTopActivity extends BaseActivity
             return;
         }
 
-        sendScreenViewForPosition(mTabIndex, true);
+        sendScreenViewForPosition(mTabIndex, true,false);
 
         synchronized (this) {
             if (mIsPaging) {
@@ -870,7 +869,7 @@ public class SearchTopActivity extends BaseActivity
             baseFragment.setResultTextVisibility(false);
         }
         baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
-        sendScreenViewForPosition(mTabIndex, false);
+        sendScreenViewForPosition(mTabIndex, false, false);
 
         setSearchStart(false);
         showErrorMessage();

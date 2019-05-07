@@ -1602,15 +1602,30 @@ public class ContentUtils {
     }
 
     /**
-     * カスタムディメンション取得(ペアリング、ログイン).
+     * カスタムディメンション取得(ペアリング、ログイン、リモート視聴設定).
      *
      * @param context コンテキスト
-     * @return 「ペアリング、ログインス」のテータス
+     * @return 「ペアリング、ログインス、リモート視聴設定」のテータス
      */
     public static SparseArray<String> getParingAndLoginCustomDimensions(final Context context) {
         SparseArray<String> customDimensions = new SparseArray<>();
         customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, getParingStatusString(context));
         customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, getLoginStatusString(context));
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_REMOTE, getRemoteSettingStatus(context));
+        return customDimensions;
+    }
+
+    /**
+     * カスタムディメンション取得(サービス、ジャンル).
+     *
+     * @param service サービス
+     * @param genre ジャンル
+     * @return 「サービス、ジャンル」のテータス
+     */
+    public static SparseArray<String> getGenreCustomDimensions(final String service, final String genre) {
+        SparseArray<String> customDimensions = new SparseArray<>();
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, service);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_GENRE, genre);
         return customDimensions;
     }
 

@@ -322,7 +322,6 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.tutorial_show_agreement:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_agreement), null);
                 startActivity(LaunchTermsOfServiceActivity.class, null);
                 break;
             case R.id.skipOrFinishTutorialAcivity:
