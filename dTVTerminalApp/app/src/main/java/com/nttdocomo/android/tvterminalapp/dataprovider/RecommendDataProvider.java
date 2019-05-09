@@ -118,6 +118,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     };
     /** テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）. */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
+            RecommendRequestId.HIKARITV_DOCOMO_TTB.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_BS.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
     };
@@ -173,6 +175,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         DTVCHANNEL_MISS("43", "02"),
         /**dTVチャンネル　VOD（関連番組）.*/
         DTVCHANNEL_RELATION("43", "03"),
+        /**地デジ.*/
+        HIKARITV_DOCOMO_TTB("44", "01"),
+        /**BS.*/
+        HIKARITV_DOCOMO_BS("44", "02"),
         /**IPTV.*/
         HIKARITV_DOCOMO_IPTV("44", "03"),
         /**dTVチャンネル　放送.*/
