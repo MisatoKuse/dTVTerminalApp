@@ -89,7 +89,6 @@
     <string name="str_stb_not_registration_account_message">本スマートフォン・タブレットとドコモテレビターミナルのdアカウントが一致しません。\n同一のdアカウントを本スマートフォン・タブレットとドコモテレビターミナルに設定してください。</string>
     <string name="str_stb_login_other_account">本スマートフォン・タブレットの\ndアカウントを変更する</string>
     <string name="str_stb_d_account_registration_help">ドコモテレビターミナルに\ndアカウントを設定する</string>
-    <string name="str_stb_input_activation_code">ペアリングコードを入力する</string>
     <string name="str_stb_again_pairing">再度、ドコモテレビターミナルとつなげる</string>
     <string name="launch_initial_setting_door_string">ドコモテレビターミナルと連携したテレビ操作などの機能を利用するには接続設定(ペアリング)\nを行う必要があります。</string>
     <string name="launch_initial_setting_door_paring_string">接続設定を行う</string>
