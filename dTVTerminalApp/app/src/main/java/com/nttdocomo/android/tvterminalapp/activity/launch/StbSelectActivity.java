@@ -391,12 +391,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+        mIsDAccountAppStarting = false;
         //新しいdアカウントが送られていた場合は、STB選択画面の再起動を行う
         if (mNewDaccountGet) {
             reStartApplication();
             return;
         }
-        mIsDAccountAppStarting = false;
         initResumeView();
         startDlnaSearch();
 
@@ -961,10 +961,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * エラータイプ切り分け.
      */
-   public enum ErrorType {
-        /**検出タイムアウトエラー.*/
+    public enum ErrorType {
+        /**
+         * 検出タイムアウトエラー.
+         */
         TIME_OUT_ERROR,
-        /**WiFi未接続エラー.*/
+        /**
+         * WiFi未接続エラー.
+         */
         WIFI_NO_CONNECT_ERROR
     }
 
@@ -1361,6 +1365,30 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             }
         });
         restartDialog.showDialog();
+    }
+    @Override
+    protected void reStartApplication() {
+        DTVTLogger.start();
+        //現在の画面に応じて、戻り先を変える
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            DTVTLogger.debug("start StbSelectActivity");
+            //ホーム画面より前に表示された時のSTB選択画面なので、STB選択画面を再実行する
+            //通常startActivity側で行う解放処理を、上記のパラメータでスキップするので自前で行う
+            DaccountControl daccountControl = getDAccountControl();
+            if (daccountControl != null && daccountControl.getmDaccountGetOtt() != null) {
+                daccountControl.getmDaccountGetOtt().daccountServiceEnd();
+            }
+            resetDmpForResume();
+            initResumeView();
+            startDlnaSearch();
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            //それ以外の場合はホーム画面に戻る
+            startActivity(intent);
+        }
+        DTVTLogger.end();
     }
 
     @Override

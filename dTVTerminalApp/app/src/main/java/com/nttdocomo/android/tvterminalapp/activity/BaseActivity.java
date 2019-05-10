@@ -2420,32 +2420,11 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void reStartApplication() {
         DTVTLogger.start();
-
-        //再起動処理を行う
+        //ホーム画面に戻る
         Intent intent = new Intent();
-
-        //現在の画面に応じて、戻り先を変える
-        if (this instanceof StbSelectActivity && ((StbSelectActivity)this).getmStartMode()
-                == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-            DTVTLogger.debug("start StbSelectActivity");
-            //ホーム画面より前に表示された時のSTB選択画面なので、STB選択画面を再実行する
-            intent.setClass(this, StbSelectActivity.class);
-            //ランチャーから起動したことにする設定
-            intent.putExtra(StbSelectActivity.FROM_WHERE,
-                    StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
-            //専用パラメータを付与して、dアカウント関連の処理をスキップさせる
-            intent.putExtra(STB_SELECT_ACTIVITY_RESTART,true);
-            //通常startActivity側で行う解放処理を、上記のパラメータでスキップするので自前で行う
-            if (mDAccountControl != null && mDAccountControl.getmDaccountGetOtt() != null) {
-                mDAccountControl.getmDaccountGetOtt().daccountServiceEnd();
-            }
-        } else {
-            //それ以外の場合はホーム画面に戻る
-            intent.setClass(this, HomeActivity.class);
-        }
+        intent.setClass(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-
         DTVTLogger.end();
     }
 
