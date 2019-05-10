@@ -44,6 +44,7 @@
     <string name="common_date_format_end_str">" まで"</string>
     <string name="common_text_regist_progress_done">設定を完了しました</string>
     <string name="common_text_regist_over_error_setting">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。</string>
+    <string name="common_text_regist_no_h4d_contract_error">@string/main_setting_h4d_not_signed_message</string>
     <string name="common_text_regist_other_error">ひかりＴＶ for docomoの設定が「自宅内/外出先で有効」になっていない可能性があります。設定をご確認ください。</string>
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
@@ -636,7 +637,8 @@
     <string name="google_analytics_category_action_action_remote_activation_error">リモート視聴設定アクティベートエラー</string>
     <string name="google_analytics_category_action_remote_success">リモート視聴設定成功</string>
     <string name="google_analytics_category_action_remote_device_over_error">リモート視聴設定台数超過エラー</string>
-    <string name="google_analytics_category_action_remote_other_error"> リモート視聴設定その他エラー</string>
+    <string name="google_analytics_category_action_remote_no_h4d_contract_error">リモート視聴設定未契約エラー</string>
+    <string name="google_analytics_category_action_remote_other_error">リモート視聴設定その他エラー</string>
 
     <!-- Google Analytics カスタムディメンション名 契約種別 -->
     <string name="google_analytics_custom_dimension_hikari_contract_ing">ひかりTV契約中</string>
