@@ -80,7 +80,7 @@ public class StbConnectActivity extends BaseActivity {
         DTVTLogger.end();
     }
     /**
-     * STB接続できたら、ホーム画面に自動遷移する.
+     * STB接続できたら、リモート視聴設定確認画面に自動的に遷移する.
      */
     private final Runnable runnable = new Runnable() {
         @Override
