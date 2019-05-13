@@ -1538,6 +1538,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //新しいdアカウントが来たことを知らせ、onResumeでSTB選択画面の再起動をさせる
         //(送られてきたdアカウントは直接使用せず、既存のdアカウント取得処理に委ねる)
         mNewDaccountGet = true;
+        SharedPreferencesUtils.setSharedPreferencesDaccountId(this, dAccount);
         DTVTLogger.end();
     }
 
