@@ -120,6 +120,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     };
     /** テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）. */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
+            RecommendRequestId.HIKARITV_DOCOMO_TTB.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_BS.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
     };
