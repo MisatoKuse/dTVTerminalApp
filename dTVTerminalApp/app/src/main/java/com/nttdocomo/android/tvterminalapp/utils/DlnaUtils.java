@@ -110,6 +110,8 @@ public class DlnaUtils {
         START_DTCP,
         /**台数超過エラー.*/
         DEVICE_OVER_ERROR,
+        /**未契約(h4d)エラー.*/
+        NO_H4D_CONTRACT,
         /**その他エラー.*/
         UNKOWN,
         /**なし.*/
@@ -474,6 +476,9 @@ public class DlnaUtils {
                     break;
                 case DEVICE_OVER_ERROR:
                     resultDialog.setContent(context.getString(R.string.common_text_regist_over_error_setting));
+                    break;
+                case NO_H4D_CONTRACT:
+                    resultDialog.setContent(context.getString(R.string.common_text_regist_no_h4d_contract_error));
                     break;
                 case START_DTCP:
                 case START_DIRAG:
