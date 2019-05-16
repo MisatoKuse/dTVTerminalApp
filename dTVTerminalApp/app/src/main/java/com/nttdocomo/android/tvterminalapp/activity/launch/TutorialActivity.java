@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -325,6 +326,8 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
                 startActivity(LaunchTermsOfServiceActivity.class, null);
                 break;
             case R.id.skipOrFinishTutorialAcivity:
+                // 利用規約画面表示時にアプリケーションプライバシーポリシーバージョンを保存する
+                SharedPreferencesUtils.setSharedPreferencesApplicationPrivacyPolicyVersion(this, DtvtConstants.NEW_APPLICATION_PRIVACY_POLICY_VERSION);
                 onSkipOrFinish();
                 break;
             case R.id.tutorial_dots_1:
