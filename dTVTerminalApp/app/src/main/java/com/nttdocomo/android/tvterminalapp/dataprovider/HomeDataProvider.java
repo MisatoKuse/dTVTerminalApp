@@ -42,6 +42,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
@@ -65,6 +66,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -711,6 +713,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void sendTvScheduleListData(final List<ContentsData> list) {
         //契約ありの場合のみ「NOW ON AIR」を表示する(番組表表示のためデータをDB保存する必要があるためActivityへのデータ送信抑制のみ実施)
         if (UserInfoUtils.isContract(mContext)) {
+            Collections.sort(list, new ChannelComparator(ChannelComparator.OBJECT_TYPE));
             List<ContentsData> matchDataList = getContentsDataListMatchAgeInfo(list);
             mApiDataProviderCallback.tvScheduleListCallback(matchDataList);
         }
@@ -723,20 +726,59 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @return 条件に該当する番組リスト
      */
     private List<ContentsData> getContentsDataListMatchAgeInfo(final List<ContentsData> list) {
-        List<ContentsData> baseList = new ArrayList();
+        List<ContentsData> baseList = new ArrayList<>();
         int userAge = UserInfoUtils.getUserAgeInfoWrapper(SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext));
 
         for (ContentsData data : list) {
+            if (hasExistChannelContents(baseList, data.getServiceIdUniq())) {
+                continue;
+            }
             if (!StringUtils.isParental(userAge, data.getRValue())) {
                 baseList.add(data);
             }
-
             if (baseList.size() >= MAX_CONTENTS_COUNT_FOR_SHOW) {
                 break;
             }
         }
 
         return baseList;
+    }
+
+    /**
+     * 地デジチャンネル存在チェック.
+     * @param list チャンネルリスト
+     */
+    private boolean ifHasAreaCodeNotExistTtbChannel(final List<Map<String, String>> list) {
+        boolean result = false;
+        if (!TextUtils.isEmpty(UserInfoUtils.getAreaCode(mContext))) {
+            result = true;
+            for (int i = 0; i < list.size(); i++) {
+                if (ContentUtils.TV_SERVICE_FLAG_TTB.equals(list.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE))) {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 該当チャンネルのNOW ON AIRコンテンツ重複チェック.
+     * @param baseList ベースリスト
+     * @param serviceIdUniq サービスIDユニーク
+     */
+    private boolean hasExistChannelContents(final List<ContentsData> baseList, final String serviceIdUniq) {
+        if (serviceIdUniq == null) {
+            return false;
+        }
+        boolean result = false;
+        for (ContentsData data : baseList) {
+            if (serviceIdUniq.equals(data.getServiceIdUniq())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     /**
@@ -920,13 +962,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param channelList チャンネル情報
      */
     private void getTvScheduleFromChInfo(final ChannelList channelList) {
-        List<Map<String, String>> channelInfoList;
-
+        List<Map<String, String>> channelInfoList = channelList.getChannelList();
+        Collections.sort(channelInfoList, new ChannelComparator(ChannelComparator.MAP_TYPE));
         // 最大30チャンネルを対象にする
-        if (channelList.getChannelList().size() >= NOW_ON_AIR_CHANNEL_LIMIT) {
-            channelInfoList = channelList.getChannelList().subList(0, NOW_ON_AIR_CHANNEL_LIMIT);
-        } else {
-            channelInfoList = channelList.getChannelList();
+        if (channelInfoList.size() >= NOW_ON_AIR_CHANNEL_LIMIT) {
+            channelInfoList = channelInfoList.subList(0, NOW_ON_AIR_CHANNEL_LIMIT);
         }
 
         List<String> serviceIdUniqList = new ArrayList<>();
@@ -1102,10 +1142,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             dataBaseThread.start();
         } else {
             //通信クラスにデータ取得要求を出す
-            mChannelWebClient = new ChannelWebClient(mContext);
-            mChannelWebClient.getChannelApi(0, 0, "", JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE], this);
+            getChannelListFromServer();
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * CH一覧取得From Server.
+     */
+    private void getChannelListFromServer() {
+        //通信クラスにデータ取得要求を出す
+        String areaCode = UserInfoUtils.getAreaCode(mContext);
+        mChannelWebClient = new ChannelWebClient(mContext);
+        mChannelWebClient.getChannelApi(0, 0, "", JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE], areaCode, this);
     }
 
     /**
@@ -1591,18 +1640,24 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 homeDataManager = new HomeDataManager(mContext);
                 List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
                 ChannelList chList = setHomeChannelData(channelList);
-                //チャンネル情報を元にNowOnAir情報の取得を行う.
-                mChannelList = chList;
-                getTvScheduleFromChInfo(chList);
-                //おすすめ番組は、前回チャンネル取得できなければ、再設定する
-                if (mRecommendChData != null) {
-                    sendRecommendChListData(mRecommendChData);
-                }
-                if (mDailyRankListData != null) {
-                    sendDailyRankListData(mDailyRankListData);
-                }
-                if (mTvClipListData != null) {
-                    sendTvClipListData(mTvClipListData);
+                if (chList.getChannelList().size() == 0 && NetWorkUtils.isOnline(mContext)) {
+                    getChannelListFromServer();
+                } else if (ifHasAreaCodeNotExistTtbChannel(chList.getChannelList()) && NetWorkUtils.isOnline(mContext)) {
+                    getChannelListFromServer();
+                } else  {
+                    //チャンネル情報を元にNowOnAir情報の取得を行う.
+                    mChannelList = chList;
+                    getTvScheduleFromChInfo(chList);
+                    //おすすめ番組は、前回チャンネル取得できなければ、再設定する
+                    if (mRecommendChData != null) {
+                        sendRecommendChListData(mRecommendChData);
+                    }
+                    if (mDailyRankListData != null) {
+                        sendDailyRankListData(mDailyRankListData);
+                    }
+                    if (mTvClipListData != null) {
+                        sendTvClipListData(mTvClipListData);
+                    }
                 }
                 break;
             case SELECT_WATCH_LISTEN_VIDEO_LIST:
