@@ -55,6 +55,7 @@
             android:layout_height="@dimen/stb_launch_btn_height"
             android:text="@string/launch_stb_bt_txt"
             android:background="@drawable/startup_btn_normal"
+            android:padding="@dimen/launch_stb_door_text_zero_padding_all"
             android:textColor="@color/stb_launch_black_color"
             android:textSize="@dimen/stb_launch_text_size"
             android:textStyle="bold"
