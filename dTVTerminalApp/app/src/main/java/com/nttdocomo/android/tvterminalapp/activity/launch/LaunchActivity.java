@@ -358,7 +358,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         int newApplicationPrivacyPolicyVersion = DtvtConstants.NEW_APPLICATION_PRIVACY_POLICY_VERSION;
 
         DTVTLogger.end();
-        return applicationPrivacyPolicyVersion != newApplicationPrivacyPolicyVersion;
+        return applicationPrivacyPolicyVersion < newApplicationPrivacyPolicyVersion;
     }
 
     @Override
