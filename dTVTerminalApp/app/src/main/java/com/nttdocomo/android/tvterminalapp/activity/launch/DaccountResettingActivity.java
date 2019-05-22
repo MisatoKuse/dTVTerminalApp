@@ -81,9 +81,6 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
         TextView dAccountRegistrationHelp = findViewById(R.id.d_account_registration_help);
         dAccountRegistrationHelp.setOnClickListener(this);
 
-        TextView dAccountInputActivationCode = findViewById(R.id.d_account_input_activation_code);
-        dAccountInputActivationCode.setOnClickListener(this);
-
         TextView dAccountAgainPairing = findViewById(R.id.d_account_again_pairing);
         dAccountAgainPairing.setOnClickListener(this);
 
@@ -96,9 +93,6 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
         if (v.getId() == R.id.d_account_registration_help) {
             // ヘルプ画面に遷移
             onDAccountRegButton();
-        } else if (v.getId() == R.id.d_account_input_activation_code) {
-            // アカウントアプリを起動する
-            onDAccountRegton();
         } else if (v.getId() == R.id.d_account_again_pairing) {
             // 再度ペアリング
             onReturnButton();

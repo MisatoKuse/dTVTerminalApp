@@ -128,9 +128,14 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         } else {
             if (UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
                 //H4d契約済の場合リモート視聴設定画面へ遷移
-                Intent intent = new Intent(getApplicationContext(), RemoteSetActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(getApplicationContext(), RemoteSetActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                }, DELAYED_TIME);
             } else {
                 //ホーム画面に遷移
                 mHandler.postDelayed(runnable, DELAYED_TIME);
