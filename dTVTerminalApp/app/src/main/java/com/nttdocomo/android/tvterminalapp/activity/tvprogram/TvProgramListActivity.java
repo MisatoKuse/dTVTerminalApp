@@ -536,7 +536,7 @@ public class TvProgramListActivity extends BaseActivity implements
             switch (tvProgramType) {
                 case NO_LOGIN:
                 case NO_CONTRACT_LOGIN_OK_AREA_NG:
-                    gaScreenNames = getResources().getStringArray(R.array.tv_program_list_no_login_tab_names);
+                    gaScreenNames = getResources().getStringArray(R.array.tv_program_list_no_login_ga_names);
                     break;
                 case NO_CONTRACT_LOGIN_OK_AREA_OK:
                     gaScreenNames = getResources().getStringArray(R.array.tv_program_list_area_code_ga_names);

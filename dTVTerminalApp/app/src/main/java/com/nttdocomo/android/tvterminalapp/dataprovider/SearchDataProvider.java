@@ -264,6 +264,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
+                ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_TERRESTRIAL_DIGITAL);
+                ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_SATELLITE_BROADCASTING);
                 ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_IP_TV);
                 ret.add(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_BROADCAST);
                 break;

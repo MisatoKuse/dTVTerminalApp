@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,16 +21,23 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+
+import java.util.List;
 
 /**
  * リモート視聴設定.
  */
-public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnClickListener, DlnaManager.LocalRegisterListener {
+public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnClickListener, DlnaManager.LocalRegisterListener,
+        UserInfoDataProvider.UserDataProviderCallback {
 
     /** 画像の素材.*/
     private final int[] mImagResource = {R.mipmap.remote_setting_01, R.mipmap.remote_setting_02, R.mipmap.remote_setting_03};
@@ -86,10 +94,30 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     }
 
     /**
+     * ユーザ状態判定.
+     *
+     * @param doGetUserInfo 契約情報再取得要否
+     */
+    private void checkContractInfo(final boolean doGetUserInfo) {
+        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
+        DTVTLogger.debug("contractInfo: " + contractInfo);
+        if ((contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo))
+                && doGetUserInfo) {
+            new UserInfoDataProvider(this, this).getUserInfo();
+        } else {
+            if (UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
+                executeLocalRegistration();
+            } else {
+                //h4d未契約として扱い（未契約である旨のエラーを表示すること）
+                showRegistrationResultDialog(false, DlnaUtils.ExcuteLocalRegistrationErrorType.NO_H4D_CONTRACT);
+            }
+        }
+    }
+
+    /**
      * ローカルレジストレーション実施.
      */
     private void executeLocalRegistration() {
-        setRemoteProgressVisible(View.VISIBLE);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -162,6 +190,11 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                         getString(R.string.google_analytics_category_action_remote_device_over_error),
                         null, null);
                 break;
+            case NO_H4D_CONTRACT:
+                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                        getString(R.string.google_analytics_category_action_remote_no_h4d_contract_error),
+                        null, null);
+                break;
             case START_DTCP:
             case START_DIRAG:
             case UNKOWN:
@@ -178,7 +211,8 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.remote_introduce_main_layout_set_btn:
-                executeLocalRegistration();
+                setRemoteProgressVisible(View.VISIBLE);
+                checkContractInfo(true);
                 break;
             case R.id.remote_introduce_main_layout_tv_link:
                 CustomDialog resultDialog = new CustomDialog(RemoteSetIntroduceActivity.this, CustomDialog.DialogType.ERROR);
@@ -252,5 +286,21 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
             SharedPreferencesUtils.setRegistTime(getApplicationContext());
         }
         showRegistrationResultDialog(result, errorType);
+    }
+
+    @Override
+    public void userInfoListCallback(final boolean isDataChange,
+                                     final List<UserInfoList> userList, final boolean isUserContract) {
+        startTvProgramIntentService();
+        //契約情報確認、契約情報再取得不要
+        checkContractInfo(false);
+        String contractType = ContentUtils.getContractType(RemoteSetIntroduceActivity.this);
+        if (!TextUtils.isEmpty(contractType)) {
+            SparseArray<String> customDimensions = new SparseArray<>();
+            customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
+            sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+                    getString(R.string.google_analytics_category_action_remote_contract_get_success),
+                    null, customDimensions);
+        }
     }
 }

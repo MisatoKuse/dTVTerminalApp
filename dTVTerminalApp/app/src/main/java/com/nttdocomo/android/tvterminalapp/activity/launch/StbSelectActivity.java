@@ -391,12 +391,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+        mIsDAccountAppStarting = false;
         //新しいdアカウントが送られていた場合は、STB選択画面の再起動を行う
         if (mNewDaccountGet) {
             reStartApplication();
             return;
         }
-        mIsDAccountAppStarting = false;
         initResumeView();
         startDlnaSearch();
 
@@ -961,10 +961,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * エラータイプ切り分け.
      */
-   public enum ErrorType {
-        /**検出タイムアウトエラー.*/
+    public enum ErrorType {
+        /**
+         * 検出タイムアウトエラー.
+         */
         TIME_OUT_ERROR,
-        /**WiFi未接続エラー.*/
+        /**
+         * WiFi未接続エラー.
+         */
         WIFI_NO_CONNECT_ERROR
     }
 
@@ -1213,7 +1217,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
-                                SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                 Intent dAccountResetIntent = new Intent(this, DaccountResettingActivity.class);
                                 dAccountResetIntent.putExtra(FROM_WHERE, mStartMode);
                                 startActivity(dAccountResetIntent);
@@ -1319,9 +1322,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     protected void restartMessageDialog(final String... message) {
-        //呼び出し用のアクティビティの退避
-        final Activity activity = this;
-
         //出力メッセージのデフォルトはdアカウント用
         String printMessage = getString(R.string.d_account_change_message);
 
@@ -1365,6 +1365,30 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             }
         });
         restartDialog.showDialog();
+    }
+    @Override
+    protected void reStartApplication() {
+        DTVTLogger.start();
+        //現在の画面に応じて、戻り先を変える
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            DTVTLogger.debug("start StbSelectActivity");
+            //ホーム画面より前に表示された時のSTB選択画面なので、STB選択画面を再実行する
+            //通常startActivity側で行う解放処理を、上記のパラメータでスキップするので自前で行う
+            DaccountControl daccountControl = getDAccountControl();
+            if (daccountControl != null && daccountControl.getmDaccountGetOtt() != null) {
+                daccountControl.getmDaccountGetOtt().daccountServiceEnd();
+            }
+            resetDmpForResume();
+            initResumeView();
+            startDlnaSearch();
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            //それ以外の場合はホーム画面に戻る
+            startActivity(intent);
+        }
+        DTVTLogger.end();
     }
 
     @Override
@@ -1514,6 +1538,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //新しいdアカウントが来たことを知らせ、onResumeでSTB選択画面の再起動をさせる
         //(送られてきたdアカウントは直接使用せず、既存のdアカウント取得処理に委ねる)
         mNewDaccountGet = true;
+        SharedPreferencesUtils.setSharedPreferencesDaccountId(this, dAccount);
         DTVTLogger.end();
     }
 

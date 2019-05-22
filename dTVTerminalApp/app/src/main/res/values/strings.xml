@@ -44,6 +44,7 @@
     <string name="common_date_format_end_str">" まで"</string>
     <string name="common_text_regist_progress_done">設定を完了しました</string>
     <string name="common_text_regist_over_error_setting">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。</string>
+    <string name="common_text_regist_no_h4d_contract_error">@string/main_setting_h4d_not_signed_message</string>
     <string name="common_text_regist_other_error">ひかりＴＶ for docomoの設定が「自宅内/外出先で有効」になっていない可能性があります。設定をご確認ください。</string>
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
@@ -514,7 +515,9 @@
     <!-- Google Analytics スクリーン名 -->
     <string name="google_analytics_screen_name_splash">スプラッシュ</string>
     <string name="google_analytics_screen_name_home">ホーム</string>
-    <string name="google_analytics_screen_name_player">プレイヤー</string>
+    <string name="google_analytics_screen_name_player_h4d_broadcast_program_detail">プレイヤー_ひかりTVコンテンツ_放送_番組詳細</string>
+    <string name="google_analytics_screen_name_player_h4d_broadcast_channel">プレイヤー_ひかりTVコンテンツ_放送_チャンネル</string>
+    <string name="google_analytics_screen_name_player_recording">プレイヤー_録画</string>
     <string name="google_analytics_screen_name_content_detail_h4d_broadcast_program_detail">コンテンツ詳細_ひかりTVコンテンツ_放送_番組詳細</string>
     <string name="google_analytics_screen_name_content_detail_h4d_broadcast_channel">コンテンツ詳細_ひかりTVコンテンツ_放送_チャンネル</string>
     <string name="google_analytics_screen_name_content_detail_h4d_vod_program_detail">コンテンツ詳細_ひかりTVコンテンツ_VOD_番組詳細</string>
@@ -523,7 +526,7 @@
     <string name="google_analytics_screen_name_content_detail_other_dtv_ch">コンテンツ詳細_pure dTVチャンネル</string>
     <string name="google_analytics_screen_name_content_detail_other_danime">コンテンツ詳細_pure dアニメストア</string>
     <string name="google_analytics_screen_name_content_detail_other_dazn">コンテンツ詳細_pure DAZN</string>
-    <string name="google_analytics_screen_name_recording_list">録画一覧</string>
+    <string name="google_analytics_screen_name_recording_list">録画一覧_すべて</string>
     <string name="google_analytics_screen_name_recording_list_takeout">録画一覧_持ち出し</string>
     <string name="google_analytics_screen_name_recording_reservation">録画予約</string>
     <string name="google_analytics_screen_name_watching_video">視聴中ビデオ</string>
@@ -534,15 +537,15 @@
     <string name="google_analytics_screen_name_clip_video">クリップ_ビデオ</string>
     <string name="google_analytics_screen_name_clip_key_word">クリップ_キーワード</string>
     <string name="google_analytics_screen_name_program_list_mine">番組表_マイ番組表</string>
-    <string name="google_analytics_screen_name_program_list_h4d">番組表_ひかりTV</string>
+    <string name="google_analytics_screen_name_program_list_h4d">番組表_専門ch</string>
     <string name="google_analytics_screen_name_program_list_ttb_channel">番組表_地デジ</string>
     <string name="google_analytics_screen_name_program_list_bs_channel">番組表_BS</string>
     <string name="google_analytics_screen_name_program_list_dtv_channel">番組表_dTVチャンネル</string>
     <string name="google_analytics_screen_name_channel_detail">チャンネル詳細</string>
     <string name="google_analytics_screen_name_channel_edit_menu">番組表編集メニュー</string>
     <string name="google_analytics_screen_name_channel_edit_menu_channel_select">番組表編集メニュー_チャンネル選択</string>
-    <string name="google_analytics_screen_name_channel_list_h4d">チャンネルリスト_ひかりTV</string>
-    <string name="google_analytics_screen_name_channel_list_ter">チャンネルリスト_地上波</string>
+    <string name="google_analytics_screen_name_channel_list_h4d">チャンネルリスト_専門ch</string>
+    <string name="google_analytics_screen_name_channel_list_ter">チャンネルリスト_地デジ</string>
     <string name="google_analytics_screen_name_channel_list_bs">チャンネルリスト_BS</string>
     <string name="google_analytics_screen_name_channel_list_dtv">チャンネルリスト_dTVチャンネル</string>
     <string name="google_analytics_screen_name_channel_detail_watching_only">チャンネル詳細（視聴のみ）・宅内/宅外</string>
@@ -633,7 +636,8 @@
     <string name="google_analytics_category_action_action_remote_activation_error">リモート視聴設定アクティベートエラー</string>
     <string name="google_analytics_category_action_remote_success">リモート視聴設定成功</string>
     <string name="google_analytics_category_action_remote_device_over_error">リモート視聴設定台数超過エラー</string>
-    <string name="google_analytics_category_action_remote_other_error"> リモート視聴設定その他エラー</string>
+    <string name="google_analytics_category_action_remote_no_h4d_contract_error">リモート視聴設定未契約エラー</string>
+    <string name="google_analytics_category_action_remote_other_error">リモート視聴設定その他エラー</string>
 
     <!-- Google Analytics カスタムディメンション名 契約種別 -->
     <string name="google_analytics_custom_dimension_hikari_contract_ing">ひかりTV契約中</string>

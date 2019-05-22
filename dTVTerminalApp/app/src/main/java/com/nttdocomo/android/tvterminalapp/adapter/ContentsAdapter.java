@@ -602,7 +602,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                 String categoryId = listContentInfo.getCategoryId();
                 if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
-                        && (ContentUtils.RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
+                        && (ContentUtils.RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)
+                        || ContentUtils.RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)
+                        || ContentUtils.RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
                         || ContentUtils.RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId))) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
                             listContentInfo.getEndViewing(), false)) {
@@ -925,6 +927,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (holder.tv_recorded_ch_name == null) {
                 holder.tv_recorded_ch_name = contentView.findViewById(R.id.item_common_result_recorded_content_channel_name);
             }
+            holder.tv_recorded_hyphen.setVisibility(View.GONE);
+            holder.tv_recorded_ch_name.setVisibility(View.GONE);
             ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));

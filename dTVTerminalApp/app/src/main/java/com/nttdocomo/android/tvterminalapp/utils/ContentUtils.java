@@ -46,7 +46,7 @@ public class ContentUtils {
     /** レコメンドのCategoryId 01. **/
     public static final String RECOMMEND_CATEGORY_ID_ONE = "01";
     /** レコメンドのCategoryId 02. **/
-    private static final String RECOMMEND_CATEGORY_ID_TWO = "02";
+    public static final String RECOMMEND_CATEGORY_ID_TWO = "02";
     /** レコメンドのCategoryId 03. **/
     public static final String RECOMMEND_CATEGORY_ID_THREE = "03";
     /** レコメンドのCategoryId 04. **/
@@ -398,7 +398,9 @@ public class ContentUtils {
                 break;
             //ひかりTV for docomo
             case DTV_HIKARI_CONTENTS_SERVICE_ID:
-                if (RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
                         || RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId)) {
                     cType = ContentsType.TV;
                 } else if (RECOMMEND_CATEGORY_ID_FIVE.equals(categoryId)
@@ -1600,15 +1602,30 @@ public class ContentUtils {
     }
 
     /**
-     * カスタムディメンション取得(ペアリング、ログイン).
+     * カスタムディメンション取得(ペアリング、ログイン、リモート視聴設定).
      *
      * @param context コンテキスト
-     * @return 「ペアリング、ログインス」のテータス
+     * @return 「ペアリング、ログインス、リモート視聴設定」のテータス
      */
     public static SparseArray<String> getParingAndLoginCustomDimensions(final Context context) {
         SparseArray<String> customDimensions = new SparseArray<>();
         customDimensions.put(ContentUtils.CUSTOMDIMENSION_PAIRING, getParingStatusString(context));
         customDimensions.put(ContentUtils.CUSTOMDIMENSION_LOGIN, getLoginStatusString(context));
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_REMOTE, getRemoteSettingStatus(context));
+        return customDimensions;
+    }
+
+    /**
+     * カスタムディメンション取得(サービス、ジャンル).
+     *
+     * @param service サービス
+     * @param genre ジャンル
+     * @return 「サービス、ジャンル」のテータス
+     */
+    public static SparseArray<String> getGenreCustomDimensions(final String service, final String genre) {
+        SparseArray<String> customDimensions = new SparseArray<>();
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, service);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_GENRE, genre);
         return customDimensions;
     }
 

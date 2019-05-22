@@ -362,9 +362,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if (!isFromTab && mIsFromBgFlg) {
                 super.sendScreenView(screenName, ContentUtils.getParingAndLoginCustomDimensions(RecordedListActivity.this));
             } else {
-                SparseArray<String> customDimensions  = new SparseArray<>();
-                customDimensions.put(ContentUtils.CUSTOMDIMENSION_SERVICE, getString(R.string.google_analytics_custom_dimension_service_h4d));
-                super.sendScreenView(screenName, customDimensions);
+                super.sendScreenView(screenName, null);
             }
         }
     }

@@ -34,6 +34,7 @@
     <dimen name="launch_stb_start_up_icon2_high">44dp</dimen>
     <dimen name="launch_stb_start_up_icon2_width">163dp</dimen>
     <dimen name="launch_stb_account_error_margin_top">40dp</dimen>
+    <dimen name="launch_stb_door_text_zero_padding_all">0dp</dimen>
 
     <dimen name="clip_button_size">44dp</dimen>
     <dimen name="item_common_clip_button_padding">7dp</dimen>

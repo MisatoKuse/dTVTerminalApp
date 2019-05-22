@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
@@ -46,6 +47,13 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
         setContent();
         // dアカウント処理は不要
         setUnnecessaryDaccountRegistService();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_agreement),
+                mIsFromBgFlg ? ContentUtils.getParingAndLoginCustomDimensions(LaunchTermsOfServiceActivity.this) : null);
     }
 
     /**
