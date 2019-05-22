@@ -35,11 +35,7 @@ android {
 
     // ★マイナーリリース毎にインクリメントするVersionNameのリビジョン数値(下2桁)
     // ※バージョンが上がったら0リセットすること
-<<<<<<< HEAD
-    def revison_end_num = "02"
-=======
     def revison_end_num = "01"
->>>>>>> feature/Phase3/Sprint17/Sprint17
 
     signingConfigs {
         dcmeval {
