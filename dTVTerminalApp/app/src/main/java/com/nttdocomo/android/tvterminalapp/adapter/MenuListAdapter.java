@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.List;
 
@@ -107,6 +108,7 @@ public class MenuListAdapter extends BaseAdapter {
             holder.tv_arrow = itemProgramView.findViewById(R.id.iv_arrow);
             holder.tv_title_icon = itemProgramView.findViewById(R.id.tv_title_icon);
             holder.menu_item_divider = itemProgramView.findViewById(R.id.menu_item_divider);
+            holder.notice_news_icon = itemProgramView.findViewById(R.id.notice_news_icon);
             itemProgramView.setTag(holder);
         } else {
             itemProgramView = view;
@@ -117,6 +119,7 @@ public class MenuListAdapter extends BaseAdapter {
         setTextViewAndMenuDivider(title, holder.tv_title, holder.menu_item_divider);
         setImageView(title, holder.tv_arrow);
         setTitleNameImageView(title, holder.tv_title_icon);
+        setStatusImageView(title, holder.notice_news_icon);
         int cnt = (int) mDataCounts.get(i);
         if (MenuDisplay.INT_NONE_COUNT_STATUS != cnt) {
             holder.tv_count.setText(String.valueOf(cnt));
@@ -300,6 +303,20 @@ public class MenuListAdapter extends BaseAdapter {
         Drawable drawable = ContextCompat.getDrawable(mContext, resId);
         dst.setImageDrawable(drawable);
     }
+
+    /**
+     * 右側のステータスアイコン表示設定
+     * @param title メニュータイトル
+     * @param imageView 右側のメニューイメージビュー
+     */
+    private void setStatusImageView(final String title, final ImageView imageView) {
+        if (title != null && title.equals(mContext.getString(R.string.nav_menu_item_notice)) && SharedPreferencesUtils.getUnreadNewlyNotice(mContext)) {
+            imageView.setVisibility(View.VISIBLE);
+        } else {
+            imageView.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * ViewHolder.
      */
@@ -324,6 +341,10 @@ public class MenuListAdapter extends BaseAdapter {
          * メニュー区切り線.
          */
         View menu_item_divider;
+        /**
+         * お知らせのNEWアイコン
+         */
+        ImageView notice_news_icon;
     }
 
     /**

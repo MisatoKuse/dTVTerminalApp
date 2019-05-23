@@ -69,6 +69,10 @@ public class DtvtConstants {
      * クリップ一覧パラメータ(取得方向).
      */
     public static final String CLIP_BODY_DIRECTION_NEXT = "next";
+    /**
+     * HTMLヘッダーキー：Last-Modified
+     */
+    public static final String LAST_MODIFIED_HEADER_KEY = "Last-Modified";
 
     /**
      * disp_type 一覧（まず、多階層用のみ宣言）.

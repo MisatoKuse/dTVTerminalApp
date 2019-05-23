@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.content.Context;
 import android.os.Handler;
+import android.provider.SyncStateContract;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
@@ -132,6 +133,11 @@ public class HttpThread extends Thread {
     private ErrorState mErrorStatus;
 
     /**
+     * HTMLのヘッダー情報
+     */
+    private HtmlHeaderData mHtmlHeaderData;
+
+    /**
      * HTTP通信終了を通知するインターフェイス.
      */
     public interface HttpThreadFinish {
@@ -188,6 +194,21 @@ public class HttpThread extends Thread {
         if (mErrorStatus != null) {
             mErrorStatus.setXmlErrorCode(xmlString);
         }
+    }
+
+    /**
+     * HTMLのヘッダー取得
+     * @return  HTMLレスポンスヘッダー
+     */
+    public HtmlHeaderData getResponseHeaderField() {
+        return mHtmlHeaderData;
+    }
+
+    /**
+     * HTMLのヘッダー設定
+     */
+    private void setResponseHeader() {
+        mHtmlHeaderData.lastModified = mHttpUrlConn.getHeaderField(DtvtConstants.LAST_MODIFIED_HEADER_KEY);
     }
 
     /**
@@ -255,6 +276,11 @@ public class HttpThread extends Thread {
 
         //エラー情報構造体の宣言
         mErrorStatus = new ErrorState();
+
+        // Htmlレスポンスヘッダー
+        if (UrlConstants.WebUrl.NOTICE_URL == url) {
+            mHtmlHeaderData = new HtmlHeaderData();
+        }
     }
 
     /**
@@ -364,6 +390,17 @@ public class HttpThread extends Thread {
                 ocspURLConnection.connect();
             }
 
+            // お知らせ取得の場合、レスポンスヘッダー情報のみ使用しているため、afterProcessの処理は不要である。
+            if (UrlConstants.WebUrl.NOTICE_URL == mUrl && null != mHttpThreadFinish) {
+                setResponseHeader();
+                mHttpThreadFinish.onHttpThreadFinish(null, null);
+
+                if (mHttpUrlConn != null) {
+                    mHttpUrlConn.disconnect();
+                }
+                return;
+            }
+
             //通信後の処理を外に出す
             stringBuffer = afterProcess();
         } catch (UnknownHostException e) {
@@ -459,7 +496,6 @@ public class HttpThread extends Thread {
         BufferedReader bufferedReader = null;
         DTVTLogger.debug("response=" + status);
         StringBuffer stringBuffer = new StringBuffer();
-
         if (status == HttpURLConnection.HTTP_OK) {
             InputStream inputStream = mHttpUrlConn.getInputStream();
             if (null == inputStream) {

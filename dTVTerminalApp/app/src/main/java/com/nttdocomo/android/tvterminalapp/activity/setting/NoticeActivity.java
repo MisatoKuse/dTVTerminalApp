@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserAgentUtils;
 
 /**
@@ -55,6 +56,10 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
         setTitleText(getString(R.string.information_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
+
+        // 新しいお知らせの既読状態を更新
+        SharedPreferencesUtils.setUnreadNewlyNotice(this, false);
+        changeGlobalMenuNewIcon(false);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);

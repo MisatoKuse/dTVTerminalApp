@@ -152,6 +152,9 @@ public class DateUtils {
     /** 日付フォーマット. */
     public static final String DATE_STANDARD_END = "03:59:59";
 
+    /** Last-Modifiedフォーマット */
+    private static final String DATE_E_D_MMM_YYYY_HH_MM_SS_Z = "E, d MMM yyyy hh:mm:ss Z";
+
     /** DB保存期限. */
     private static final int LIMIT_HOUR = 1;
 
@@ -1575,5 +1578,25 @@ public class DateUtils {
             nowTimeEpoch = nowTimeEpoch - EPOCH_TIME_ONE_DAY;
         }
         return formatEpochToSimpleDate(nowTimeEpoch);
+    }
+
+    /**
+     * 文字列から日付に変更
+     * @param dateString　フォーマットが”E, d MMM yyyy HH:mm:ss Z”の日付文字列
+     * @return
+     */
+    public static Date changeNoticeLastModifiedStringToDate(final String dateString) {
+        if (TextUtils.isEmpty(dateString)) {
+            return null;
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat(DATE_E_D_MMM_YYYY_HH_MM_SS_Z, Locale.ENGLISH); //フォーマット：Wed, 27 Mar 2019 17:00:00 GMT
+        Date date = null;
+        try {
+            date = format.parse(dateString);
+        } catch (Exception e) {
+            DTVTLogger.debug("Error with date format");
+        }
+        return date;
     }
 }
