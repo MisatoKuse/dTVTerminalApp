@@ -792,8 +792,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         try {
             clearTextSizeInt = Long.parseLong(clearTextSize);
         } catch (NumberFormatException e) {
-            showMessage();
-            return false;
+            clearTextSizeInt = 0;
         }
         mDownloadParam = new DtcpDownloadParam();
         DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) mDownloadParam;

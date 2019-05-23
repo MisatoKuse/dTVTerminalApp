@@ -283,12 +283,18 @@ du_bool calculateDownloadSize(const du_uchar* cleartextSize, const du_uchar* est
     if ((cleartextSize != nullptr) && du_str_scan_uint64(cleartextSize, size)) {
         // cleartextSize
         LOG_WITH("downloader: size using dlna:cleartextSize: [%llu]", *size);
-        return 1;
-    } else if ((estimatedSize != nullptr) && du_str_scan_uint64(estimatedSize, size)){
+        if (*size != 0) {
+            return 1;
+        }
+    }
+    if ((estimatedSize != nullptr) && du_str_scan_uint64(estimatedSize, size)){
         // estimatedSize
         LOG_WITH("downloader: size using dlna:estimatedSize: [%llu]", *size);
-        return 1;
-    } else if ((bitrate != nullptr) && (duration != nullptr) ) {
+        if (*size != 0) {
+            return 1;
+        }
+    }
+    if ((bitrate != nullptr) && (duration != nullptr) ) {
         // bitrate & duration
         du_uint32 duration_ms;
         du_uint32 byterate;

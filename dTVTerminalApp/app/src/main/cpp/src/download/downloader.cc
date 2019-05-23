@@ -807,13 +807,17 @@ static du_bool estimate_size(const du_uchar* didl, const du_uchar* url, du_uint6
         if ((s = dav_didl_object_attribute_list_get_attribute_value(prop->attr_list, dav_didl_attribute_dlna_cleartext_size()))) {
             if (!du_str_scan_uint64(s, size)) {LOGW; goto error;}
             du_log_dv(0, DU_UCHAR_CONST("downloader: estimate size using dlna:cleartextSize"));
-            break;
+            if (*size != 0) {
+                break;
+            }
         }
 
         if ((s = dav_didl_object_attribute_list_get_attribute_value(prop->attr_list, dav_didl_attribute_dlna_estimated_size()))) {
             if (!du_str_scan_uint64(s, size)) {LOGW; goto error;}
             du_log_dv(0, DU_UCHAR_CONST("downloader: estimate size using dlna:estimatedSize"));
-            break;
+            if (*size != 0) {
+                break;
+            }
         }
 
         s = dav_didl_object_attribute_list_get_attribute_value(prop->attr_list, dav_didl_attribute_bitrate());

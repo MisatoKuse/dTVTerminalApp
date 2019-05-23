@@ -85,7 +85,7 @@ void DlnaDownload::downloaderProgressHandler(du_uint64 sent_size, du_uint64 tota
         float f1 = ((float) sent_size);
         float f2 = ((float) total_size);
         int ff = (int) ((f1 / f2) * 100);
-        if (ff >= 99) {
+        if (ff > 99) {
             LOG_WITH("download percent >= 99 %d%%", ff);
             ff = 99;
         }
