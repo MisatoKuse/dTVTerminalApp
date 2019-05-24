@@ -21,7 +21,9 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -40,6 +42,7 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
     private final static int SPAN_START_POSITION = 28;
     /**ENDポジション.*/
     private final static int SPAN_END_POSITION = 31;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,10 +131,11 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
         DTVTLogger.start();
         switch (view.getId()) {
             case R.id.agree_to_terms_start_use_button:
-                Intent intent = new Intent(this, LaunchStbActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                // 利用規約画面表示時にアプリケーションプライバシーポリシーバージョンを保存する
+                SharedPreferencesUtils.setSharedPreferencesApplicationPrivacyPolicyVersion(this, DtvtConstants.NEW_APPLICATION_PRIVACY_POLICY_VERSION);
+                // チュートリアル画面表示フラグ設定
                 SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this, true);
-                startActivity(intent);
+                transitionNextActivity();
                 break;
             case R.id.externally_transmit_layout:
                 ImageView externallyImageView = findViewById(R.id.externally_transmit_open_image);
@@ -172,5 +176,44 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
     @Override
     protected void restartMessageDialog(final String... message) {
         //この画面でdアカウント変わった旨のホーム画面遷移する促すダイアログを出さない
+    }
+
+    /**
+     * 次Activityに遷移する
+     */
+    private void transitionNextActivity() {
+        DTVTLogger.start();
+
+        Intent nextActivity;
+        if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
+            // ペアリング済み HOME画面遷移
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
+            nextActivity = new Intent(getApplicationContext(), HomeActivity.class);
+            nextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            DTVTLogger.debug("ParingOK Start HomeActivity");
+        } else if (SharedPreferencesUtils.getSharedPreferencesShowLaunchStbStatus(this)) {
+            // 次回から表示しないをチェック済み
+            // 未ペアリング HOME画面遷移
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
+            nextActivity = new Intent(getApplicationContext(), HomeActivity.class);
+            nextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            DTVTLogger.debug("ParingNG Start HomeActivity");
+        } else {
+            // 初期設定扉画面へ遷移(初期表示)
+            if (!SharedPreferencesUtils.getSharedPreferencesStbLaunchFirst(this)) {
+                nextActivity = new Intent(getApplicationContext(), LaunchStbActivity.class);
+            } else {
+                // wifiチェック(未接続の場合)
+                if (isWifiOn()) {
+                    nextActivity = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                } else {
+                    nextActivity = new Intent(getApplicationContext(), HomeActivity.class);
+                }
+            }
+            nextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+
+        startActivity(nextActivity);
+        DTVTLogger.debug("Start StbSelectActivity");
     }
 }

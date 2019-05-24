@@ -83,6 +83,10 @@ public class SharedPreferencesUtils {
      */
     private static final String SHARED_KEY_IS_DISPLAYED_TUTORIAL = "is_displayed_tutorial";
     /**
+     * アプリケーションプライバシーポリシーバージョン
+     */
+    private static final String SHARED_KEY_APPLICATION_PRIVACY_POLICY_VERSION = "application_privacy_policy_version";
+    /**
      * SettingActivity 画質設定の設定値.
      */
     private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
@@ -515,6 +519,36 @@ public class SharedPreferencesUtils {
                 SHARED_KEY_SCREEN_INFORMATION, Context.MODE_PRIVATE);
 
         return data.getBoolean(SHARED_KEY_IS_DISPLAYED_TUTORIAL, false);
+    }
+
+    /**
+     * アプリケーションプライバシーポリシーバージョン情報の設定
+     *
+     * @param context コンテキスト
+     * @param version アプリケーションプライバシーポリシーバージョン
+     */
+    public static void setSharedPreferencesApplicationPrivacyPolicyVersion(final Context context, final int version) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_APPLICATION_PRIVACY_POLICY_VERSION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(SHARED_KEY_APPLICATION_PRIVACY_POLICY_VERSION, version);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * アプリケーションプライバシーポリシーバージョン情報の取得
+     *
+     * @param context コンテキスト
+     * @return アプリケーションプライバシーポリシーバージョン
+     */
+    public static int getSharedPreferencesApplicationPrivacyPolicyVersion(final Context context) {
+        DTVTLogger.debug("getSharedPreferencesAppVersion");
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_APPLICATION_PRIVACY_POLICY_VERSION, Context.MODE_PRIVATE);
+
+        return data.getInt(SHARED_KEY_APPLICATION_PRIVACY_POLICY_VERSION, 0);
     }
 
     /**

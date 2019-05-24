@@ -86,7 +86,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         sIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
 
         if (sIsFirstRun) {
-            SharedPreferencesUtils.setCacheDataVersion(this, DtvtConstants.newCacheDataVersion);
+            SharedPreferencesUtils.setCacheDataVersion(this, DtvtConstants.NEW_CACHE_DATA_VERDION);
             SharedPreferencesUtils.setAppVersion(this, BuildConfig.VERSION_NAME);
         } else {
             checkCacheDataVersion();
@@ -101,9 +101,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     private void checkCacheDataVersion() {
         int savedCacheDataVersion = SharedPreferencesUtils.getCacheDataVersion(this);
-        if (savedCacheDataVersion < DtvtConstants.newCacheDataVersion) {
+        if (savedCacheDataVersion < DtvtConstants.NEW_CACHE_DATA_VERDION) {
             clearCacheKey();
-            SharedPreferencesUtils.setCacheDataVersion(this, DtvtConstants.newCacheDataVersion);
+            SharedPreferencesUtils.setCacheDataVersion(this, DtvtConstants.NEW_CACHE_DATA_VERDION);
         }
     }
 
@@ -245,6 +245,10 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             //チュートリアル画面に遷移
             mNextActivity = new Intent(getApplicationContext(), TutorialActivity.class);
 
+        } else if (checkApplicationPrivacyPolicyVersion()) {
+            // 利用規約画面表示
+            mNextActivity = new Intent(getApplicationContext(), LaunchTermsOfServiceActivity.class);
+            mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         } else if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
@@ -339,6 +343,22 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         return !((mCheckSetting != null && mCheckSetting.isBusy())
                 || mCheckSetting == null);
 
+    }
+
+    /**
+     *アプリケーションプライバシーポリシーバージョンチェック
+     *
+     * @return アプリケーションプライバシーポリシー更新されていればtrue
+     */
+    private boolean checkApplicationPrivacyPolicyVersion() {
+        DTVTLogger.start();
+        //　保存されているアプリケーションプライバシーポリシーバージョン
+        int applicationPrivacyPolicyVersion = SharedPreferencesUtils.getSharedPreferencesApplicationPrivacyPolicyVersion(getApplicationContext());
+        // 更新されたアプリケーションプライバシーポリシーバージョン
+        int newApplicationPrivacyPolicyVersion = DtvtConstants.NEW_APPLICATION_PRIVACY_POLICY_VERSION;
+
+        DTVTLogger.end();
+        return applicationPrivacyPolicyVersion < newApplicationPrivacyPolicyVersion;
     }
 
     @Override
