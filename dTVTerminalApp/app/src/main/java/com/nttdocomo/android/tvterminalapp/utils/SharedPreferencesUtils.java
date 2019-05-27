@@ -1492,7 +1492,7 @@ public class SharedPreferencesUtils {
             SharedPreferences.Editor editor = data.edit();
             editor.putString(NOTICE_LAST_MIDIFIED_TIME_KEY, lastModifiedDateString);
             editor.apply();
-            setUnreadNewlyNotice(context, false);
+            setUnreadNewlyNotice(context, true);
             return true;
         } else {
             return false;
@@ -1520,7 +1520,7 @@ public class SharedPreferencesUtils {
      */
     public static boolean getUnreadNewlyNotice(final Context context) {
         SharedPreferences data = context.getSharedPreferences(UNREAD_NOTICE_NEWS_KEY, Context.MODE_PRIVATE);
-        return data.getBoolean(UNREAD_NOTICE_NEWS_KEY, true);
+        return data.getBoolean(UNREAD_NOTICE_NEWS_KEY, false);
     }
 
     /**
