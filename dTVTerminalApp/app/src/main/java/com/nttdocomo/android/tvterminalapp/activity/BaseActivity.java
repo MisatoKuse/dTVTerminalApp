@@ -447,7 +447,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param isNewly   true: 新着お知らせあり。false: 新着お知らせなし
      */
     protected void changeGlobalMenuNewIcon(final boolean isNewly) {
-        if (null != mMenuImageViewForBase && HEADER_ICON_MENU.equals(mMenuImageViewForBase.getTag())) {
+        if (null != mMenuImageViewForBase && !HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
             if (isNewly || SharedPreferencesUtils.getUnreadNewlyNotice(mContext)) {
                 mMenuImageViewForBase.setImageResource(R.drawable.header_menu_news_selector);
             } else {
