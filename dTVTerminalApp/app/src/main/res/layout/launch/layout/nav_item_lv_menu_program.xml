@@ -22,6 +22,15 @@
         android:layout_centerVertical="true" />
 
     <ImageView
+        android:id="@+id/notice_news_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_toLeftOf="@+id/iv_arrow"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/label_new_menu"/>
+
+    <ImageView
         android:id="@+id/iv_arrow"
         android:layout_width="@dimen/global_menu_list_right_arrow_icon_size"
         android:layout_height="@dimen/global_menu_list_right_arrow_icon_size"

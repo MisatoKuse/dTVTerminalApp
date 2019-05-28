@@ -31,7 +31,7 @@
             android:layout_width="@dimen/main_header_icon_size"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:src="@mipmap/header_material_icon_menu"
+            android:src="@drawable/header_menu_selector"
             android:visibility="invisible" />
     </LinearLayout>
 

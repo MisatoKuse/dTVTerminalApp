@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -14,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.Serial
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -200,6 +202,14 @@ public class SharedPreferencesUtils {
      * バージョンのPreferenceの名前
      */
     private static final String VERSION_PREFERENCES_NAME = "VERSION_PREFERENCES_NAME";
+    /**
+     * 新お知らせキー
+     */
+    private static final String NOTICE_LAST_MIDIFIED_TIME_KEY = "NOTICE_LAST_MIDIFIED_TIME_KEY";
+    /**
+     * 新お知らせ未読キー
+     */
+    private static final String UNREAD_NOTICE_NEWS_KEY = "UNREAD_NOTICE_NEWS_KEY";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -1489,6 +1499,74 @@ public class SharedPreferencesUtils {
         SharedPreferences data = context.getSharedPreferences(VERSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(APP_VERSION, appVersion);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * Last-Modified情報を確認し、新着お知らせがあるかを判定する
+     * @param context   コンテキスト
+     * @param lastModifiedDateString    サーバーから返却したLast-Modified日付文字列
+     * @return  true：新着お知らせがある。その他：新着お知らせがない。
+     */
+    public static boolean updateNewlyNoticeFlag(final Context context, final String lastModifiedDateString) {
+        if (TextUtils.isEmpty(lastModifiedDateString)) {
+            return false;
+        }
+
+        Date lastModifiedDate = DateUtils.changeNoticeLastModifiedStringToDate(lastModifiedDateString);
+        if (lastModifiedDate == null) {
+            return false;
+        }
+
+        SharedPreferences data = context.getSharedPreferences(NOTICE_LAST_MIDIFIED_TIME_KEY, Context.MODE_PRIVATE);
+        Date preModifiedDate = DateUtils.changeNoticeLastModifiedStringToDate(data.getString(NOTICE_LAST_MIDIFIED_TIME_KEY, ""));
+
+        if (preModifiedDate == null || lastModifiedDate.after(preModifiedDate)) {
+            SharedPreferences.Editor editor = data.edit();
+            editor.putString(NOTICE_LAST_MIDIFIED_TIME_KEY, lastModifiedDateString);
+            editor.apply();
+            setUnreadNewlyNotice(context, true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * dアカウントログアウトおよび切り替えるなど時に新着お知らせ表示のFlagをリセット
+     * @param context
+     */
+    public static void removeNewlyNoticeFlag(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(NOTICE_LAST_MIDIFIED_TIME_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.remove(NOTICE_LAST_MIDIFIED_TIME_KEY);
+        editor.remove(UNREAD_NOTICE_NEWS_KEY);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 新着お知らせの既読状態を取得
+     * @param context   コンテキスト
+     * @return  ローカルの既読状態
+     */
+    public static boolean getUnreadNewlyNotice(final Context context) {
+        SharedPreferences data = context.getSharedPreferences(UNREAD_NOTICE_NEWS_KEY, Context.MODE_PRIVATE);
+        return data.getBoolean(UNREAD_NOTICE_NEWS_KEY, false);
+    }
+
+    /**
+     * 新着お知らせの既読状態を設定
+     * @param context   コンテキスト
+     * @param unread    読書状態
+     */
+    public static void setUnreadNewlyNotice(final Context context, final boolean unread) {
+        DTVTLogger.start("unread = " + unread);
+        SharedPreferences data = context.getSharedPreferences(UNREAD_NOTICE_NEWS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(UNREAD_NOTICE_NEWS_KEY, unread);
         editor.apply();
         DTVTLogger.end();
     }

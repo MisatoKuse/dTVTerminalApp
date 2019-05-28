@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstant
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.NoticeDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
@@ -86,6 +87,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         RentalChListWebClient.RentalChListJsonParserCallback,
         RentalDataProvider.ApiDataProviderCallback,
+        NoticeDataProvider.NoticeDataProviderCallback,
         HomeDataProvider.ApiDataProviderCallback, UserInfoDataProvider.UserDataProviderCallback,
         HomeRecyclerViewAdapter.ItemClickCallback {
 
@@ -329,6 +331,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         enableStbStatusIcon(true);
+        updateNoticeInfo();
         if (!isOttChecked) {
             //ワンタイムトークンチェックフラグを済みにする
             isOttChecked = true;
@@ -1144,6 +1147,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableGlobalMenuIconHome(true);
     }
 
+    /**
+     * ホームに遷移時（BG→FGにも含む）にお知らせ情報を更新
+     */
+    private void updateNoticeInfo() {
+        NoticeDataProvider noticeDataProvider = new NoticeDataProvider(this, this);
+        noticeDataProvider.requestNotice();
+    }
+
     @Override
     public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse, final ErrorState jsonParseError) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1331,5 +1342,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             finish();
         }
         return false;
+    }
+
+    @Override
+    public void noticeGetFinishCallBack(final boolean isNewly) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                changeGlobalMenuNewIcon(isNewly);
+            }
+        });
+
     }
 }

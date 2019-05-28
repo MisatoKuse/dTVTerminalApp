@@ -143,7 +143,6 @@ public class BaseActivity extends FragmentActivity implements
         HomeRecyclerViewAdapter.ItemClickCallback,
         StbConnectionManager.ConnectionListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
-
         DaccountReceiver.DaccountChangedCallBack {
     /** ヘッダーBaseレイアウト. */
     private LinearLayout mBaseLinearLayout = null;
@@ -326,6 +325,7 @@ public class BaseActivity extends FragmentActivity implements
         mDrawerLayout = findViewById(R.id.baseCustomDrawerLayout);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mGlobalMenuListView = findViewById(R.id.menu_list);
+        changeGlobalMenuNewIcon(false);
         DTVTLogger.end();
     }
 
@@ -433,11 +433,25 @@ public class BaseActivity extends FragmentActivity implements
     protected void changeGlobalMenuIcon(final boolean isMenu) {
         if (null != mMenuImageViewForBase) {
             if (isMenu) {
-                mMenuImageViewForBase.setImageResource(R.mipmap.header_material_icon_menu);
+                mMenuImageViewForBase.setImageResource(R.drawable.header_menu_selector);
                 mMenuImageViewForBase.setTag(HEADER_ICON_MENU);
             } else {
                 mMenuImageViewForBase.setImageResource(R.mipmap.header_material_icon_close);
                 mMenuImageViewForBase.setTag(HEADER_ICON_CLOSE);
+            }
+        }
+    }
+
+    /**
+     * 新着お知らせのメニューアイコンを切り替え
+     * @param isNewly   true: 新着お知らせあり。false: 新着お知らせなし
+     */
+    protected void changeGlobalMenuNewIcon(final boolean isNewly) {
+        if (null != mMenuImageViewForBase && !HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
+            if (isNewly || SharedPreferencesUtils.getUnreadNewlyNotice(mContext)) {
+                mMenuImageViewForBase.setImageResource(R.drawable.header_menu_news_selector);
+            } else {
+                mMenuImageViewForBase.setImageResource(R.drawable.header_menu_selector);
             }
         }
     }
@@ -1372,6 +1386,10 @@ public class BaseActivity extends FragmentActivity implements
             @Override
             public void onOKCallback(final boolean isOK) {
                 SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
+
+                // dアカウントが変更しましたため、新しいお知らせの未読状態に関するFlagをリセットする
+                SharedPreferencesUtils.removeNewlyNoticeFlag(mContext);
+
                 //OKが押されたので、ホーム画面の表示
                 reStartApplication();
             }
