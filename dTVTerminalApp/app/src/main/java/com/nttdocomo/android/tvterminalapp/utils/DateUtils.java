@@ -153,7 +153,7 @@ public class DateUtils {
     public static final String DATE_STANDARD_END = "03:59:59";
 
     /** Last-Modifiedフォーマット */
-    private static final String DATE_E_D_MMM_YYYY_HH_MM_SS_Z = "E, d MMM yyyy hh:mm:ss Z";
+    private static final String DATE_E_D_MMM_YYYY_HH_MM_SS_Z = "E, d MMM yyyy HH:mm:ss Z";
 
     /** DB保存期限. */
     private static final int LIMIT_HOUR = 1;
