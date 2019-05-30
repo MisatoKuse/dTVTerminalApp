@@ -3,6 +3,7 @@
  */
 
 #include "DlnaDmsBrowse.h"
+#include <dav_didl_duration.h>
 
 #include <vector>
 #include <dcu_converter_arib.h>
@@ -36,7 +37,7 @@ std::function<void(const char* containerUpdateIds)> DlnaDmsBrowse::EventHandlerC
 
 extern du_bool browseDirectChildren2(DMP* d, const du_uchar* controlUrl);
 
-const du_uchar* BDC_FILTER = DU_UCHAR_CONST("@id=\"\",@restricted=\"0\",dc:title,upnp:class,res,res@protocolInfo,res@duration,res@dlna:cleartextSize,upnp:genre,arib:objectType,upnp:rating,upnp:channelName,upnp:channelNr,dc:date,@res@allowedUse,upnp:lastPlaybackPosition,res@bitrate");
+const du_uchar* BDC_FILTER = DU_UCHAR_CONST("@id=\"\",@restricted=\"0\",dc:title,upnp:class,res,res@protocolInfo,res@duration,res@dlna:estimatedSize,res@dlna:cleartextSize,upnp:genre,arib:objectType,upnp:rating,upnp:channelName,upnp:channelNr,dc:date,res@allowedUse,upnp:lastPlaybackPosition,res@bitrate");
 
 bool DlnaDmsBrowse::selectContainerWithContainerId(DMP *dmp, du_uint32 offset, du_uint32 limit, const du_uchar* containerId, const du_uchar* controlUrlString) {
     LOG_WITH_PARAM("containerId = %s, offset = %u, limit = %u", containerId, offset, limit);
@@ -277,6 +278,36 @@ error:
     return 0;
 }
 
+du_bool calculateDownloadSize(const du_uchar* cleartextSize, const du_uchar* estimatedSize, const du_uchar* bitrate, const du_uchar* duration, du_uint64* size) {
+    *size = 0;
+    if ((cleartextSize != nullptr) && du_str_scan_uint64(cleartextSize, size)) {
+        // cleartextSize
+        LOG_WITH("downloader: size using dlna:cleartextSize: [%llu]", *size);
+        if (*size != 0) {
+            return 1;
+        }
+    }
+    if ((estimatedSize != nullptr) && du_str_scan_uint64(estimatedSize, size)){
+        // estimatedSize
+        LOG_WITH("downloader: size using dlna:estimatedSize: [%llu]", *size);
+        if (*size != 0) {
+            return 1;
+        }
+    }
+    if ((bitrate != nullptr) && (duration != nullptr) ) {
+        // bitrate & duration
+        du_uint32 duration_ms;
+        du_uint32 byterate;
+        if (du_str_scan_uint32(bitrate, &byterate) && dav_didl_duration_scan(duration, &duration_ms)) {
+            // byterate(ビット速度) = bit/s
+            *size = (duration_ms / 1000) * byterate;
+            LOG_WITH("downloader: size using bitrate and duration: [%llu]", *size);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_container, dav_capability_class cls, ContentInfo &contentInfo) {
     xmlChar* s = 0;
     xmlNodePtr p;
@@ -285,6 +316,9 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
     xmlNodePtr curNode;
     int resPos = 0;
     int resCount = 0;
+
+    char tmpCleartextSize[256];
+    char tmpEstimatedSize[256];
     
     du_uchar_array_init(&ua);
     
@@ -360,8 +394,15 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
             // cleartextSize
             if (dav_didl_libxml_get_attribute_value_by_name(p, dav_didl_attribute_dlna_cleartext_size(), &ua)) {
                 if (!du_uchar_array_cat0(&ua)) goto error;
-                snprintf(contentInfo.cleartextSize, sizeof(contentInfo.cleartextSize), "%s" , du_uchar_array_get(&ua));
-                MY_LOG("   size: %s", du_uchar_array_get(&ua));
+                snprintf(tmpCleartextSize, sizeof(tmpCleartextSize), "%s" , du_uchar_array_get(&ua));
+                MY_LOG("   cleartextSize: %s", du_uchar_array_get(&ua));
+            }
+
+            // estimatedSize
+            if (dav_didl_libxml_get_attribute_value_by_name(p, dav_didl_attribute_dlna_estimated_size(), &ua)) {
+                if (!du_uchar_array_cat0(&ua)) goto error;
+                snprintf(tmpEstimatedSize, sizeof(tmpEstimatedSize), "%s" , du_uchar_array_get(&ua));
+                MY_LOG("   estimatedSize: %s", du_uchar_array_get(&ua));
             }
 
             // protocol_info
@@ -418,6 +459,15 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
                 if (!du_uchar_array_cat0(&ua)) goto error;
                 snprintf(contentInfo.bitrate, sizeof(contentInfo.bitrate), "%s" , du_uchar_array_get(&ua));
                 MY_LOG("   bitrate: %s", du_uchar_array_get(&ua));
+            }
+
+
+            // download size
+            du_uint64 downloadSize;
+            if (calculateDownloadSize((du_uchar*)tmpCleartextSize, (du_uchar*)tmpEstimatedSize, (du_uchar*)contentInfo.bitrate, (du_uchar*)contentInfo.duration, &downloadSize)) {
+                // cleartextSizeを使い回す
+                snprintf(contentInfo.cleartextSize, sizeof(contentInfo.cleartextSize), "%llu" , downloadSize);
+                MY_LOG("   download size: %llu", downloadSize);
             }
 
         } else {

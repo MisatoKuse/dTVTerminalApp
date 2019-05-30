@@ -77,14 +77,14 @@ void DlnaDownload::downloaderProgressHandler(du_uint64 sent_size, du_uint64 tota
     float res = ((float)(diff)) / ((float)total_size);
     float pp = percent * 0.01f;
 
-    if (sent_size >= total_size) {
-        lastNotifiedBytes=0;
-        return;
-    }
     if (res >= pp) {
         float f1 = ((float) sent_size);
         float f2 = ((float) total_size);
         int ff = (int) ((f1 / f2) * 100);
+        if (ff > 99) {
+            LOG_WITH("download percent >= 99 %d%%", ff);
+            ff = 99;
+        }
         LOG_WITH("C>>>>>>>>>>>>>>>>DlnaDownload.cpp %d%%", ff);
         if (DlnaDownload::DownloadProgressCallBack != nullptr) {
             DlnaDownload::DownloadProgressCallBack(ff);
