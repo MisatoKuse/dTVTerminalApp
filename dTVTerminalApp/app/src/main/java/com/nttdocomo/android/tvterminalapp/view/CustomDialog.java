@@ -59,6 +59,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     private boolean mBackKeyAsCancel = false;
     /** バックキータップの可能／不可. */
     private boolean mEnableBackkey = true;
+    /** バックキーをアプリ終了として扱うスイッチ. */
+    private boolean mBackKeyAsFinishActivity = false;
     /**独自レイアウトView.*/
     private View mCustomView;
 
@@ -297,6 +299,16 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     }
 
     /**
+     * アプリ終了
+     */
+    private void finishActivity () {
+        if (mContext != null && mContext instanceof BaseActivity) {
+            //コンテキストがベースアクティビティから継承された物かどうかの判定
+            ((BaseActivity) mContext).stopAllActivity();
+        }
+    }
+
+    /**
      * ダイアログを閉じる.
      */
     public void dismissDialog() {
@@ -359,6 +371,9 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
                     && event.getAction() != KeyEvent.ACTION_UP) {
                 if (mEnableBackkey) {
                     dialog.dismiss();
+                    if (mBackKeyAsFinishActivity) {
+                        finishActivity();
+                    }
                     return true;
                 }
             }
@@ -474,5 +489,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
      */
     public void setBackKeyAsCancel(final boolean setSwitch) {
         mBackKeyAsCancel = setSwitch;
+    }
+
+    /**
+     * バックキーでダイアログのアプリ終了ボタンとして扱うか否かを指定する.
+     *
+     * @param setSwitch trueを指定すると、バックキーでのアプリが終了になる
+     */
+    public void setBackKeyAsFinishActivity(final boolean setSwitch) {
+        mBackKeyAsFinishActivity = setSwitch;
     }
 }

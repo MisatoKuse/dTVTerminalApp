@@ -344,6 +344,7 @@ public class ProcessSettingFile {
         } else {
             //ダイアログを、キャンセル無しにする
             dialog = new CustomDialog(mActivity, CustomDialog.DialogType.ERROR);
+            dialog.setBackKeyAsFinishActivity(true);
             printMessage = mActivity.getString(R.string.setting_file_force_download);
         }
 
