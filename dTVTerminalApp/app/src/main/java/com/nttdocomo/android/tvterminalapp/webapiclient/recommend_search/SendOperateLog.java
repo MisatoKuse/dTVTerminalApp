@@ -130,29 +130,27 @@ public class SendOperateLog extends WebApiBase {
             } else {
                 mCategoryId = mDetailData.getCategoryId();
             }
-            if (!TextUtils.isEmpty(mCategoryId)) {
-                DTVTLogger.debug("”execDaccountGetOTT” sendOpeLog");
+            DTVTLogger.debug("”execDaccountGetOTT” sendOpeLog");
 
-                //認証画面の表示状況のインスタンスの取得
-                final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+            //認証画面の表示状況のインスタンスの取得
+            final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
 
-                //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
-                mGetOtt = new DaccountGetOtt();
-                mGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
-                    @Override
-                    public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-                        if(result == IDimDefines.RESULT_USER_CANCEL) {
-                            //キャンセルならば、ログアウトのダイアログを呼び出す
-                            ottGetAuthSwitch.showLogoutDialog();
-                        } else {
-                            //ワンタイムパスワードの取得後に呼び出す
-                            mHttpThread = new HttpThread(getUrl(mDetailData), null,
-                                    mContext, oneTimePassword, mGetOtt);
-                            mHttpThread.start();
-                        }
+            //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
+            mGetOtt = new DaccountGetOtt();
+            mGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
+                @Override
+                public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
+                    if(result == IDimDefines.RESULT_USER_CANCEL) {
+                        //キャンセルならば、ログアウトのダイアログを呼び出す
+                        ottGetAuthSwitch.showLogoutDialog();
+                    } else {
+                        //ワンタイムパスワードの取得後に呼び出す
+                        mHttpThread = new HttpThread(getUrl(mDetailData), null,
+                                mContext, oneTimePassword, mGetOtt);
+                        mHttpThread.start();
                     }
-                });
-            }
+                }
+            });
         }
         DTVTLogger.end();
     }
@@ -228,9 +226,15 @@ public class SendOperateLog extends WebApiBase {
                                 default:
                                     break;
                             }
+                            // 地デジ・BSのカテゴリー分類は次回のストーリーで対応予定
+//                        case ContentUtils.TV_SERVICE_FLAG_TTB:
+//                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_TTB.getCategoryId();
+//                        case ContentUtils.TV_SERVICE_FLAG_BS:
+//                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_BS.getCategoryId();
                         default:
                             break;
                     }
+                    break;
                 default:
                     switch (mDetailFullData.getDtv() == null ? valueBlank : mDetailFullData.getDtv()) {
                         case valueBlank:

@@ -292,7 +292,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case ContentDetailUtils.CONTENTS_DETAIL_ONLY:
                 if (mIsFromBgFlg && contentType != null && mViewPager != null) {
-                    String screenName = null;
+                    String screenName;
                     if (mIsOtherService) {
                         screenName = ContentUtils.getOtherServiceScreenName(ContentDetailActivity.this, mDetailData.getServiceId());
                     } else {
@@ -838,6 +838,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mDetailData = new OtherContentsDetailData();
             }
             mDetailData.setContentsId(contentsId);
+            mDetailData.setServiceId(ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID);
         } else {
             mDetailData = mIntent.getParcelableExtra(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
             if (mDetailData != null) {
@@ -2721,7 +2722,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (contentsType1 == null) {
             return;
         }
-        String screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this, mIsH4dPlayer).get(mTabNames[ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION]);
+        String screenName = ContentDetailUtils.getScreenNameMap(contentType, ContentDetailActivity.this, mIsH4dPlayer).
+                get(mTabNames[ContentDetailUtils.CONTENTS_DETAIL_INFO_TAB_POSITION]);
         String serviceName = getString(R.string.google_analytics_custom_dimension_service_h4d);
         String contentsType2 = getString(R.string.google_analytics_custom_dimension_contents_type2_live);
         String contentName = getTitleText().toString();
