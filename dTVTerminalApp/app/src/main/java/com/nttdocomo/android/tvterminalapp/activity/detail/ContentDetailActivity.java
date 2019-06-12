@@ -3045,9 +3045,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void sendOperateLog() {
         if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this)) && mSendOperateLog == null) {
             mSendOperateLog = new SendOperateLog(getApplicationContext());
-            if (mDetailFullData != null) {
-                mDetailData.setChannelId(mDetailFullData.getmService_id());
-            }
             mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
         }
     }
