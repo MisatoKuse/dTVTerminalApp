@@ -163,7 +163,7 @@ public class SendOperateLog extends WebApiBase {
      */
     private String getUrl(final OtherContentsDetailData mDetailData) {
         mUrl.append(URL_TEXT_SERVICE_ID);
-        mUrl.append(String.valueOf(mDetailData.getServiceId()));
+        mUrl.append(mDetailData.getServiceId() == 0 ? ContentUtils.STR_BLANK : mDetailData.getServiceId());
         mUrl.append(URL_TEXT_CATEGORY_ID);
         if (mCategoryId == null) {
             mCategoryId = ContentUtils.STR_BLANK;
@@ -203,6 +203,7 @@ public class SendOperateLog extends WebApiBase {
             mUrl.append(URL_TEXT_RECOMMEND_METHOD_ID);
             mUrl.append(mDetailData.getRecommendMethodId());
         }
+        DTVTLogger.debug("url =====================>" + mUrl.toString());
         return mUrl.toString();
     }
 
