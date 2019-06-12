@@ -166,7 +166,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      */
     private void sendRemoteEvent(final boolean isSuccess, final  DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
         if (isSuccess) {
-            sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+            sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                     getString(R.string.google_analytics_category_action_remote_success),
                     null, null);
         } else {
@@ -181,17 +181,17 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     private void sendEventTrackingByErrorType(final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
         switch (errorType) {
             case ACTIVATION:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_action_remote_activation_error),
                         null, null);
                 break;
             case DEVICE_OVER_ERROR:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_device_over_error),
                         null, null);
                 break;
             case NO_H4D_CONTRACT:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_no_h4d_contract_error),
                         null, null);
                 break;
@@ -200,7 +200,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
             case UNKOWN:
             case NONE:
             default:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_other_error),
                         null, null);
                 break;
@@ -298,7 +298,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         if (!TextUtils.isEmpty(contractType)) {
             SparseArray<String> customDimensions = new SparseArray<>();
             customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
-            sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+            sendEvent(getString(R.string.google_analytics_category_contract),
                     getString(R.string.google_analytics_category_action_remote_contract_get_success),
                     null, customDimensions);
         }

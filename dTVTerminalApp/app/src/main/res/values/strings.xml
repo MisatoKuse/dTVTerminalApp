@@ -611,10 +611,11 @@
     <string name="google_analytics_category_service_name_dtv_ch">dTVチャンネル</string>
     <string name="google_analytics_category_service_name_danime">dアニメ</string>
     <string name="google_analytics_category_service_name_dazn">DAZN</string>
-    <string name="google_analytics_category_service_name_remote_control">リモコンエミュレート</string>
-    <string name="google_analytics_category_service_name_contract">契約状態変更</string>
-    <string name="google_analytics_category_service_name_transparent_from_paring_description">ペアリング前説明からの遷移</string>
-    <string name="google_analytics_category_service_name_remote_viewing_settings">リモート視聴設定</string>
+    <string name="google_analytics_category_remote_control">リモコンエミュレート</string>
+    <string name="google_analytics_category_contract">契約状態変更</string>
+    <string name="google_analytics_category_transparent_from_paring_description">ペアリング前説明からの遷移</string>
+    <string name="google_analytics_category_remote_viewing_settings">リモート視聴設定</string>
+    <string name="google_analytics_category_event_error_report">アラートエラー</string>
 
     <!-- Google Analytics イベントアクション -->
     <string name="google_analytics_category_action_watch_tv">テレビで視聴するをタップ</string>
