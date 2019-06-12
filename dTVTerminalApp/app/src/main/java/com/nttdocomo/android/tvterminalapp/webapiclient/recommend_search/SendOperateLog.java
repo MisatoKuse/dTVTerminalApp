@@ -165,13 +165,20 @@ public class SendOperateLog extends WebApiBase {
         mUrl.append(URL_TEXT_SERVICE_ID);
         mUrl.append(String.valueOf(mDetailData.getServiceId()));
         mUrl.append(URL_TEXT_CATEGORY_ID);
+        if (mCategoryId == null) {
+            mCategoryId = ContentUtils.STR_BLANK;
+        }
         mUrl.append(mCategoryId);
         if (!TextUtils.isEmpty(mDetailData.getChannelId())) {
             mUrl.append(URL_TEXT_CHANNEL_ID);
             mUrl.append(mDetailData.getChannelId());
         }
         mUrl.append(URL_TEXT_CID);
-        mUrl.append(mDetailData.getContentsId());
+        if (mDetailData.getContentsId() == null) {
+            mUrl.append(ContentUtils.STR_BLANK);
+        } else {
+            mUrl.append(mDetailData.getContentsId());
+        }
         mUrl.append(URL_TEXT_OPERATE_KIND);
         if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())) {
             mUrl.append(URL_TEXT_OPERATE_KIND_RECOMMEND);

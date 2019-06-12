@@ -165,7 +165,7 @@ public class ContentUtils {
     /** スペース.*/
     private static final String STR_SPACE = " ";
     /** 空白.*/
-    private static final String STR_BLANK = "";
+    public static final String STR_BLANK = "";
     /** サイズ.*/
     private static final int SCHEDULE_FORMAT_SIZE = 10;
     /** 予約されたサービス 多チャン.*/
