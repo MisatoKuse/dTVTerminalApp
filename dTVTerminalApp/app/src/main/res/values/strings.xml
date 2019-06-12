@@ -246,6 +246,7 @@
         <item>すべて</item>
         <item>ダウンロード済み</item>
     </string-array>
+    <string name="record_list_loading_message">読み込みに30秒ほどかかる場合があります</string>
     <string name="record_download_percent_mark">%</string>
     <string name="record_download_error_message">ダウンロードに失敗しました</string>
     <string name="record_download_delete_title">削除しますか？</string>
