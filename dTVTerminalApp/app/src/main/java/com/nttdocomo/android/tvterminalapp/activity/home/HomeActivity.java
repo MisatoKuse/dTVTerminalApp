@@ -1112,7 +1112,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 if (!TextUtils.isEmpty(contractType)) {
                     SparseArray<String> customDimensions = new SparseArray<>();
                     customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
-                    sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+                    sendEvent(getString(R.string.google_analytics_category_contract),
                             getString(R.string.google_analytics_category_action_remote_contract_get_success),
                             null, customDimensions);
                 }
