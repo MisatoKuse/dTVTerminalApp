@@ -79,6 +79,24 @@ public class DlnaManager {
         DOWNLOADER_STATUS_ERROR_OCCURED
     }
 
+    /**
+     * JNI側のローカルレジストレーションエラータイプ.
+     */
+    /** エラーなし. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_NONE = 0;
+    /** SOCKETエラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_SOCKET = 1;
+    /** DEVICE OVERエラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DEVICE_OVER = 2;
+    /** DEVICE OVER以外のSOAPエラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_SOAP = 3;
+    /** HTTPエラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_HTTP = 4;
+    /** その他エラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_OTHER = 5;
+    /** REQUESTエラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST = 6;
+
     /**　エラータイプ:OVER.*/
     private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
     /** 不明. */
@@ -142,6 +160,8 @@ public class DlnaManager {
     private Timer mTimer = null;
     /** 起動フラグ. */
     private boolean mIsLaunched = false;
+    /** ローカルレジストレーションエラーコード.*/
+    private String mLocalRegistrationErrorCode = null;
 
     // region Listener declaration
 
@@ -175,8 +195,9 @@ public class DlnaManager {
          * onRegisterCallBack.
          * @param result result
          * @param errorType errorType
+         * @param errorCode errorCode
          */
-        void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType);
+        void onRegisterCallBack(final boolean result, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode);
     }
 
     /**
@@ -277,7 +298,7 @@ public class DlnaManager {
      * @return コンテキスト
      */
     public Context getContext() {
-        return DlnaManager.shared().mContext;
+        return mContext;
     }
 
     /**
@@ -285,7 +306,30 @@ public class DlnaManager {
      * @param context コンテキスト
      */
     public void setContext(final Context context) {
-        DlnaManager.shared().mContext = context;
+        mContext = context;
+    }
+
+    /**
+     * ローカルレジストレーションエラーコード取得.
+     * @return ローカルレジストレーションエラーコード
+     */
+    public String getLocalRegistrationErrorCode() {
+        return mLocalRegistrationErrorCode;
+    }
+
+    /**
+     * ローカルレジストレーションエラーコード設定.
+     * @param errorCode ローカルレジストレーションエラーコード
+     */
+    public void setLocalRegistrationErrorCode(String errorCode) {
+        mLocalRegistrationErrorCode = errorCode;
+    }
+
+    /**
+     * エラーコードをクリア.
+     */
+    public void clearErrorCode() {
+        mLocalRegistrationErrorCode = null;
     }
 
     /**
@@ -397,7 +441,7 @@ public class DlnaManager {
                         @Override
                         public void run() {
                             cancelTimer();
-                            if (!StartDtcp()) {
+                            if (DlnaUtils.INT_DDTCP_RET_SUCCESS != StartDtcp()) {
                                 browseError(containerId);
                             }
                             if (!RestartDirag()) {
@@ -487,12 +531,12 @@ public class DlnaManager {
     /**
      * StartDtcp.
      */
-    public boolean StartDtcp() {
+    public int StartDtcp() {
         if (!DlnaManager.shared().startedDtcp) {
             DlnaManager.shared().startedDtcp = true;
             return startDtcp();
         } else {
-            return true;
+            return DlnaUtils.INT_DDTCP_RET_SUCCESS;
         }
     }
 
@@ -766,9 +810,8 @@ public class DlnaManager {
      * @param result 結果
      * @param errorType エラータイプ
      */
-    public void RegistResultCallBack(final boolean result, final int errorType) {
+    public void RegistResultCallBack(final boolean result, final int errorType, final String errorCode) {
         DTVTLogger.warning("result = " + result);
-
         if (result) {
             //ローカルレジストレーションが成功したので日時を蓄積する
             SharedPreferencesUtils.setRegistTime(DlnaManager.shared().mContext);
@@ -776,15 +819,35 @@ public class DlnaManager {
 
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
-            DlnaUtils.ExcuteLocalRegistrationErrorType localRegistrationErrorType = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE;
-            if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER) {
-                localRegistrationErrorType = DlnaUtils.ExcuteLocalRegistrationErrorType.DEVICE_OVER_ERROR;
+            DlnaUtils.ExecuteLocalRegistrationErrorType localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.NONE;
+
+            switch (errorType) {
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_SOCKET:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.SOCKET;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DEVICE_OVER:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.DEVICE_OVER;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_SOAP:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.SOAP;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_HTTP:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.HTTP;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_OTHER:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.OTHER;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.REQUEST_ERROR_FROM_JNI;
+                    break;
+                default:
+                    break;
             }
             if (result) {
                 //リモート視聴設定期限ダイアログ表示フラグをリセットする
                 SharedPreferencesUtils.setRegisterExpiredateDialogFlg(DlnaManager.shared().mContext, 0);
             }
-            listener.onRegisterCallBack(result, localRegistrationErrorType);
+            listener.onRegisterCallBack(result, localRegistrationErrorType, errorCode);
         } else {
             DTVTLogger.error("no callback");
         }
@@ -1046,7 +1109,7 @@ public class DlnaManager {
      */
     private native boolean browseContentWithContainerId(final int offset, final int limit, final String containerId, final String controlUrl);
     /** dtcpを開始.*/
-    private native boolean startDtcp();
+    private native int startDtcp();
     /** dtcpを停止.*/
     private native void stopDtcp();
     /**

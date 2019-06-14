@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.digion.dixim.android.activation.helper.ActivationHelper;
 import com.digion.dixim.android.util.EnvironmentUtil;
@@ -98,22 +99,48 @@ public class DlnaUtils {
     /**ダウンロード通知チャンネルID.*/
     private static final String DOWNLOAD_NOTIFICATION_ID = "downloadProgress";
 
+    //DDTCP Success
+    public static final int INT_DDTCP_RET_SUCCESS = 0;
+
+    //エラーコード細分化により定数定義
+    private static final String STR_SPACE = " ";
+    private static final String STR_PADDING_CHARACTER = "0";
+    private static final String STR_CODE_HEAD_SOAP = "1";
+    private static final String STR_CODE_HEAD_HTTP = "2";
+    private static final String STR_CODE_HEAD_SOCKET = "3";
+    private static final String STR_CODE_HEAD_OTHER = "4";
+    private static final String STR_CODE_HEAD_START_DTCP = "5";
+    private static final String STR_CODE_HEAD_START_DIRAG = "6";
+    private static final String STR_CODE_HEAD_REQUEST = "7";
+    private static final String STR_CODE_REQUEST_ERROR = "99996";
+    private static final String STR_CODE_UNKNOWN_ERROR = "99999";
+
     /**
      * ローカルレジストレーションエラータイプ.
      */
-    public enum ExcuteLocalRegistrationErrorType {
+    public enum ExecuteLocalRegistrationErrorType {
+        /**未契約(h4d)エラー.*/
+        NO_H4D_CONTRACT,
+        /**jniからのリクエストエラー.*/
+        REQUEST_ERROR_FROM_JNI,
+        /**Javaのリクエストエラー.*/
+        REQUEST_ERROR_FROM_JAVA,
         /**アクティベーション失敗.*/
         ACTIVATION,
         /**Dirag起動失敗.*/
         START_DIRAG,
         /**dtcp起動失敗.*/
         START_DTCP,
+        /**SOCKETエラー.*/
+        SOCKET,
         /**台数超過エラー.*/
-        DEVICE_OVER_ERROR,
-        /**未契約(h4d)エラー.*/
-        NO_H4D_CONTRACT,
+        DEVICE_OVER,
+        /**SOAPエラー.*/
+        SOAP,
+        /**HTTPエラー.*/
+        HTTP,
         /**その他エラー.*/
-        UNKOWN,
+        OTHER,
         /**なし.*/
         NONE
     }
@@ -121,25 +148,43 @@ public class DlnaUtils {
     /**
      * ローカルレジストレーション実行.
      * @param context コンテスト
-     * @param mLocalRegisterListener リスナー
+     * @param localRegisterListener リスナー
      * @return エラータイプ
      */
-    public static ExcuteLocalRegistrationErrorType excuteLocalRegistration(final Context context, final DlnaManager.LocalRegisterListener mLocalRegisterListener) {
-        ExcuteLocalRegistrationErrorType localRegistrationErrorType = ExcuteLocalRegistrationErrorType.NONE;
-        if (context == null || mLocalRegisterListener == null) {
-            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.UNKOWN;
-        } else if (!DlnaUtils.getActivationState(context)) {
-            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.ACTIVATION;
-        } else if (!DlnaManager.shared().StartDtcp()) {
-            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.START_DTCP;
-        } else if (!DlnaManager.shared().RestartDirag()) {
-            localRegistrationErrorType = ExcuteLocalRegistrationErrorType.START_DIRAG;
-        } else {
-            DlnaManager.shared().mLocalRegisterListener = mLocalRegisterListener;
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
-            DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, context);
+    public static ExecuteLocalRegistrationErrorType executeLocalRegistration(final Context context, final DlnaManager.LocalRegisterListener localRegisterListener) {
+        int result;
+        DlnaManager.shared().clearErrorCode();
+        if (context == null || localRegisterListener == null) {
+            // エラーコード設定
+            DlnaManager.shared().setLocalRegistrationErrorCode(STR_CODE_REQUEST_ERROR);
+            return ExecuteLocalRegistrationErrorType.REQUEST_ERROR_FROM_JAVA;
         }
-        return localRegistrationErrorType;
+
+        Pair<Boolean, Integer> activationState = DlnaUtils.getActivationState(context);
+        if (!activationState.first) {
+            // エラーコード設定
+            DlnaManager.shared().setLocalRegistrationErrorCode(String.valueOf(activationState.second));
+            return ExecuteLocalRegistrationErrorType.ACTIVATION;
+        }
+
+        result = DlnaManager.shared().StartDtcp();
+        if (result != INT_DDTCP_RET_SUCCESS) {
+            // エラーコード設定
+            DlnaManager.shared().setLocalRegistrationErrorCode(Integer.toString(result));
+            return  ExecuteLocalRegistrationErrorType.START_DTCP;
+        }
+
+        if (!DlnaManager.shared().RestartDirag()) {
+            // エラーコード設定
+            DlnaManager.shared().setLocalRegistrationErrorCode(STR_CODE_UNKNOWN_ERROR);
+            return ExecuteLocalRegistrationErrorType.START_DIRAG;
+        }
+
+        DlnaManager.shared().mLocalRegisterListener = localRegisterListener;
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, context);
+        //エラーコードはDlnaManager.RegistResultCallBackで渡している。
+        return ExecuteLocalRegistrationErrorType.NONE;
     }
 
     /**
@@ -162,18 +207,18 @@ public class DlnaUtils {
     /**
      * アクティベーションのチェック、実行.
      * @param context コンテキスト
-     * @return チェック結果
+     * @return チェック結果： first:Activate結果、second:エラーコード
      */
-    public static boolean getActivationState(final Context context) {
+    public static Pair<Boolean, Integer> getActivationState(final Context context) {
         final String deviceKey = getPrivateDataHomePath(context);
         ActivationHelper activationHelper = new ActivationHelper(context, deviceKey);
         boolean activationState = activationHelper.activationState(deviceKey);
         if (activationState) {
-            return true;
-        } else {
-            int result = activationHelper.activation(deviceKey);
-            return result == ActivationHelper.ACTC_OK;
+            return new Pair<>(true, ActivationHelper.ACTC_OK);
         }
+
+        int result = activationHelper.activation(deviceKey);
+        return new Pair<>(result == ActivationHelper.ACTC_OK, result);
     }
 
     /**
@@ -457,37 +502,69 @@ public class DlnaUtils {
      * @param context コンテキスト
      * @param isSuccess true 成功 false 失敗
      * @param errorType エラータイプ
+     * @param errorCode エラーコード
      * @return ローカルレジストレーションの処理結果ダイアログ
      */
-    public static CustomDialog getRegistResultDialog(final Context context, final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    public static CustomDialog getRegistResultDialog(final Context context, final boolean isSuccess, final ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
         CustomDialog resultDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
         resultDialog.setCancelable(false);
         resultDialog.setOnTouchBackkey(false);
+
         if (isSuccess) {
             resultDialog.setContent(context.getString(R.string.common_text_regist_progress_done));
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
             String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
             SharedPreferencesUtils.setRemoteDeviceExpireDate(context, expireDate);
         } else {
+            String dialogMessage;
+            String formatErrorCode = errorCode;
+
+            if (TextUtils.isEmpty(formatErrorCode)) {
+                formatErrorCode = STR_CODE_UNKNOWN_ERROR;
+            }
+
+            formatErrorCode = String.format("%5s", formatErrorCode).replace(STR_SPACE, STR_PADDING_CHARACTER);//エラーコード桁数調整、0埋め込み
+
             switch (errorType) {
-                case ACTIVATION:
-                    resultDialog.setContent(context.getString(R.string.activation_failed_error_local_registration));
-                    break;
-                case DEVICE_OVER_ERROR:
-                    resultDialog.setContent(context.getString(R.string.common_text_regist_over_error_setting));
-                    break;
                 case NO_H4D_CONTRACT:
-                    resultDialog.setContent(context.getString(R.string.common_text_regist_no_h4d_contract_error));
+                    dialogMessage = context.getString(R.string.common_text_regist_no_h4d_contract_error);
+                    break;
+                case ACTIVATION:
+                    dialogMessage = context.getString(R.string.activation_failed_error_local_registration, formatErrorCode);
+                    break;
+                case DEVICE_OVER:
+                    dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_SOAP + formatErrorCode);
+                    break;
+                case SOAP:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_HEAD_SOAP + formatErrorCode);
+                    break;
+                case HTTP:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_HEAD_HTTP + formatErrorCode);
+                    break;
+                case SOCKET:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_SOCKET + formatErrorCode);
+                    break;
+                case OTHER:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_OTHER + formatErrorCode);
                     break;
                 case START_DTCP:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DTCP + formatErrorCode);
+                    break;
                 case START_DIRAG:
-                case UNKOWN:
-                case NONE:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DIRAG + formatErrorCode);
+                    break;
+                case REQUEST_ERROR_FROM_JNI:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_REQUEST + formatErrorCode);
+                    break;
+                case REQUEST_ERROR_FROM_JAVA:
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_REQUEST + formatErrorCode);
+                    break;
                 default:
-                    resultDialog.setContent(context.getString(R.string.common_text_regist_other_error));
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_UNKNOWN_ERROR);
                     break;
             }
+            resultDialog.setContent(dialogMessage);
             resultDialog.setConfirmText(R.string.common_text_close);
         }
         return resultDialog;

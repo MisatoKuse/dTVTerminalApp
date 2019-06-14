@@ -15,6 +15,7 @@
 #include "DlnaRemoteConnect.h"
 #include "DlnaDownload.h"
 #include "download/downloader.h"
+#include "LocalRegistration/local_registration.h"
 
 #define PackageName "com/nttdocomo/android/tvterminalapp/jni/"
 #define DlnaManagerClassName "DlnaManager"
@@ -304,7 +305,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
     //endregion dlnaDmsBrowse callback
 
     //region dlnaRemoteConnect callback
-    dlnaRemoteConnect->LocalRegistrationCallback = [](bool result, eLocalRegistrationResultType resultType) {
+    dlnaRemoteConnect->LocalRegistrationCallback = [](bool result, int resultType, const du_uchar* errorCode) {
         JNIEnv *_env = NULL;
         int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
         bool isAttached = false;
@@ -316,13 +317,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             isAttached = true;
         }
 
-        jint resultTypeNumber = 0;
-        if (resultType == LocalRegistrationResultTypeRegistrationOverError) {
-            resultTypeNumber = 1;
-        }
+        jint resultTypeNumber = resultType;
+        jstring errorCodeString = _env->NewStringUTF((const char*)errorCode);
+
         LOG_WITH("before GetMethodID");
-        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZI)V");
-        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, result, resultTypeNumber);
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZILjava/lang/String;)V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, result, resultTypeNumber, errorCodeString);
         LOG_WITH("after CallVoidMethod");
 
         if (isAttached) {
@@ -341,16 +341,23 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             isAttached = true;
         }
 
-        switch(ddtcpSinkAkeEndRet) {
-            case DDTCP_RET_SUCCESS:
+        jint resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_NONE;
+        switch (ddtcpSinkAkeEndRet) {
+            case DDTCP_RET_SUCCESS:  // 成功
+                break;
+            case DDTCP_RET_FAILURE_RA_SINK_NOT_REGISTERED:  // 超過台数エラー
+                resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DEVICE_OVER;
                 break;
             default:
-                jint resultTypeNumber = 2;
-                jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZI)V");
-                _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, false, resultTypeNumber);
+                resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_OTHER;
                 break;
         }
 
+        if (resultTypeNumber != LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_NONE) {
+            jstring errorCodeString = _env->NewStringUTF((const char*)ddtcpSinkAkeEndRet);
+            jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZILjava/lang/String;)V");
+            _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, false, resultTypeNumber, errorCodeString);
+        }
         if (isAttached) {
             g_ctx.javaVM->DetachCurrentThread();
         }
@@ -546,13 +553,13 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_browseContentWithContai
     }
 }
 
-JNIEXPORT jboolean JNICALL
+JNIEXPORT ddtcp_ret JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_startDtcp(JNIEnv *env, jobject thiz) {
     LOG_WITH("");
     jclass clazz = env->GetObjectClass(thiz);
     jmethodID mid = env->GetMethodID(clazz, "getUniqueId", "()Ljava/lang/String;");
-    bool result = dlnaBase->startDtcp(dmp, g_ctx.javaVM, thiz, mid);
-    return (jboolean) result;
+    ddtcp_ret result = dlnaBase->startDtcp(dmp, g_ctx.javaVM, thiz, mid);
+    return result;
 }
 
 JNIEXPORT void JNICALL
@@ -585,14 +592,14 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistratio
     if (NULL==udn) {
         LOG_WITH("requestLocalRegistration udn is NULL");
         if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
-            DlnaRemoteConnect::LocalRegistrationCallback(false, LocalRegistrationResultTypeUnknownError);
+            DlnaRemoteConnect::LocalRegistrationCallback(false, LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST, DU_UCHAR_CONST(LOCAL_REGISTRATION_REQUEST_ERROR_UDN_NULL));
         }
         return;
     }
     if (NULL==deviceName) {
         LOG_WITH("requestLocalRegistration deviceName is NULL");
         if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
-            DlnaRemoteConnect::LocalRegistrationCallback(false, LocalRegistrationResultTypeUnknownError);
+            DlnaRemoteConnect::LocalRegistrationCallback(false, LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST, DU_UCHAR_CONST(LOCAL_REGISTRATION_REQUEST_ERROR_DEVICE_NAME_NULL));
         }
         return;
     }
@@ -602,7 +609,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistratio
     bool result = dlnaRemoteConnect->requestLocalRegistration(dmp, DU_UCHAR(udnString), DU_UCHAR(deviceNameString));
     if (!result) {
         if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
-            DlnaRemoteConnect::LocalRegistrationCallback(false, LocalRegistrationResultTypeUnknownError);
+            DlnaRemoteConnect::LocalRegistrationCallback(false, LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST, DU_UCHAR_CONST(LOCAL_REGISTRATION_ERROR_OTHER));
         }
     }
 }

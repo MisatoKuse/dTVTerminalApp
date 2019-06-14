@@ -43,9 +43,9 @@
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
     <string name="common_text_regist_progress_done">設定を完了しました</string>
-    <string name="common_text_regist_over_error_setting">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。</string>
+    <string name="common_text_regist_over_error_setting">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。(LR-%s)</string>
     <string name="common_text_regist_no_h4d_contract_error">@string/main_setting_h4d_not_signed_message</string>
-    <string name="common_text_regist_other_error">ひかりＴＶ for docomoの設定が「自宅内/外出先で有効」になっていない可能性があります。設定をご確認ください。</string>
+    <string name="common_text_regist_other_error">ひかりＴＶ for docomoの設定が「自宅内/外出先で有効」になっていない可能性があります。設定をご確認ください。(LR-%s)</string>
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_dtv_channel__application_uninstall_error">ドコモテレビターミナルにdTVチャンネルアプリがインストールされていないため、起動に失敗しました</string>
@@ -256,7 +256,7 @@
     <string name="record_download_not_completed_msg">録画コンテンツのダウンロードに失敗しました。\n再度録画一覧よりダウンロードを行ってください。</string>
     <string name="record_download_low_storage_space_msg">端末の容量が不足しているため、ダウンロードできません</string>
     <string name="activation_failed_error_player">再生に失敗しました（AC-1）</string>
-    <string name="activation_failed_error_local_registration">リモート視聴設定に失敗しました（AC-1）</string>
+    <string name="activation_failed_error_local_registration">リモート視聴設定に失敗しました。\nしばらくしてからもう一度お試しください。(AC-%s)</string>
     <string name="activation_failed_error_download">ダウンロードに失敗しました（AC-1）</string>
 
     <!-- ビデオ一覧 -->

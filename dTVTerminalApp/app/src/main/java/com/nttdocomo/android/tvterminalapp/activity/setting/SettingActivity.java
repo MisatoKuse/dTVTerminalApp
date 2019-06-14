@@ -25,11 +25,9 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -41,8 +39,7 @@ import java.util.List;
 /**
  * 設定画面.
  */
-public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener,
-        DlnaManager.LocalRegisterListener {
+public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     /**
      * 項目名の配列を保持.
@@ -260,8 +257,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             /* test code end */
         }
 
-        String dAccountId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
-
         //項目名、設定値、>の画像、カテゴリ情報
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_D_ACCOUNT], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PAIRING], isParing));
@@ -373,30 +368,4 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         }
         return super.onKeyDown(keyCode, event);
     }
-
-    @Override
-    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
-        if (result) {
-            //ローカルレジストレーションが成功したので日時を蓄積する
-            SharedPreferencesUtils.setRegistTime(getApplicationContext());
-        }
-        showRegistResultDialog(result, errorType);
-    }
-
-    /**
-     * ローカルレジストレーションの処理結果.
-     * @param errorType errorType
-     * @param isSuccess true 成功 false 失敗
-     */
-    private void showRegistResultDialog(final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(SettingActivity.this, isSuccess, errorType);
-                setRemoteProgressVisible(View.GONE);
-                resultDialog.showDialog();
-            }
-        });
-    }
-
 }
