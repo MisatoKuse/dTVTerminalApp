@@ -16,11 +16,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -72,8 +71,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private TabItemLayout mTabLayout = null;
     /** viewpager. */
     private ViewPager mViewPager = null;
-    /** 進捗バー. */
-    private ProgressBar progressBar;
+    /** 進捗バービュー. */
+    private LinearLayout progressBarView;
+    /** ローディングワーディング */
+    private TextView loadingWordTextView;
     /** 遷移先（メニュー）. */
     private Boolean mIsMenuLaunch = false;
     /** プロバイダー. */
@@ -319,7 +320,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
-        progressBar = findViewById(R.id.record_list_main_layout_progress);
+        progressBarView = findViewById(R.id.record_list_main_layout_progress_view);
+        loadingWordTextView = findViewById(R.id.record_list_main_layout_loading_word_text_view);
         mNoDataMessage = findViewById(R.id.recorded_list_no_items);
     }
 
@@ -417,7 +419,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void showProgressBar() {
         //オフライン時は表示しない
-        progressBar.setVisibility(View.VISIBLE);
+        progressBarView.setVisibility(View.VISIBLE);
+        if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
+            loadingWordTextView.setVisibility(View.VISIBLE);
+        } else {
+            loadingWordTextView.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -512,7 +519,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         mNoDataMessage.setVisibility(View.VISIBLE);
                         mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                     }
-                    progressBar.setVisibility(View.GONE);
+                    progressBarView.setVisibility(View.GONE);
                 }
             });
 
@@ -536,8 +543,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (progressBar != null && progressBar.getVisibility() == View.GONE) {
-                        progressBar.setVisibility(View.VISIBLE);
+                    if (progressBarView != null && progressBarView.getVisibility() == View.GONE) {
+                        progressBarView.setVisibility(View.VISIBLE);
+                        if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
+                            loadingWordTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            loadingWordTextView.setVisibility(View.GONE);
+                        }
                     }
                 }
             });
@@ -668,8 +680,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (progressBar != null) {
-                    progressBar.setVisibility(View.GONE);
+                if (progressBarView != null) {
+                    progressBarView.setVisibility(View.GONE);
                 }
             }
         });
