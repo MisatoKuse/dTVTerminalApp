@@ -120,7 +120,7 @@ public class DlnaManager {
     /** ERROR_OCCURED. */
     private static final int DOWNLOADER_STATUS_ERROR_OCCURED = 15;
     /** リモート接続　タイムアウト　秒数. */
-    private static final int REMOTE_TIME_OUT = 30 * 1000;
+    private static final int REMOTE_TIME_OUT = 90 * 1000;
     /** dms検出リスナー. */
     public DlnaManagerListener mDlnaManagerListener = null;
 
@@ -240,9 +240,10 @@ public class DlnaManager {
         void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete);
         /**
          * コンテンツブラウズエラーコールバック.
-         * @param containerId パス
+         * @param errorType エラータイプ
+         * @param errorCode エラーコード
          */
-        void onContentBrowseErrorCallback(final String containerId);
+        void onContentBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode);
         /**
          * リモート接続タイムアウトコールバック.
          */
@@ -441,11 +442,13 @@ public class DlnaManager {
                         @Override
                         public void run() {
                             cancelTimer();
-                            if (DlnaUtils.INT_DDTCP_RET_SUCCESS != StartDtcp()) {
-                                browseError(containerId);
+                            int ddtcpRet = StartDtcp();
+                            if (DlnaUtils.INT_DDTCP_RET_SUCCESS != ddtcpRet) {
+                                browseError(DlnaUtils.RemoteConnectErrorType.START_DTCP, ddtcpRet);
+                                return;
                             }
                             if (!RestartDirag()) {
-                                browseError(containerId);
+                                browseError(DlnaUtils.RemoteConnectErrorType.START_DIRAG, DlnaUtils.ERROR_CODE_NOT_INITIALIZED);
                             }
                         }
                     }).start();
@@ -471,7 +474,7 @@ public class DlnaManager {
             case NONE_PAIRING:
             default:
                 DTVTLogger.warning("default");
-                browseError(containerId);
+                browseError(DlnaUtils.RemoteConnectErrorType.NONE, DlnaUtils.ERROR_CODE_NOT_INITIALIZED);
                 break;
         }
         DTVTLogger.warning("containerId = " + containerId);
@@ -479,12 +482,13 @@ public class DlnaManager {
 
     /**
      * ブラウズエラー.
-     * @param containerId containerId
+     * @param errorType エラータイプ
+     * @param errorCode エラーコード
      */
-    private void browseError(final String containerId) {
+    private void browseError(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
         if (listener != null) {
-            listener.onContentBrowseErrorCallback(containerId);
+            listener.onContentBrowseErrorCallback(errorType, errorCode);
         }
     }
 
@@ -502,7 +506,7 @@ public class DlnaManager {
                 public void run() {
                     if (!browseContentWithContainerId(requestIndex, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, controlUrl)) {
                         DlnaManager.shared().clearQue();
-                        browseError(containerId);
+                        browseError(DlnaUtils.RemoteConnectErrorType.NONE, DlnaUtils.ERROR_CODE_NOT_INITIALIZED);
                     }
                 }
             }).start();
@@ -801,7 +805,7 @@ public class DlnaManager {
             DTVTLogger.warning("ContentBrowseErrorCallback checkContainerId containerId = " + containerId);
             return;
         }
-        browseError(containerId);
+        browseError(DlnaUtils.RemoteConnectErrorType.NONE, DlnaUtils.ERROR_CODE_NOT_INITIALIZED);
         DlnaManager.shared().clearQue();
     }
 

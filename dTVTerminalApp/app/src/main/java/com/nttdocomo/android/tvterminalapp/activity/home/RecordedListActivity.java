@@ -265,12 +265,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onBrowseErrorCallback() {
+    public void onBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setProgressBarGone();
-                showGetDataFailedToast();
+                if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
+                        || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
+                    showErrorDialog(DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, errorType, errorCode));
+                } else {
+                    showGetDataFailedToast();
+                }
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
@@ -285,7 +290,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 setProgressBarGone();
-                showGetDataFailedToast();
+                showErrorDialog(getString(R.string.remote_connect_error_timeout));
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
@@ -389,7 +394,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showGetDataFailedToast();
+                showErrorDialog(DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode));
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));

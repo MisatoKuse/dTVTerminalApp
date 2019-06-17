@@ -115,6 +115,25 @@ public class DlnaUtils {
     private static final String STR_CODE_REQUEST_ERROR = "99996";
     private static final String STR_CODE_UNKNOWN_ERROR = "99999";
 
+    /**リモート接続エラーコード.*/
+    private static final int RATUN_MANAGER_ERROR_CODE_NOT_INITIALIZED = 1201;
+    private static final int RATUN_MANAGER_ERROR_CODE_AUTH_ERROR = 2026;
+    private static final int RATUN_MANAGER_ERROR_CODE_INTERNAL = 1200;
+    private static final int RATUN_MANAGER_ERROR_CODE_NETTYPE_UNKNOWN = 1501;
+    private static final int RATUN_MANAGER_ERROR_CODE_NETTYPE_BLOCKED = 1502;
+    private static final int RATUN_MANAGER_ERROR_CODE_NETTYPE_SYMMETRIC = 1503;
+    private static final int RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_PROHIBITED_SERVICE_P = 2014;
+    private static final int RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_CERT_D = 2019;
+    private static final int RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_TICKET_1 = 2020;
+    private static final int RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_TICKET_2 = 2021;
+    private static final int RATUN_SC_BUSY_HERE = 486;
+    private static final int RATUN_SC_NOT_ACCEPTABLE_HERE = 488;
+    private static final int RATUN_SC_NOT_ACCEPTABLE_ANYWHERE = 606;
+    private static final int RATUN_SC_NOT_FOUND = 404;
+    private static final int RATUN_SC_REQUEST_TIMEOUT = 408;
+    private static final int RATUN_SC_TEMPORARILY_UNAVAILABLE = 480;
+    public static final int ERROR_CODE_NOT_INITIALIZED = 0;
+
     /**
      * ローカルレジストレーションエラータイプ.
      */
@@ -146,6 +165,20 @@ public class DlnaUtils {
     }
 
     /**
+     * リモート接続エラータイプ.
+     */
+    public enum RemoteConnectErrorType {
+        /**dtcp起動失敗.*/
+        START_DTCP,
+        /**Dirag起動失敗.*/
+        START_DIRAG,
+        /**リモート接続状態エラー.*/
+        REMOTE_CONNECT_STATUS,
+        /**なし.*/
+        NONE
+    }
+
+    /**
      * ローカルレジストレーション実行.
      * @param context コンテスト
      * @param localRegisterListener リスナー
@@ -170,7 +203,7 @@ public class DlnaUtils {
         result = DlnaManager.shared().StartDtcp();
         if (result != INT_DDTCP_RET_SUCCESS) {
             // エラーコード設定
-            DlnaManager.shared().setLocalRegistrationErrorCode(Integer.toString(result));
+            DlnaManager.shared().setLocalRegistrationErrorCode(String.valueOf(result));
             return  ExecuteLocalRegistrationErrorType.START_DTCP;
         }
 
@@ -568,6 +601,66 @@ public class DlnaUtils {
             resultDialog.setConfirmText(R.string.common_text_close);
         }
         return resultDialog;
+    }
+
+    /**
+     * リモート接続エラーメッセージ取得.
+     *
+     * @param context コンテキスト
+     * @param errorType エラータイプ
+     * @param errorCode エラーコード
+     * @return リモート接続エラーメッセージ
+     */
+    public static String getDlnaErrorMessage(final Context context, final RemoteConnectErrorType errorType, final int errorCode) {
+        String message;
+        switch (errorType) {
+            case REMOTE_CONNECT_STATUS:
+                switch (errorCode) {
+                    case RATUN_MANAGER_ERROR_CODE_NOT_INITIALIZED:
+                    case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR:
+                    case RATUN_MANAGER_ERROR_CODE_INTERNAL:
+                    case RATUN_MANAGER_ERROR_CODE_NETTYPE_UNKNOWN:
+                    case RATUN_MANAGER_ERROR_CODE_NETTYPE_BLOCKED:
+                    case RATUN_MANAGER_ERROR_CODE_NETTYPE_SYMMETRIC:
+                        message = context.getString(R.string.remote_connect_error_network_failed, String.valueOf(errorCode));
+                        break;
+                    case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_PROHIBITED_SERVICE_P:
+                        message = context.getString(R.string.remote_connect_error_service_unavailable, String.valueOf(errorCode));
+                        break;
+                    case RATUN_SC_BUSY_HERE:
+                        message = context.getString(R.string.remote_connect_error_already_connected, String.valueOf(errorCode));
+                        break;
+                    case RATUN_SC_NOT_ACCEPTABLE_HERE:
+                        message = context.getString(R.string.remote_connect_error_local_registration_unset);
+                        break;
+                    case RATUN_SC_NOT_ACCEPTABLE_ANYWHERE:
+                        message = context.getString(R.string.remote_connect_error_local_registration_expired);
+                        break;
+                    case RATUN_SC_NOT_FOUND:
+                    case RATUN_SC_REQUEST_TIMEOUT:
+                    case RATUN_SC_TEMPORARILY_UNAVAILABLE:
+                        message = context.getString(R.string.remote_connect_error_stb_power_off, String.valueOf(errorCode));
+                        break;
+                    case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_CERT_D:
+                    case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_TICKET_1:
+                    case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_TICKET_2:
+                    default:
+                        message = context.getString(R.string.remote_connect_error_connect_failed, String.valueOf(errorCode));
+                        break;
+                }
+                break;
+            case START_DTCP:
+                message = context.getString(R.string.remote_connect_error_connect_failed_ddtcp, String.valueOf(errorCode));
+                break;
+            case START_DIRAG:
+                message = context.getString(R.string.remote_connect_error_connect_failed_dirag);
+                break;
+            case NONE:
+            default:
+                message = context.getString(R.string.remote_connect_error_connect_failed, String.valueOf(errorCode));
+                break;
+        }
+        return message;
     }
 
 }

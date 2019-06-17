@@ -81,6 +81,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -2250,7 +2251,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         boolean isInit = false;
         switch (mPlayerErrorType) {
             case REMOTE:
-                msg = getString(R.string.contents_detail_out_house_player_error_msg);
+                msg = getString(R.string.remote_connect_error_local_registration_unset);
                 break;
             case ACTIVATION:
                 msg = getString(R.string.activation_failed_error_player);
@@ -2376,12 +2377,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
 
                     @Override
-                    public void multiChannelErrorCallback() {
+                    public void multiChannelErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showGetDataFailedToast();
+                                if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
+                                        || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
+                                    showErrorDialog(DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this, errorType, errorCode));
+                                } else {
+                                    showGetDataFailedToast();
+                                }
                             }
                         });
                     }
@@ -2392,7 +2398,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showGetDataFailedToast();
+                                showErrorDialog(DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this, DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode));
                                 setRemotePlayArrow(null);
                             }
                         });
@@ -2404,7 +2410,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showErrorDialog(getString(R.string.contents_player_bad_contents_info));
+                                showErrorDialog(getString(R.string.remote_connect_error_timeout));
                                 setRemotePlayArrow(null);
                             }
                         });
