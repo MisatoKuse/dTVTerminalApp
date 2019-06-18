@@ -151,10 +151,14 @@ public class DlnaUtils {
         START_DIRAG,
         /**dtcp起動失敗.*/
         START_DTCP,
+        /**dtcp台数超過エラー.*/
+        DTCP_DEVICE_OVER,
+        /**dtcpその他エラー.*/
+        DTCP_OTHER,
         /**SOCKETエラー.*/
         SOCKET,
         /**台数超過エラー.*/
-        DEVICE_OVER,
+        SOAP_DEVICE_OVER,
         /**SOAPエラー.*/
         SOAP,
         /**HTTPエラー.*/
@@ -567,7 +571,7 @@ public class DlnaUtils {
                 case ACTIVATION:
                     dialogMessage = context.getString(R.string.activation_failed_error_local_registration, formatErrorCode);
                     break;
-                case DEVICE_OVER:
+                case SOAP_DEVICE_OVER:
                     dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_SOAP + formatErrorCode);
                     break;
                 case SOAP:
@@ -580,9 +584,13 @@ public class DlnaUtils {
                     dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_SOCKET + formatErrorCode);
                     break;
                 case OTHER:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_OTHER + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_OTHER + STR_CODE_UNKNOWN_ERROR);
+                    break;
+                case DTCP_DEVICE_OVER:
+                    dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_START_DTCP + formatErrorCode);
                     break;
                 case START_DTCP:
+                case DTCP_OTHER:
                     dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DTCP + formatErrorCode);
                     break;
                 case START_DIRAG:

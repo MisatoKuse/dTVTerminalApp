@@ -96,6 +96,10 @@ public class DlnaManager {
     private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_OTHER = 5;
     /** REQUESTエラー. */
     private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST = 6;
+    /** DTCPその他エラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_OTHER = 7;
+    /** DTCP DEVICE OVERエラー. */
+    private static final int LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_DEVICE_OVER = 8;
 
     /**　エラータイプ:OVER.*/
     private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
@@ -537,8 +541,11 @@ public class DlnaManager {
      */
     public int StartDtcp() {
         if (!DlnaManager.shared().startedDtcp) {
-            DlnaManager.shared().startedDtcp = true;
-            return startDtcp();
+            int ret = startDtcp();
+            if (DlnaUtils.INT_DDTCP_RET_SUCCESS == ret) {
+                DlnaManager.shared().startedDtcp = true;
+            }
+            return ret;
         } else {
             return DlnaUtils.INT_DDTCP_RET_SUCCESS;
         }
@@ -830,7 +837,7 @@ public class DlnaManager {
                     localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.SOCKET;
                     break;
                 case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DEVICE_OVER:
-                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.DEVICE_OVER;
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.SOAP_DEVICE_OVER;
                     break;
                 case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_SOAP:
                     localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.SOAP;
@@ -843,6 +850,12 @@ public class DlnaManager {
                     break;
                 case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_REQUEST:
                     localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.REQUEST_ERROR_FROM_JNI;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_OTHER:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.DTCP_OTHER;
+                    break;
+                case LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_DEVICE_OVER:
+                    localRegistrationErrorType = DlnaUtils.ExecuteLocalRegistrationErrorType.DTCP_DEVICE_OVER;
                     break;
                 default:
                     break;

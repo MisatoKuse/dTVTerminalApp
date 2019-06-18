@@ -186,7 +186,8 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                         getString(R.string.google_analytics_category_action_action_remote_activation_error),
                         null, null);
                 break;
-            case DEVICE_OVER:
+            case SOAP_DEVICE_OVER:
+            case DTCP_DEVICE_OVER:
                 sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_device_over_error),
                         null, null);
@@ -197,6 +198,12 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                         null, null);
                 break;
             case START_DTCP:
+            case SOAP:
+            case HTTP:
+            case SOCKET:
+            case DTCP_OTHER:
+            case REQUEST_ERROR_FROM_JNI:
+            case REQUEST_ERROR_FROM_JAVA:
             case START_DIRAG:
             case OTHER:
             case NONE:
