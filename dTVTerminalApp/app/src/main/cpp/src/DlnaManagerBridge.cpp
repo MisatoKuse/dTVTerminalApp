@@ -323,7 +323,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         if (nullptr == errorCode) {
             errorCodeString = NULL;
         } else {
-            errorCodeString = _env->NewStringUTF((const char*)errorCode);
+            errorCodeString = _env->NewStringUTF((char*)errorCode);
         }
 
         LOG_WITH("before GetMethodID");
@@ -348,24 +348,22 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         }
 
         jint resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_NONE;
-        jstring errorCodeString = NULL;
-        if (NULL == ddtcpSinkAkeEndRet) {
-            resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_OTHER;
-        } else {
-            errorCodeString = _env->NewStringUTF((const char*)ddtcpSinkAkeEndRet);
-            switch (ddtcpSinkAkeEndRet) {
-                case DDTCP_RET_SUCCESS:  // 成功
-                    break;
-                case DDTCP_RET_FAILURE_RA_SINK_NOT_REGISTERED:  // 超過台数エラー
-                    resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_DEVICE_OVER;
-                    break;
-                default:
-                    resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_OTHER;
-                    break;
-            }
+        switch (ddtcpSinkAkeEndRet) {
+            case DDTCP_RET_SUCCESS:  // 成功
+                break;
+            case DDTCP_RET_FAILURE_RA_SINK_NOT_REGISTERED:  // 超過台数エラー
+                resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_DEVICE_OVER;
+                break;
+            default:
+                resultTypeNumber = LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_DTCP_OTHER;
+                break;
         }
 
+        jint errorCode = ddtcpSinkAkeEndRet;
         if (resultTypeNumber != LOCAL_REGISTRATION_CALLBACK_ERROR_TYPE_NONE) {
+            char buf[64]; // assumed large enough to cope with result
+            sprintf(buf, "%d", errorCode); // error checking omitted
+            jstring errorCodeString = _env->NewStringUTF(buf);
             jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZILjava/lang/String;)V");
             _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, false, resultTypeNumber, errorCodeString);
         }
