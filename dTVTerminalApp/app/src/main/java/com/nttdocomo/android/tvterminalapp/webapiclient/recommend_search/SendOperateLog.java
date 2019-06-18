@@ -203,7 +203,6 @@ public class SendOperateLog extends WebApiBase {
             mUrl.append(URL_TEXT_RECOMMEND_METHOD_ID);
             mUrl.append(mDetailData.getRecommendMethodId());
         }
-        DTVTLogger.debug("url =====================>" + mUrl.toString());
         return mUrl.toString();
     }
 
