@@ -2830,7 +2830,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         } else {
                             switch (StbConnectionManager.shared().getConnectionStatus()) {
                                 case NONE_LOCAL_REGISTRATION:
-                                    showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
+                                    showErrorDialog(getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET)));
                                     break;
                                 case HOME_OUT:
                                     if (mDetailFullData != null) {
