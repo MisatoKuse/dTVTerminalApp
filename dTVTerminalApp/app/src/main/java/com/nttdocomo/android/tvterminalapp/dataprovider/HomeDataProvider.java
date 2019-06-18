@@ -753,7 +753,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (!TextUtils.isEmpty(UserInfoUtils.getAreaCode(mContext))) {
             result = true;
             for (int i = 0; i < list.size(); i++) {
-                if (ContentUtils.TV_SERVICE_FLAG_TTB.equals(list.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE))) {
+                if (ContentUtils.TV_SERVICE_FLAG_TTB.equals(list.get(i).get(JsonConstants.META_RESPONSE_SERVICE))) {
                     result = false;
                     break;
                 }
