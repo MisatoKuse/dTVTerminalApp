@@ -742,7 +742,7 @@
     <string name="remote_connect_error_connect_failed_ddtcp">リモート接続に失敗しました。\nしばらくしてからもう一度お試しください。(RM-D-%s)</string>
     <string name="remote_connect_error_connect_failed_dirag">リモート接続に失敗しました。\nしばらくしてからもう一度お試しください。(RM-9997)</string>
     <string name="remote_connect_error_already_connected">リモート接続に失敗しました。\nほかのユーザーが既にリモート接続をしているため、現在ご利用になれません。(RM-%s)</string>
-    <string name="remote_connect_error_local_registration_unset">視聴いただくには、「リモート視聴設定」が必要です。\n「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(RM-488)</string>
+    <string name="remote_connect_error_local_registration_unset">視聴いただくには、「リモート視聴設定」が必要です。\n「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(RM-%s)</string>
     <string name="remote_connect_error_local_registration_expired">リモート視聴設定の期限が切れたため、現在ご利用になれません。\n再度、「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(RM-606)</string>
     <string name="remote_connect_error_stb_power_off">リモート接続に失敗しました。\nドコモテレビターミナルの電源が入っていないため、現在ご利用になれません。\nドコモテレビターミナルの電源を入れ、しばらくしてからもう一度お試しください。(RM-%s)</string>
 </resources>

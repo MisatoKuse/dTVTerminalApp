@@ -2251,7 +2251,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         boolean isInit = false;
         switch (mPlayerErrorType) {
             case REMOTE:
-                msg = getString(R.string.remote_connect_error_local_registration_unset);
+                msg = getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET));
                 break;
             case ACTIVATION:
                 msg = getString(R.string.activation_failed_error_player);

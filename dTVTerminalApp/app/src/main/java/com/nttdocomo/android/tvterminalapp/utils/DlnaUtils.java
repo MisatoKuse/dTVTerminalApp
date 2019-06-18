@@ -133,6 +133,7 @@ public class DlnaUtils {
     private static final int RATUN_SC_REQUEST_TIMEOUT = 408;
     private static final int RATUN_SC_TEMPORARILY_UNAVAILABLE = 480;
     public static final int ERROR_CODE_NOT_INITIALIZED = 0;
+    public static final int ERROR_CODE_LOCAL_REGISTRATION_UNSET = 9998;
 
     /**
      * ローカルレジストレーションエラータイプ.
@@ -631,7 +632,7 @@ public class DlnaUtils {
                         message = context.getString(R.string.remote_connect_error_already_connected, String.valueOf(errorCode));
                         break;
                     case RATUN_SC_NOT_ACCEPTABLE_HERE:
-                        message = context.getString(R.string.remote_connect_error_local_registration_unset);
+                        message = context.getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(errorCode));
                         break;
                     case RATUN_SC_NOT_ACCEPTABLE_ANYWHERE:
                         message = context.getString(R.string.remote_connect_error_local_registration_expired);
