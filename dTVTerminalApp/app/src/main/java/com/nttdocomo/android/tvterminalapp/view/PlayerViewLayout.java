@@ -20,6 +20,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -1265,8 +1266,8 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         mPlayerController.setCurrentCaption(0); // start caption.
         mReconnectStartTime = 0;
         mDmsDisconnectedTime = 0;
-        boolean result = DlnaUtils.getActivationState(mContext);
-        if (!result) {
+        Pair<Boolean, Integer> result = DlnaUtils.getActivationState(mContext);
+        if (!result.first) {
             mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
             return false;
         } else {

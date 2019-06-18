@@ -109,7 +109,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 executeLocalRegistration();
             } else {
                 //h4d未契約として扱い（未契約である旨のエラーを表示すること）
-                showRegistrationResultDialog(false, DlnaUtils.ExcuteLocalRegistrationErrorType.NO_H4D_CONTRACT);
+                showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, "");
             }
         }
     }
@@ -121,11 +121,10 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DlnaUtils.ExcuteLocalRegistrationErrorType errorType =
-                        DlnaUtils.excuteLocalRegistration(getApplicationContext(), RemoteSetIntroduceActivity.this);
-                boolean result = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE.equals(errorType);
-                if (!result) {
-                    showRegistrationResultDialog(false, errorType);
+                DlnaUtils.ExecuteLocalRegistrationErrorType errorType =
+                        DlnaUtils.executeLocalRegistration(getApplicationContext(), RemoteSetIntroduceActivity.this);
+                if (DlnaUtils.ExecuteLocalRegistrationErrorType.NONE != errorType) {
+                    showRegistrationResultDialog(false, errorType, DlnaManager.shared().getLocalRegistrationErrorCode());
                 }
             }
         }).start();
@@ -136,12 +135,13 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      *
      * @param isSuccess true 成功 false 失敗
      * @param errorType エラータイプ
+     * @param errorCode エラーコード
      */
-    private void showRegistrationResultDialog(final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    private void showRegistrationResultDialog(final boolean isSuccess, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType);
+                final CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType, errorCode);
                 resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
@@ -150,6 +150,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                         } else {
                             resultDialog.dismissDialog();
                         }
+                        DlnaManager.shared().clearErrorCode();
                     }
                 });
                 setRemoteProgressVisible(View.GONE);
@@ -164,7 +165,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * @param isSuccess isSuccess
      * @param errorType errorType
      */
-    private void sendRemoteEvent(final boolean isSuccess, final  DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    private void sendRemoteEvent(final boolean isSuccess, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType) {
         if (isSuccess) {
             sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                     getString(R.string.google_analytics_category_action_remote_success),
@@ -178,14 +179,15 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * イベント送信.
      * @param errorType エラータイプ
      */
-    private void sendEventTrackingByErrorType(final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    private void sendEventTrackingByErrorType(final DlnaUtils.ExecuteLocalRegistrationErrorType errorType) {
         switch (errorType) {
             case ACTIVATION:
                 sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_action_remote_activation_error),
                         null, null);
                 break;
-            case DEVICE_OVER_ERROR:
+            case SOAP_DEVICE_OVER:
+            case DTCP_DEVICE_OVER:
                 sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_device_over_error),
                         null, null);
@@ -196,8 +198,14 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                         null, null);
                 break;
             case START_DTCP:
+            case SOAP:
+            case HTTP:
+            case SOCKET:
+            case DTCP_OTHER:
+            case REQUEST_ERROR_FROM_JNI:
+            case REQUEST_ERROR_FROM_JAVA:
             case START_DIRAG:
-            case UNKOWN:
+            case OTHER:
             case NONE:
             default:
                 sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
@@ -280,12 +288,12 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     }
 
     @Override
-    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
         if (result) {
             //ローカルレジストレーションが成功したので日時を蓄積する
             SharedPreferencesUtils.setRegistTime(getApplicationContext());
         }
-        showRegistrationResultDialog(result, errorType);
+        showRegistrationResultDialog(result, errorType, errorCode);
     }
 
     @Override

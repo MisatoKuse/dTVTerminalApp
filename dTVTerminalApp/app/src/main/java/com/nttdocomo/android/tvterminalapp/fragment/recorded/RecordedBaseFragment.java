@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -685,8 +686,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void downloadClick(final View view) {
-        boolean result = DlnaUtils.getActivationState(mContext);
-        if (!result) {
+        Pair<Boolean, Integer> result = DlnaUtils.getActivationState(mContext);
+        if (!result.first) {
             showErrorDialog(getString(R.string.activation_failed_error_download), R.string.common_text_close);
             return;
         }

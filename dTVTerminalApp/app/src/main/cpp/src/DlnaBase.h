@@ -57,7 +57,7 @@ public:
      */
     bool startDmp(DMP *dmp);
 
-    bool startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid);
+    ddtcp_ret startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid);
     bool stopDtcp(DMP *dmp);
 
     /**

@@ -244,9 +244,9 @@ bool DlnaBase::startDmp(DMP *dmp) {
     return result;
 }
 
-bool DlnaBase::startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid) {
+ddtcp_ret DlnaBase::startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid) {
     LOG_WITH_PARAM(">>>");
-    bool result = false;
+    ddtcp_ret ret;
     do {
         void *private_data;
         dixim_hwif_private_data_io dstPrivateDataIo;
@@ -255,24 +255,23 @@ bool DlnaBase::startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid) {
         dstPrivateDataIo.obj = object;
         dstPrivateDataIo.mac_address_method_id = mid;
         private_data = &dstPrivateDataIo;
-        result = false;
-        LOG_WITH(" before ddtcp_set_additional_param");
-        if (DDTCP_FAILED(ddtcp_set_additional_param(dmp->dtcp, DDTCP_ADDITINAL_PARAM_TYPE_PRIVATE_DATA_IO, private_data))) {
-            du_log_mark_w(0);
-            break;
-        }
-        LOG_WITH(" after ddtcp_set_additional_param");
-        ddtcp_ret ret = ddtcp_startup(dmp->dtcp);
 
+        LOG_WITH(" before ddtcp_set_additional_param");
+        ret = ddtcp_set_additional_param(dmp->dtcp, DDTCP_ADDITINAL_PARAM_TYPE_PRIVATE_DATA_IO, private_data);
         if (DDTCP_FAILED(ret)) {
             du_log_mark_w(0);
             break;
         }
-        result = true;
+        LOG_WITH(" after ddtcp_set_additional_param");
+
+        ret = ddtcp_startup(dmp->dtcp);
+        if (DDTCP_FAILED(ret)) {
+            du_log_mark_w(0);
+            break;
+        }
     } while (false);
 
-    LOG_WITH_BOOL_PARAM(result, " <<<");
-    return result;
+    return ret;
 }
 
 bool DlnaBase::stopDtcp(DMP *dmp) {

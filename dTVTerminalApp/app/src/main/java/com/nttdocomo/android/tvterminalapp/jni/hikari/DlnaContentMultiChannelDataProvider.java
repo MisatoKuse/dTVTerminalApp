@@ -29,7 +29,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
         /**
          * ブラウズエラーコールバック.
          */
-        void multiChannelErrorCallback();
+        void multiChannelErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode);
         /**
          * 接続できない場合のエラーコールバック.
          * @param errorCode エラーコード
@@ -113,9 +113,9 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     }
 
     @Override
-    public void onContentBrowseErrorCallback(final String containerId) {
+    public void onContentBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
         if (mOnMultiChCallbackListener != null) {
-            mOnMultiChCallbackListener.multiChannelErrorCallback();
+            mOnMultiChCallbackListener.multiChannelErrorCallback(errorType, errorCode);
         }
     }
 
