@@ -489,40 +489,47 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param isPlala true:ぷららサーバ  false:レコメンドサーバ
      * @return チャンネル名付いているコンテンツリスト
      */
-    private List<ContentsData> setChannelName(final List<ContentsData> contentDataList, final ChannelList channelList, final boolean isPlala) {
-        if (channelList != null && contentDataList != null) {
-            List<Map<String, String>> list = channelList.getChannelList();
-            for (int i = 0; i < contentDataList.size(); i++) {
-                if (!isPlala) {
-                    String channelId = contentDataList.get(i).getChannelId();
-                    String serviceId = contentDataList.get(i).getServiceId();
-                    String categoryId = contentDataList.get(i).getCategoryId();
-                    if (DataBaseUtils.isNumber(serviceId)) {
-                        int serviceID = Integer.parseInt(serviceId);
-                        ContentUtils.ChannelServiceType serviceType = ContentUtils.getChannelServiceTypeFromRecommend(serviceID, categoryId);
-                        String tvService = ContentUtils.getTvService(serviceType);
-                        if (!TextUtils.isEmpty(tvService) && !TextUtils.isEmpty(channelId)) {
-                            for (Map<String, String> hashMap : list) {
-                                if (tvService.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE))
-                                        && channelId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
-                                    contentDataList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
-                                }
+    private synchronized List<ContentsData> setChannelName(final List<ContentsData> contentDataList, final ChannelList channelList, final boolean isPlala) {
+        if (contentDataList == null) {
+            return null;
+        }
+        List<ContentsData> tmpContentDataList = new ArrayList<>(contentDataList);
+        if (channelList == null || tmpContentDataList.isEmpty()) {
+            return tmpContentDataList;
+        }
+        List<Map<String, String>> list = new ArrayList<>(channelList.getChannelList());
+        for (int i = 0; i < tmpContentDataList.size(); i++) {
+            if (!isPlala) {
+                String channelId = tmpContentDataList.get(i).getChannelId();
+                String serviceId = tmpContentDataList.get(i).getServiceId();
+                String categoryId = tmpContentDataList.get(i).getCategoryId();
+                if (DataBaseUtils.isNumber(serviceId)) {
+                    int serviceID = Integer.parseInt(serviceId);
+                    ContentUtils.ChannelServiceType serviceType = ContentUtils.getChannelServiceTypeFromRecommend(serviceID, categoryId);
+                    String tvService = ContentUtils.getTvService(serviceType);
+                    if (!TextUtils.isEmpty(tvService) && !TextUtils.isEmpty(channelId)) {
+                        for (int j = 0; j < list.size(); j++) {
+                            Map<String, String> hashMap = list.get(j);
+                            if (tvService.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE))
+                                    && channelId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
+                                tmpContentDataList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
                             }
                         }
                     }
-                } else {
-                    String serviceIdUniq = contentDataList.get(i).getServiceIdUniq();
-                    if (!TextUtils.isEmpty(serviceIdUniq)) {
-                        for (Map<String, String> hashMap : list) {
-                            if (serviceIdUniq.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ))) {
-                                contentDataList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
-                            }
+                }
+            } else {
+                String serviceIdUniq = tmpContentDataList.get(i).getServiceIdUniq();
+                if (!TextUtils.isEmpty(serviceIdUniq)) {
+                    for (int j = 0; j < list.size(); j++) {
+                        Map<String, String> hashMap = list.get(j);
+                        if (serviceIdUniq.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID_UNIQ))) {
+                            tmpContentDataList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
                         }
                     }
                 }
             }
         }
-        return contentDataList;
+        return tmpContentDataList;
     }
 
     @Override
