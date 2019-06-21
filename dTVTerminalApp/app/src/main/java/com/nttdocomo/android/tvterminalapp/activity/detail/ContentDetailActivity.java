@@ -839,7 +839,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mDetailData = new OtherContentsDetailData();
             }
             mDetailData.setContentsId(contentsId);
-            mDetailData.setServiceId(ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID);
         } else {
             mDetailData = mIntent.getParcelableExtra(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
             if (mDetailData != null) {
@@ -3052,6 +3051,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this)) && mSendOperateLog == null) {
             mSendOperateLog = new SendOperateLog(getApplicationContext());
             if (mDetailFullData != null) {
+                mDetailData.setServiceId(ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID);
                 mDetailData.setChannelId(mDetailFullData.getmService_id());
             }
             mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
