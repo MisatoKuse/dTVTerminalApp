@@ -100,6 +100,8 @@ public class ContentDetailUtils {
     public static final String PLAY_START_POSITION = "playStartPosition";
     /** 前回リモートコントローラービュー表示フラグ.*/
     public static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
+    /** 再生停止フラグ.*/
+    public static final String IS_PLAYER_PAUSED = "isPlayerPaused";
     /** 前回ViewPagerのタブ位置.*/
     public static final String VIEWPAGER_INDEX = "viewPagerIndex";
     /**コンテンツ詳細予約済みID.*/

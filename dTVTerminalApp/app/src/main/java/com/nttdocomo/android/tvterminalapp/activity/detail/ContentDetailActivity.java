@@ -253,6 +253,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mPlayStartPosition = savedInstanceState.getInt(ContentDetailUtils.PLAY_START_POSITION);
             mVisibility = savedInstanceState.getBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY);
             mViewPagerIndex = savedInstanceState.getInt(ContentDetailUtils.VIEWPAGER_INDEX);
+            mIsPlayerPaused = savedInstanceState.getBoolean(ContentDetailUtils.IS_PLAYER_PAUSED);
             savedInstanceState.clear();
         }
         setTheme(R.style.AppThemeBlack);
@@ -443,6 +444,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mViewPager != null) {
             outState.putInt(ContentDetailUtils.VIEWPAGER_INDEX, mViewPager.getCurrentItem());
         }
+        outState.putBoolean(ContentDetailUtils.IS_PLAYER_PAUSED, mIsPlayerPaused);
     }
 
     @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
