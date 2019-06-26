@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -48,6 +49,7 @@ import com.nttdocomo.android.tvterminalapp.struct.DownloadComparator;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
@@ -267,13 +269,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setProgressBarGone();
                 if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
                         || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
-                    showErrorDialog(DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, errorType, errorCode));
+                    Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, errorType, errorCode);
+                    showErrorDialog(errorInfoPair.first);
+                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                 } else {
                     showGetDataFailedToast();
                 }
@@ -287,11 +292,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onRemoteConnectTimeOutCallback() {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setProgressBarGone();
-                showErrorDialog(getString(R.string.remote_connect_error_timeout));
+                showErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
+                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement),
+                        getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
@@ -392,11 +400,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onConnectErrorCallback(final int errorCode) {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         setProgressBarGone();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showErrorDialog(DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode));
+                Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this,
+                        DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode);
+                showErrorDialog(errorInfoPair.first);
+                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));

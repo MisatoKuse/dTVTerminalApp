@@ -20,14 +20,16 @@ public class GoogleAnalyticsUtils {
 
     /**
      * 実行中のクラス名を取得します.
-     *
+     * @param stackTraceElement stackTraceElement
      * @return クラス名.
      */
-    private static String getCurrentClassName() {
-        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
-        if (stackTraceElement.length >= 5) {
-            String className = Thread.currentThread().getStackTrace()[4].getClassName();
+    private static String getCurrentClassName(final StackTraceElement[] stackTraceElement) {
+        if (stackTraceElement.length >= 3) {
+            String className = stackTraceElement[2].getClassName();
             className = className.substring(className.lastIndexOf(ContentUtils.STR_DOT) + 1);
+            if (className.contains(ContentUtils.STR_DOLLAR)) {
+                className = className.substring(0, className.lastIndexOf(ContentUtils.STR_DOLLAR));
+            }
             return className;
         } else {
             return null;
@@ -38,11 +40,11 @@ public class GoogleAnalyticsUtils {
      * 実行中のメソッド名を取得します.
      *
      * @return メソッド名.
+     * @param stackTraceElement stackTraceElement
      */
-    private static String getCurrentMethodName() {
-        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
-        if (stackTraceElement.length >= 5) {
-            return Thread.currentThread().getStackTrace()[4].getMethodName();
+    private static String getCurrentMethodName(final StackTraceElement[] stackTraceElement) {
+        if (stackTraceElement.length >= 3) {
+            return stackTraceElement[2].getMethodName();
         } else {
             return null;
         }
@@ -51,11 +53,20 @@ public class GoogleAnalyticsUtils {
     /**
      * getClassNameAndMethodName.
      * @return nameString
+     * @param stackTraceElement stackTraceElement
      */
-    public static String getClassNameAndMethodName() {
-        String nameString;
-        nameString = getCurrentClassName() + ContentUtils.STR_COLON + getCurrentMethodName();
-        return nameString;
+    public static String getClassNameAndMethodName(final StackTraceElement[] stackTraceElement) {
+        return getCurrentClassName(stackTraceElement) + ContentUtils.STR_COLON + getCurrentMethodName(stackTraceElement);
+    }
+
+    /**
+     * class名とmethod名を整形する.
+     * @param className className
+     * @param methodName methodName
+     * @return  class名とmethod名
+     */
+    public static String formatClassNameAndMethodName(final String className, final String methodName) {
+        return className + ContentUtils.STR_COLON + methodName;
     }
 
     /**

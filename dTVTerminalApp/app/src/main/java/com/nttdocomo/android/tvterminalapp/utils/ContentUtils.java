@@ -170,6 +170,8 @@ public class ContentUtils {
     public static final String STR_DOT = ".";
     /** コロン.*/
     public static final String STR_COLON = ":";
+    /** ドル.*/
+    public static final String STR_DOLLAR = "$";
     /** サイズ.*/
     private static final int SCHEDULE_FORMAT_SIZE = 10;
     /** 予約されたサービス 多チャン.*/

@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -97,6 +99,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * ユーザ状態判定.
      *
      * @param doGetUserInfo 契約情報再取得要否
+     *
      */
     private void checkContractInfo(final boolean doGetUserInfo) {
         String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
@@ -109,7 +112,12 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 executeLocalRegistration();
             } else {
                 //h4d未契約として扱い（未契約である旨のエラーを表示すること）
-                showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, "");
+                String notContractErrorCode = ContentUtils.STR_BLANK;
+                if (UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
+                    //契約情報なしの場合
+                    notContractErrorCode = DlnaUtils.STR_CODE_NOT_CONTRACT_ERROR;
+                }
+                showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, notContractErrorCode);
             }
         }
     }
@@ -138,24 +146,29 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * @param errorCode エラーコード
      */
     private void showRegistrationResultDialog(final boolean isSuccess, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
+        final String fixErrorCode  = DlnaUtils.formatErrorCode(errorCode);
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType, errorCode);
-                resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                final Pair<CustomDialog, String> resultPair = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType, fixErrorCode);
+                resultPair.first.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
                         if (isSuccess) {
                             startTransition();
                         } else {
-                            resultDialog.dismissDialog();
+                            resultPair.first.dismissDialog();
                         }
                         DlnaManager.shared().clearErrorCode();
                     }
                 });
                 setRemoteProgressVisible(View.GONE);
                 sendRemoteEvent(isSuccess, errorType);
-                resultDialog.showDialog();
+                resultPair.first.showDialog();
+                if (!isSuccess) {
+                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), resultPair.second);
+                }
             }
         });
     }

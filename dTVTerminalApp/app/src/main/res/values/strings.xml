@@ -44,7 +44,7 @@
     <string name="common_date_format_end_str">" まで"</string>
     <string name="common_text_regist_progress_done">設定を完了しました</string>
     <string name="common_text_regist_over_error_setting">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。(LR-%s)</string>
-    <string name="common_text_regist_no_h4d_contract_error">@string/main_setting_h4d_not_signed_message</string>
+    <string name="common_text_regist_no_h4d_contract_error">ひかりＴＶ for docomoの契約状態が確認できないため\nご利用になれません(LR-%s)</string>
     <string name="common_text_regist_other_error">ひかりＴＶ for docomoの設定が「自宅内/外出先で有効」になっていない可能性があります。設定をご確認ください。(LR-%s)</string>
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
@@ -256,7 +256,7 @@
     <string name="record_download_notification_channel_name">ダウンロード状況</string>
     <string name="record_download_not_completed_msg">録画コンテンツのダウンロードに失敗しました。\n再度録画一覧よりダウンロードを行ってください。</string>
     <string name="record_download_low_storage_space_msg">端末の容量が不足しているため、ダウンロードできません</string>
-    <string name="activation_failed_error_player">再生に失敗しました（AC-1）</string>
+    <string name="activation_failed_error_player">再生に失敗しました（AC-%s）</string>
     <string name="activation_failed_error_local_registration">リモート視聴設定に失敗しました。\nしばらくしてからもう一度お試しください。(AC-%s)</string>
     <string name="activation_failed_error_download">ダウンロードに失敗しました（AC-1）</string>
 
@@ -500,6 +500,19 @@
     <string name="network_http_error_message">サーバとの通信に失敗しました</string>
     <string name="json_parse_error_message">取得に失敗しました</string>
 
+    <!-- エラープレフィックスタイプ一覧　※新たに定義されたら追加していく -->
+    <string name="error_prefix_type_plala_server_error">P-%s</string>
+    <string name="error_prefix_type_json_paser_error">A-%s</string>
+    <string name="error_prefix_type_search_recommend_error" >K-%s</string>
+    <string name="error_prefix_type_d_account_error" >AI-%s</string>
+    <string name="error_prefix_type_local_registration_error" >LR-%s</string>
+    <string name="error_prefix_type_http_code_and_dtcp_error" >HC-%s, DT-%s</string>
+    <string name="error_prefix_type_download_error" >DL-%s</string>
+    <string name="error_prefix_type_remote_connect_error" >RM-%s</string>
+    <string name="error_prefix_type_connect_failed_ddtcp_error">RM-D-%s</string>
+    <string name="error_prefix_type_media_player_and_status_code_error" >MP-%s, SC-%s</string>
+    <string name="error_prefix_activated_error" >AC-%s</string>
+
     <!-- TODO: 設定ファイル動作制御用仮ワーディング -->
     <string name="setting_file_force_download">ドコモテレビターミナルアプリの新バージョンがあります。アップデートを行います。</string>
     <string name="setting_file_download">ドコモテレビターミナルアプリの新バージョンが存在します。アップデートを行いますか？</string>
@@ -736,14 +749,14 @@
     <string name="remote_introduce_dialog_txt">あとで設定する場合は、「設定＞リモート視聴設定」より行ってください。</string>
 
     <!-- リモート接続エラー -->
-    <string name="remote_connect_error_timeout">リモート接続がタイムアウトしました。\nしばらくしてからもう一度お試しください。(RM-9999)</string>
+    <string name="remote_connect_error_timeout">リモート接続がタイムアウトしました。\nしばらくしてからもう一度お試しください。(RM-%s)</string>
     <string name="remote_connect_error_network_failed">リモート接続に失敗しました。\nネットワーク状態を確認してもう一度お試しください。(RM-%s)</string>
     <string name="remote_connect_error_service_unavailable">リモート接続に失敗しました。\n現在、サービスを停止しているためリモート接続ができません。\nお知らせをご確認の上しばらくしてからもう一度お試しください。(RM-%s)</string>
     <string name="remote_connect_error_connect_failed">リモート接続に失敗しました(RM-%s)</string>
     <string name="remote_connect_error_connect_failed_ddtcp">リモート接続に失敗しました。\nしばらくしてからもう一度お試しください。(RM-D-%s)</string>
-    <string name="remote_connect_error_connect_failed_dirag">リモート接続に失敗しました。\nしばらくしてからもう一度お試しください。(RM-9997)</string>
+    <string name="remote_connect_error_connect_failed_dirag">リモート接続に失敗しました。\nしばらくしてからもう一度お試しください。(RM-%s)</string>
     <string name="remote_connect_error_already_connected">リモート接続に失敗しました。\nほかのユーザーが既にリモート接続をしているため、現在ご利用になれません。(RM-%s)</string>
     <string name="remote_connect_error_local_registration_unset">視聴いただくには、「リモート視聴設定」が必要です。\n「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(RM-%s)</string>
-    <string name="remote_connect_error_local_registration_expired">リモート視聴設定の期限が切れたため、現在ご利用になれません。\n再度、「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(RM-606)</string>
+    <string name="remote_connect_error_local_registration_expired">リモート視聴設定の期限が切れたため、現在ご利用になれません。\n再度、「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(RM-%s)</string>
     <string name="remote_connect_error_stb_power_off">リモート接続に失敗しました。\nドコモテレビターミナルの電源が入っていないため、現在ご利用になれません。\nドコモテレビターミナルの電源を入れ、しばらくしてからもう一度お試しください。(RM-%s)</string>
 </resources>
