@@ -407,8 +407,8 @@ public class DlnaManager {
      * タイマーキャンセル.
      */
     private void cancelTimer() {
-        if (mTimer != null) {
-            mTimer.cancel();
+        if (DlnaManager.shared().mTimer != null) {
+            DlnaManager.shared().mTimer.cancel();
         }
     }
 
