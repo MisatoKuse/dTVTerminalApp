@@ -99,9 +99,9 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * ユーザ状態判定.
      *
      * @param doGetUserInfo 契約情報再取得要否
-     *
+     * @param notContractErrorCode notContractErrorCode
      */
-    private void checkContractInfo(final boolean doGetUserInfo) {
+    private void checkContractInfo(final boolean doGetUserInfo, final String notContractErrorCode) {
         String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
         DTVTLogger.debug("contractInfo: " + contractInfo);
         if ((contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo))
@@ -112,11 +112,6 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 executeLocalRegistration();
             } else {
                 //h4d未契約として扱い（未契約である旨のエラーを表示すること）
-                String notContractErrorCode = ContentUtils.STR_BLANK;
-                if (UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
-                    //契約情報なしの場合
-                    notContractErrorCode = DlnaUtils.STR_CODE_NOT_CONTRACT_ERROR;
-                }
                 showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, notContractErrorCode);
             }
         }
@@ -233,7 +228,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         switch (view.getId()) {
             case R.id.remote_introduce_main_layout_set_btn:
                 setRemoteProgressVisible(View.VISIBLE);
-                checkContractInfo(true);
+                checkContractInfo(true, ContentUtils.STR_BLANK);
                 break;
             case R.id.remote_introduce_main_layout_tv_link:
                 CustomDialog resultDialog = new CustomDialog(RemoteSetIntroduceActivity.this, CustomDialog.DialogType.ERROR);
@@ -314,7 +309,12 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                                      final List<UserInfoList> userList, final boolean isUserContract) {
         startTvProgramIntentService();
         //契約情報確認、契約情報再取得不要
-        checkContractInfo(false);
+        String notContractErrorCode = ContentUtils.STR_BLANK;
+        //契約情報取得失敗
+        if (userList == null || userList.size() < 1) {
+            notContractErrorCode = DlnaUtils.STR_CODE_USER_INFO_GET_ERROR;
+        }
+        checkContractInfo(false, notContractErrorCode);
         String contractType = ContentUtils.getContractType(RemoteSetIntroduceActivity.this);
         if (!TextUtils.isEmpty(contractType)) {
             SparseArray<String> customDimensions = new SparseArray<>();
