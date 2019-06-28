@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -97,8 +99,9 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * ユーザ状態判定.
      *
      * @param doGetUserInfo 契約情報再取得要否
+     * @param notContractErrorCode notContractErrorCode
      */
-    private void checkContractInfo(final boolean doGetUserInfo) {
+    private void checkContractInfo(final boolean doGetUserInfo, final String notContractErrorCode) {
         String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
         DTVTLogger.debug("contractInfo: " + contractInfo);
         if ((contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo))
@@ -109,7 +112,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 executeLocalRegistration();
             } else {
                 //h4d未契約として扱い（未契約である旨のエラーを表示すること）
-                showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, "");
+                showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, notContractErrorCode);
             }
         }
     }
@@ -138,24 +141,29 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * @param errorCode エラーコード
      */
     private void showRegistrationResultDialog(final boolean isSuccess, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
+        final String fixErrorCode  = DlnaUtils.formatErrorCode(errorCode);
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType, errorCode);
-                resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                final Pair<CustomDialog, String> resultPair = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType, fixErrorCode);
+                resultPair.first.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
                         if (isSuccess) {
                             startTransition();
                         } else {
-                            resultDialog.dismissDialog();
+                            resultPair.first.dismissDialog();
                         }
                         DlnaManager.shared().clearErrorCode();
                     }
                 });
                 setRemoteProgressVisible(View.GONE);
                 sendRemoteEvent(isSuccess, errorType);
-                resultDialog.showDialog();
+                resultPair.first.showDialog();
+                if (!isSuccess) {
+                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), resultPair.second);
+                }
             }
         });
     }
@@ -220,7 +228,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         switch (view.getId()) {
             case R.id.remote_introduce_main_layout_set_btn:
                 setRemoteProgressVisible(View.VISIBLE);
-                checkContractInfo(true);
+                checkContractInfo(true, ContentUtils.STR_BLANK);
                 break;
             case R.id.remote_introduce_main_layout_tv_link:
                 CustomDialog resultDialog = new CustomDialog(RemoteSetIntroduceActivity.this, CustomDialog.DialogType.ERROR);
@@ -301,7 +309,12 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                                      final List<UserInfoList> userList, final boolean isUserContract) {
         startTvProgramIntentService();
         //契約情報確認、契約情報再取得不要
-        checkContractInfo(false);
+        String notContractErrorCode = ContentUtils.STR_BLANK;
+        //契約情報取得失敗
+        if (userList == null || userList.size() < 1) {
+            notContractErrorCode = DlnaUtils.STR_CODE_USER_INFO_GET_ERROR;
+        }
+        checkContractInfo(false, notContractErrorCode);
         String contractType = ContentUtils.getContractType(RemoteSetIntroduceActivity.this);
         if (!TextUtils.isEmpty(contractType)) {
             SparseArray<String> customDimensions = new SparseArray<>();

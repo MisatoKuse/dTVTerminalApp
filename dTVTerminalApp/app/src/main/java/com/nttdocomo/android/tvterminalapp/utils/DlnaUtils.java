@@ -36,6 +36,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DLNA共通Utilクラス.
@@ -114,6 +116,8 @@ public class DlnaUtils {
     private static final String STR_CODE_HEAD_REQUEST = "7";
     private static final String STR_CODE_REQUEST_ERROR = "99996";
     private static final String STR_CODE_UNKNOWN_ERROR = "99999";
+    public static final String STR_CODE_USER_INFO_GET_ERROR = "899998";
+    public static final String STR_CODE_NOT_CONTRACT_ERROR = "899999";
 
     /**リモート接続エラーコード.*/
     private static final int RATUN_MANAGER_ERROR_CODE_NOT_INITIALIZED = 1201;
@@ -133,7 +137,9 @@ public class DlnaUtils {
     private static final int RATUN_SC_REQUEST_TIMEOUT = 408;
     private static final int RATUN_SC_TEMPORARILY_UNAVAILABLE = 480;
     public static final int ERROR_CODE_NOT_INITIALIZED = 0;
+    public static final int ERROR_CODE_REMOTE_CONNECT_FAILED_DIRAG = 9997;
     public static final int ERROR_CODE_LOCAL_REGISTRATION_UNSET = 9998;
+    public static final int ERROR_CODE_REMOTE_CONNECT_TIME_OUT = 9999;
 
     /**
      * ローカルレジストレーションエラータイプ.
@@ -540,15 +546,15 @@ public class DlnaUtils {
      * @param context コンテキスト
      * @param isSuccess true 成功 false 失敗
      * @param errorType エラータイプ
-     * @param errorCode エラーコード
-     * @return ローカルレジストレーションの処理結果ダイアログ
+     * @param fixErrorCode エラーコード
+     * @return ローカルレジストレーションの処理結果Pair first：エラーダイアログ、second:エラーコード
      */
-    public static CustomDialog getRegistResultDialog(final Context context, final boolean isSuccess, final ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
+    public static Pair<CustomDialog, String> getRegistResultDialog(final Context context, final boolean isSuccess, final ExecuteLocalRegistrationErrorType errorType, final String fixErrorCode) {
         CustomDialog resultDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
         resultDialog.setCancelable(false);
         resultDialog.setOnTouchBackkey(false);
-
+        String formatErrorCode = ContentUtils.STR_BLANK;
         if (isSuccess) {
             resultDialog.setContent(context.getString(R.string.common_text_regist_progress_done));
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
@@ -556,60 +562,97 @@ public class DlnaUtils {
             SharedPreferencesUtils.setRemoteDeviceExpireDate(context, expireDate);
         } else {
             String dialogMessage;
-            String formatErrorCode = errorCode;
-
-            if (TextUtils.isEmpty(formatErrorCode)) {
-                formatErrorCode = STR_CODE_UNKNOWN_ERROR;
-            }
-
-            formatErrorCode = String.format("%5s", formatErrorCode).replace(STR_SPACE, STR_PADDING_CHARACTER);//エラーコード桁数調整、0埋め込み
-
             switch (errorType) {
                 case NO_H4D_CONTRACT:
-                    dialogMessage = context.getString(R.string.common_text_regist_no_h4d_contract_error);
+                    //ユーザ情報取得失敗アラートエラー採番LR-899998
+                    if (DlnaUtils.STR_CODE_USER_INFO_GET_ERROR.equals(fixErrorCode)) {
+                        dialogMessage = context.getString(R.string.common_text_regist_no_h4d_contract_error, fixErrorCode);
+                        formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, fixErrorCode);
+                    } else {
+                        //そもそも未契約アラートエラー採番LR-899999
+                        dialogMessage = context.getString(R.string.common_text_regist_no_h4d_contract_error, DlnaUtils.STR_CODE_NOT_CONTRACT_ERROR);
+                        formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, DlnaUtils.STR_CODE_NOT_CONTRACT_ERROR);
+                    }
                     break;
                 case ACTIVATION:
-                    dialogMessage = context.getString(R.string.activation_failed_error_local_registration, formatErrorCode);
+                    dialogMessage = context.getString(R.string.activation_failed_error_local_registration, fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_activated_error, fixErrorCode);
                     break;
                 case SOAP_DEVICE_OVER:
-                    dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_SOAP + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_SOAP + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, STR_CODE_HEAD_SOAP + fixErrorCode);
                     break;
                 case SOAP:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_HEAD_SOAP + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_HEAD_SOAP + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, STR_CODE_HEAD_SOAP + fixErrorCode);
                     break;
                 case HTTP:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_HEAD_HTTP + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_HEAD_HTTP + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, STR_CODE_HEAD_HTTP + fixErrorCode);
                     break;
                 case SOCKET:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_SOCKET + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_SOCKET + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, STR_CODE_HEAD_SOCKET + fixErrorCode);
                     break;
                 case OTHER:
                     dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_OTHER + STR_CODE_UNKNOWN_ERROR);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error,
+                            STR_CODE_HEAD_OTHER + STR_CODE_UNKNOWN_ERROR);
                     break;
                 case DTCP_DEVICE_OVER:
-                    dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_START_DTCP + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_over_error_setting, STR_CODE_HEAD_START_DTCP + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error,
+                            STR_CODE_HEAD_START_DTCP + fixErrorCode);
                     break;
                 case START_DTCP:
                 case DTCP_OTHER:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DTCP + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DTCP + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error,
+                            STR_CODE_HEAD_START_DTCP + fixErrorCode);
                     break;
                 case START_DIRAG:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DIRAG + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_START_DIRAG + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error,
+                            STR_CODE_HEAD_START_DIRAG + fixErrorCode);
                     break;
                 case REQUEST_ERROR_FROM_JNI:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_REQUEST + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_REQUEST + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error,
+                            STR_CODE_HEAD_REQUEST + fixErrorCode);
                     break;
                 case REQUEST_ERROR_FROM_JAVA:
-                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_REQUEST + formatErrorCode);
+                    dialogMessage = context.getString(R.string.common_text_regist_other_error,  STR_CODE_HEAD_REQUEST + fixErrorCode);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error,
+                            STR_CODE_HEAD_REQUEST + fixErrorCode);
                     break;
                 default:
                     dialogMessage = context.getString(R.string.common_text_regist_other_error, STR_CODE_UNKNOWN_ERROR);
+                    formatErrorCode = context.getString(R.string.error_prefix_type_local_registration_error, STR_CODE_UNKNOWN_ERROR);
                     break;
             }
             resultDialog.setContent(dialogMessage);
             resultDialog.setConfirmText(R.string.common_text_close);
         }
-        return resultDialog;
+        return new Pair<>(resultDialog, formatErrorCode);
+    }
+
+    /**
+     * エラーコードを整形する.
+     * @param errorCode .
+     * @return errorCode
+     */
+    public static String formatErrorCode(final String errorCode) {
+        String formatErrorCode = errorCode;
+        if (DlnaUtils.STR_CODE_USER_INFO_GET_ERROR.equals(formatErrorCode)) {
+            return formatErrorCode;
+        }
+
+        if (TextUtils.isEmpty(formatErrorCode)) {
+            formatErrorCode = STR_CODE_UNKNOWN_ERROR;
+        }
+
+        formatErrorCode = String.format("%5s", formatErrorCode).replace(STR_SPACE, STR_PADDING_CHARACTER); //エラーコード桁数調整、0埋め込み
+        return formatErrorCode;
     }
 
     /**
@@ -618,10 +661,11 @@ public class DlnaUtils {
      * @param context コンテキスト
      * @param errorType エラータイプ
      * @param errorCode エラーコード
-     * @return リモート接続エラーメッセージ
+     * @return Pair first：エラーメッセージ、second:エラーコード
      */
-    public static String getDlnaErrorMessage(final Context context, final RemoteConnectErrorType errorType, final int errorCode) {
+    public static  Pair<String, String> getDlnaErrorMessage(final Context context, final RemoteConnectErrorType errorType, final int errorCode) {
         String message;
+        String formatErrorCode;
         switch (errorType) {
             case REMOTE_CONNECT_STATUS:
                 switch (errorCode) {
@@ -632,44 +676,53 @@ public class DlnaUtils {
                     case RATUN_MANAGER_ERROR_CODE_NETTYPE_BLOCKED:
                     case RATUN_MANAGER_ERROR_CODE_NETTYPE_SYMMETRIC:
                         message = context.getString(R.string.remote_connect_error_network_failed, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                     case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_PROHIBITED_SERVICE_P:
                         message = context.getString(R.string.remote_connect_error_service_unavailable, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                     case RATUN_SC_BUSY_HERE:
                         message = context.getString(R.string.remote_connect_error_already_connected, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                     case RATUN_SC_NOT_ACCEPTABLE_HERE:
                         message = context.getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                     case RATUN_SC_NOT_ACCEPTABLE_ANYWHERE:
-                        message = context.getString(R.string.remote_connect_error_local_registration_expired);
+                        message = context.getString(R.string.remote_connect_error_local_registration_expired, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                     case RATUN_SC_NOT_FOUND:
                     case RATUN_SC_REQUEST_TIMEOUT:
                     case RATUN_SC_TEMPORARILY_UNAVAILABLE:
                         message = context.getString(R.string.remote_connect_error_stb_power_off, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                     case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_CERT_D:
                     case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_TICKET_1:
                     case RATUN_MANAGER_ERROR_CODE_AUTH_ERROR_EXCEEDED_TICKET_2:
                     default:
                         message = context.getString(R.string.remote_connect_error_connect_failed, String.valueOf(errorCode));
+                        formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                         break;
                 }
                 break;
             case START_DTCP:
                 message = context.getString(R.string.remote_connect_error_connect_failed_ddtcp, String.valueOf(errorCode));
+                formatErrorCode = context.getString(R.string.error_prefix_type_connect_failed_ddtcp_error, String.valueOf(errorCode));
                 break;
             case START_DIRAG:
-                message = context.getString(R.string.remote_connect_error_connect_failed_dirag);
+                message = context.getString(R.string.remote_connect_error_connect_failed_dirag, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_FAILED_DIRAG));
+                formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_FAILED_DIRAG));
                 break;
             case NONE:
             default:
                 message = context.getString(R.string.remote_connect_error_connect_failed, String.valueOf(errorCode));
+                formatErrorCode = context.getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(errorCode));
                 break;
         }
-        return message;
+        return new Pair<>(message, formatErrorCode);
     }
-
 }

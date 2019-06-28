@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -82,6 +83,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -2244,16 +2246,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType mPlayerErrorType) {
+    public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType mPlayerErrorType, final int errorCode) {
         showProgressBar(false);
+        String formatErrorCode = null;
         String msg = null;
         boolean isInit = false;
         switch (mPlayerErrorType) {
             case REMOTE:
                 msg = getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET));
+                formatErrorCode = getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET));
                 break;
             case ACTIVATION:
-                msg = getString(R.string.activation_failed_error_player);
+                msg = getString(R.string.activation_failed_error_player, String.valueOf(errorCode));
+                formatErrorCode = getString(R.string.error_prefix_activated_error, String.valueOf(errorCode));
                 break;
             case EXTERNAL:
                 msg = getString(R.string.contents_detail_external_display_dialog_msg);
@@ -2273,6 +2278,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 showDialogToConfirm(msg);
             } else {
                 showDialogToConfirmClose(msg);
+            }
+            if (!TextUtils.isEmpty(formatErrorCode)) {
+                final StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElements), formatErrorCode);
             }
             mPlayerViewLayout.removeSendMessage();
         }
@@ -2377,13 +2386,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void multiChannelErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
+                        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
                                 if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
                                         || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
-                                    showErrorDialog(DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this, errorType, errorCode));
+                                    Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this, errorType, errorCode);
+                                    showErrorDialog(errorInfoPair.first);
+                                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                                 } else {
                                     showGetDataFailedToast();
                                 }
@@ -2393,11 +2405,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onConnectErrorCallback(final int errorCode) {
+                       final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showErrorDialog(DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this, DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode));
+                                Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this,
+                                        DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode);
+                                showErrorDialog(errorInfoPair.first);
+                                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                                 setRemotePlayArrow(null);
                             }
                         });
@@ -2405,11 +2421,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onRemoteConnectTimeOutCallback() {
+                        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showErrorDialog(getString(R.string.remote_connect_error_timeout));
+                                showErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
+                                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement),
+                                        getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
                                 setRemotePlayArrow(null);
                             }
                         });
@@ -2812,6 +2831,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void setRemotePlayArrow(final RecordedContentsDetailData playData) {
         DTVTLogger.start();
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         //再生ボタンは宅外かつ契約があるときのみ表示
         if (UserInfoUtils.isContract(this)) {
             if (mPlayerViewLayout != null) {
@@ -2830,6 +2850,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             switch (StbConnectionManager.shared().getConnectionStatus()) {
                                 case NONE_LOCAL_REGISTRATION:
                                     showErrorDialog(getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET)));
+                                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), getString(
+                                            R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET)));
                                     break;
                                 case HOME_OUT:
                                     if (mDetailFullData != null) {
