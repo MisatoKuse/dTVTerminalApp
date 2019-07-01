@@ -129,25 +129,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @SuppressWarnings("OverlyLongMethod")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.record_list_main_layout);
-        setTitleText(getString(R.string.nav_menu_item_recorder_program));
-        Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        enableHeaderBackIcon(true);
-        enableGlobalMenuIcon(true);
-        registReceiver();
-        initView();
-        initTabView();
-        setPagerAdapter();
+        int startPageNo;
         if (savedInstanceState != null) {
-            int startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
+            startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
             mDlnaRecVideoItems = (ArrayList<DlnaRecVideoItem>) savedInstanceState.getSerializable(ITEMS_MEMORY);
             savedInstanceState.clear();
-            mViewPager.setCurrentItem(startPageNo);
-            mTabLayout.setTab(startPageNo);
         } else {
-            int startPageNo;
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case NONE_PAIRING:
                 case NONE_LOCAL_REGISTRATION:
@@ -160,9 +147,20 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     startPageNo = ALL_RECORD_LIST;
                     break;
             }
-            mViewPager.setCurrentItem(startPageNo);
-            mTabLayout.setTab(startPageNo);
         }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.record_list_main_layout);
+        setTitleText(getString(R.string.nav_menu_item_recorder_program));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
+        enableHeaderBackIcon(true);
+        enableGlobalMenuIcon(true);
+        registReceiver();
+        initView();
+        initTabView();
+        setPagerAdapter();
+        mViewPager.setCurrentItem(startPageNo);
+        mTabLayout.setTab(startPageNo);
         mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
         mAgeReq = userInfoDataProvider.getUserAge();
