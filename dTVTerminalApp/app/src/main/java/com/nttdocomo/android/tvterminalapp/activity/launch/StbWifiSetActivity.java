@@ -76,20 +76,22 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
         linkNextBtn.setOnClickListener(this);
         mLinkHelpBtn.setOnClickListener(this);
         mNextBtn.setOnClickListener(this);
-        showWifiStateChangeView();
+        showWifiStateChangeView(null);
     }
 
     /**
      * wifi状態変更ジのビュー描画.
+     *
+     * @param networkInfo ネットワーク情報
      */
-    private void showWifiStateChangeView() {
+    private void showWifiStateChangeView(final NetworkInfo networkInfo) {
         if (isWifiOn()) {
             mWifiTitleTxt.setText(getString(R.string.stb_wifi_set_title_wifi_on));
             mWifiStateTxt.setText(getString(R.string.stb_wifi_set_wifi_on_txt));
             String wifiStateTxt = getString(R.string.stb_wifi_set_wifi_on_txt);
             StringBuilder sb = new StringBuilder();
             sb.append(wifiStateTxt);
-            String ssId = getWiFiSSID();
+            String ssId = getWiFiSSID(networkInfo);
             if (!TextUtils.isEmpty(ssId)) {
                 sb.append(getString(R.string.stb_wifi_set_wifi_state_hyphen_txt));
                 sb.append(ssId);
@@ -108,14 +110,18 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
 
     /**
      * SSID取得.
+     *
+     * @param networkInfo ネットワーク情報
      * @return SSID
      */
-    private String getWiFiSSID() {
+    private String getWiFiSSID(NetworkInfo networkInfo) {
         String ssId = "";
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1) {
-            ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-            if (networkInfo.isConnected()) {
+            if (networkInfo == null) {
+                ConnectivityManager connManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+                networkInfo = connManager.getActiveNetworkInfo();
+            }
+            if (networkInfo != null && networkInfo.isConnected()) {
                 ssId = networkInfo.getExtraInfo();
                 if (ssId != null) {
                     return ssId.replace("\"", "");
@@ -127,8 +133,8 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
                     return ssId;
                 }
             }
-            WifiManager mWifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-            WifiInfo info = mWifiManager.getConnectionInfo();
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            WifiInfo info = wifiManager.getConnectionInfo();
             ssId = info.getSSID();
             if (ssId != null) {
                 ssId = ssId.replace("\"", "");
@@ -164,9 +170,9 @@ public class StbWifiSetActivity extends BaseActivity implements View.OnClickList
                     NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
                     NetworkInfo.State state = networkInfo.getState();
                     if (state == NetworkInfo.State.CONNECTED) {
-                        showWifiStateChangeView();
+                        showWifiStateChangeView(networkInfo);
                     } else if (state == NetworkInfo.State.DISCONNECTED) {
-                        showWifiStateChangeView();
+                        showWifiStateChangeView(networkInfo);
                     }
                 }
             }
