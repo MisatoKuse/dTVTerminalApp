@@ -83,6 +83,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
+import com.nttdocomo.android.tvterminalapp.commonmanager.TrackerManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.RebuildDatabaseTableManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -108,6 +109,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -704,6 +706,9 @@ public class BaseActivity extends FragmentActivity implements
         super.onResume();
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
+        if (TrackerManager.shared().getAppContext() == null) {
+            TrackerManager.shared().setAppContext(app);
+        }
 
         DaccountReceiver.setDaccountChangedCallBack(this);
 
@@ -1016,7 +1021,7 @@ public class BaseActivity extends FragmentActivity implements
                         = ((RelayServiceResponseMessage) msg.obj).getApplicationTypes();
                 switch (requestCommand) {
                     case KEYEVENT_KEYCODE_POWER:
-                        sendEvent(getString(R.string.google_analytics_category_service_name_remote_control),
+                        sendEvent(getString(R.string.google_analytics_category_remote_control),
                                 getString(R.string.google_analytics_category_action_remote_control_power),
                                 null, null);
                         break;
@@ -2902,7 +2907,7 @@ public class BaseActivity extends FragmentActivity implements
                         if (!TextUtils.isEmpty(contractType)) {
                             SparseArray<String> customDimensions = new SparseArray<>();
                             customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
-                            sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+                            sendEvent(getString(R.string.google_analytics_category_contract),
                                     getString(R.string.google_analytics_category_action_remote_contract_get_success),
                                     null, customDimensions);
                         }
@@ -3628,22 +3633,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void sendScreenView(final String screenName, final SparseArray<String> customDimensions) {
         DTVTLogger.start();
-
-        TvtApplication app = (TvtApplication) getApplication();
-        Tracker tracker = app.getDefaultTracker();
-        tracker.setScreenName(screenName);
-        DTVTLogger.debug("[GA][SN]:" + screenName);
-        HitBuilders.ScreenViewBuilder builder = new HitBuilders.ScreenViewBuilder();
-        if (customDimensions != null) {
-            for (int i = 0; i < customDimensions.size(); i++) {
-                int key = customDimensions.keyAt(i);
-                String value = customDimensions.get(key);
-                builder.setCustomDimension(key, value);
-                DTVTLogger.debug("[GA][CD]:" + key + ":" + value);
-            }
-        }
-        tracker.send(builder.build());
-
+        GoogleAnalyticsUtils.sendScreenViewInfo(screenName, customDimensions);
         DTVTLogger.end();
     }
 
@@ -3657,29 +3647,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void sendEvent(final String category, final String action, final String label, final SparseArray<String> customDimensions) {
         DTVTLogger.start();
-
-        TvtApplication app = (TvtApplication) getApplication();
-        Tracker tracker = app.getDefaultTracker();
-        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
-        builder.setCategory(category);
-        builder.setAction(action);
-        if (!TextUtils.isEmpty(label)) {
-            builder.setLabel(label);
-        } else {
-            builder.setLabel("");
-        }
-        DTVTLogger.debug("[GA][E]:" + " category: " + category + " action: " + action + " label: " + label + " eventValue: " + 1);
-        builder.setValue(1);
-        if (customDimensions != null) {
-            for (int i = 0; i < customDimensions.size(); i++) {
-                int key = customDimensions.keyAt(i);
-                String value = customDimensions.get(key);
-                builder.setCustomDimension(key, value);
-                DTVTLogger.debug("[GA][CD]:" + key + ":" + value);
-            }
-        }
-        tracker.send(builder.build());
-
+        GoogleAnalyticsUtils.sendEventInfo(category, action, label, customDimensions);
         DTVTLogger.end();
     }
     // endregion callback
@@ -3693,7 +3661,7 @@ public class BaseActivity extends FragmentActivity implements
             //24時間経過していたので、再度ローカルレジストレーションを行う
             DlnaManager.shared().mLocalRegisterListener = new DlnaManager.LocalRegisterListener() {
                 @Override
-                public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+                public void onRegisterCallBack(final boolean result, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
                     if (result) {
                         //ローカルレジストレーションが成功したので日時を蓄積する
                         SharedPreferencesUtils.setRegistTime(getApplicationContext());

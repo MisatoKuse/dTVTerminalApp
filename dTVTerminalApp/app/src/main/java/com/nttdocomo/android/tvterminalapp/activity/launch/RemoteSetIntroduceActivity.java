@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -97,8 +99,9 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * ユーザ状態判定.
      *
      * @param doGetUserInfo 契約情報再取得要否
+     * @param notContractErrorCode notContractErrorCode
      */
-    private void checkContractInfo(final boolean doGetUserInfo) {
+    private void checkContractInfo(final boolean doGetUserInfo, final String notContractErrorCode) {
         String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
         DTVTLogger.debug("contractInfo: " + contractInfo);
         if ((contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo))
@@ -109,7 +112,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                 executeLocalRegistration();
             } else {
                 //h4d未契約として扱い（未契約である旨のエラーを表示すること）
-                showRegistrationResultDialog(false, DlnaUtils.ExcuteLocalRegistrationErrorType.NO_H4D_CONTRACT);
+                showRegistrationResultDialog(false, DlnaUtils.ExecuteLocalRegistrationErrorType.NO_H4D_CONTRACT, notContractErrorCode);
             }
         }
     }
@@ -121,11 +124,10 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DlnaUtils.ExcuteLocalRegistrationErrorType errorType =
-                        DlnaUtils.excuteLocalRegistration(getApplicationContext(), RemoteSetIntroduceActivity.this);
-                boolean result = DlnaUtils.ExcuteLocalRegistrationErrorType.NONE.equals(errorType);
-                if (!result) {
-                    showRegistrationResultDialog(false, errorType);
+                DlnaUtils.ExecuteLocalRegistrationErrorType errorType =
+                        DlnaUtils.executeLocalRegistration(getApplicationContext(), RemoteSetIntroduceActivity.this);
+                if (DlnaUtils.ExecuteLocalRegistrationErrorType.NONE != errorType) {
+                    showRegistrationResultDialog(false, errorType, DlnaManager.shared().getLocalRegistrationErrorCode());
                 }
             }
         }).start();
@@ -136,25 +138,32 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      *
      * @param isSuccess true 成功 false 失敗
      * @param errorType エラータイプ
+     * @param errorCode エラーコード
      */
-    private void showRegistrationResultDialog(final boolean isSuccess, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    private void showRegistrationResultDialog(final boolean isSuccess, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
+        final String fixErrorCode  = DlnaUtils.formatErrorCode(errorCode);
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final CustomDialog resultDialog = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType);
-                resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                final Pair<CustomDialog, String> resultPair = DlnaUtils.getRegistResultDialog(RemoteSetIntroduceActivity.this, isSuccess, errorType, fixErrorCode);
+                resultPair.first.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
                         if (isSuccess) {
                             startTransition();
                         } else {
-                            resultDialog.dismissDialog();
+                            resultPair.first.dismissDialog();
                         }
+                        DlnaManager.shared().clearErrorCode();
                     }
                 });
                 setRemoteProgressVisible(View.GONE);
                 sendRemoteEvent(isSuccess, errorType);
-                resultDialog.showDialog();
+                resultPair.first.showDialog();
+                if (!isSuccess) {
+                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), resultPair.second);
+                }
             }
         });
     }
@@ -164,9 +173,9 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * @param isSuccess isSuccess
      * @param errorType errorType
      */
-    private void sendRemoteEvent(final boolean isSuccess, final  DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    private void sendRemoteEvent(final boolean isSuccess, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType) {
         if (isSuccess) {
-            sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+            sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                     getString(R.string.google_analytics_category_action_remote_success),
                     null, null);
         } else {
@@ -178,29 +187,36 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
      * イベント送信.
      * @param errorType エラータイプ
      */
-    private void sendEventTrackingByErrorType(final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    private void sendEventTrackingByErrorType(final DlnaUtils.ExecuteLocalRegistrationErrorType errorType) {
         switch (errorType) {
             case ACTIVATION:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_action_remote_activation_error),
                         null, null);
                 break;
-            case DEVICE_OVER_ERROR:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+            case SOAP_DEVICE_OVER:
+            case DTCP_DEVICE_OVER:
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_device_over_error),
                         null, null);
                 break;
             case NO_H4D_CONTRACT:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_no_h4d_contract_error),
                         null, null);
                 break;
             case START_DTCP:
+            case SOAP:
+            case HTTP:
+            case SOCKET:
+            case DTCP_OTHER:
+            case REQUEST_ERROR_FROM_JNI:
+            case REQUEST_ERROR_FROM_JAVA:
             case START_DIRAG:
-            case UNKOWN:
+            case OTHER:
             case NONE:
             default:
-                sendEvent(getString(R.string.google_analytics_category_service_name_remote_viewing_settings),
+                sendEvent(getString(R.string.google_analytics_category_remote_viewing_settings),
                         getString(R.string.google_analytics_category_action_remote_other_error),
                         null, null);
                 break;
@@ -212,7 +228,7 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
         switch (view.getId()) {
             case R.id.remote_introduce_main_layout_set_btn:
                 setRemoteProgressVisible(View.VISIBLE);
-                checkContractInfo(true);
+                checkContractInfo(true, ContentUtils.STR_BLANK);
                 break;
             case R.id.remote_introduce_main_layout_tv_link:
                 CustomDialog resultDialog = new CustomDialog(RemoteSetIntroduceActivity.this, CustomDialog.DialogType.ERROR);
@@ -280,12 +296,12 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
     }
 
     @Override
-    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExcuteLocalRegistrationErrorType errorType) {
+    public void onRegisterCallBack(final boolean result, final DlnaUtils.ExecuteLocalRegistrationErrorType errorType, final String errorCode) {
         if (result) {
             //ローカルレジストレーションが成功したので日時を蓄積する
             SharedPreferencesUtils.setRegistTime(getApplicationContext());
         }
-        showRegistrationResultDialog(result, errorType);
+        showRegistrationResultDialog(result, errorType, errorCode);
     }
 
     @Override
@@ -293,12 +309,17 @@ public class RemoteSetIntroduceActivity extends BaseActivity implements View.OnC
                                      final List<UserInfoList> userList, final boolean isUserContract) {
         startTvProgramIntentService();
         //契約情報確認、契約情報再取得不要
-        checkContractInfo(false);
+        String notContractErrorCode = ContentUtils.STR_BLANK;
+        //契約情報取得失敗
+        if (userList == null || userList.size() < 1) {
+            notContractErrorCode = DlnaUtils.STR_CODE_USER_INFO_GET_ERROR;
+        }
+        checkContractInfo(false, notContractErrorCode);
         String contractType = ContentUtils.getContractType(RemoteSetIntroduceActivity.this);
         if (!TextUtils.isEmpty(contractType)) {
             SparseArray<String> customDimensions = new SparseArray<>();
             customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTRACT, contractType);
-            sendEvent(getString(R.string.google_analytics_category_service_name_contract),
+            sendEvent(getString(R.string.google_analytics_category_contract),
                     getString(R.string.google_analytics_category_action_remote_contract_get_success),
                     null, customDimensions);
         }

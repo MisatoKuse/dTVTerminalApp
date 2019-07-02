@@ -30,7 +30,7 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
         /**
          * コンテンツブラウズエラーコールバック.
          */
-        void onBrowseErrorCallback();
+        void onBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode);
         /**
          * 接続できない場合のエラーコールバック.
          * @param errorCode エラーコード
@@ -81,9 +81,9 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     }
 
     @Override
-    public void onContentBrowseErrorCallback(final String containerId) {
+    public void onContentBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
         if (mCallbackListener != null) {
-            mCallbackListener.onBrowseErrorCallback();
+            mCallbackListener.onBrowseErrorCallback(errorType, errorCode);
         }
     }
 

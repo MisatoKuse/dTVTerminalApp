@@ -12,11 +12,11 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 # ヘッダファイrうライブラリを指定
-include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/dixim)
-include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/dixim/drag_include)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/${ANDROID_ABI}/dixim)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/${ANDROID_ABI}/dixim/drag_include)
 include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/ddps)
-include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/openssl/include)
-include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/curl/include)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/${ANDROID_ABI}/openssl/include)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/${ANDROID_ABI}/curl/include)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16")

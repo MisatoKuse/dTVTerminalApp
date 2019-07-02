@@ -14,6 +14,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.GoogleAnalyticsConstants;
+import com.nttdocomo.android.tvterminalapp.commonmanager.TrackerManager;
 
 /**
  * クラス機能：
@@ -30,10 +31,6 @@ public class TvtApplication extends Application implements Application.ActivityL
      */
     private int mTmpStartedCounter = 0;
     /**
-     * GoogleAnalytics用クラス(Google提示の設定例がどちらもstaticになっている).
-     */
-    private static GoogleAnalytics sAnalytics;
-    /**
      * Tracker.
      */
     private static Tracker sTracker;
@@ -41,7 +38,7 @@ public class TvtApplication extends Application implements Application.ActivityL
     public void onCreate() {
         super.onCreate();
         //Googleアナリティクスの情報収集
-        sAnalytics = GoogleAnalytics.getInstance(this);
+        TrackerManager.shared().setAppContext(this);
         reportUncaughtExceptions();
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
@@ -132,25 +129,12 @@ public class TvtApplication extends Application implements Application.ActivityL
     }
 
     /**
-     * トラッカーの取得.
-     *
-     * @return トラッカーのインスタンス
-     */
-    synchronized public Tracker getDefaultTracker() {
-        //トラッカーがヌルならば新たに取得
-       if (sTracker == null) {
-            sTracker = sAnalytics.newTracker(GoogleAnalyticsConstants.getGoogleAnalyticsId());
-        }
-        return sTracker;
-    }
-
-    /**
-    * 捕捉されなかった例外を自動的に送信する処理
+    * 捕捉されなかった例外を自動的に送信する処理.
     *
     */
     public void reportUncaughtExceptions() {
         Thread.UncaughtExceptionHandler myHandler = new ExceptionReporter(
-                getDefaultTracker(),
+                TrackerManager.shared().getDefaultTracker(),
                 Thread.getDefaultUncaughtExceptionHandler(),
                 this);
         Thread.setDefaultUncaughtExceptionHandler(myHandler);

@@ -62,13 +62,13 @@ typedef struct BrowseInfo {
 typedef struct DMP {
     dupnp upnpInstance;
     dav_capability davCapability;
-    
+
     dupnp_cp_dvcmgr deviceManager;
     dupnp_cp_evtmgr eventManager;
-    
+
     SoapInfo soapInfo;
     BrowseInfo browseInfo;
-    
+
     ddtcp dtcp;
     du_uchar* private_data_home;
 } DMP;
@@ -85,7 +85,7 @@ struct ContentInfo {
     char date[256];
     du_uint32 index;
     du_bool isContainer;
-    
+
     // item of info
     char bitrate[256];
     char contentPath[256];
@@ -109,11 +109,6 @@ enum eDiragConnectStatus {
     , DiragConnectStatusGaveupReconnection
 };
 
-enum eLocalRegistrationResultType {
-    LocalRegistrationResultTypeNone
-    , LocalRegistrationResultTypeUnknownError //不明なエラー
-    , LocalRegistrationResultTypeRegistrationOverError //台数オーバー
-};
 enum eDlnaErrorType {
     initError,
     startError,

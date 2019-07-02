@@ -16,11 +16,11 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.SparseArray;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -49,6 +49,7 @@ import com.nttdocomo.android.tvterminalapp.struct.DownloadComparator;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
@@ -72,8 +73,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private TabItemLayout mTabLayout = null;
     /** viewpager. */
     private ViewPager mViewPager = null;
-    /** 進捗バー. */
-    private ProgressBar progressBar;
+    /** 進捗バービュー. */
+    private LinearLayout progressBarView;
+    /** ローディングワーディング */
+    private TextView loadingWordTextView;
     /** 遷移先（メニュー）. */
     private Boolean mIsMenuLaunch = false;
     /** プロバイダー. */
@@ -126,25 +129,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @SuppressWarnings("OverlyLongMethod")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.record_list_main_layout);
-        setTitleText(getString(R.string.nav_menu_item_recorder_program));
-        Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        enableHeaderBackIcon(true);
-        enableGlobalMenuIcon(true);
-        registReceiver();
-        initView();
-        initTabView();
-        setPagerAdapter();
+        int startPageNo;
         if (savedInstanceState != null) {
-            int startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
+            startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
             mDlnaRecVideoItems = (ArrayList<DlnaRecVideoItem>) savedInstanceState.getSerializable(ITEMS_MEMORY);
             savedInstanceState.clear();
-            mViewPager.setCurrentItem(startPageNo);
-            mTabLayout.setTab(startPageNo);
         } else {
-            int startPageNo;
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case NONE_PAIRING:
                 case NONE_LOCAL_REGISTRATION:
@@ -157,9 +147,20 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     startPageNo = ALL_RECORD_LIST;
                     break;
             }
-            mViewPager.setCurrentItem(startPageNo);
-            mTabLayout.setTab(startPageNo);
         }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.record_list_main_layout);
+        setTitleText(getString(R.string.nav_menu_item_recorder_program));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
+        enableHeaderBackIcon(true);
+        enableGlobalMenuIcon(true);
+        registReceiver();
+        initView();
+        initTabView();
+        setPagerAdapter();
+        mViewPager.setCurrentItem(startPageNo);
+        mTabLayout.setTab(startPageNo);
         mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
         mAgeReq = userInfoDataProvider.getUserAge();
@@ -265,12 +266,20 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onBrowseErrorCallback() {
+    public void onBrowseErrorCallback(final DlnaUtils.RemoteConnectErrorType errorType, final int errorCode) {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setProgressBarGone();
-                showGetDataFailedToast();
+                if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
+                        || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
+                    Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, errorType, errorCode);
+                    showErrorDialog(errorInfoPair.first);
+                    GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
+                } else {
+                    showGetDataFailedToast();
+                }
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
@@ -281,11 +290,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onRemoteConnectTimeOutCallback() {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setProgressBarGone();
-                showGetDataFailedToast();
+                showErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
+                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement),
+                        getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
@@ -319,7 +331,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
-        progressBar = findViewById(R.id.record_list_main_layout_progress);
+        progressBarView = findViewById(R.id.record_list_main_layout_progress_view);
+        loadingWordTextView = findViewById(R.id.record_list_main_layout_loading_word_text_view);
         mNoDataMessage = findViewById(R.id.recorded_list_no_items);
     }
 
@@ -385,11 +398,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onConnectErrorCallback(final int errorCode) {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
         setProgressBarGone();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showGetDataFailedToast();
+                Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this,
+                        DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode);
+                showErrorDialog(errorInfoPair.first);
+                GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {
                     mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
@@ -417,7 +434,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void showProgressBar() {
         //オフライン時は表示しない
-        progressBar.setVisibility(View.VISIBLE);
+        progressBarView.setVisibility(View.VISIBLE);
+        if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
+            loadingWordTextView.setVisibility(View.VISIBLE);
+        } else {
+            loadingWordTextView.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -512,7 +534,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         mNoDataMessage.setVisibility(View.VISIBLE);
                         mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                     }
-                    progressBar.setVisibility(View.GONE);
+                    progressBarView.setVisibility(View.GONE);
                 }
             });
 
@@ -536,8 +558,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (progressBar != null && progressBar.getVisibility() == View.GONE) {
-                        progressBar.setVisibility(View.VISIBLE);
+                    if (progressBarView != null && progressBarView.getVisibility() == View.GONE) {
+                        progressBarView.setVisibility(View.VISIBLE);
+                        if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
+                            loadingWordTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            loadingWordTextView.setVisibility(View.GONE);
+                        }
                     }
                 }
             });
@@ -668,8 +695,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (progressBar != null) {
-                    progressBar.setVisibility(View.GONE);
+                if (progressBarView != null) {
+                    progressBarView.setVisibility(View.GONE);
                 }
             }
         });

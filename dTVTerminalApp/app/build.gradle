@@ -9,19 +9,18 @@ android {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 36           //★バージョンコード. リリース毎に更新する事
-        versionName "04.00."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
+        versionCode 37           //★バージョンコード. リリース毎に更新する事
+        versionName "92.03."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11"
-                arguments "-DANDROID_ABI=armeabi",
-                        "-DANDROID_STL=gnustl_static"
+                arguments "-DANDROID_STL=c++_shared"
             }
         }
         ndk {
-            abiFilters 'armeabi' //'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
     }
 

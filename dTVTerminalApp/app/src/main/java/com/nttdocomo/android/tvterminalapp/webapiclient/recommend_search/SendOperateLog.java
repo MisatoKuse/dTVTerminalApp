@@ -140,7 +140,7 @@ public class SendOperateLog extends WebApiBase {
             mGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
                 @Override
                 public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-                    if(result == IDimDefines.RESULT_USER_CANCEL) {
+                    if (result == IDimDefines.RESULT_USER_CANCEL) {
                         //キャンセルならば、ログアウトのダイアログを呼び出す
                         ottGetAuthSwitch.showLogoutDialog();
                     } else {
@@ -163,7 +163,7 @@ public class SendOperateLog extends WebApiBase {
      */
     private String getUrl(final OtherContentsDetailData mDetailData) {
         mUrl.append(URL_TEXT_SERVICE_ID);
-        mUrl.append(mDetailData.getServiceId() == 0 ? ContentUtils.STR_BLANK : mDetailData.getServiceId());
+        mUrl.append(mDetailData.getServiceId());
         mUrl.append(URL_TEXT_CATEGORY_ID);
         if (mCategoryId == null) {
             mCategoryId = ContentUtils.STR_BLANK;
@@ -209,19 +209,19 @@ public class SendOperateLog extends WebApiBase {
     /**
      * カテゴリーIDを設定.
      *
-     * @param mDetailFullData 詳細フルデータ
+     * @param metaFullData 詳細フルデータ
      * @return ID
      */
-    private String getCategoryId(final VodMetaFullData mDetailFullData) {
+    private String getCategoryId(final VodMetaFullData metaFullData) {
         final String valueBlank = "";
-        if (mDetailFullData != null) {
-            switch (mDetailFullData.getDisp_type() == null ? valueBlank : mDetailFullData.getDisp_type()) {
+        if (metaFullData != null) {
+            switch (metaFullData.getDisp_type() == null ? valueBlank : metaFullData.getDisp_type()) {
                 case ContentUtils.TV_PROGRAM:
-                    switch (mDetailFullData.getmTv_service() == null ? valueBlank : mDetailFullData.getmTv_service()) {
+                    switch (metaFullData.getmTv_service() == null ? valueBlank : metaFullData.getmTv_service()) {
                         case ContentUtils.TV_SERVICE_FLAG_HIKARI:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
                         case ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI:
-                            switch (mDetailFullData.getmContent_type() == null ? valueBlank : mDetailFullData.getmContent_type()) {
+                            switch (metaFullData.getmContent_type() == null ? valueBlank : metaFullData.getmContent_type()) {
                                 case valueBlank:
                                 case ContentUtils.CONTENT_TYPE_FLAG_ZERO:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getCategoryId();
@@ -233,17 +233,16 @@ public class SendOperateLog extends WebApiBase {
                                 default:
                                     break;
                             }
-                            // 地デジ・BSのカテゴリー分類は次回のストーリーで対応予定
-//                        case ContentUtils.TV_SERVICE_FLAG_TTB:
-//                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_TTB.getCategoryId();
-//                        case ContentUtils.TV_SERVICE_FLAG_BS:
-//                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_BS.getCategoryId();
+                        case ContentUtils.TV_SERVICE_FLAG_TTB:
+                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_TTB.getCategoryId();
+                        case ContentUtils.TV_SERVICE_FLAG_BS:
+                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_BS.getCategoryId();
                         default:
                             break;
                     }
                     break;
                 default:
-                    switch (mDetailFullData.getDtv() == null ? valueBlank : mDetailFullData.getDtv()) {
+                    switch (metaFullData.getDtv() == null ? valueBlank : metaFullData.getDtv()) {
                         case valueBlank:
                         case ContentUtils.DTV_FLAG_ZERO:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();

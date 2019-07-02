@@ -20,6 +20,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -276,8 +277,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         /**
          * エラーコールバック.
          * @param mPlayerErrorType エラータイプ
+         * @param errorCode エラーコード
          */
-        void onErrorCallBack(final PlayerErrorType mPlayerErrorType);
+        void onErrorCallBack(final PlayerErrorType mPlayerErrorType, final int errorCode);
         /**
          * エラーコールバック.
          * @param errorCode エラーコード
@@ -436,7 +438,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             public Presentation onCreatePresentation(final Display presentationDisplay) {
                 if (!mExternalDisplayFlg) {
                     mExternalDisplayFlg = true;
-                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.EXTERNAL);
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.EXTERNAL,0);
                     mPlayerEventType = PlayerEventType.NONE;
                     mRecordCtrlView.setOnTouchListener(null);
                     hideCtrlView(false);
@@ -694,7 +696,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         //パレンタルチェック
         if (mAge < mediaPlayerController.getParentalRating()) {
             mPlayerController.stop();
-            mPlayerStateListener.onErrorCallBack(PlayerErrorType.AGE);
+            mPlayerStateListener.onErrorCallBack(PlayerErrorType.AGE, 0);
             mPlayerEventType = PlayerEventType.NONE;
         }
         //外部出力制御
@@ -730,7 +732,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 doRequestAudioFocus();
                 mAlreadyRendered = true;
-                mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE, 0);
                 if (!mIsShowStartControl || mPlayerEventType == PlayerEventType.PLAY_PAUSE_TAP
                         || mPlayerEventType == PlayerEventType.SKIP_TAP || mPlayerEventType == PlayerEventType.BACK_TAP) {
                     mIsShowStartControl = true;
@@ -802,7 +804,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             if (item != null) {
                 String remoteExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(mContext);
                 if (TextUtils.isEmpty(remoteExpireDate)) {
-                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE);
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE,0);
                     mPlayerEventType = PlayerEventType.NONE;
                     return;
                 }
@@ -1265,20 +1267,20 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         mPlayerController.setCurrentCaption(0); // start caption.
         mReconnectStartTime = 0;
         mDmsDisconnectedTime = 0;
-        boolean result = DlnaUtils.getActivationState(mContext);
-        if (!result) {
-            mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
+        Pair<Boolean, Integer> result = DlnaUtils.getActivationState(mContext);
+        if (!result.first) {
+            mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION, result.second);
             return false;
         } else {
             String privateHomePath = DlnaUtils.getPrivateDataHomePath(mContext);
             int ret = mPlayerController.dtcpInit(privateHomePath);
             if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
-                mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION,result.second);
                 mPlayerEventType = PlayerEventType.NONE;
                 return false;
             }
         }
-        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS);
+        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS,0);
         preparePlayer(playStartPosition);
         DTVTLogger.end();
         return true;

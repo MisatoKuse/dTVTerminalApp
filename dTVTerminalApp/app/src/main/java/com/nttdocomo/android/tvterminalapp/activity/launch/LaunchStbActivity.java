@@ -97,7 +97,7 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         setLaterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                sendEvent(getString(R.string.google_analytics_category_service_name_transparent_from_paring_description),
+                sendEvent(getString(R.string.google_analytics_category_transparent_from_paring_description),
                         getString(R.string.google_analytics_category_action_set_later),
                         null, null);
                 customDialog.dismissDialog();
@@ -107,7 +107,7 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
         notAppearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                sendEvent(getString(R.string.google_analytics_category_service_name_transparent_from_paring_description),
+                sendEvent(getString(R.string.google_analytics_category_transparent_from_paring_description),
                         getString(R.string.google_analytics_category_action_no_display_next_time),
                         null, null);
                 SharedPreferencesUtils.setSharedPreferencesShowLaunchStbStatus(LaunchStbActivity.this, true);
@@ -130,7 +130,7 @@ public class LaunchStbActivity extends BaseActivity implements View.OnClickListe
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.launch_stb_main_layout_tv_btn:
-                sendEvent(getString(R.string.google_analytics_category_service_name_transparent_from_paring_description),
+                sendEvent(getString(R.string.google_analytics_category_transparent_from_paring_description),
                         getString(R.string.google_analytics_category_action_paring_connection_set),
                         null, null);
                 Intent intent = new Intent(this, StbWifiSetActivity.class);
