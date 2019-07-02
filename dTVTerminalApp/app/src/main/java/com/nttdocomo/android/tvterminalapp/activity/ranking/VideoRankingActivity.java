@@ -69,9 +69,14 @@ public class VideoRankingActivity extends BaseActivity implements
     // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        DTVTLogger.start();
+        if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
+            savedInstanceState.clear();
+        }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_ranking_main_layout);
-        DTVTLogger.start();
 
         //Headerの設定
         setTitleText(getString(R.string.video_ranking_title));
@@ -79,11 +84,8 @@ public class VideoRankingActivity extends BaseActivity implements
         enableGlobalMenuIcon(true);
 
         initView();
-        if (savedInstanceState != null) {
-            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
-            savedInstanceState.clear();
-        }
         resetPaging(mViewPager, mRankingFragmentFactory);
+        DTVTLogger.end();
     }
 
     @Override

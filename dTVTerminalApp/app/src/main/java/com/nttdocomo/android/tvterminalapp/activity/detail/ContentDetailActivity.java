@@ -250,7 +250,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        DTVTLogger.start();
         if (savedInstanceState != null) {
             mPlayStartPosition = savedInstanceState.getInt(ContentDetailUtils.PLAY_START_POSITION);
             mVisibility = savedInstanceState.getBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY);
@@ -258,14 +258,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mIsPlayerPaused = savedInstanceState.getBoolean(ContentDetailUtils.IS_PLAYER_PAUSED);
             savedInstanceState.clear();
         }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
+        super.onCreate(savedInstanceState);
         setTheme(R.style.AppThemeBlack);
         setContentView(R.layout.dtv_contents_detail_main_layout);
-        DTVTLogger.start();
         setStatusBarColor(R.color.contents_header_background);
         showProgressBar(true);
         // プログレスバー表示中でもxボタンクリック可能にする。※プログレスバー表示後に禁止に設定する
         findViewById(R.id.base_progress_rl).setClickable(false);
         initView();
+        DTVTLogger.end();
     }
 
     @SuppressWarnings("OverlyLongMethod")
