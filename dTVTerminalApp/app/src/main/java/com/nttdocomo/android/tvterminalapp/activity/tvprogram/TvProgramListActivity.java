@@ -57,7 +57,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ViewUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1214,7 +1213,7 @@ public class TvProgramListActivity extends BaseActivity implements
                                 DTVTLogger.debug(e);
                                 continue;
                             }
-                            if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX) {
+                            if (1 <= indexNum && indexNum <= ContentUtils.MY_CHANNEL_MAX_INDEX) {
                                 mMyChannelDataList.add(myChannelMetaData.get(j));
                             }
                         }

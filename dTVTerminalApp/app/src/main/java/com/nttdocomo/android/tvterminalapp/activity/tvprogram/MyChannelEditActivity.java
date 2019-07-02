@@ -28,7 +28,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 
@@ -42,7 +41,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
     //region variable
     /** マイ番組表数.*/
-    private static final int EDIT_CHANNEL_LIST_COUNT = WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
+    private static final int EDIT_CHANNEL_LIST_COUNT = ContentUtils.MY_CHANNEL_MAX_INDEX;
     /** マイ番組表データプロバイダー.*/
     private MyChannelDataProvider mMyChannelDataProvider;
     /** 番組表データプロバイダー. */
@@ -337,7 +336,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         showProgressView(View.VISIBLE);
         mMyChannelDataProvider = new MyChannelDataProvider(this);
         mMyChannelDataProvider.getMyChannelRegisterStatus(channel.getServiceId(),
-                channel.getTitle(), WebApiBasePlala.MY_CHANNEL_R_VALUE_G,
+                channel.getTitle(), ContentUtils.MY_CHANNEL_R_VALUE_G,
                 getAdultType(channel.getAdult()), position + 1);
     }
 
@@ -349,9 +348,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private String getAdultType(final String adult) {
         if (ADULT_VALUE_ONE.equals(adult)) {
-            return WebApiBasePlala.MY_CHANNEL_ADULT_TYPE_ADULT;
+            return ContentUtils.MY_CHANNEL_ADULT_TYPE_ADULT;
         }
-        return WebApiBasePlala.MY_CHANNEL_ADULT_TYPE_EMPTY;
+        return ContentUtils.STR_BLANK;
     }
 
     @Override
