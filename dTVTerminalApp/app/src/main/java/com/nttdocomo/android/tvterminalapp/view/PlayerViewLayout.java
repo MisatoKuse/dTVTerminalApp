@@ -283,8 +283,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         /**
          * エラーコールバック.
          * @param errorCode エラーコード
+         * @param arg arg
          */
-        void onPlayerErrorCallBack(final int errorCode);
+        void onPlayerErrorCallBack(final int errorCode, final int arg);
         /**
          * 横、縦チェンジコールバック.
          * @param isLandscape 横
@@ -677,7 +678,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 tryOpenVideo(mPlayStartPosition, null, new Runnable() {
                     @Override
                     public void run() {
-                        mPlayerStateListener.onPlayerErrorCallBack(what);
+                        mPlayerStateListener.onPlayerErrorCallBack(what, (int) arg);
                         mPlayerEventType = PlayerEventType.NONE;
                     }
                 });
@@ -686,7 +687,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             }
         }
         goneCtrlView();
-        mPlayerStateListener.onPlayerErrorCallBack(what);
+        mPlayerStateListener.onPlayerErrorCallBack(what, (int) arg);
         mPlayerEventType = PlayerEventType.NONE;
     }
 
@@ -804,7 +805,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             if (item != null) {
                 String remoteExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(mContext);
                 if (TextUtils.isEmpty(remoteExpireDate)) {
-                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE,0);
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE, 0);
                     mPlayerEventType = PlayerEventType.NONE;
                     return;
                 }
@@ -1275,12 +1276,12 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             String privateHomePath = DlnaUtils.getPrivateDataHomePath(mContext);
             int ret = mPlayerController.dtcpInit(privateHomePath);
             if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
-                mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION,result.second);
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION, result.second);
                 mPlayerEventType = PlayerEventType.NONE;
                 return false;
             }
         }
-        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS,0);
+        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS, 0);
         preparePlayer(playStartPosition);
         DTVTLogger.end();
         return true;

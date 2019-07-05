@@ -2294,23 +2294,36 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onPlayerErrorCallBack(final int errorCode) {
+    public void onPlayerErrorCallBack(final int errorCode, final int arg) {
         showProgressBar(false);
-        String format = getString(R.string.contents_player_fail_error_code_format);
-        String errorMsg = getString(R.string.contents_player_fail_msg);
-        errorMsg = errorMsg.replace(format, String.valueOf(errorCode));
+        Pair<String, Integer> errorResultPair = DlnaUtils.getConvertErrorResult(ContentDetailActivity.this, errorCode, arg);
         //通信エラーの場合はリトライする
         if (errorCode >= ContentDetailUtils.RETRY_ERROR_START) {
             DTVTLogger.debug("not close");
             //自動再生コンテンツ再生準備
             setPlayRetryArrow();
             //OKで閉じないダイアログで表示
-            showDialogToConfirm(errorMsg);
+            showDialogToConfirm(errorResultPair.first);
         } else {
             //再開不能エラーは従来通り終了するダイアログを使用する
             DTVTLogger.debug("close");
-            showDialogToConfirmClose(errorMsg);
+            showDialogToConfirmClose(errorResultPair.first);
         }
+        //GAエラーレポート送信
+//        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+//        String formatErrorCode;
+//        switch (errorResultPair.second) {
+//            case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_ONE:
+//                formatErrorCode = getString(R.string.error_prefix_type_http_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE));
+//                break;
+//            case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_TWO:
+//                formatErrorCode = getString(R.string.error_prefix_type_http_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE));
+//                break;
+//            default:
+//                formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(errorResultPair.second));
+//                break;
+//        }
+//        GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), formatErrorCode);
         mPlayerViewLayout.removeSendMessage();
     }
 

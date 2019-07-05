@@ -256,7 +256,7 @@
     <string name="record_download_notification_channel_name">ダウンロード状況</string>
     <string name="record_download_not_completed_msg">録画コンテンツのダウンロードに失敗しました。\n再度録画一覧よりダウンロードを行ってください。</string>
     <string name="record_download_low_storage_space_msg">端末の容量が不足しているため、ダウンロードできません</string>
-    <string name="activation_failed_error_player">再生に失敗しました（AC-%s）</string>
+    <string name="activation_failed_error_player">再生に失敗しました。\nしばらくしてからもう一度お試しください。(AC-%s)</string>
     <string name="activation_failed_error_local_registration">リモート視聴設定に失敗しました。\nしばらくしてからもう一度お試しください。(AC-%s)</string>
     <string name="activation_failed_error_download">ダウンロードに失敗しました（AC-1）</string>
 
@@ -394,8 +394,6 @@
     <string name="contents_detail_external_display_dialog_msg">外部出力が検出されたので、再生を停止しました</string>
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
     <string name="contents_detail_response_ok">OK</string>
-    <string name="contents_player_fail_msg">再生に失敗しました（MP-XXXX）</string>
-    <string name="contents_player_fail_error_code_format">XXXX</string>
     <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
     <string name="contents_detail_pairing_request">ドコモテレビターミナルとのペアリングが必要です</string>
     <string name="contents_detail_login_button">ログインする</string>
@@ -403,6 +401,19 @@
     <string name="contents_detail_now_on_air_contents_nothing">現在放送中のコンテンツがありません</string>
     <string name="contents_detail_player_no_channel">お使いの環境では、このコンテンツは視聴できません</string>
     <string name="contents_detail_pairing_button">ペアリングする</string>
+    <string name="contents_detail_secure_player_fail_message">再生ができませんでした。\nしばらくしてからもう一度お試しください。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_network_disconnection">ネットワークから切断されました。\nWi-Fi設定を確認してもう一度お試しください。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_contents_not_find">ドコモテレビターミナルに指定されたコンテンツがありません。\nドコモテレビターミナルを再起動してもう一度お試しください。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_contents_could_not_read">ドコモテレビターミナルからコンテンツを読み込めませんでした。\nアプリを再起動してもう一度お試しください。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_encrypted_communication_set">再生ができませんでした。\n指定されたコンテンツを再生するには、WEP, WPA, WPA2のいずれかの暗号化通信方式を使用するよう無線LANルーターの設定を変更してください。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_only_takeout_device">再生ができませんでした。\n持ち出しコンテンツは持ち出したデバイスでのみ再生できます。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_other_http_error">再生ができませんでした。\nネットワーク状態を確認してもう一度お試しください。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_specified_content_invalid">再生ができませんでした。\n指定されたコンテンツはデータが破損しているか不正なため再生できません。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_specified_content_format_not_support">再生ができませんでした。\nこのデバイスは指定されたコンテンツ形式の再生に対応していません。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_video_corresponding_content_error">再生ができませんでした。\n指定されたコンテンツのビデオデータが再生できませんでした。\n対応コンテンツについては、搭載機器一覧でご確認いただけます。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_audio_corresponding_content_error">再生ができませんでした。\n指定されたコンテンツのオーディオデータが再生できませんでした。\n対応コンテンツについては、搭載機器一覧でご確認いただけます。(MP-%s)</string>
+    <string name="contents_detail_secure_player_fail_remote_setting_one_more_time">再生ができませんでした。\n再度、「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(HC-%s)</string>
+    <string name="contents_detail_secure_player_fail_http_error">再生ができませんでした。\nネットワーク状態を確認してもう一度お試しください。(HC-%s)</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
@@ -503,15 +514,15 @@
     <!-- エラープレフィックスタイプ一覧　※新たに定義されたら追加していく -->
     <string name="error_prefix_type_plala_server_error">P-%s</string>
     <string name="error_prefix_type_json_paser_error">A-%s</string>
-    <string name="error_prefix_type_search_recommend_error" >K-%s</string>
-    <string name="error_prefix_type_d_account_error" >AI-%s</string>
-    <string name="error_prefix_type_local_registration_error" >LR-%s</string>
-    <string name="error_prefix_type_http_code_and_dtcp_error" >HC-%s, DT-%s</string>
-    <string name="error_prefix_type_download_error" >DL-%s</string>
-    <string name="error_prefix_type_remote_connect_error" >RM-%s</string>
+    <string name="error_prefix_type_search_recommend_error">K-%s</string>
+    <string name="error_prefix_type_d_account_error">AI-%s</string>
+    <string name="error_prefix_type_local_registration_error">LR-%s</string>
+    <string name="error_prefix_type_http_code_error">HC-%s</string>
+    <string name="error_prefix_type_download_error">DL-%s</string>
+    <string name="error_prefix_type_remote_connect_error">RM-%s</string>
     <string name="error_prefix_type_connect_failed_ddtcp_error">RM-D-%s</string>
-    <string name="error_prefix_type_media_player_and_status_code_error" >MP-%s, SC-%s</string>
-    <string name="error_prefix_activated_error" >AC-%s</string>
+    <string name="error_prefix_type_media_player_code_error">MP-%s</string>
+    <string name="error_prefix_activated_error">AC-%s</string>
 
     <!-- TODO: 設定ファイル動作制御用仮ワーディング -->
     <string name="setting_file_force_download">ドコモテレビターミナルアプリの新バージョンがあります。アップデートを行います。</string>
