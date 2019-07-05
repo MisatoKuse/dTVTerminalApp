@@ -738,7 +738,11 @@ public class ContentDetailUtils {
                 DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " episode_id:" + episodeId + " URLScheme:" + startUrl);
             }
         } else {
-            startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            if (ContentUtils.VIDEO_PROGRAM.equals(detailData.getDisp_type())) {
+                startUrl = UrlConstants.WebUrl.NEW_TITTLE_EPISODE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            } else {
+                startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            }
             DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
         }
         return startUrl;
