@@ -15,7 +15,6 @@ import android.util.SparseArray;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -52,6 +51,10 @@ public class ContentDetailUtils {
     private static final String STR_COMMA = "、";
     /**DTVパッケージ名.*/
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
+    /**DTV schema url 変換.*/
+    private static final String DTV_URL_FORMAT_CHANGE = "XXXX";
+    /**DTV 新バージョン.*/
+    private static final int DTV_VERSION_NEW = 60000;
     /**DTVバージョン.*/
     private static final int DTV_VERSION_STANDARD = 52000;
     /**dアニメストアパッケージ名.*/
@@ -92,7 +95,7 @@ public class ContentDetailUtils {
     private static final int CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER = 10;
     /** リモコンキーを地デジ・BS用のチャンネル番号に変換する際の倍率. */
     private static final int CONVERT_REMOCON_KEY_TO_CHANNEL_NUMBER = 10000;
-    /** チャンネルNoを地デジ・BS用のチャンネル番号に変換する際の倍率*/
+    /** チャンネルNoを地デジ・BS用のチャンネル番号に変換する際の倍率.*/
     private static final int CONVERT_CHANNEL_NO_TO_CHANNEL_NUMBER = 10;
     /** 値渡すキー. */
     public static final String RECORD_LIST_KEY = "recordListKey";
@@ -230,7 +233,8 @@ public class ContentDetailUtils {
                 if (channelInfo.getRemoconKey() != null) {
                     try {
                         int remoconKey = Integer.parseInt(channelInfo.getRemoconKey());
-                        serviceIdDecimal = remoconKey * CONVERT_REMOCON_KEY_TO_CHANNEL_NUMBER + channelInfo.getChannelNo() * CONVERT_CHANNEL_NO_TO_CHANNEL_NUMBER;
+                        serviceIdDecimal = remoconKey * CONVERT_REMOCON_KEY_TO_CHANNEL_NUMBER
+                                + channelInfo.getChannelNo() * CONVERT_CHANNEL_NO_TO_CHANNEL_NUMBER;
                     } catch (NumberFormatException exception) {
                         // フェールセーフ用
                         DTVTLogger.debug(exception);
@@ -254,50 +258,6 @@ public class ContentDetailUtils {
      */
     public static boolean getStbStatus() {
         return StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN;
-    }
-
-    /**
-     * カスタムディメンション取得(コンテンツタイプ1、コンテンツタイプ2、ペアリング、ログイン).
-     * @param contentType コンテンツタイプ
-     * @param mHikariType ひかりタイプ
-     * @param context コンテキスト
-     * @param title タイトル名
-     * @return カスタムディメンション配列
-     */
-    public static SparseArray<String> getPlalaCallBackCustomDimensions(final ContentTypeForGoogleAnalytics contentType,
-                                                                        final ContentUtils.HikariType mHikariType, final Context context, final String title) {
-        String contentsType2;
-        if (contentType == ContentTypeForGoogleAnalytics.VOD) {
-            contentsType2 = context.getString(R.string.google_analytics_custom_dimension_contents_type2_void);
-        } else {
-            contentsType2 = context.getString(R.string.google_analytics_custom_dimension_contents_type2_live);
-        }
-        UserState userState = UserInfoUtils.getUserState(context);
-        String loginStatus;
-        if (UserState.LOGIN_NG.equals(userState)) {
-            loginStatus = context.getString(R.string.google_analytics_custom_dimension_login_ng);
-        } else {
-            loginStatus = context.getString(R.string.google_analytics_custom_dimension_login_ok);
-        }
-        String serviceName = context.getString(R.string.google_analytics_custom_dimension_service_h4d);
-        String contentsType1 = ContentUtils.getContentsType1(context, mHikariType);
-        return ContentUtils.getCustomDimensions(loginStatus, serviceName, contentsType1, contentsType2, title);
-    }
-
-    /**
-     * カスタムディメンション取得(スクリーン名).
-     * @param contentType コンテンツタイプ
-     * @param context コンテキスト
-     * @return スクリーン名
-     */
-    public static String getPlalaCallBackScreenName(final ContentTypeForGoogleAnalytics contentType, final Context context) {
-        String screenName;
-        if (contentType == ContentTypeForGoogleAnalytics.VOD) {
-            screenName = context.getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail);
-        } else {
-            screenName = context.getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail);
-        }
-        return screenName;
     }
 
     /**
@@ -578,24 +538,49 @@ public class ContentDetailUtils {
     }
 
     /**
+     * 機能：dTV アプリバージョン判定.
+     * @param versionCode バージョンコード
+     * @return true:新バージョン false:旧バージョン
+     */
+    private static boolean dTVAppIsNewVersion(final long versionCode) {
+        return versionCode >= DTV_VERSION_NEW;
+    }
+
+    /**
      * 機能：dTV APP起動（検レコサーバ）.
      * @param detailData 検レコサーバメタデータ
+     * @param context コンテキスト
      * @return 起動URL
      */
-    public static String startDtvApp(final OtherContentsDetailData detailData) {
+    public static String getStartDtvAppUrl(final OtherContentsDetailData detailData, final Context context) {
+        String packageName = getStartAppPackageName(ContentDetailUtils.StartAppServiceType.DTV);
+        long localVersionCode = getVersionCode(packageName, context);
+        // contentsId が16桁の場合に下8桁を使用する。※前提条件:contentsId は8桁または16桁である
+        String contentsId = detailData.getContentsId().substring(detailData.getContentsId().length() - CONTENTS_ID_VALID_LENGTH);
+        DTVTLogger.debug("Reserved4[" + detailData.getReserved4() + "] contentsId:" + detailData.getContentsId() + " lower 8 digits:" + contentsId);
+        if (dTVAppIsNewVersion(localVersionCode)) {
+            return getStartDtvAppUrlByRecommendNewVersion(detailData.getReserved4(), contentsId);
+        } else {
+            return getStartDtvAppUrlByRecommendOldVersion(detailData.getReserved4(), contentsId);
+        }
+    }
+
+    /**
+     * 機能：dTV APP起動（検レコサーバ）（旧dTVバージョン：60000未満）.
+     * @param reserved4 reserved4
+     * @param contentsId コンテンツId
+     * @return 起動URL
+     */
+    private static String getStartDtvAppUrlByRecommendOldVersion(final String reserved4, final String contentsId) {
         String startUrl = "";
         try {
-            // contentsId が16桁の場合に下8桁を使用する。※前提条件:contentsId は8桁または16桁である
-            String contentsId = detailData.getContentsId().substring(
-                    detailData.getContentsId().length() - CONTENTS_ID_VALID_LENGTH);
-            DTVTLogger.debug("Reserved4[" + detailData.getReserved4() + "] contentsId:" + detailData.getContentsId() + " lower 8 digits:" + contentsId);
             //タイトルタイプの別
             //4:音楽コンテンツ
-            if (RESERVED4_TYPE4.equals(detailData.getReserved4())) {
+            if (RESERVED4_TYPE4.equals(reserved4)) {
                 startUrl = UrlConstants.WebUrl.WORK_START_TYPE + contentsId;
                 //7,8:ライブ配信コンテンツ
-            } else if (RESERVED4_TYPE7.equals(detailData.getReserved4())
-                    || RESERVED4_TYPE8.equals(detailData.getReserved4())) {
+            } else if (RESERVED4_TYPE7.equals(reserved4)
+                    || RESERVED4_TYPE8.equals(reserved4)) {
                 startUrl = UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + contentsId;
                 //その他の場合
             } else {
@@ -608,11 +593,38 @@ public class ContentDetailUtils {
     }
 
     /**
+     * 機能：dTV APP起動（検レコサーバ）（新dTVバージョン：60000以上）.
+     * @param reserved4 reserved4
+     * @param contentsId コンテンツId
+     * @return 起動URL
+     */
+    private static String getStartDtvAppUrlByRecommendNewVersion(final String reserved4, final String contentsId) {
+        String startUrl = "";
+        try {
+            //タイトルタイプの別
+            //4:音楽コンテンツ
+            if (RESERVED4_TYPE4.equals(reserved4)) {
+                startUrl = UrlConstants.WebUrl.NEW_WORK_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                //7,8:ライブ配信コンテンツ
+            } else if (RESERVED4_TYPE7.equals(reserved4)
+                    || RESERVED4_TYPE8.equals(reserved4)) {
+                startUrl = UrlConstants.WebUrl.NEW_SUPER_SPEED_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                //その他の場合
+            } else {
+                startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+            }
+        } catch (StringIndexOutOfBoundsException e) {
+            DTVTLogger.debug(e);
+        }
+        return startUrl;
+    }
+
+    /**
      * 機能：DAZN APP起動（検レコサーバ）.
      * @param detailData 検レコサーバメタデータ
      * @return 起動URL
      */
-    public static String startDAZNApp(final OtherContentsDetailData detailData) {
+    public static String getStartDAZNAppUrl(final OtherContentsDetailData detailData) {
         return UrlConstants.WebUrl.DAZN_START_URL + detailData.getContentsId();
     }
 
@@ -621,7 +633,7 @@ public class ContentDetailUtils {
      * @param detailData 検レコサーバメタデータ
      * @return 起動URL
      */
-    public static String startDAnimeApp(final OtherContentsDetailData detailData) {
+    public static String getStartDAnimeAppUrl(final OtherContentsDetailData detailData) {
         String startUrl = "";
         if (detailData != null) {
             if (detailData.getTitleKind() != null && detailData.getTitleKind().equals(SearchDataProvider.D_ANIME_STORE_SONG_CONTENTS)) {
@@ -640,7 +652,7 @@ public class ContentDetailUtils {
      * @param detailData 検レコサーバメタデータ
      * @return 起動URL
      */
-    public static String startDtvChannelApp(final OtherContentsDetailData detailData) {
+    public static String getStartDtvChannelAppUrl(final OtherContentsDetailData detailData) {
         String startUrl = "";
         //テレビ再生  「categoryId」が「01」の場合
         if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(detailData.getCategoryId())) {
@@ -658,37 +670,76 @@ public class ContentDetailUtils {
     /**
      * 機能：dTVAPP起動（ぷららサーバ）.
      * @param detailData ぷららサーバメタデータ
+     * @param context コンテキスト
      * @return 起動URL
      */
-    public static String startDtvApp(final VodMetaFullData detailData) {
-        String startUrl;
+    public static String getStartDtvAppUrl(final VodMetaFullData detailData, final Context context) {
+        String packageName = getStartAppPackageName(ContentDetailUtils.StartAppServiceType.DTV);
+        long localVersionCode = getVersionCode(packageName, context);
         DTVTLogger.debug("dtv_type[" + detailData.getDtvType() + "] title_id:" + detailData.getTitle_id() + " episode_id:" + detailData.getEpisode_id());
+        if (dTVAppIsNewVersion(localVersionCode)) {
+            return getStartDtvAppUrlByPlalaNewVersion(detailData);
+        } else {
+            return getStartDtvAppUrlByPlalaOldVersion(detailData);
+        }
+    }
+
+    /**
+     * 機能：dTV APP起動（検レコサーバ）（旧dTVバージョン：60000未満）.
+     * @param detailData ぷららサーバメタデータ
+     * @return 起動URL
+     */
+    private static String getStartDtvAppUrlByPlalaOldVersion(final VodMetaFullData detailData) {
+        String startUrl;
         if (METARESPONSE1.equals(detailData.getDtvType())) {
             startUrl = UrlConstants.WebUrl.WORK_START_TYPE + detailData.getEpisode_id();
-            DTVTLogger.debug("Start title with the specified episode_id:" + detailData.getEpisode_id()
-                    + " URLScheme:" + UrlConstants.WebUrl.WORK_START_TYPE + detailData.getEpisode_id());
+            DTVTLogger.debug("Start title with the specified episode_id:" + detailData.getEpisode_id() + " URLScheme:" + startUrl);
         } else if (METARESPONSE2.equals(detailData.getDtvType())) {
             startUrl = UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id();
-            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id()
-                    + " URLScheme:" + UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
+            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
         } else if (METARESPONSE3.equals(detailData.getDtvType())) {
             String episodeId = detailData.getEpisode_id();
-
-            if (episodeId == null || episodeId.isEmpty()) {
+            if (TextUtils.isEmpty(episodeId)) {
                 startUrl = UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id();
-                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id()
-                        + " URLScheme:" + UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
             } else {
                 // ※作品IDが設定されていた場合は、タイトル詳細を作品ID指定で起動させる
-                startUrl = String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE,
-                        detailData.getTitle_id(), episodeId);
-                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " episode_id:" + episodeId
-                        + " URLScheme:" + String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, detailData.getTitle_id(), episodeId));
+                startUrl = String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, detailData.getTitle_id(), episodeId);
+                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " episode_id:" + episodeId + " URLScheme:" + startUrl);
             }
         } else {
             startUrl = UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id();
-            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id()
-                    + " URLScheme:" + UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
+        }
+        return startUrl;
+    }
+
+    /**
+     * 機能：dTV APP起動（検レコサーバ）（新dTVバージョン：60000以上）.
+     * @param detailData ぷららサーバメタデータ
+     * @return 起動URL
+     */
+    private static String getStartDtvAppUrlByPlalaNewVersion(final VodMetaFullData detailData) {
+        String startUrl;
+        if (METARESPONSE1.equals(detailData.getDtvType())) {
+            startUrl = UrlConstants.WebUrl.NEW_WORK_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getEpisode_id());
+            DTVTLogger.debug("Start title with the specified episode_id:" + detailData.getEpisode_id() + " URLScheme:" + startUrl);
+        } else if (METARESPONSE2.equals(detailData.getDtvType())) {
+            startUrl = UrlConstants.WebUrl.NEW_SUPER_SPEED_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
+        } else if (METARESPONSE3.equals(detailData.getDtvType())) {
+            String episodeId = detailData.getEpisode_id();
+            if (TextUtils.isEmpty(episodeId)) {
+                startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
+            } else {
+                // ※作品IDが設定されていた場合は、タイトル詳細を作品ID指定で起動させる
+                startUrl = UrlConstants.WebUrl.NEW_TITTLE_EPISODE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " episode_id:" + episodeId + " URLScheme:" + startUrl);
+            }
+        } else {
+            startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
         }
         return startUrl;
     }
@@ -698,7 +749,7 @@ public class ContentDetailUtils {
      * @param detailData ぷららサーバメタデータ
      * @return 起動URL
      */
-    public static String startDtvChannelApp(final VodMetaFullData detailData) {
+    public static String getStartDtvChannelAppUrl(final VodMetaFullData detailData) {
         //ひかりTV内dtvチャンネルの場合
         String startUrl = "";
         if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(detailData.getmTv_service())) {

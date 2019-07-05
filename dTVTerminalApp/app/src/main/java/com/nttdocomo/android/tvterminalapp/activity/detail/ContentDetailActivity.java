@@ -1644,22 +1644,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                    String url = "";
                    switch (serviceType) {
                        case DTV:
-                           url = ContentDetailUtils.startDtvApp(mDetailData);
+                           url = ContentDetailUtils.getStartDtvAppUrl(mDetailData, ContentDetailActivity.this);
                            break;
                        case DTV_CH:
-                           url = ContentDetailUtils.startDtvChannelApp(mDetailData);
+                           url = ContentDetailUtils.getStartDtvChannelAppUrl(mDetailData);
                            break;
                        case DAZN:
-                           url = ContentDetailUtils.startDAZNApp(mDetailData);
+                           url = ContentDetailUtils.getStartDAZNAppUrl(mDetailData);
                            break;
                        case DANIME:
-                           url = ContentDetailUtils.startDAnimeApp(mDetailData);
+                           url = ContentDetailUtils.getStartDAnimeAppUrl(mDetailData);
                            break;
                        case H4D_DTV:
-                           url = ContentDetailUtils.startDtvApp(mDetailFullData);
+                           url = ContentDetailUtils.getStartDtvAppUrl(mDetailFullData, ContentDetailActivity.this);
                            break;
                        case H4D_DTV_CH:
-                           url = ContentDetailUtils.startDtvChannelApp(mDetailFullData);
+                           url = ContentDetailUtils.getStartDtvChannelAppUrl(mDetailFullData);
                            break;
                        default:
                            break;
