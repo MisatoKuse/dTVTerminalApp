@@ -442,6 +442,7 @@ public class ContentDetailUtils {
         detailData.setContentsId(content.mContentsId);
         detailData.setContentCategory(ContentUtils.getRecommendContentsType(detailData.getServiceId(), content.mCategoryId));
         detailData.setCopyRight(content.mCopyright);
+        detailData.setTotalEpisodeCount(content.mTotalEpisodeCount);
         //履歴送信用
         detailData.setRecommendFlg(mDetailData.getRecommendFlg());
         detailData.setGroupId(mDetailData.getGroupId());
@@ -559,7 +560,7 @@ public class ContentDetailUtils {
         String contentsId = detailData.getContentsId().substring(detailData.getContentsId().length() - CONTENTS_ID_VALID_LENGTH);
         DTVTLogger.debug("Reserved4[" + detailData.getReserved4() + "] contentsId:" + detailData.getContentsId() + " lower 8 digits:" + contentsId);
         if (dTVAppIsNewVersion(localVersionCode)) {
-            return getStartDtvAppUrlByRecommendNewVersion(detailData.getReserved4(), contentsId);
+            return getStartDtvAppUrlByRecommendNewVersion(detailData.getReserved4(), contentsId, detailData.getTotalEpisodeCount());
         } else {
             return getStartDtvAppUrlByRecommendOldVersion(detailData.getReserved4(), contentsId);
         }
@@ -596,22 +597,27 @@ public class ContentDetailUtils {
      * 機能：dTV APP起動（検レコサーバ）（新dTVバージョン：60000以上）.
      * @param reserved4 reserved4
      * @param contentsId コンテンツId
+     * @param totalEpisodeCount エピソード総数
      * @return 起動URL
      */
-    private static String getStartDtvAppUrlByRecommendNewVersion(final String reserved4, final String contentsId) {
+    private static String getStartDtvAppUrlByRecommendNewVersion(final String reserved4, final String contentsId, final int totalEpisodeCount) {
         String startUrl = "";
         try {
             //タイトルタイプの別
             //4:音楽コンテンツ
             if (RESERVED4_TYPE4.equals(reserved4)) {
-                startUrl = UrlConstants.WebUrl.NEW_WORK_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
-                //7,8:ライブ配信コンテンツ
-            } else if (RESERVED4_TYPE7.equals(reserved4)
-                    || RESERVED4_TYPE8.equals(reserved4)) {
-                startUrl = UrlConstants.WebUrl.NEW_SUPER_SPEED_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                startUrl = UrlConstants.WebUrl.NEW_PRODUCT_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                //8:ライブ配信コンテンツ
+            } else if (RESERVED4_TYPE8.equals(reserved4)) {
+                startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
                 //その他の場合
             } else {
-                startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                // "totalEpisodeCount"が1の場合は「単話」、それ以外は「シリーズ」
+                if (totalEpisodeCount == 1) {
+                    startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                } else {
+                    startUrl = UrlConstants.WebUrl.NEW_TITLE_VIEW_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
+                }
             }
         } catch (StringIndexOutOfBoundsException e) {
             DTVTLogger.debug(e);
@@ -722,26 +728,19 @@ public class ContentDetailUtils {
     private static String getStartDtvAppUrlByPlalaNewVersion(final VodMetaFullData detailData) {
         String startUrl;
         if (METARESPONSE1.equals(detailData.getDtvType())) {
-            startUrl = UrlConstants.WebUrl.NEW_WORK_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getEpisode_id());
+            startUrl = UrlConstants.WebUrl.NEW_PRODUCT_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getEpisode_id());
             DTVTLogger.debug("Start title with the specified episode_id:" + detailData.getEpisode_id() + " URLScheme:" + startUrl);
         } else if (METARESPONSE2.equals(detailData.getDtvType())) {
-            startUrl = UrlConstants.WebUrl.NEW_SUPER_SPEED_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
             DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
         } else if (METARESPONSE3.equals(detailData.getDtvType())) {
-            String episodeId = detailData.getEpisode_id();
-            if (TextUtils.isEmpty(episodeId)) {
-                startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
-                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
-            } else {
-                // ※作品IDが設定されていた場合は、タイトル詳細を作品ID指定で起動させる
-                startUrl = UrlConstants.WebUrl.NEW_TITTLE_EPISODE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
-                DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " episode_id:" + episodeId + " URLScheme:" + startUrl);
-            }
+            startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+            DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
         } else {
             if (ContentUtils.VIDEO_PROGRAM.equals(detailData.getDisp_type())) {
-                startUrl = UrlConstants.WebUrl.NEW_TITTLE_EPISODE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+                startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
             } else {
-                startUrl = UrlConstants.WebUrl.NEW_TITTLE_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
+                startUrl = UrlConstants.WebUrl.NEW_TITLE_VIEW_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, detailData.getTitle_id());
             }
             DTVTLogger.debug("Start title with the specified title_id:" + detailData.getTitle_id() + " URLScheme:" + startUrl);
         }
