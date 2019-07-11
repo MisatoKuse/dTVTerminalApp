@@ -194,7 +194,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onPause() {
         super.onPause();
-        mDlnaContentRecordedDataProvider.stopListen();
         if (mIsLoading) {
             final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
             baseFragment.loadComplete();
