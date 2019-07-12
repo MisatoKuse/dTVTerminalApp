@@ -3,6 +3,7 @@
  */
 package com.nttdocomo.android.tvterminalapp.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Presentation;
 import android.content.Context;
@@ -882,7 +883,14 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     /**
      * initPlayerView mView.
      */
+    @SuppressLint("CutPasteId")
     private void initPlayerView() {
+        DTVTLogger.start();
+        int pauseIconVisible = View.GONE;
+        if (mRecordCtrlView != null) {
+            //PlayerController が初期化される前にControllerの表示状態を保存する
+            pauseIconVisible =  mRecordCtrlView.findViewById(R.id.tv_player_control_pause).getVisibility();
+        }
         this.removeView(mRecordCtrlView);
         this.getKeepScreenOn();
         mRecordCtrlView = (RelativeLayout) View.inflate(mContext, R.layout.tv_player_ctrl_video_record, null);
@@ -911,11 +919,12 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         hideCtrlView(false);
         if (mPlayerController != null) {
-            if (mPlayerController.isPlaying()) {
+            if (pauseIconVisible == View.VISIBLE) {
                 mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
                 mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -1358,6 +1367,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * @param playerEventType プレイヤーイベント
      */
     private void showControlViewAfterPlayerEvent(final PlayerEventType playerEventType) {
+        DTVTLogger.start();
         showControlView();
         if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             showLiveLayout(true);
@@ -1382,6 +1392,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         }
         hideCtrlViewAfterOperate();
         mIsShowControl = true;
+        DTVTLogger.end();
     }
 
     /**
@@ -1424,9 +1435,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                         if (!mIsVideoBroadcast) {
                             if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
                                 // 再生・一時停止ボタン長押し時の再生・一時停止処理.
-                                if (!mPlayerController.isPlaying()) {
+                                if (mVideoPlay.getVisibility() == VISIBLE) {
                                     playStart(false);
-                                } else {
+                                } else if (mVideoPause.getVisibility() == View.VISIBLE) {
                                     playPause();
                                 }
                                 mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
@@ -1731,6 +1742,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * タッチイベントの初期化.
      */
     private void setPlayerTouchEvent() {
+        DTVTLogger.start();
         mGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
             @Override
@@ -1761,6 +1773,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 return super.onFling(e1, e2, velocityX, velocityY);
             }
         });
+        DTVTLogger.end();
     }
 
     /**
@@ -1769,6 +1782,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * @return 停止結果
      */
     public int onPause() {
+        DTVTLogger.start();
         int result = 0;
         //外部出力制御
         if (mExternalDisplayHelper != null) {
@@ -1786,6 +1800,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         removeSendMessage();
         showPlayingProgress(false);
         stopThumbnailConnect();
+        DTVTLogger.end();
         return result;
     }
 
