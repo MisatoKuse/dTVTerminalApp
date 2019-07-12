@@ -19,7 +19,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationListWebClient;
 
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * 録画予約データ取得用プロパイダ.
@@ -44,7 +44,7 @@ public class RecordingReservationListDataProvider implements
     /**
      * コールバック.
      */
-    private ApiDataProviderCallback mApiDataProviderCallback = null;
+    private ApiDataProviderCallback mApiDataProviderCallback;
     /**
      * ソート完了リスト.
      */
@@ -250,17 +250,21 @@ public class RecordingReservationListDataProvider implements
          */
         TYPE_MON_FRI(8, "0x3e"),
         /**
+         * 毎月.
+         */
+        TYPE_EV_MONTH(9, "0x7e"),
+        /**
+         * 毎日.
+         */
+        TYPE_EV_DAY(10, "0x7f"),
+        /**
          * 日曜～木曜.
          */
         TYPE_SUN_THU(11, "0x1f"),
         /**
          * 日曜～金曜.
          */
-        TYPE_SUN_FRI(12, "0x3f"),
-        /**
-         * 毎月.
-         */
-        TYPE_EV_MONTH(13, "0x7e"),;
+        TYPE_SUN_FRI(12, "0x3f");
         /**
          * ID.
          */
@@ -579,7 +583,10 @@ public class RecordingReservationListDataProvider implements
         // 現在日時（エポック秒：秒単位）
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
         // レスポンスデータの日時（エポック秒：秒単位）
-        long dataTimeEpoch = DateUtils.getTodayStartTimeFormatEpoch() + startTime;
+        long dataTimeEpoch = DateUtils.getTodayStartTimeFormatEpoch();
+        // 開始時間をUTCから日本時間に変換
+        long startDate = startTime + TimeZone.getTimeZone(DateUtils.TIMEZONE_TOKYO).getOffset(System.currentTimeMillis()) / 1000;
+        dataTimeEpoch = dataTimeEpoch + (startDate % DateUtils.EPOCH_TIME_ONE_DAY);
         int dayLater = RECORD_RESERVATION_LOOP_TYPE_DEFAULT;
         DTVTLogger.debug("toDayOfWeek = " + todayDayOfWeek);
         switch (loopTypeNum) {
