@@ -13,7 +13,6 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
@@ -32,7 +31,7 @@ import java.util.TimeZone;
 public class DateUtils {
 
     /** Context. */
-    private Context mContext = null;
+    private Context mContext;
 
     /** VodClipList取得日付キー. */
     public static final String VOD_LAST_INSERT = "VodLastInsert";
@@ -113,7 +112,7 @@ public class DateUtils {
     private static final String DATE_PATTERN_UNTIL_MINUTE = "yyyy/MM/dd HH:mm";
 
     /** 日付フォーマット. */
-    private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) HH:mm";
+    private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) H:mm";
 
     /** 日付フォーマット. */
     public static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
@@ -182,6 +181,8 @@ public class DateUtils {
     /** 1日のエポック秒(用途ができたので、public化). */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
 
+    /** TIMEZONE(TOKYO). */
+    public static final String TIMEZONE_TOKYO = "Asia/Tokyo";
     /** 1時間のエポック秒. */
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
     /** 2時間のエポック秒. */
@@ -677,7 +678,7 @@ public class DateUtils {
     public static String getRecordShowListItem(final long time) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(time * 1000);
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION, Locale.JAPAN);
         String text = sdf.format(new Date(cal.getTimeInMillis()));
 
         DTVTLogger.debug("NowTime = " + cal.toString());
