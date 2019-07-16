@@ -141,85 +141,85 @@ public class DlnaUtils {
 
     //SecurePlayerエラーコード.
     /**不明なエラー.*/
-    public static final int SECURE_PLAYER_UNKNOWN_ERROR = 1;
+    private static final int SECURE_PLAYER_UNKNOWN_ERROR = 1;
     /** サポートしていない形式.*/
-    public static final int SECURE_PLAYER_NOT_SUPPORTED_FORMAT = 2;
+    private static final int SECURE_PLAYER_NOT_SUPPORTED_FORMAT = 2;
     /** 初期化エラー.*/
-    public static final int SECURE_PLAYER_INITIALIZATION_ERROR = 3;
+    private static final int SECURE_PLAYER_INITIALIZATION_ERROR = 3;
     /** 再生状態エラー.*/
-    public static final int SECURE_PLAYER_PLAYBACK_STATUS_ERROR = 4;
+    private static final int SECURE_PLAYER_PLAYBACK_STATUS_ERROR = 4;
     /** モジュール状態エラー.*/
-    public static final int SECURE_PLAYER_MODULE_STATUS_ERROR = 5;
+    private static final int SECURE_PLAYER_MODULE_STATUS_ERROR = 5;
     /** 引数エラー.*/
-    public static final int SECURE_PLAYER_ARGUMENT_ERROR = 6;
+    private static final int SECURE_PLAYER_ARGUMENT_ERROR = 6;
     /** 未実装エラー.*/
-    public static final int SECURE_PLAYER_UNIMPLEMENTED_RROR = 7;
+    private static final int SECURE_PLAYER_UNIMPLEMENTED_RROR = 7;
     /** アクティベーションが必要な端末で、アクティベーションされていない状態で起動した.*/
-    public static final int SECURE_PLAYER_WITHOUT_ACTIVATED = 1001;
+    private static final int SECURE_PLAYER_WITHOUT_ACTIVATED = 1001;
     /** ネットワーク切断.*/
-    public static final int SECURE_PLAYER_NETWORK_DISCONNECTION = 2001;
+    private static final int SECURE_PLAYER_NETWORK_DISCONNECTION = 2001;
     /** http Connection エラー.*/
-    public static final int SECURE_PLAYER_HTTP_CONNECTION_ERROR = 2002;
+    private static final int SECURE_PLAYER_HTTP_CONNECTION_ERROR = 2002;
     /** http Read エラー（ストリーム読み込み時のエラー）.*/
-    public static final int SECURE_PLAYER_HTTP_READ_ERROR = 2003;
+    private static final int SECURE_PLAYER_HTTP_READ_ERROR = 2003;
     /** http Open エラー（不正なURLが指定された場合）.*/
-    public static final int SECURE_PLAYER_HTTP_OPEN_ERROR = 2004;
+    private static final int SECURE_PLAYER_HTTP_OPEN_ERROR = 2004;
     /** http buffer エラー（読み取りバッファが不足した場合。）.*/
-    public static final int SECURE_PLAYER_HTTP_BUFFER_ERROR = 2005;
+    private static final int SECURE_PLAYER_HTTP_BUFFER_ERROR = 2005;
     /** DTCP 初期化エラー（DTCP-IP キーが入っていない端末で実行した場合など。.*/
-    public static final int SECURE_PLAYER_DTCP_INITIALIZATION_ERROR = 2006;
+    private static final int SECURE_PLAYER_DTCP_INITIALIZATION_ERROR = 2006;
     /** DTCP AKEエラー（AKEの失敗）.*/
-    public static final int SECURE_PLAYER_DTCP_AKE_ERROR = 2007;
+    private static final int SECURE_PLAYER_DTCP_AKE_ERROR = 2007;
     /** DTCP WLANチェックエラー（暗号化されていないWiFiで再生しようとした場合）.*/
-    public static final int SECURE_PLAYER_DTCP_WLAN_CHECK_ERROR = 2008;
+    private static final int SECURE_PLAYER_DTCP_WLAN_CHECK_ERROR = 2008;
     /** DTCP パケット解析エラー（DTCP-IP 復号処理に失敗した場合）.*/
-    public static final int SECURE_PLAYER_DTCP_PACKET_ANALYSIS_ERROR = 2009;
+    private static final int SECURE_PLAYER_DTCP_PACKET_ANALYSIS_ERROR = 2009;
     /** DTCP PCP SESSION 作成エラー（PCP streaming session の開始に失敗した場合）.*/
-    public static final int SECURE_PLAYER_DTCP_PCP_SESSION_CREATION_ERROR = 2010;
+    private static final int SECURE_PLAYER_DTCP_PCP_SESSION_CREATION_ERROR = 2010;
     /** HTTPエラー（その他）.*/
-    public static final int SECURE_PLAYER_HTTP_OTHER_ERROR = 2100;
+    private static final int SECURE_PLAYER_HTTP_OTHER_ERROR = 2100;
     /** HTTPエラー403.*/
-    public static final int SECURE_PLAYER_HTTP_ERROR_ONE = 2101;
+    private static final int SECURE_PLAYER_HTTP_ERROR_ONE = 2101;
     /** HTTPエラー503.*/
-    public static final int SECURE_PLAYER_HTTP_ERROR_TWO = 2102;
+    private static final int SECURE_PLAYER_HTTP_ERROR_TWO = 2102;
     /** 持ち出しコンテンツ再生エラー。.*/
-    public static final int SECURE_PLAYER_TAKEOUT_DEVICE_ERROR = 2900;
+    private static final int SECURE_PLAYER_TAKEOUT_DEVICE_ERROR = 2900;
     /** ストリーム読み込みその他エラー.*/
-    public static final int SECURE_PLAYER_STREAM_READ_OTHER_ERROR = 2999;
+    private static final int SECURE_PLAYER_STREAM_READ_OTHER_ERROR = 2999;
     /** TSパケットのパース失敗.*/
-    public static final int SECURE_PLAYER_TS_PACKET_PARSE_FAILURE = 3001;
+    private static final int SECURE_PLAYER_TS_PACKET_PARSE_FAILURE = 3001;
     /** TSパケットサイズ不正.*/
-    public static final int SECURE_PLAYER_TS_PACKET_SIZE_INCORRECT = 3002;
+    private static final int SECURE_PLAYER_TS_PACKET_SIZE_INCORRECT = 3002;
     /** 未サポートのストリーム.*/
-    public static final int SECURE_PLAYER_UNSUPPORTED_STREAM_ERROR = 3003;
+    private static final int SECURE_PLAYER_UNSUPPORTED_STREAM_ERROR = 3003;
     /** ビデオストリームが見つからない.*/
-    public static final int SECURE_PLAYER_VIDEO_STREAM_NOT_FIND = 3004;
+    private static final int SECURE_PLAYER_VIDEO_STREAM_NOT_FIND = 3004;
     /** オーディオストリームが見つからない.*/
-    public static final int SECURE_PLAYER_AUDIO_STREAM_NOT_FOUND = 3005;
+    private static final int SECURE_PLAYER_AUDIO_STREAM_NOT_FOUND = 3005;
     /** TSパーサーその他のエラー.*/
-    public static final int SECURE_PLAYER_TS_PARSER_OTHER_ERROR = 3999;
+    private static final int SECURE_PLAYER_TS_PARSER_OTHER_ERROR = 3999;
     /** ビデオデコーダーエラー.*/
-    public static final int SECURE_PLAYER_VIDEO_DECODER_ERROR = 4001;
+    private static final int SECURE_PLAYER_VIDEO_DECODER_ERROR = 4001;
     /** ビデオレンダラーエラー.*/
-    public static final int SECURE_PLAYER_VIDEO_RENDERER_ERROR = 4002;
+    private static final int SECURE_PLAYER_VIDEO_RENDERER_ERROR = 4002;
     /** ビデオデコーダー初期化エラー.*/
-    public static final int SECURE_PLAYER_VIDEO_DECODER_INITIALIZATION_ERROR = 4003;
+    private static final int SECURE_PLAYER_VIDEO_DECODER_INITIALIZATION_ERROR = 4003;
     /** ビデオレンダラー初期化エラー.*/
-    public static final int SECURE_PLAYER_VIDEO_RENDERER_INITIALIZATION_ERROR = 4004;
+    private static final int SECURE_PLAYER_VIDEO_RENDERER_INITIALIZATION_ERROR = 4004;
     /** オーディオデコーダーエラー.*/
-    public static final int SECURE_PLAYER_AUDIO_DECODER_ERROR = 5001;
+    private static final int SECURE_PLAYER_AUDIO_DECODER_ERROR = 5001;
     /** オーディオレンダラーエラー.*/
-    public static final int SECURE_PLAYER_AUDIO_RENDERER_ERROR = 5002;
+    private static final int SECURE_PLAYER_AUDIO_RENDERER_ERROR = 5002;
     /** オーディオデコーダー初期化エラー.*/
-    public static final int SECURE_PLAYER_AUDIO_DECODER_INITIALIZATION_ERROR = 5003;
+    private static final int SECURE_PLAYER_AUDIO_DECODER_INITIALIZATION_ERROR = 5003;
     /** オーディオレンダラー初期化エラー.*/
-    public static final int SECURE_PLAYER_AUDIO_RENDERER_INITIALIZATION_ERROR = 5004;
+    private static final int SECURE_PLAYER_AUDIO_RENDERER_INITIALIZATION_ERROR = 5004;
     /** オーディオストリーム変更失敗.*/
-    public static final int SECURE_PLAYER_AUDIO_STREAM_CHANGE_FAILURE = 5005;
+    private static final int SECURE_PLAYER_AUDIO_STREAM_CHANGE_FAILURE = 5005;
     /** HTTPエラー403.*/
-    public static final int SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE = 403;
+    private static final int SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE = 403;
     /** HTTPエラー503.*/
-    public static final int SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE = 503;
+    private static final int SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE = 503;
 
     /**
      * ローカルレジストレーションエラータイプ.
