@@ -690,7 +690,7 @@ public class RecordingReservationListDataProvider implements
                 DTVTLogger.debug("case 9");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        dayLater = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TWO_DAY_LATER;
                     } else {
                         dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
