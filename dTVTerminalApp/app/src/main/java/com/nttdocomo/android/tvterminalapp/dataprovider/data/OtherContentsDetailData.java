@@ -118,6 +118,9 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private ContentUtils.ContentsType mContentCategory = null;
     /**コピーライト.*/
     private String mCopyRight = null;
+    /**.エピソード数*/
+    private int mTotalEpisodeCount = 0;
+
 
     /**
      * 日付取得.
@@ -931,6 +934,22 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
      */
     public void setCopyRight(final String copyRight) {
         this.mCopyRight = copyRight;
+    }
+
+    /**
+     * エピソード総数取得
+     * @return エピソード総数
+     */
+    public int getTotalEpisodeCount() {
+        return mTotalEpisodeCount;
+    }
+
+    /**
+     * エピソード総数設定
+     * @param totalEpisodeCount　エピソード総数
+     */
+    public void setTotalEpisodeCount(final int totalEpisodeCount) {
+        this.mTotalEpisodeCount = totalEpisodeCount;
     }
 
     @Override

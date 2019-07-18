@@ -86,7 +86,7 @@ public class StbMetaInfoResponseData {
         /** 予備10.*/
         String mReserved10;
         /** エピソード総数.*/
-        int mTotalEpisodeCount;
+        public int mTotalEpisodeCount;
         /** エピソードリスト.*/
         ArrayList<Episode> mEpisodeList;
     }

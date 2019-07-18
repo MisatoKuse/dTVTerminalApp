@@ -25,6 +25,8 @@ public class UrlConstants {
          * DTVアプリGoogle Play ストア‎URL.
          */
         public static final String DTV_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+
+        // --------------dtv 旧バージョン (「60000」未満) schema url start--------------
         /**
          * DTV起動URL.
          * 超スピード配信タイトル指定起動
@@ -45,6 +47,28 @@ public class UrlConstants {
          * タイトル指定アプリ起動(作品IDが設定されていた場合)
          */
         public static final String TITTLE_EPISODE_START_TYPE = "dmktvideosc:///openTitle?titleId=%s&episodeId=%s";
+        // --------------dtv 旧バージョン (「60000」未満) schema url end--------------
+
+        // --------------dtv 新バージョン(「60000」以上) schema url start --------------
+        /**
+         * DTV起動URL.
+         * 作品指定アプリ起動
+         */
+        public static final String NEW_PRODUCT_PLAY_START_TYPE = "https://dtv5wyhmk.page.link/?link=https%3A%2F%2Fsmart.video.dmkt-sp.jp%2Fproduct%2Fplay%2FXXXX"
+                + "&apn=jp.co.nttdocomo.dtv&ibi=com.nttdocomo.mb.dvideo&ipbi=com.nttdocomo.mb.dvideo&isi=705923000&ofl=https%3A%2F%2Fvideo.dmkt-sp.jp%2F&efr=1";
+        /**
+         * DTV起動URL.
+         * タイトル指定アプリ起動(作品IDがない場合)
+         */
+        public static final String NEW_TITLE_VIEW_START_TYPE = "https://dtv5wyhmk.page.link/?link=https%3A%2F%2Fsmart.video.dmkt-sp.jp%2Ftitle%2Fview%2FXXXX"
+                + "&apn=jp.co.nttdocomo.dtv&ibi=com.nttdocomo.mb.dvideo&ipbi=com.nttdocomo.mb.dvideo&isi=705923000&ofl=https%3A%2F%2Fvideo.dmkt-sp.jp%2F&efr=1";
+        /**
+         * DTV起動URL.
+         * タイトル指定アプリ起動(作品IDが設定されていた場合)
+         */
+        public static final String NEW_TITLE_PLAY_START_TYPE = "https://dtv5wyhmk.page.link/?link=https%3A%2F%2Fsmart.video.dmkt-sp.jp%2Ftitle%2Fplay%2FXXXX"
+                + "&apn=jp.co.nttdocomo.dtv&ibi=com.nttdocomo.mb.dvideo&ipbi=com.nttdocomo.mb.dvideo&isi=705923000&ofl=https%3A%2F%2Fvideo.dmkt-sp.jp%2F&efr=1";
+        // --------------dtv 新バージョン(「60000」以上) schema url end --------------
 
         /**
          * dアニメストアアプリGoogle Play ストア‎URL.
