@@ -676,12 +676,21 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 mIsCompleted = true;
             }
             if (needRetry(what)) {
-                tryOpenVideo(mPlayStartPosition, null, new Runnable() {
-                    @Override
-                    public void run() {
-                        mPlayerStateListener.onPlayerErrorCallBack(what, (int) arg);
-                        mPlayerEventType = PlayerEventType.NONE;
-                    }
+                tryOpenVideo(mPlayStartPosition,
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mPlayerController != null) {
+                                    mPlayerController.start();
+                                }
+                            }
+                        },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                mPlayerStateListener.onPlayerErrorCallBack(what, (int) arg);
+                                mPlayerEventType = PlayerEventType.NONE;
+                        }
                 });
                 goneCtrlView();
                 return;
