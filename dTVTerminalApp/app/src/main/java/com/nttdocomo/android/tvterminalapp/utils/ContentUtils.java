@@ -188,6 +188,30 @@ public class ContentUtils {
     private static final int PLATFORM_REMOTE_BS = 3;
     /** スターブサーバー.*/
     public static final String LOCAL_SIGNED_ON = "local_signed_on";
+    /** パラメータ名「copy」DTCP:CopyNever.*/
+    public final static String LABEL_STATUS_COPY_COPYNEVER = "DTCP:CopyNever";
+    /** パラメータ名「copy」DTCP:CopyNever.*/
+    public final static String LABEL_STATUS_COPY_COPYFREE = "DTCP:CopyFree";
+    /** パラメータ名「copy」DTCP:CopyNever.*/
+    public final static String LABEL_STATUS_COPY_COPYONCE = "DTCP:CopyOnce";
+    /** パラメータ名「copy」DTCP:CopyNever.*/
+    public final static String LABEL_STATUS_COPY_COPYNOMORE = "DTCP:CopyNoMore";
+    /** r_value PG-12.*/
+    public final static String R_VALUE_PG_12 = "PG-12";
+    /** r_value R-12.*/
+    public final static String R_VALUE_R_12 = "R-12";
+    /** r_value R-15.*/
+    public final static String R_VALUE_R_15 = "R-15";
+    /** r_value R-18.*/
+    public final static String R_VALUE_R_18 = "R-18";
+    /** r_value R-20.*/
+    public final static String R_VALUE_R_20 = "R-20";
+    /** マイチャンネル登録位置の上限値.*/
+    public static final int MY_CHANNEL_MAX_INDEX = 45;
+    /** チャンネルのアダルトタイプ(adult).*/
+    public static final String MY_CHANNEL_ADULT_TYPE_ADULT = "adult";
+    /** チャンネルのパレンタル設定値(G).*/
+    public static final String MY_CHANNEL_R_VALUE_G = "G";
     //endregion
 
     /**

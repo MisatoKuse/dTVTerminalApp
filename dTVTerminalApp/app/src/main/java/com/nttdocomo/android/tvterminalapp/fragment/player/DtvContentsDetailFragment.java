@@ -101,24 +101,6 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static int LABEL_STATUS_ADTYPE_9 = 9;
     /** adinfo_array の adtype 2.*/
     private final static int LABEL_STATUS_ADTYPE_2 = 2;
-    /** パラメータ名「copy」DTCP:CopyNever.*/
-    private final static String LABEL_STATUS_COPY_COPYNEVER = "DTCP:CopyNever";
-    /** パラメータ名「copy」DTCP:CopyNever.*/
-    private final static String LABEL_STATUS_COPY_COPYFREE = "DTCP:CopyFree";
-    /** パラメータ名「copy」DTCP:CopyNever.*/
-    private final static String LABEL_STATUS_COPY_COPYONCE = "DTCP:CopyOnce";
-    /** パラメータ名「copy」DTCP:CopyNever.*/
-    private final static String LABEL_STATUS_COPY_COPYNOMORE = "DTCP:CopyNoMore";
-    /** r_value PG-12.*/
-    private final static String LABEL_STATUS_R_VALUE_PG_12 = "PG-12";
-    /** r_value R-12.*/
-    private final static String LABEL_STATUS_R_VALUE_R_12 = "R-12";
-    /** r_value R-15.*/
-    private final static String LABEL_STATUS_R_VALUE_R_15 = "R-15";
-    /** r_value R-18.*/
-    private final static String LABEL_STATUS_R_VALUE_R_18 = "R-18";
-    /** r_value R-20.*/
-    private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
 
     /**フラグメントスクロールリスナー.*/
     public interface ContentsDetailFragmentListener {
@@ -453,16 +435,16 @@ public class DtvContentsDetailFragment extends Fragment {
         String copy = mOtherContentsDetailData.getCopy();
         if (copy != null) {
             switch (copy) {
-                case LABEL_STATUS_COPY_COPYNEVER:
+                case ContentUtils.LABEL_STATUS_COPY_COPYNEVER:
                     labelStatusList.add(R.mipmap.label_status_copy_never);
                     break;
-                case LABEL_STATUS_COPY_COPYFREE:
+                case ContentUtils.LABEL_STATUS_COPY_COPYFREE:
                     labelStatusList.add(R.mipmap.label_status_copy_free);
                     break;
-                case LABEL_STATUS_COPY_COPYONCE:
+                case ContentUtils.LABEL_STATUS_COPY_COPYONCE:
                     labelStatusList.add(R.mipmap.label_status_copy_once);
                     break;
-                case LABEL_STATUS_COPY_COPYNOMORE:
+                case ContentUtils.LABEL_STATUS_COPY_COPYNOMORE:
                 default:
                     break;
             }
@@ -477,19 +459,19 @@ public class DtvContentsDetailFragment extends Fragment {
         String rValue = mOtherContentsDetailData.getRvalue();
         if (rValue != null) {
             switch (rValue) {
-                case LABEL_STATUS_R_VALUE_PG_12:
+                case ContentUtils.R_VALUE_PG_12:
                     labelStatusList.add(R.mipmap.label_status_r_pg_12);
                     break;
-                case LABEL_STATUS_R_VALUE_R_12:
+                case ContentUtils.R_VALUE_R_12:
                     labelStatusList.add(R.mipmap.label_status_r_r_12);
                     break;
-                case LABEL_STATUS_R_VALUE_R_15:
+                case ContentUtils.R_VALUE_R_15:
                     labelStatusList.add(R.mipmap.label_status_r_r_15);
                     break;
-                case LABEL_STATUS_R_VALUE_R_18:
+                case ContentUtils.R_VALUE_R_18:
                     labelStatusList.add(R.mipmap.label_status_r_r_18);
                     break;
-                case LABEL_STATUS_R_VALUE_R_20:
+                case ContentUtils.R_VALUE_R_20:
                     labelStatusList.add(R.mipmap.label_status_r_r_20);
                     break;
                 default:

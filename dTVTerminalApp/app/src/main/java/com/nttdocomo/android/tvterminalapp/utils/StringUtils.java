@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -284,13 +283,13 @@ public class StringUtils {
 
         int ageReq = DEFAULT_R_VALUE;
         if (ageValue != null) {
-            if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_12)) {
+            if (ageValue.equals(ContentUtils.R_VALUE_PG_12)) {
                 ageReq = USER_AGE_REQ_PG12;
-            } else if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_15)) {
+            } else if (ageValue.equals(ContentUtils.R_VALUE_R_15)) {
                 ageReq = USER_AGE_REQ_R15;
-            } else if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_18)) {
+            } else if (ageValue.equals(ContentUtils.R_VALUE_R_18)) {
                 ageReq = USER_AGE_REQ_R18;
-            } else if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_20)) {
+            } else if (ageValue.equals(ContentUtils.R_VALUE_R_20)) {
                 ageReq = USER_AGE_REQ_R20;
             }
         }
