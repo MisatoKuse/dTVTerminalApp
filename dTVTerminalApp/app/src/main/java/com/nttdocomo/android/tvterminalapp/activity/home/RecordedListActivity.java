@@ -274,7 +274,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
                         || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
                     Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this, errorType, errorCode);
-                    showErrorDialog(errorInfoPair.first);
+                    showCommonControlErrorDialog(errorInfoPair.first, null, null, null, null);
                     GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                 } else {
                     showGetDataFailedToast();
@@ -294,7 +294,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 setProgressBarGone();
-                showErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
+                showCommonControlErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)), null, null, null, null);
                 GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement),
                         getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
                 setVideoBrows(null, false);
@@ -404,7 +404,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(RecordedListActivity.this,
                         DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode);
-                showErrorDialog(errorInfoPair.first);
+                showCommonControlErrorDialog(errorInfoPair.first, null, null, null, null);
                 GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                 setVideoBrows(null, false);
                 if (mNoDataMessage.getVisibility() == View.VISIBLE) {

@@ -18,6 +18,7 @@ import android.view.Window;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * カスタムダイアログ.
@@ -63,6 +64,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     private boolean mBackKeyAsFinishActivity = false;
     /**独自レイアウトView.*/
     private View mCustomView;
+    /** ErrorDialogType.*/
+    private CustomDialog.ErrorDialogType mErrorDialogType = ErrorDialogType.COMMON_DIALOG;
 
     /**
      * 最後に扱ったキーコード.
@@ -119,6 +122,22 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
      */
     public void setOkCallBack(final ApiOKCallback apiOKCallback) {
         this.mApiOKCallback = apiOKCallback;
+    }
+
+    /**
+     * getErrorDialogType.
+     * @return ErrorDialogType
+     */
+    public CustomDialog.ErrorDialogType getErrorDialogType() {
+        return mErrorDialogType;
+    }
+
+    /**
+     * setErrorDialogType.
+     * @param errorDialogType errorDialogType
+     */
+    public void setErrorDialogType(final CustomDialog.ErrorDialogType errorDialogType) {
+        this.mErrorDialogType = errorDialogType;
     }
 
     /**
@@ -202,6 +221,42 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
          * ダイアログタイプ：リスト(リスト表示、OK/Cancelは任意).
          */
         SELECT          //選択ダイアログ
+    }
+
+    /**
+     * ErrorDialogType.
+     */
+    public enum ErrorDialogType {
+        /**. dアカウントヘルプ画面へ遷移*/
+        D_ACCOUNT_REGISTRATION_HELP,
+        /**. dアカウント変わったため、ホーム画面に遷移*/
+        D_ACCOUNT_CHANGED,
+        /** プレイヤーエラー.*/
+        SECURE_PLAYER_ERROR,
+        /** コンテンツ詳細エラー.*/
+        CONTENT_DETAIL_GET_ERROR,
+        /** 強制バージョンアップ.*/
+        FORCED_VERSION_UP,
+        /** 任意バージョンアップ.*/
+        OPTIONAL_VERSION_UP,
+        /** 設定ファイルエラー.*/
+        SETTING_FILE_ERROR_DIALOG,
+        /**. 画面遷移なし.*/
+        COMMON_DIALOG
+    }
+
+    /**
+     * DialogTapType.
+     */
+    public enum  DialogTapType {
+        /** ok.*/
+        OK,
+        /** cancel.*/
+        CANCEL,
+        /** back key.*/
+        BACK_KEY,
+        /** not tap.*/
+        NOT_TAP
     }
 
     /**
