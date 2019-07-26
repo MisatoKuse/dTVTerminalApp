@@ -81,10 +81,8 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         EXTERNAL,
         /**年齢制限.*/
         AGE,
-        /** 再生パラメータチェックコンテンツファイルサイズ.*/
-        PARAMETER_CONTENT_FILE_SIZE_ERROR,
-        /** 再生パラメータチェックビットレート.*/
-        PARAMETER_CONTENT_BITRATE_SIZE_ERROR,
+        /** 再生パラメータ不正setCurrentMediaInfo failed.*/
+        PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED,
         /** 再生パラメータチェックファイルパス.*/
         PARAMETER_FILE_PATH_NOT_EXIST_ERROR,
         /**なし.*/
@@ -1678,7 +1676,6 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         try {
             size = Long.parseLong(playerData.getSize());
         } catch (NumberFormatException e) {
-            mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_CONTENT_FILE_SIZE_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_CONTENT_FILE_SIZE_ERROR);
             DTVTLogger.debug("Content File Size Err! size:" + playerData.getSize());
             DTVTLogger.debug(e);
         }
@@ -1692,7 +1689,6 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         try {
             bitRate = Integer.parseInt(playerData.getBitrate());
         } catch (NumberFormatException e) {
-            mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_CONTENT_BITRATE_SIZE_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_CONTENT_BITRATE_SIZE_ERROR);
             DTVTLogger.debug("Content Bitrate Err! size:" + playerData.getBitrate());
             DTVTLogger.debug(e);
         }
@@ -1714,6 +1710,8 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 type2 = "application/x-dtcp1";
             } else {
                 DTVTLogger.debug("setCurrentMediaInfo failed");
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED,
+                        DlnaUtils.ERROR_CODE_PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED);
                 return false;
             }
         } else {
@@ -1733,6 +1731,10 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             if ((ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus())) {
                 //ローカルファイルパス
                 String dlFile = playerData.getDlFileFullPath();
+                if (TextUtils.isEmpty(dlFile)) {
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_FILE_PATH_NOT_EXIST_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR);
+                    return false;
+                }
                 File file = new File(dlFile);
                 if (!file.exists()) {
                     mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_FILE_PATH_NOT_EXIST_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR);

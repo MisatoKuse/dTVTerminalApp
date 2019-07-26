@@ -2233,8 +2233,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 msg = getString(R.string.contents_detail_parental_check_fail, String.valueOf(DlnaUtils.SECURE_PLAYER_AGE_ERROR));
                 formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_AGE_ERROR));
                 break;
-            case PARAMETER_CONTENT_FILE_SIZE_ERROR: //Content File Size Err
-            case PARAMETER_CONTENT_BITRATE_SIZE_ERROR: //Content Bitrate Err
+            case PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED: //setCurrentMediaInfo failed
             case PARAMETER_FILE_PATH_NOT_EXIST_ERROR: //file path not exist Err
                 msg = getString(R.string.contents_detail_secure_player_fail_message, String.valueOf(errorCode));
                 formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(errorCode));

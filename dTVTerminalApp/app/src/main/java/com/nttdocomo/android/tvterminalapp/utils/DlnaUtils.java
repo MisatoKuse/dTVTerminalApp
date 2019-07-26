@@ -220,13 +220,11 @@ public class DlnaUtils {
     private static final int SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE = 403;
     /** HTTPエラー503.*/
     private static final int SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE = 503;
-    /** パラメータ不正コンテンツファイルサイズ.*/
-    public static final int ERROR_CODE_PARAMETER_CONTENT_FILE_SIZE_ERROR = 999999;
-    /** パラメータ不正ビットレート.*/
-    public static final int ERROR_CODE_PARAMETER_CONTENT_BITRATE_SIZE_ERROR = 999998;
+    /** パラメータ不正setCurrentMediaInfo failed.*/
+    public static final int ERROR_CODE_PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED = 999998;
     /**. 設定ファイルエラー.*/
     public static final int SECURE_PLAYER_SETTING_FILE_ERROR = 999997;
-    /** パラメータ不正ファイルパスーエラー.*/
+    /** パラメータ不正ファイルパスエラー.*/
     public static final int ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR = 999996;
     /** 外部出力エラー.*/
     public static final int SECURE_PLAYER_EXTERNAL_ERROR = 999995;
