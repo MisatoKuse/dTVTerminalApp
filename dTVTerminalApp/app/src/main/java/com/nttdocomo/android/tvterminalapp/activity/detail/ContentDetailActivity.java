@@ -2281,20 +2281,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             showCommonControlErrorDialog(errorResultPair.first, CustomDialog.ErrorDialogType.SECURE_PLAYER_ERROR, null, null, null);
         }
         //GAエラーレポート送信
-//        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
-//        String formatErrorCode;
-//        switch (errorResultPair.second) {
-//            case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_ONE:
-//                formatErrorCode = getString(R.string.error_prefix_type_http_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE));
-//                break;
-//            case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_TWO:
-//                formatErrorCode = getString(R.string.error_prefix_type_http_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE));
-//                break;
-//            default:
-//                formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(errorResultPair.second));
-//                break;
-//        }
-//        GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), formatErrorCode);
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+        final String formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error,
+                String.valueOf(errorResultPair.second));
+        GoogleAnalyticsUtils.sendErrorReport(
+                GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), formatErrorCode);
         mPlayerViewLayout.removeSendMessage();
     }
 
