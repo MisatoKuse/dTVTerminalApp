@@ -68,7 +68,8 @@ import java.util.Map;
  */
 public class PlayerViewLayout extends RelativeLayout implements MediaPlayerController.OnStateChangeListener,
         MediaPlayerController.OnFormatChangeListener, MediaPlayerController.OnPlayerEventListener,
-        MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener {
+        MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
+        ProcessSettingFile.OnShowSettingDialogListener {
 
     /**エラータイプ.*/
     public enum PlayerErrorType {
@@ -80,6 +81,10 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         EXTERNAL,
         /**年齢制限.*/
         AGE,
+        /** 再生パラメータ不正setCurrentMediaInfo failed.*/
+        PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED,
+        /** 再生パラメータチェックファイルパス.*/
+        PARAMETER_FILE_PATH_NOT_EXIST_ERROR,
         /**なし.*/
         NONE,
         /**初期化成功.*/
@@ -252,6 +257,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     private static final Handler sCtrlHandler = new Handler(Looper.getMainLooper());
     /**再生コールバック.*/
     private PlayerStateListener mPlayerStateListener;
+    /**設定ファイルエラーリスナー.*/
+    private SettingFilerListener mSettingFilerListener;
+
     /**ヘッダー.*/
     private Map<String, String> additionalHeaders;
     /**
@@ -294,6 +302,25 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         void onScreenOrientationChangeCallBack(final boolean isLandscape);
     }
 
+    public interface SettingFilerListener {
+        /**
+         * 設定ファイルエラー.
+         * @param errorMessage errorMessage
+         * @param dialogType dialogType
+         * @param okCallback okCallback
+         * @param cancelCallback cancelCallback
+         * @param dismissCallback dismissCallback
+         */
+        void onSettingFileErrorCallback(final String errorMessage, final CustomDialog.ErrorDialogType dialogType,
+                                        final CustomDialog.ApiOKCallback okCallback,
+                                        final CustomDialog.ApiCancelCallback cancelCallback,
+                                        final CustomDialog.DismissCallback dismissCallback);
+
+        /**
+         * 設定ファイル取得エラー.
+         */
+        void onSettingFileGetErrorCallback();
+    }
     /**
      * UIを更新するハンドラー.
      */
@@ -357,6 +384,14 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      */
     public void setPlayerStateListener(final PlayerStateListener mPlayerStateListener) {
         this.mPlayerStateListener = mPlayerStateListener;
+    }
+
+    /**
+     * setSettingFilerListener.
+     * @param settingFilerListener SettingFilerListener
+     */
+    public void setSettingFilerListener(final SettingFilerListener settingFilerListener) {
+        this.mSettingFilerListener = settingFilerListener;
     }
 
     /**
@@ -824,6 +859,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
 
         //リモート視聴なので、設定ファイルの内容に応じて判定を行う
         ProcessSettingFile processSettingFile = new ProcessSettingFile((ContentDetailActivity) mActivity, false);
+        processSettingFile.setOnShowSettingDialogListener(this);
         //リモート視聴の明示
         processSettingFile.setIsRemote(true);
         //コールバック指定付きで処理を開始する
@@ -1683,6 +1719,8 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 type2 = "application/x-dtcp1";
             } else {
                 DTVTLogger.debug("setCurrentMediaInfo failed");
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED,
+                        DlnaUtils.ERROR_CODE_PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED);
                 return false;
             }
         } else {
@@ -1702,8 +1740,13 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             if ((ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus())) {
                 //ローカルファイルパス
                 String dlFile = playerData.getDlFileFullPath();
+                if (TextUtils.isEmpty(dlFile)) {
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_FILE_PATH_NOT_EXIST_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR);
+                    return false;
+                }
                 File file = new File(dlFile);
                 if (!file.exists()) {
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_FILE_PATH_NOT_EXIST_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR);
                     DTVTLogger.debug(file  + " not exists");
                     return false;
                 }
@@ -1853,4 +1896,20 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         this.mPlayStartPosition = playStartPosition;
     }
 
+
+    @Override
+    public void onShowSettingFileDialog(final String errorMessage, final  CustomDialog.ErrorDialogType errorDialogType,
+                                        final  CustomDialog.ApiOKCallback okCallback, final  CustomDialog.ApiCancelCallback cancelCallback,
+                                        final  CustomDialog.DismissCallback dismissCallback) {
+        if (mSettingFilerListener != null) {
+            mSettingFilerListener.onSettingFileErrorCallback(errorMessage, errorDialogType, okCallback, cancelCallback, dismissCallback);
+        }
+    }
+
+    @Override
+    public void onSettingFileGetErrorCallback() {
+        if (mSettingFilerListener != null) {
+            mSettingFilerListener.onSettingFileGetErrorCallback();
+        }
+    }
 }

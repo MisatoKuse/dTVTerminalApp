@@ -63,6 +63,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     private boolean mBackKeyAsFinishActivity = false;
     /**独自レイアウトView.*/
     private View mCustomView;
+    /** ErrorDialogType.*/
+    private CustomDialog.ErrorDialogType mErrorDialogType = ErrorDialogType.COMMON_DIALOG;
 
     /**
      * 最後に扱ったキーコード.
@@ -119,6 +121,22 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
      */
     public void setOkCallBack(final ApiOKCallback apiOKCallback) {
         this.mApiOKCallback = apiOKCallback;
+    }
+
+    /**
+     * getErrorDialogType.
+     * @return ErrorDialogType
+     */
+    public CustomDialog.ErrorDialogType getErrorDialogType() {
+        return mErrorDialogType;
+    }
+
+    /**
+     * setErrorDialogType.
+     * @param errorDialogType errorDialogType
+     */
+    public void setErrorDialogType(final CustomDialog.ErrorDialogType errorDialogType) {
+        this.mErrorDialogType = errorDialogType;
     }
 
     /**
@@ -205,6 +223,42 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     }
 
     /**
+     * ErrorDialogType.
+     */
+    public enum ErrorDialogType {
+        /**. dアカウントヘルプ画面へ遷移*/
+        D_ACCOUNT_REGISTRATION_HELP,
+        /**. dアカウント変わったため、ホーム画面に遷移*/
+        D_ACCOUNT_CHANGED,
+        /** プレイヤーエラー.*/
+        SECURE_PLAYER_ERROR,
+        /** コンテンツ詳細エラー.*/
+        CONTENT_DETAIL_GET_ERROR,
+        /** 強制バージョンアップ.*/
+        FORCED_VERSION_UP,
+        /** 任意バージョンアップ.*/
+        OPTIONAL_VERSION_UP,
+        /** 設定ファイルエラー.*/
+        SETTING_FILE_ERROR_DIALOG,
+        /**. 画面遷移なし.*/
+        COMMON_DIALOG
+    }
+
+    /**
+     * DialogTapType.
+     */
+    public enum  DialogTapType {
+        /** ok.*/
+        OK,
+        /** cancel.*/
+        CANCEL,
+        /** back key.*/
+        BACK_KEY,
+        /** not tap.*/
+        NOT_TAP
+    }
+
+    /**
      * ダイアログの表示.
      */
     public void showDialog() {
@@ -285,6 +339,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
 
             //ダイアログを表示する
             mDialog.show();
+            setButtonClickListener();
         } else {
             //ベースアクティビティ以外の場合のフェールセーフ処理
             //本アプリのアクティビティは全てBaseアクティビティを継承しているのここは実行されない筈
@@ -294,12 +349,30 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
             if (mContext instanceof BaseActivity && !((Activity) mContext).isFinishing()) {
                 //ダイアログを表示する
                 mDialog.show();
+                setButtonClickListener();
             }
         }
     }
 
     /**
-     * アプリ終了
+     * setButtonClickListener.
+     */
+    private void setButtonClickListener() {
+        if (getErrorDialogType() == ErrorDialogType.OPTIONAL_VERSION_UP) {
+            mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    if (mApiOKCallback != null) {
+                        mIsButtonTap = true;
+                        mApiOKCallback.onOKCallback(true);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * アプリ終了.
      */
     private void finishActivity () {
         if (mContext != null && mContext instanceof BaseActivity) {
