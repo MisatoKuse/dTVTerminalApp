@@ -18,7 +18,6 @@ import android.view.Window;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 /**
  * カスタムダイアログ.
@@ -340,6 +339,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
 
             //ダイアログを表示する
             mDialog.show();
+            setButtonClickListener();
         } else {
             //ベースアクティビティ以外の場合のフェールセーフ処理
             //本アプリのアクティビティは全てBaseアクティビティを継承しているのここは実行されない筈
@@ -349,12 +349,30 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
             if (mContext instanceof BaseActivity && !((Activity) mContext).isFinishing()) {
                 //ダイアログを表示する
                 mDialog.show();
+                setButtonClickListener();
             }
         }
     }
 
     /**
-     * アプリ終了
+     * setButtonClickListener.
+     */
+    private void setButtonClickListener() {
+        if (getErrorDialogType() == ErrorDialogType.OPTIONAL_VERSION_UP) {
+            mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    if (mApiOKCallback != null) {
+                        mIsButtonTap = true;
+                        mApiOKCallback.onOKCallback(true);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * アプリ終了.
      */
     private void finishActivity () {
         if (mContext != null && mContext instanceof BaseActivity) {
