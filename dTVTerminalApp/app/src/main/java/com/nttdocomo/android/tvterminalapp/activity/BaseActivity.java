@@ -1342,6 +1342,11 @@ public class BaseActivity extends FragmentActivity implements
             if (errorDialogType != CustomDialog.ErrorDialogType.FORCED_VERSION_UP
                     && errorDialogType != CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
                 return;
+            } else {
+                //VersionUpダイアログの場合、もし表示中であれば蓄積しない
+                if (mShowDialog.getErrorDialogType() == errorDialogType) {
+                    return;
+                }
             }
         }
         CustomDialog errorDialog;
@@ -1438,7 +1443,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void onVersionUpDialogShow(final CustomDialog.ErrorDialogType errorDialogType,
                                        final CustomDialog.DialogTapType dialogTapType) {
-        clearDialogContentText();
         if (getLinkListSize() > 0) {
             pollDialog();
             if (mShowDialog != null) {
@@ -1479,7 +1483,6 @@ public class BaseActivity extends FragmentActivity implements
         showDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                clearDialogContentText();
                 switch (errorDialogType) {
                     case D_ACCOUNT_CHANGED:
                     case COMMON_DIALOG:
@@ -1496,7 +1499,6 @@ public class BaseActivity extends FragmentActivity implements
         showDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                clearDialogContentText();
                 switch (errorDialogType) {
                     case D_ACCOUNT_CHANGED:
                         onRestartApplication();
@@ -1521,12 +1523,11 @@ public class BaseActivity extends FragmentActivity implements
         showDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
             @Override
             public void allDismissCallback() {
-                //NOP
+                clearDialogContentText();
             }
 
             @Override
             public void otherDismissCallback() {
-                clearDialogContentText();
                 if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP) {
                     stopAllActivity();
                     return;
