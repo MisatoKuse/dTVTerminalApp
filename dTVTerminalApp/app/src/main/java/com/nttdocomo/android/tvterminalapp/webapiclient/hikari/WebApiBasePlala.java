@@ -64,11 +64,11 @@ public class WebApiBasePlala {
     /**
      * エラー値.
      */
-    private ReturnCode mReturnCode = null;
+    private ReturnCode mReturnCode;
     /**
      * コンテキスト.
      */
-    private Context mContext = null;
+    private Context mContext;
     /**
      * コールバックのインスタンス.
      */
@@ -124,14 +124,6 @@ public class WebApiBasePlala {
      */
     private static final String CONTENT_TYPE_TEXT = "application/json; charset="
             + UTF8_CHARACTER_SET; //final同士なので、+での結合こそベスト
-    /**
-     * Connection.
-     */
-    private static final String CONNECTION_KEY_TEXT = "Connection";
-    /**
-     * close.
-     */
-    private static final String CONTENT_CLOSE_TEXT = "close";
 
     /**
      * API通信用タスク.
@@ -285,56 +277,6 @@ public class WebApiBasePlala {
      * age_req(年齢設定値)の最大値.
      */
     static final int AGE_HIGH_VALUE = 17;
-
-    /**
-     * マイチャンネル登録位置の上限値.
-     */
-    public static final int MY_CHANNEL_MAX_INDEX = 16;
-
-    /**
-     * チャンネルのアダルトタイプ(adult).
-     */
-    public static final String MY_CHANNEL_ADULT_TYPE_ADULT = "adult";
-
-    /**
-     * チャンネルのアダルトタイプ(空値).
-     */
-    public static final String MY_CHANNEL_ADULT_TYPE_EMPTY = "";
-
-    /**
-     * チャンネルのパレンタル設定値(G).
-     */
-    public static final String MY_CHANNEL_R_VALUE_G = "G";
-
-    /**
-     * チャンネルのパレンタル設定値(PG-12).
-     */
-    public static final String MY_CHANNEL_R_VALUE_PG_12 = "PG-12";
-
-    /**
-     * チャンネルのパレンタル設定値(R-15).
-     */
-    public static final String MY_CHANNEL_R_VALUE_PG_15 = "R-15";
-
-    /**
-     * チャンネルのパレンタル設定値(R-18).
-     */
-    public static final String MY_CHANNEL_R_VALUE_PG_18 = "R-18";
-
-    /**
-     * チャンネルのパレンタル設定値(R-20).
-     */
-    public static final String MY_CHANNEL_R_VALUE_PG_20 = "R-20";
-
-    /**
-     * age_req(年齢設定値)のパラメータ作成用文字列.
-     */
-    public static final String AGE_REQ_STRING = "age_req";
-
-    /**
-     * コンテンツ識別ID作成文字列.
-     */
-    public static final String CRID_STRING = "crid";
 
     /**
      * リスト作成文字列.

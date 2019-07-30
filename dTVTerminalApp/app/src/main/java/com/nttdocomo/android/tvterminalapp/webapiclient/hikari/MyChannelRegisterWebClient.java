@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelRegisterResponse;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelRegisterJsonParser;
 
 import org.json.JSONException;
@@ -184,8 +185,8 @@ public class MyChannelRegisterWebClient
         }
 
         //フィルター用の固定値をひとまとめにする
-        List<String> rValueList = makeStringArry(MY_CHANNEL_R_VALUE_G, MY_CHANNEL_R_VALUE_PG_12, MY_CHANNEL_R_VALUE_PG_15,
-                MY_CHANNEL_R_VALUE_PG_18, MY_CHANNEL_R_VALUE_PG_20);
+        List<String> rValueList = makeStringArry(ContentUtils.MY_CHANNEL_R_VALUE_G, ContentUtils.R_VALUE_PG_12, ContentUtils.R_VALUE_R_15,
+                ContentUtils.R_VALUE_R_18, ContentUtils.R_VALUE_R_20);
 
         //指定された文字がひとまとめにした中に含まれるか確認
         if (rValueList.indexOf(rValue) == -1) {
@@ -194,7 +195,7 @@ public class MyChannelRegisterWebClient
         }
 
         //フィルター用の固定値をひとまとめにする
-        List<String> adultTypeList = makeStringArry(MY_CHANNEL_ADULT_TYPE_ADULT, MY_CHANNEL_ADULT_TYPE_EMPTY);
+        List<String> adultTypeList = makeStringArry(ContentUtils.MY_CHANNEL_ADULT_TYPE_ADULT, ContentUtils.STR_BLANK);
 
         //指定された文字がひとまとめにした中に含まれるか確認
         if (adultTypeList.indexOf(adultType) == -1) {
@@ -203,7 +204,7 @@ public class MyChannelRegisterWebClient
         }
 
         ////index範囲は0 < index ≦　MAX_INDEXなので、範囲外ならばfalse
-        if (index > MY_CHANNEL_MAX_INDEX || index <= 0) {
+        if (index > ContentUtils.MY_CHANNEL_MAX_INDEX || index <= 0) {
             return false;
         }
 

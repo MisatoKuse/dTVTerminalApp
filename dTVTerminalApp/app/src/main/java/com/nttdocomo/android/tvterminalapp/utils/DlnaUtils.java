@@ -36,8 +36,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * DLNA共通Utilクラス.
@@ -140,6 +138,99 @@ public class DlnaUtils {
     public static final int ERROR_CODE_REMOTE_CONNECT_FAILED_DIRAG = 9997;
     public static final int ERROR_CODE_LOCAL_REGISTRATION_UNSET = 9998;
     public static final int ERROR_CODE_REMOTE_CONNECT_TIME_OUT = 9999;
+
+    //SecurePlayerエラーコード.
+    /**不明なエラー.*/
+    private static final int SECURE_PLAYER_UNKNOWN_ERROR = 1;
+    /** サポートしていない形式.*/
+    private static final int SECURE_PLAYER_NOT_SUPPORTED_FORMAT = 2;
+    /** 初期化エラー.*/
+    private static final int SECURE_PLAYER_INITIALIZATION_ERROR = 3;
+    /** 再生状態エラー.*/
+    private static final int SECURE_PLAYER_PLAYBACK_STATUS_ERROR = 4;
+    /** モジュール状態エラー.*/
+    private static final int SECURE_PLAYER_MODULE_STATUS_ERROR = 5;
+    /** 引数エラー.*/
+    private static final int SECURE_PLAYER_ARGUMENT_ERROR = 6;
+    /** 未実装エラー.*/
+    private static final int SECURE_PLAYER_UNIMPLEMENTED_RROR = 7;
+    /** アクティベーションが必要な端末で、アクティベーションされていない状態で起動した.*/
+    private static final int SECURE_PLAYER_WITHOUT_ACTIVATED = 1001;
+    /** ネットワーク切断.*/
+    private static final int SECURE_PLAYER_NETWORK_DISCONNECTION = 2001;
+    /** http Connection エラー.*/
+    private static final int SECURE_PLAYER_HTTP_CONNECTION_ERROR = 2002;
+    /** http Read エラー（ストリーム読み込み時のエラー）.*/
+    private static final int SECURE_PLAYER_HTTP_READ_ERROR = 2003;
+    /** http Open エラー（不正なURLが指定された場合）.*/
+    private static final int SECURE_PLAYER_HTTP_OPEN_ERROR = 2004;
+    /** http buffer エラー（読み取りバッファが不足した場合。）.*/
+    private static final int SECURE_PLAYER_HTTP_BUFFER_ERROR = 2005;
+    /** DTCP 初期化エラー（DTCP-IP キーが入っていない端末で実行した場合など。.*/
+    private static final int SECURE_PLAYER_DTCP_INITIALIZATION_ERROR = 2006;
+    /** DTCP AKEエラー（AKEの失敗）.*/
+    private static final int SECURE_PLAYER_DTCP_AKE_ERROR = 2007;
+    /** DTCP WLANチェックエラー（暗号化されていないWiFiで再生しようとした場合）.*/
+    private static final int SECURE_PLAYER_DTCP_WLAN_CHECK_ERROR = 2008;
+    /** DTCP パケット解析エラー（DTCP-IP 復号処理に失敗した場合）.*/
+    private static final int SECURE_PLAYER_DTCP_PACKET_ANALYSIS_ERROR = 2009;
+    /** DTCP PCP SESSION 作成エラー（PCP streaming session の開始に失敗した場合）.*/
+    private static final int SECURE_PLAYER_DTCP_PCP_SESSION_CREATION_ERROR = 2010;
+    /** HTTPエラー（その他）.*/
+    private static final int SECURE_PLAYER_HTTP_OTHER_ERROR = 2100;
+    /** HTTPエラー403.*/
+    private static final int SECURE_PLAYER_HTTP_ERROR_ONE = 2101;
+    /** HTTPエラー503.*/
+    private static final int SECURE_PLAYER_HTTP_ERROR_TWO = 2102;
+    /** 持ち出しコンテンツ再生エラー。.*/
+    private static final int SECURE_PLAYER_TAKEOUT_DEVICE_ERROR = 2900;
+    /** ストリーム読み込みその他エラー.*/
+    private static final int SECURE_PLAYER_STREAM_READ_OTHER_ERROR = 2999;
+    /** TSパケットのパース失敗.*/
+    private static final int SECURE_PLAYER_TS_PACKET_PARSE_FAILURE = 3001;
+    /** TSパケットサイズ不正.*/
+    private static final int SECURE_PLAYER_TS_PACKET_SIZE_INCORRECT = 3002;
+    /** 未サポートのストリーム.*/
+    private static final int SECURE_PLAYER_UNSUPPORTED_STREAM_ERROR = 3003;
+    /** ビデオストリームが見つからない.*/
+    private static final int SECURE_PLAYER_VIDEO_STREAM_NOT_FIND = 3004;
+    /** オーディオストリームが見つからない.*/
+    private static final int SECURE_PLAYER_AUDIO_STREAM_NOT_FOUND = 3005;
+    /** TSパーサーその他のエラー.*/
+    private static final int SECURE_PLAYER_TS_PARSER_OTHER_ERROR = 3999;
+    /** ビデオデコーダーエラー.*/
+    private static final int SECURE_PLAYER_VIDEO_DECODER_ERROR = 4001;
+    /** ビデオレンダラーエラー.*/
+    private static final int SECURE_PLAYER_VIDEO_RENDERER_ERROR = 4002;
+    /** ビデオデコーダー初期化エラー.*/
+    private static final int SECURE_PLAYER_VIDEO_DECODER_INITIALIZATION_ERROR = 4003;
+    /** ビデオレンダラー初期化エラー.*/
+    private static final int SECURE_PLAYER_VIDEO_RENDERER_INITIALIZATION_ERROR = 4004;
+    /** オーディオデコーダーエラー.*/
+    private static final int SECURE_PLAYER_AUDIO_DECODER_ERROR = 5001;
+    /** オーディオレンダラーエラー.*/
+    private static final int SECURE_PLAYER_AUDIO_RENDERER_ERROR = 5002;
+    /** オーディオデコーダー初期化エラー.*/
+    private static final int SECURE_PLAYER_AUDIO_DECODER_INITIALIZATION_ERROR = 5003;
+    /** オーディオレンダラー初期化エラー.*/
+    private static final int SECURE_PLAYER_AUDIO_RENDERER_INITIALIZATION_ERROR = 5004;
+    /** オーディオストリーム変更失敗.*/
+    private static final int SECURE_PLAYER_AUDIO_STREAM_CHANGE_FAILURE = 5005;
+    /** HTTPエラー403.*/
+    private static final int SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE = 403;
+    /** HTTPエラー503.*/
+    private static final int SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE = 503;
+    /** パラメータ不正setCurrentMediaInfo failed.*/
+    public static final int ERROR_CODE_PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED = 999998;
+    /**. 設定ファイルエラー.*/
+    public static final int SECURE_PLAYER_SETTING_FILE_ERROR = 999997;
+    /** パラメータ不正ファイルパスエラー.*/
+    public static final int ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR = 999996;
+    /** 外部出力エラー.*/
+    public static final int SECURE_PLAYER_EXTERNAL_ERROR = 999995;
+    /** 視聴年齢エラー.*/
+    public static final int SECURE_PLAYER_AGE_ERROR = 999994;
+
 
     /**
      * ローカルレジストレーションエラータイプ.
@@ -724,5 +815,105 @@ public class DlnaUtils {
                 break;
         }
         return new Pair<>(message, formatErrorCode);
+    }
+
+    /**
+     * getConvertErrorResult.
+     * @param context context
+     * @param errorCode errorCode
+     * @param arg arg
+     * @return Pair first：エラーメッセージ、second:エラーコード
+     */
+
+    public static Pair<String, Integer> getConvertErrorResult(final Context context, final int errorCode, final int arg) {
+        int fixErrorCode = errorCode;
+        if (fixErrorCode == SECURE_PLAYER_HTTP_CONNECTION_ERROR) {
+            switch (arg) {
+                case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_FOUR_ZERO_THREE: //403
+                    fixErrorCode = SECURE_PLAYER_HTTP_ERROR_ONE; //2101
+                    break;
+                case SECURE_PLAYER_HTTP_ERROR_FIVE_ZERO_THREE: //503
+                    fixErrorCode = SECURE_PLAYER_HTTP_ERROR_TWO; //2102
+                    break;
+                default:
+                    fixErrorCode = SECURE_PLAYER_HTTP_OTHER_ERROR; //2100
+                    break;
+            }
+        }
+        String errorMessage = setMessageByErrorCode(context, fixErrorCode);
+        return new Pair<>(errorMessage, fixErrorCode);
+    }
+
+    /**
+     * setMessageByErrorCode.
+     * @param errorCode errorCode
+     * @param context context
+     * @return errorMessage
+     */
+    private static String setMessageByErrorCode(final Context context, final int errorCode) {
+        String errorMessage;
+        switch (errorCode) {
+            case DlnaUtils.SECURE_PLAYER_NETWORK_DISCONNECTION: //2001
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_other_http_error, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_HTTP_OPEN_ERROR: //2004
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_contents_not_find, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_HTTP_BUFFER_ERROR: //2005
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_contents_could_not_read, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_DTCP_WLAN_CHECK_ERROR: //2008
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_encrypted_communication_set, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_HTTP_READ_ERROR: //2003
+            case DlnaUtils.SECURE_PLAYER_HTTP_OTHER_ERROR: //2100
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_http_connection_error, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_ONE: //2101
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_remote_setting_one_more_time, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_HTTP_ERROR_TWO: //2102
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_http_error, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_TAKEOUT_DEVICE_ERROR: //2900
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_only_takeout_device, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_TS_PACKET_PARSE_FAILURE: //3001
+            case DlnaUtils.SECURE_PLAYER_TS_PACKET_SIZE_INCORRECT: //3002
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_specified_content_invalid, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_UNSUPPORTED_STREAM_ERROR: //3003
+            case DlnaUtils.SECURE_PLAYER_VIDEO_STREAM_NOT_FIND: //3004
+            case DlnaUtils.SECURE_PLAYER_AUDIO_STREAM_NOT_FOUND: //3005
+            case DlnaUtils.SECURE_PLAYER_VIDEO_DECODER_ERROR: //4001
+            case DlnaUtils.SECURE_PLAYER_VIDEO_RENDERER_ERROR: //4002
+            case DlnaUtils.SECURE_PLAYER_VIDEO_DECODER_INITIALIZATION_ERROR: //4003
+            case DlnaUtils.SECURE_PLAYER_VIDEO_RENDERER_INITIALIZATION_ERROR: //4004
+            case DlnaUtils.SECURE_PLAYER_AUDIO_DECODER_ERROR: //5001
+            case DlnaUtils.SECURE_PLAYER_AUDIO_RENDERER_ERROR: //5002
+            case DlnaUtils.SECURE_PLAYER_AUDIO_DECODER_INITIALIZATION_ERROR: //5003
+            case DlnaUtils.SECURE_PLAYER_AUDIO_RENDERER_INITIALIZATION_ERROR: //5004
+            case DlnaUtils.SECURE_PLAYER_AUDIO_STREAM_CHANGE_FAILURE: //5005
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_specified_content_format_not_support, String.valueOf(errorCode));
+                break;
+            case DlnaUtils.SECURE_PLAYER_UNKNOWN_ERROR: //1
+            case DlnaUtils.SECURE_PLAYER_NOT_SUPPORTED_FORMAT: //2
+            case DlnaUtils.SECURE_PLAYER_INITIALIZATION_ERROR: //3
+            case DlnaUtils.SECURE_PLAYER_PLAYBACK_STATUS_ERROR: //4
+            case DlnaUtils.SECURE_PLAYER_MODULE_STATUS_ERROR: //5
+            case DlnaUtils.SECURE_PLAYER_ARGUMENT_ERROR: //6
+            case DlnaUtils.SECURE_PLAYER_UNIMPLEMENTED_RROR: //7
+            case DlnaUtils.SECURE_PLAYER_WITHOUT_ACTIVATED: //1001
+            case DlnaUtils.SECURE_PLAYER_DTCP_INITIALIZATION_ERROR: //2006
+            case DlnaUtils.SECURE_PLAYER_DTCP_AKE_ERROR: //2007
+            case DlnaUtils.SECURE_PLAYER_DTCP_PACKET_ANALYSIS_ERROR: //2009
+            case DlnaUtils.SECURE_PLAYER_DTCP_PCP_SESSION_CREATION_ERROR: //2010
+            case DlnaUtils.SECURE_PLAYER_STREAM_READ_OTHER_ERROR: //2999
+            case DlnaUtils.SECURE_PLAYER_TS_PARSER_OTHER_ERROR: //3999
+            default:
+                errorMessage = context.getString(R.string.contents_detail_secure_player_fail_message, String.valueOf(errorCode));
+                break;
+        }
+        return errorMessage;
     }
 }

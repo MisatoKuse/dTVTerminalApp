@@ -3,6 +3,7 @@
  */
 package com.nttdocomo.android.tvterminalapp.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Presentation;
 import android.content.Context;
@@ -67,7 +68,8 @@ import java.util.Map;
  */
 public class PlayerViewLayout extends RelativeLayout implements MediaPlayerController.OnStateChangeListener,
         MediaPlayerController.OnFormatChangeListener, MediaPlayerController.OnPlayerEventListener,
-        MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener {
+        MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
+        ProcessSettingFile.OnShowSettingDialogListener {
 
     /**エラータイプ.*/
     public enum PlayerErrorType {
@@ -79,6 +81,10 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         EXTERNAL,
         /**年齢制限.*/
         AGE,
+        /** 再生パラメータ不正setCurrentMediaInfo failed.*/
+        PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED,
+        /** 再生パラメータチェックファイルパス.*/
+        PARAMETER_FILE_PATH_NOT_EXIST_ERROR,
         /**なし.*/
         NONE,
         /**初期化成功.*/
@@ -251,6 +257,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     private static final Handler sCtrlHandler = new Handler(Looper.getMainLooper());
     /**再生コールバック.*/
     private PlayerStateListener mPlayerStateListener;
+    /**設定ファイルエラーリスナー.*/
+    private SettingFilerListener mSettingFilerListener;
+
     /**ヘッダー.*/
     private Map<String, String> additionalHeaders;
     /**
@@ -283,8 +292,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         /**
          * エラーコールバック.
          * @param errorCode エラーコード
+         * @param arg arg
          */
-        void onPlayerErrorCallBack(final int errorCode);
+        void onPlayerErrorCallBack(final int errorCode, final int arg);
         /**
          * 横、縦チェンジコールバック.
          * @param isLandscape 横
@@ -292,6 +302,25 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         void onScreenOrientationChangeCallBack(final boolean isLandscape);
     }
 
+    public interface SettingFilerListener {
+        /**
+         * 設定ファイルエラー.
+         * @param errorMessage errorMessage
+         * @param dialogType dialogType
+         * @param okCallback okCallback
+         * @param cancelCallback cancelCallback
+         * @param dismissCallback dismissCallback
+         */
+        void onSettingFileErrorCallback(final String errorMessage, final CustomDialog.ErrorDialogType dialogType,
+                                        final CustomDialog.ApiOKCallback okCallback,
+                                        final CustomDialog.ApiCancelCallback cancelCallback,
+                                        final CustomDialog.DismissCallback dismissCallback);
+
+        /**
+         * 設定ファイル取得エラー.
+         */
+        void onSettingFileGetErrorCallback();
+    }
     /**
      * UIを更新するハンドラー.
      */
@@ -355,6 +384,14 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      */
     public void setPlayerStateListener(final PlayerStateListener mPlayerStateListener) {
         this.mPlayerStateListener = mPlayerStateListener;
+    }
+
+    /**
+     * setSettingFilerListener.
+     * @param settingFilerListener SettingFilerListener
+     */
+    public void setSettingFilerListener(final SettingFilerListener settingFilerListener) {
+        this.mSettingFilerListener = settingFilerListener;
     }
 
     /**
@@ -674,19 +711,28 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 mIsCompleted = true;
             }
             if (needRetry(what)) {
-                tryOpenVideo(mPlayStartPosition, null, new Runnable() {
-                    @Override
-                    public void run() {
-                        mPlayerStateListener.onPlayerErrorCallBack(what);
-                        mPlayerEventType = PlayerEventType.NONE;
-                    }
+                tryOpenVideo(mPlayStartPosition,
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mPlayerController != null) {
+                                    mPlayerController.start();
+                                }
+                            }
+                        },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                mPlayerStateListener.onPlayerErrorCallBack(what, (int) arg);
+                                mPlayerEventType = PlayerEventType.NONE;
+                        }
                 });
                 goneCtrlView();
                 return;
             }
         }
         goneCtrlView();
-        mPlayerStateListener.onPlayerErrorCallBack(what);
+        mPlayerStateListener.onPlayerErrorCallBack(what, (int) arg);
         mPlayerEventType = PlayerEventType.NONE;
     }
 
@@ -804,7 +850,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             if (item != null) {
                 String remoteExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(mContext);
                 if (TextUtils.isEmpty(remoteExpireDate)) {
-                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE,0);
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE, 0);
                     mPlayerEventType = PlayerEventType.NONE;
                     return;
                 }
@@ -813,6 +859,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
 
         //リモート視聴なので、設定ファイルの内容に応じて判定を行う
         ProcessSettingFile processSettingFile = new ProcessSettingFile((ContentDetailActivity) mActivity, false);
+        processSettingFile.setOnShowSettingDialogListener(this);
         //リモート視聴の明示
         processSettingFile.setIsRemote(true);
         //コールバック指定付きで処理を開始する
@@ -881,7 +928,14 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     /**
      * initPlayerView mView.
      */
+    @SuppressLint("CutPasteId")
     private void initPlayerView() {
+        DTVTLogger.start();
+        int pauseIconVisible = View.GONE;
+        if (mRecordCtrlView != null) {
+            //PlayerController が初期化される前にControllerの表示状態を保存する
+            pauseIconVisible =  mRecordCtrlView.findViewById(R.id.tv_player_control_pause).getVisibility();
+        }
         this.removeView(mRecordCtrlView);
         this.getKeepScreenOn();
         mRecordCtrlView = (RelativeLayout) View.inflate(mContext, R.layout.tv_player_ctrl_video_record, null);
@@ -910,11 +964,12 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         hideCtrlView(false);
         if (mPlayerController != null) {
-            if (mPlayerController.isPlaying()) {
+            if (pauseIconVisible == View.VISIBLE) {
                 mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
                 mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -1275,12 +1330,12 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             String privateHomePath = DlnaUtils.getPrivateDataHomePath(mContext);
             int ret = mPlayerController.dtcpInit(privateHomePath);
             if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
-                mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION,result.second);
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION, result.second);
                 mPlayerEventType = PlayerEventType.NONE;
                 return false;
             }
         }
-        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS,0);
+        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS, 0);
         preparePlayer(playStartPosition);
         DTVTLogger.end();
         return true;
@@ -1357,6 +1412,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * @param playerEventType プレイヤーイベント
      */
     private void showControlViewAfterPlayerEvent(final PlayerEventType playerEventType) {
+        DTVTLogger.start();
         showControlView();
         if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             showLiveLayout(true);
@@ -1381,6 +1437,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         }
         hideCtrlViewAfterOperate();
         mIsShowControl = true;
+        DTVTLogger.end();
     }
 
     /**
@@ -1423,9 +1480,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                         if (!mIsVideoBroadcast) {
                             if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
                                 // 再生・一時停止ボタン長押し時の再生・一時停止処理.
-                                if (!mPlayerController.isPlaying()) {
+                                if (mVideoPlay.getVisibility() == VISIBLE) {
                                     playStart(false);
-                                } else {
+                                } else if (mVideoPause.getVisibility() == View.VISIBLE) {
                                     playPause();
                                 }
                                 mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
@@ -1662,6 +1719,8 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 type2 = "application/x-dtcp1";
             } else {
                 DTVTLogger.debug("setCurrentMediaInfo failed");
+                mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED,
+                        DlnaUtils.ERROR_CODE_PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED);
                 return false;
             }
         } else {
@@ -1681,8 +1740,13 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
             if ((ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus())) {
                 //ローカルファイルパス
                 String dlFile = playerData.getDlFileFullPath();
+                if (TextUtils.isEmpty(dlFile)) {
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_FILE_PATH_NOT_EXIST_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR);
+                    return false;
+                }
                 File file = new File(dlFile);
                 if (!file.exists()) {
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.PARAMETER_FILE_PATH_NOT_EXIST_ERROR, DlnaUtils.ERROR_CODE_PARAMETER_FILE_PATH_NOT_EXIST_ERROR);
                     DTVTLogger.debug(file  + " not exists");
                     return false;
                 }
@@ -1730,6 +1794,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * タッチイベントの初期化.
      */
     private void setPlayerTouchEvent() {
+        DTVTLogger.start();
         mGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
             @Override
@@ -1760,6 +1825,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
                 return super.onFling(e1, e2, velocityX, velocityY);
             }
         });
+        DTVTLogger.end();
     }
 
     /**
@@ -1768,6 +1834,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
      * @return 停止結果
      */
     public int onPause() {
+        DTVTLogger.start();
         int result = 0;
         //外部出力制御
         if (mExternalDisplayHelper != null) {
@@ -1785,6 +1852,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         removeSendMessage();
         showPlayingProgress(false);
         stopThumbnailConnect();
+        DTVTLogger.end();
         return result;
     }
 
@@ -1828,4 +1896,20 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         this.mPlayStartPosition = playStartPosition;
     }
 
+
+    @Override
+    public void onShowSettingFileDialog(final String errorMessage, final  CustomDialog.ErrorDialogType errorDialogType,
+                                        final  CustomDialog.ApiOKCallback okCallback, final  CustomDialog.ApiCancelCallback cancelCallback,
+                                        final  CustomDialog.DismissCallback dismissCallback) {
+        if (mSettingFilerListener != null) {
+            mSettingFilerListener.onSettingFileErrorCallback(errorMessage, errorDialogType, okCallback, cancelCallback, dismissCallback);
+        }
+    }
+
+    @Override
+    public void onSettingFileGetErrorCallback() {
+        if (mSettingFilerListener != null) {
+            mSettingFilerListener.onSettingFileGetErrorCallback();
+        }
+    }
 }

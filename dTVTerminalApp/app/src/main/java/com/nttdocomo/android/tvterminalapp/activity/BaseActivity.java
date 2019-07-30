@@ -41,9 +41,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Pair;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout;
@@ -142,8 +141,11 @@ public class BaseActivity extends FragmentActivity implements
         ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack,
         CustomDialog.DismissCallback,
+        CustomDialog.ApiOKCallback,
+        CustomDialog.ApiCancelCallback,
         HomeRecyclerViewAdapter.ItemClickCallback,
         StbConnectionManager.ConnectionListener,
+        ProcessSettingFile.OnShowSettingDialogListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         DaccountReceiver.DaccountChangedCallBack {
     /** ヘッダーBaseレイアウト. */
@@ -667,13 +669,14 @@ public class BaseActivity extends FragmentActivity implements
 
         if (intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG, false)) {
             //設定ファイルエラーダイアログの表示依頼があったので、表示する
-            ProcessSettingFile settingFileInfo = new ProcessSettingFile(this, false);
+            mCheckSetting = new ProcessSettingFile(this, false);
+            mCheckSetting.setOnShowSettingDialogListener(this);
 
             Bundle bundle = intent.getBundleExtra(SHOW_SETTING_FILE_DIALOG_DATA);
             SettingFileMetaData metaData =
                     (SettingFileMetaData) bundle.getSerializable(SHOW_SETTING_FILE_DIALOG_DATA);
             DTVTLogger.debug("metaData=" + metaData);
-            settingFileInfo.processControlEmulate(metaData);
+            mCheckSetting.processControlEmulate(metaData);
         }
         DTVTLogger.end();
     }
@@ -1085,19 +1088,19 @@ public class BaseActivity extends FragmentActivity implements
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                 if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
-                    showErrorDialogOffer(getResources().getString(R.string.str_launch_stb_communication_failed_error));
+                    showCommonControlErrorDialog(getResources().getString(R.string.str_launch_stb_communication_failed_error), null, null, null, null);
                     //ペアリングアイコンをOFFにする
                     setStbStatus(false);
                 } else {
-                    showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                    showCommonControlErrorDialog(getResources().getString(R.string.main_setting_connect_error_message), null, null, null, null);
                 }
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
                 //中継アプリからの応答待ち中に新しい要求を行った場合
-                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_busy_error_message));
+                showCommonControlErrorDialog(getResources().getString(R.string.main_setting_stb_busy_error_message), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:// 中継アプリの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                showCommonControlErrorDialog(getResources().getString(R.string.main_setting_connect_error_message), null, null, null, null);
                 break;
             default:
                 break;
@@ -1128,7 +1131,7 @@ public class BaseActivity extends FragmentActivity implements
                 //dTVTUpDateDialog.showDialog();
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
-                showErrorDialogOffer(getResources().getString(R.string.stb_application_version_update));
+                showCommonControlErrorDialog(getResources().getString(R.string.stb_application_version_update), null, null, null, null);
                 break;
             default:
                 break;
@@ -1142,40 +1145,41 @@ public class BaseActivity extends FragmentActivity implements
     private void switchDefaultAccountCode(final int resultCode) {
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR: // 中継アプリの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                showCommonControlErrorDialog(getResources().getString(R.string.main_setting_connect_error_message), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED: // 要求受付失敗
-                showErrorDialogOffer(getResources().getString(R.string.common_request_acceptance_failure_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_request_acceptance_failure_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE: // サービス未登録、又は、署名による呼び出し元不正
-                showErrorDialogOffer(getResources().getString(R.string.common_service_unregistered_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_service_unregistered_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
                 // チェック処理の状態で処理を分岐する
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                 // TODO アプリのキャッシュをきれいにクリアする処理が必要
-                showDAccountRegDialog();
+                showCommonControlErrorDialog(getString(R.string.main_setting_stb_application_launch_fail_id_notexist), CustomDialog.ErrorDialogType.D_ACCOUNT_REGISTRATION_HELP,
+                        null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
-                showErrorDialogOffer(getResources().getString(R.string.common_different_user_switch_successfully_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_different_user_switch_successfully_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_TIMEOUT: // ユーザタイムアウト
-                showErrorDialogOffer(getResources().getString(R.string.common_user_time_out_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_user_time_out_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_CANCEL: // ユーザ中断
-                showErrorDialogOffer(getResources().getString(R.string.common_user_cancel_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_user_cancel_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE: // ユーザ状態異常
-                showErrorDialogOffer(getResources().getString(R.string.common_user_state_abnormality_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_user_state_abnormality_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_SERVER_ERROR: // ユーザアカウント切り替えのサーバエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_server_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_switch_user_account_server_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_network_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_switch_user_account_network_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_internal_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_switch_user_account_internal_error), null, null, null, null);
                 break;
             default:
                 break;
@@ -1189,40 +1193,41 @@ public class BaseActivity extends FragmentActivity implements
     private void switchAccountExistCode(final int resultCode) {
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR: // 中継アプリの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                showCommonControlErrorDialog(getResources().getString(R.string.main_setting_connect_error_message), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED: // 要求受付失敗
-                showErrorDialogOffer(getResources().getString(R.string.common_request_acceptance_failure_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_request_acceptance_failure_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE: // サービス未登録、又は、署名による呼び出し元不正
-                showErrorDialogOffer(getResources().getString(R.string.common_service_unregistered_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_service_unregistered_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
-                showDAccountRegDialog();
+                showCommonControlErrorDialog(getString(R.string.main_setting_stb_application_launch_fail_id_notexist), CustomDialog.ErrorDialogType.D_ACCOUNT_REGISTRATION_HELP,
+                        null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
-                showErrorDialogOffer(getResources().getString(R.string.common_different_user_switch_successfully_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_different_user_switch_successfully_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_TIMEOUT: // ユーザタイムアウト
-                showErrorDialogOffer(getResources().getString(R.string.common_user_time_out_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_user_time_out_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_CANCEL: // ユーザ中断
-                showErrorDialogOffer(getResources().getString(R.string.common_user_cancel_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_user_cancel_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE: // ユーザ状態異常
-                showErrorDialogOffer(getResources().getString(R.string.common_user_state_abnormality_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_user_state_abnormality_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_SERVER_ERROR: // ユーザアカウント切り替えのサーバエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_server_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_switch_user_account_server_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_network_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_switch_user_account_network_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_internal_error));
+                showCommonControlErrorDialog(getResources().getString(R.string.common_switch_user_account_internal_error), null, null, null, null);
                 break;
             default:
-                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_application_launch_fail));
+                showCommonControlErrorDialog(getResources().getString(R.string.main_setting_stb_application_launch_fail), null, null, null, null);
                 break;
         }
     }
@@ -1241,29 +1246,29 @@ public class BaseActivity extends FragmentActivity implements
                 switch (appId) {
                     case DTV:
                         message = getResources().getString(R.string.common_start_dtv_application_uninstall_error);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case DANIMESTORE:
                         message = getResources().getString(R.string.common_start_d_animation_application_uninstall_error);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case DTVCHANNEL:
                         message = getResources().getString(R.string.common_start_dtv_channel__application_uninstall_error);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case HIKARITV:
                         message = getResources().getString(R.string.common_start_hikari_application_uninstall_error);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case DAZN:
                         message = getResources().getString(R.string.common_start_dazn_application_uninstall_error);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
                     case UNKNOWN:
                     default:
                         message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                 }
                 break;
@@ -1271,23 +1276,23 @@ public class BaseActivity extends FragmentActivity implements
                 switch (appId) {
                     case DTV:
                         message = getResources().getString(R.string.main_setting_dtv_update_message);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case DANIMESTORE:
                         message = getResources().getString(R.string.main_setting_d_anime_store_update_message);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case DTVCHANNEL:
                         message = getResources().getString(R.string.main_setting_dtv_channel_update_message);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case HIKARITV:
                         message = getResources().getString(R.string.main_setting_hikari_tv_update_message);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     case DAZN:
                         message = getResources().getString(R.string.main_setting_dazn_update_message);
-                        showErrorDialog(message);
+                        showCommonControlErrorDialog(message, null, null, null, null);
                         break;
                     //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
                     case UNKNOWN:
@@ -1320,34 +1325,61 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * 機能 エラーメッセージの表示.
-     *
-     * @param errorMessage dialog content
+     * 機能 エラー制御ダイアログ.
+     * @param errorMessage errorMessage
+     * @param errorDialogType errorDialogType
+     * @param apiOKCallback apiOKCallback
+     * @param apiCancelCallback apiCancelCallback
+     * @param dismissCallback dismissCallback　バックキーによるダイアログクローズ
      */
-    protected void showErrorDialog(final String errorMessage) {
-        DTVTLogger.debug("showErrorDialog:" + errorMessage);
-        CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
-        errorDialog.setContent(errorMessage);
-        if (!isFinishing()) {
-            errorDialog.showDialog();
+    protected void showCommonControlErrorDialog(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+                                             final CustomDialog.ApiOKCallback apiOKCallback,
+                                             final CustomDialog.ApiCancelCallback apiCancelCallback,
+                                             final CustomDialog.DismissCallback dismissCallback) {
+        DTVTLogger.debug("showCommonControlErrorDialog:" + errorMessage);
+        if (mShowDialog != null && mShowDialog.isShowing()) {
+            //設定ファイルエラー/バージョンアップダイアログ以外の場合は蓄積せずに帰る
+            if (errorDialogType != CustomDialog.ErrorDialogType.FORCED_VERSION_UP
+                    && errorDialogType != CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
+                return;
+            } else {
+                //VersionUpダイアログの場合、もし表示中であれば蓄積しない
+                if (mShowDialog.getErrorDialogType() == errorDialogType) {
+                    return;
+                }
+            }
         }
-    }
-
-    /**
-     * 機能 エラーメッセージの表示(重複ダイアログ用処理付き).
-     *
-     * @param errorMessage dialog content
-     */
-    private void showErrorDialogOffer(final String errorMessage) {
-        DTVTLogger.debug("showErrorDialogOffer:" + errorMessage);
-        CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        CustomDialog errorDialog;
+        if (errorDialogType == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
+            errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
+        } else {
+            errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        }
         errorDialog.setContent(errorMessage);
 
         //閉じたときに次のダイアログを呼ぶ処理
-        errorDialog.setDialogDismissCallback(this);
-        //エラーダイアログ枠外タップ不可
+        if (apiOKCallback == null) {
+            errorDialog.setOkCallBack(this);
+        } else {
+            errorDialog.setOkCallBack(apiOKCallback);
+        }
+        if (apiCancelCallback == null) {
+            errorDialog.setApiCancelCallback(this);
+        } else {
+            errorDialog.setApiCancelCallback(apiCancelCallback);
+        }
+        if (dismissCallback == null) {
+            errorDialog.setDialogDismissCallback(this);
+        } else {
+            errorDialog.setDialogDismissCallback(dismissCallback);
+        }
+        //ボタン以外タップ不可
         errorDialog.setOnTouchOutside(false);
-
+        if (errorDialogType == null) {
+            errorDialog.setErrorDialogType(CustomDialog.ErrorDialogType.COMMON_DIALOG);
+        } else {
+            errorDialog.setErrorDialogType(errorDialogType);
+        }
         //ダイアログをキューにためる処理
         offerDialog(errorDialog);
     }
@@ -1387,36 +1419,154 @@ public class BaseActivity extends FragmentActivity implements
         restartDialog.setOnTouchOutside(false);
         restartDialog.setContent(printMessage);
         //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
-        restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+        showCommonControlErrorDialog(printMessage, CustomDialog.ErrorDialogType.D_ACCOUNT_CHANGED, null,
+                null, null);
+    }
+
+    /**
+     * onRestartApplication.
+     */
+    private void onRestartApplication() {
+        SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
+
+        // dアカウントが変更しましたため、新しいお知らせの未読状態に関するFlagをリセットする
+        SharedPreferencesUtils.removeNewlyNoticeFlag(mContext);
+
+        //OKが押されたので、ホーム画面の表示
+        reStartApplication();
+    }
+
+    /**
+     * onVersionUpDialogShow.
+     * @param errorDialogType errorDialogType
+     * @param dialogTapType dialogTapType
+     */
+    private void onVersionUpDialogShow(final CustomDialog.ErrorDialogType errorDialogType,
+                                       final CustomDialog.DialogTapType dialogTapType) {
+        if (getLinkListSize() > 0) {
+            pollDialog();
+            if (mShowDialog != null) {
+                setVersionUpDialogCallBack(mShowDialog, errorDialogType, dialogTapType);
+            }
+        } else {
+            switch (errorDialogType) {
+                case D_ACCOUNT_CHANGED:
+                    onRestartApplication();
+                    break;
+                case D_ACCOUNT_REGISTRATION_HELP:
+                    Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
+                    startActivity(intent);
+                    break;
+                case SECURE_PLAYER_ERROR:
+                    contentsDetailCloseKey(null);
+                    break;
+                case CONTENT_DETAIL_GET_ERROR:
+                    finish();
+                    break;
+                case COMMON_DIALOG:
+                default:
+                    startDialogDismissTask(new Pair<>(dialogTapType, CustomDialog.DialogTapType.NOT_TAP));
+                    break;
+            }
+        }
+    }
+
+    /**
+     * versionUpダイアログ表示.
+     * @param showDialog showDialog
+     * @param errorDialogType errorDialogType
+     * @param dialogTapType 　最初のダイアログタップイベント
+     */
+    private void setVersionUpDialogCallBack(final CustomDialog showDialog,
+                                            final CustomDialog.ErrorDialogType errorDialogType,
+                                            final CustomDialog.DialogTapType dialogTapType) {
+        showDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
-
-                // dアカウントが変更しましたため、新しいお知らせの未読状態に関するFlagをリセットする
-                SharedPreferencesUtils.removeNewlyNoticeFlag(mContext);
-
-                //OKが押されたので、ホーム画面の表示
-                reStartApplication();
+                switch (errorDialogType) {
+                    case D_ACCOUNT_CHANGED:
+                    case COMMON_DIALOG:
+                    case D_ACCOUNT_REGISTRATION_HELP:
+                    case CONTENT_DETAIL_GET_ERROR:
+                    case SECURE_PLAYER_ERROR:
+                        toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
+                        break;
+                    default:
+                        break;
+                }
             }
         });
-        restartDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+        showDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+            @Override
+            public void onCancelCallback() {
+                switch (errorDialogType) {
+                    case D_ACCOUNT_CHANGED:
+                        onRestartApplication();
+                        break;
+                    case D_ACCOUNT_REGISTRATION_HELP:
+                        Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
+                        startActivity(intent);
+                        break;
+                    case CONTENT_DETAIL_GET_ERROR:
+                        finish();
+                        break;
+                    case SECURE_PLAYER_ERROR:
+                        contentsDetailCloseKey(null);
+                        break;
+                    case COMMON_DIALOG:
+                    default:
+                        startDialogDismissTask(new Pair<>(dialogTapType, CustomDialog.DialogTapType.CANCEL));
+                        break;
+                }
+            }
+        });
+        showDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
             @Override
             public void allDismissCallback() {
-                //NOP
+                clearDialogContentText();
             }
 
             @Override
             public void otherDismissCallback() {
-                SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
-                //OKが押されたのと同じ、ホーム画面の表示
-                reStartApplication();
+                if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP) {
+                    stopAllActivity();
+                    return;
+                }
+                switch (errorDialogType) {
+                    case D_ACCOUNT_CHANGED:
+                        onRestartApplication();
+                        break;
+                    case D_ACCOUNT_REGISTRATION_HELP:
+                        Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
+                        startActivity(intent);
+                        break;
+                    case CONTENT_DETAIL_GET_ERROR:
+                        finish();
+                        break;
+                    case SECURE_PLAYER_ERROR:
+                        contentsDetailCloseKey(null);
+                        break;
+                    case COMMON_DIALOG:
+                    default:
+                        startDialogDismissTask(new Pair<>(dialogTapType, CustomDialog.DialogTapType.BACK_KEY));
+                        break;
+                }
             }
         });
-        restartDialog.showDialog();
     }
 
     /**
-     * エラー表示ダイアログ・OKを押した後の処理指定付き
+     * Activity内に独自の処理があればオーバライドする.
+     * @param errorDialogTapPair errorDialogTapPair
+     * errorDialogTapPair.first 最初のダイアログタップイベント
+     * errorDialogTapPair.second 最後のダイアログタップイベント
+     */
+    protected void startDialogDismissTask(final Pair<CustomDialog.DialogTapType, CustomDialog.DialogTapType> errorDialogTapPair) {
+        //NOP
+    }
+
+    /**
+     * エラー表示ダイアログ・OKを押した後の処理指定付き.
      *
      * @param errorMessage 表示するエラーメッセージ
      * @param okCallback OKボタンを押した時の処理
@@ -1673,7 +1823,6 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     protected void onPause() {
 
-        dismissDialogOnPause();
         super.onPause();
 
         //ワンタイムトークン取得のキャンセル
@@ -1929,7 +2078,7 @@ public class BaseActivity extends FragmentActivity implements
             //DREM-1882 期限切れコンテンツのクリップ対応により、期限切れコンテンツをクリップ登録しようとした場合にはエラーダイアログを表示する
             if (!data.isClipStatus() && data.isIsAfterLimitContents()) {
                 String message = getString(R.string.str_clip_execution_after_limit_contents);
-                showErrorDialogOffer(message);
+                showCommonControlErrorDialog(message, null, null, null, null);
                 mClipRunTime = false;
                 return;
             }
@@ -2295,10 +2444,7 @@ public class BaseActivity extends FragmentActivity implements
                     //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
                     OttGetAuthSwitch.INSTANCE.setNowAuth(true);
 
-                    if (mShowDialog != null) {
-                        //次のダイアログの重複判定の為に、今のダイアログの文言をクリアする
-                        mShowDialog.clearContentText();
-                    }
+                    clearDialogContentText();
 
                     //キャンセルボタンが押されたかどうかのチェック
                     if (!logoutDialog.isButtonTap()) {
@@ -2596,7 +2742,7 @@ public class BaseActivity extends FragmentActivity implements
     private void localRegisterExpireDateCheck() {
         String msg = (DlnaUtils.getLocalRegisterExpireDateCheckMessage(this));
         if (!TextUtils.isEmpty(msg)) {
-            showErrorDialogOffer(msg);
+            showCommonControlErrorDialog(msg, null, null, null, null);
         }
     }
 
@@ -2606,31 +2752,8 @@ public class BaseActivity extends FragmentActivity implements
     protected void downloadStatusCheck() {
         DownloadDataProvider downloadDataProvider = DownloadDataProvider.getInstance(mActivity);
         if (downloadDataProvider.getDownloadService() == null && downloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
-            showErrorDialogOffer(getResources().getString(R.string.record_download_not_completed_msg));
+            showCommonControlErrorDialog(getResources().getString(R.string.record_download_not_completed_msg), null, null, null, null);
         }
-    }
-
-    /**
-     * 海外通信不許可時ダイアログ.
-     *
-     * @return 表示するCustomDialog
-     */
-    private CustomDialog createPermissionDeniedDialog() {
-        DTVTLogger.start();
-        CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        dialog.setOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.setContent(this.getResources().getString(R.string.permission_denied_dialog_content));
-        dialog.setTitle(this.getResources().getString(R.string.permission_denied_dialog_title));
-        dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                mShowDialog = null;
-                stopAllActivity();
-            }
-        });
-        DTVTLogger.end();
-        return dialog;
     }
 
     /**
@@ -2958,6 +3081,7 @@ public class BaseActivity extends FragmentActivity implements
 
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
         mCheckSetting = new ProcessSettingFile(this, noDialogSw);
+        mCheckSetting.setOnShowSettingDialogListener(this);
 
         //今回はコールバックは使用しないので、ヌルを指定する
         mCheckSetting.controlAtSettingFile(null);
@@ -3105,22 +3229,6 @@ public class BaseActivity extends FragmentActivity implements
                 R.string.common_get_data_failed_message));
     }
 
-    /**
-     * dアカウント登録ヘルプ画面遷移するダイアログ表示.
-     */
-    private void showDAccountRegDialog() {
-        CustomDialog dAccountRegDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        dAccountRegDialog.setContent(getResources().getString(
-                R.string.main_setting_stb_application_launch_fail_id_notexist));
-        dAccountRegDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
-                startActivity(intent);
-            }
-        });
-        dAccountRegDialog.showDialog();
-    }
 
     /**
      * アプリ終了ダイアログ.
@@ -3198,7 +3306,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * キューにあるダイアログを順に表示.
      */
-    private void pollDialog() {
+    protected void pollDialog() {
         DTVTLogger.start();
         DTVTLogger.debug("mLinkedList.size()=" + mLinkedList.size());
         if ((mShowDialog == null || !mShowDialog.isShowing()) && mLinkedList.size() > 0) {
@@ -3598,17 +3706,57 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     public void allDismissCallback() {
+        clearDialogContentText();
+    }
+
+
+    @Override
+    public void onOKCallback(final boolean isOK) {
         if (mShowDialog != null) {
-            //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+            if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP
+                    || mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP) {
+                toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
+                return;
+            } else if ((mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.SETTING_FILE_ERROR_DIALOG)) {
+                stopAllActivity();
+                return;
+            }
+            onVersionUpDialogShow(mShowDialog.getErrorDialogType(), CustomDialog.DialogTapType.OK);
+        }
+    }
+
+
+    @Override
+    public void onCancelCallback() {
+        if (mShowDialog != null) {
+           if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
+                return;
+            }
+            onVersionUpDialogShow(mShowDialog.getErrorDialogType(), CustomDialog.DialogTapType.CANCEL);
+        }
+    }
+
+    /**
+     * 次のダイアログの判定の為に、今のダイアログの文言をクリアする.
+     */
+    protected void clearDialogContentText() {
+        if (mShowDialog != null) {
             mShowDialog.clearContentText();
         }
-
-        pollDialog();
     }
 
     @Override
     public void otherDismissCallback() {
-        //NOP
+        if (mShowDialog != null) {
+            if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP
+                    || mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.SETTING_FILE_ERROR_DIALOG) {
+                stopAllActivity();
+                return;
+            } else if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
+                return;
+            }
+            onVersionUpDialogShow(mShowDialog.getErrorDialogType(), CustomDialog.DialogTapType.BACK_KEY);
+        }
     }
 
     @Override
@@ -3756,5 +3904,25 @@ public class BaseActivity extends FragmentActivity implements
             }
         }
         return result;
+    }
+
+    /**
+     * getLinkListSize.
+     * @return LinkListSize
+     */
+    public int getLinkListSize() {
+        return mLinkedList.size();
+    }
+
+    @Override
+    public void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+                                        final CustomDialog.ApiOKCallback okCallback, final CustomDialog.ApiCancelCallback cancelCallback,
+                                        final CustomDialog.DismissCallback dismissCallback) {
+        showCommonControlErrorDialog(errorMessage, errorDialogType, okCallback, cancelCallback, dismissCallback);
+    }
+
+    @Override
+    public void onSettingFileGetErrorCallback() {
+        //NOP
     }
 }

@@ -5,14 +5,11 @@
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.content.Context;
-import android.os.Build;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.BuildConfig;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -27,10 +24,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.SettingFileWebCli
  */
 public class ProcessSettingFile {
     /**
-     * ベースアクティビティ.
-     */
-    private final BaseActivity mActivity;
-    /**
      * コンテキスト.
      */
     private final Context mContext;
@@ -43,6 +36,11 @@ public class ProcessSettingFile {
      * コールバック用のインスタンス.
      */
     private ProcessSettingFileCallBack mProcessSettingFileCallBack = null;
+    /**
+     * SettingFileDialogCallBack.
+     */
+    private OnShowSettingDialogListener mOnShowSettingDialogListener = null;
+
     /**
      * 処理中フラグ.
      */
@@ -88,18 +86,37 @@ public class ProcessSettingFile {
         this.mIsRemote = mIsRemote;
     }
 
+    public interface OnShowSettingDialogListener {
+        /**
+         * 設定ファイルダイアログ表示コールバック.
+         * @param errorMessage errorMessage
+         * @param errorDialogType dialogType
+         * @param okCallback okCallback
+         * @param cancelCallback cancelCallback
+         * @param dismissCallback dismissCallback
+         */
+        void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+                                     final CustomDialog.ApiOKCallback okCallback,
+                                     final CustomDialog.ApiCancelCallback cancelCallback,
+                                     final CustomDialog.DismissCallback dismissCallback);
+
+
+        /**
+         * 設定ファイル取得エラー.
+         */
+        void onSettingFileGetErrorCallback();
+    }
+
     /**
      * コンストラクタ.
      *
-     * @param activity BaseActivity アクティビティ
+     * @param context context
      * @param noDialogSwitch ダイアログ表示有無(ダイアログを表示するならfalse)
      */
-    public ProcessSettingFile(final BaseActivity activity, final boolean noDialogSwitch) {
-        //アクティビティの退避
-        mActivity = activity;
+    public ProcessSettingFile(final Context context, final boolean noDialogSwitch) {
 
         //コンテキストの取得
-        mContext = mActivity.getApplicationContext();
+        mContext = context;
 
         //情報クラスの初期化
         mSettingData = new SettingFileMetaData();
@@ -282,42 +299,25 @@ public class ProcessSettingFile {
         if (mIsNoDialog) {
             return;
         }
-
-        //ダイアログを、キャンセル無しにする
-        CustomDialog dialog = new CustomDialog(mActivity, CustomDialog.DialogType.ERROR);
-
-        //このダイアログは、枠外のタッチでは終わらせないようにする
-        dialog.setOnTouchOutside(false);
-
-        String printMessage;
+        String printMessage = null;
         //指定の文字列があるかどうかを見る
         if (TextUtils.isEmpty(mSettingData.getDescription())) {
-            //無いのでデフォルト文字列を設定
-            printMessage = mActivity.getString(R.string.setting_file_stop_apli);
+            //コンテンツ詳細画面の場合再生エラーを出す
+            if (mOnShowSettingDialogListener != null) {
+                mOnShowSettingDialogListener.onSettingFileGetErrorCallback();
+            } else {
+                //無いのでデフォルト文字列を設定
+                printMessage = mContext.getString(R.string.setting_file_stop_apli);
+            }
         } else {
             //あるので設定する
             printMessage = mSettingData.getDescription();
         }
-
-        //メッセージの設定
-        dialog.setContent(printMessage);
-
-        //OKボタンのコールバックを設定
-        dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                DTVTLogger.start();
-                //自分は終わる
-                mActivity.stopAllActivity();
-                DTVTLogger.end();
+        if (printMessage != null) {
+            if (mOnShowSettingDialogListener != null) {
+                mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ErrorDialogType.SETTING_FILE_ERROR_DIALOG, null, null, null);
             }
-        });
-
-        //次のダイアログを呼ぶ為の処理
-        dialog.setDialogDismissCallback(mActivity);
-
-        //ダイアログを表示
-        mActivity.offerDialog(dialog);
+        }
     }
 
     /**
@@ -330,64 +330,18 @@ public class ProcessSettingFile {
         if (mIsNoDialog) {
             return;
         }
-
-        CustomDialog dialog;
         String printMessage;
-
         //GooglePlayを起動した
         mGooglePlay = true;
-
         if (isCancel) {
-            //ダイアログをキャンセル付きにする
-            dialog = new CustomDialog(mActivity, CustomDialog.DialogType.CONFIRM);
-            printMessage = mActivity.getString(R.string.setting_file_download);
+            printMessage = mContext.getString(R.string.setting_file_download);
+            mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP,
+                    null, getDownloadCancelCallback(), null);
         } else {
-            //ダイアログを、キャンセル無しにする
-            dialog = new CustomDialog(mActivity, CustomDialog.DialogType.ERROR);
-            dialog.setBackKeyAsFinishActivity(true);
-            printMessage = mActivity.getString(R.string.setting_file_force_download);
+            printMessage = mContext.getString(R.string.setting_file_force_download);
+            mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ErrorDialogType.FORCED_VERSION_UP,
+                    null, null, null);
         }
-
-        //メッセージの設定
-        dialog.setContent(printMessage);
-
-        //OKボタンのコールバックを設定
-        dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                DTVTLogger.start();
-                //ダウンロードに遷移
-                mActivity.toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
-                DTVTLogger.end();
-            }
-        });
-
-        //ダイアログの外側のタッチは無効化する
-        dialog.setOnTouchOutside(false);
-
-        if (isCancel) {
-            //キャンセル付きの場合はキャンセルのコールバックを用意
-            dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
-                @Override
-                public void onCancelCallback() {
-                    DTVTLogger.start();
-                    //キャンセルが押されたので、GooglePlayフラグはOFF
-                    mGooglePlay = false;
-                    //ダウンロードしないので、リモート視聴の場合はコールバックが指定されていればそこへ飛ぶ
-                    if (mProcessSettingFileCallBack != null && mIsRemote) {
-                        //今回はダイアログ表示後の処理なので、falseを指定
-                        mProcessSettingFileCallBack.onCallBack(false);
-                    }
-                    DTVTLogger.end();
-                }
-            });
-        }
-
-        //次のダイアログを呼ぶ為の処理
-        dialog.setDialogDismissCallback(mActivity);
-
-        //showDialogの代わり・重複ダイアログ実現用
-        mActivity.offerDialog(dialog);
     }
 
     /**
@@ -424,5 +378,34 @@ public class ProcessSettingFile {
      */
     public void setProcessSettingFileCallBack(final ProcessSettingFileCallBack callBack) {
         mProcessSettingFileCallBack = callBack;
+    }
+    /**
+     * getDownloadApiOkCallBack.
+     * @return OkCallBack
+     */
+    private CustomDialog.ApiCancelCallback getDownloadCancelCallback() {
+        return new CustomDialog.ApiCancelCallback() {
+            @Override
+            public void onCancelCallback() {
+                DTVTLogger.start();
+                //キャンセルが押されたので、GooglePlayフラグはOFF
+                mGooglePlay = false;
+                //ダウンロードしないので、リモート視聴の場合はコールバックが指定されていればそこへ飛ぶ
+                if (mProcessSettingFileCallBack != null && mIsRemote) {
+                    //今回はダイアログ表示後の処理なので、falseを指定
+                    mProcessSettingFileCallBack.onCallBack(false);
+                }
+                DTVTLogger.end();
+            }
+        };
+    }
+
+    /**
+     * setOnShowSettingDialogListener.
+     * @param listener listener
+     */
+    public void setOnShowSettingDialogListener(final OnShowSettingDialogListener listener) {
+        DTVTLogger.debug("Set OnShowSettingDialogListener");
+        mOnShowSettingDialogListener = listener;
     }
 }

@@ -114,6 +114,7 @@ import java.util.Map;
 public class ContentDetailActivity extends BaseActivity implements View.OnClickListener,
         TabItemLayout.OnClickTabTextListener,
         PlayerViewLayout.PlayerStateListener,
+        PlayerViewLayout.SettingFilerListener,
         ContentsDetailDataProvider.ApiDataProviderCallback,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         RemoteControllerView.OnStartRemoteControllerUIListener,
@@ -516,6 +517,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setVisibility(View.VISIBLE);
         mPlayerViewLayout.setPlayerStateListener(this);
+        mPlayerViewLayout.setSettingFilerListener(this);
         mPlayerViewLayout.setScreenSize(mWidth, mHeight);
         mPlayerViewLayout.setScreenNavigationBarSize(mWidth, mScreenNavHeight);
         mPlayerViewLayout.setParentLayout(mThumbnailRelativeLayout);
@@ -1669,7 +1671,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                ContentDetailUtils.getStartAppGoogleUrl(serviceType));
                    }
                } else {
-                   showErrorDialog(message);
+                   showCommonControlErrorDialog(message, null, null, null, null);
                }
             }
         });
@@ -1920,7 +1922,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             } else if (ContentUtils.isBsOrTtbProgramPlala(mDetailFullData.getmTv_service())) {
                 if (TextUtils.isEmpty(mDetailFullData.getmService_id())) {
                     showStartStbProgress(View.GONE);
-                    showErrorDialog(getString(R.string.common_failed_get_info));
+                    showCommonControlErrorDialog(getString(R.string.common_failed_get_info), null, null, null, null);
                 } else {
                     if (ContentUtils.TV_SERVICE_FLAG_TTB.equals(mDetailFullData.getmTv_service())) {
                         requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmService_id());
@@ -1976,39 +1978,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * プレイヤーエラーダイアログを表示.
-     * (ダイアログ終了後画面が終わるタイプ)
-     * @param errorMessage エラーメッセージ
-     */
-    private void showDialogToConfirmClose(final String errorMessage) {
-        CustomDialog closeDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        closeDialog.setContent(errorMessage);
-        closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                contentsDetailCloseKey(null);
-            }
-        });
-        closeDialog.setOnTouchOutside(false);
-        closeDialog.setCancelable(false);
-        closeDialog.setOnTouchBackkey(false);
-        closeDialog.showDialog();
-    }
-
-    /**
-     * プレイヤーエラーダイアログを表示.
-     * (ダイアログ終了後画面が終わらないタイプ)
-     * @param errorMessage エラーメッセージ
-     */
-    private void showDialogToConfirm(final String errorMessage) {
-        CustomDialog closeDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        closeDialog.setContent(errorMessage);
-        closeDialog.setOnTouchOutside(false);
-        closeDialog.setCancelable(false);
-        closeDialog.showDialog();
-    }
-
-    /**
      * サムネイル取得処理を止める.
      */
     private void stopThumbnailConnect() {
@@ -2047,8 +2016,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     errorMessage = getString(R.string.recording_reservation_failed_dialog_msg);
                 }
-                CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this, errorMessage);
-                dialog.showDialog();
+               showCommonControlErrorDialog(errorMessage, null, null, null, null);
             } else {
                 if (mToast != null) {
                     mToast.cancel();
@@ -2065,8 +2033,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             }
         } else {
-            CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this, getString(R.string.recording_reservation_failed_dialog_msg));
-            dialog.showDialog();
+            showCommonControlErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg), null, null, null, null);
         }
         DTVTLogger.end();
     }
@@ -2092,9 +2059,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
                     if (!mContentsDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo)) {
                         //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
-                        CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this,
-                                getString(R.string.recording_reservation_failed_dialog_msg));
-                        dialog.showDialog();
+                        showCommonControlErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg), null, null, null, null);
                     }
                 }
             });
@@ -2114,9 +2079,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (!(contentsType == ContentUtils.ContentsType.HIKARI_TV
                || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
                 //録画ボタン表示対象の種別以外ならば、録画可能時間外や放送中等なので、録画不能のダイアログを出して、falseを返す
-                CustomDialog dialog = ContentDetailUtils.createErrorDialog(ContentDetailActivity.this,
-                        getString(R.string.recording_reservation_failed_dialog_msg));
-                dialog.showDialog();
+                showCommonControlErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg), null, null, null, null);
                 return false;
             }
         }
@@ -2248,12 +2211,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType mPlayerErrorType, final int errorCode) {
+    public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType playerErrorType, final int errorCode) {
         showProgressBar(false);
         String formatErrorCode = null;
         String msg = null;
         boolean isInit = false;
-        switch (mPlayerErrorType) {
+        switch (playerErrorType) {
             case REMOTE:
                 msg = getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET));
                 formatErrorCode = getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET));
@@ -2263,10 +2226,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 formatErrorCode = getString(R.string.error_prefix_activated_error, String.valueOf(errorCode));
                 break;
             case EXTERNAL:
-                msg = getString(R.string.contents_detail_external_display_dialog_msg);
+                msg = getString(R.string.contents_detail_external_display_dialog_msg, String.valueOf(DlnaUtils.SECURE_PLAYER_EXTERNAL_ERROR));
+                formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_EXTERNAL_ERROR));
                 break;
             case AGE:
-                msg = getString(R.string.contents_detail_parental_check_fail);
+                msg = getString(R.string.contents_detail_parental_check_fail, String.valueOf(DlnaUtils.SECURE_PLAYER_AGE_ERROR));
+                formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(DlnaUtils.SECURE_PLAYER_AGE_ERROR));
+                break;
+            case PARAMETER_SET_CURRENT_MEDIA_INFO_FAILED: //setCurrentMediaInfo failed
+            case PARAMETER_FILE_PATH_NOT_EXIST_ERROR: //file path not exist Err
+                msg = getString(R.string.contents_detail_secure_player_fail_message, String.valueOf(errorCode));
+                formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error, String.valueOf(errorCode));
                 break;
             case INIT_SUCCESS:
                 isInit = true;
@@ -2277,9 +2247,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (msg != null) {
             if (mDetailFullData != null) {
-                showDialogToConfirm(msg);
+                showCommonControlErrorDialog(msg, null, null, null, null);
             } else {
-                showDialogToConfirmClose(msg);
+                showCommonControlErrorDialog(msg, CustomDialog.ErrorDialogType.SECURE_PLAYER_ERROR, null, null, null);
             }
             if (!TextUtils.isEmpty(formatErrorCode)) {
                 final StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
@@ -2294,23 +2264,27 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onPlayerErrorCallBack(final int errorCode) {
+    public void onPlayerErrorCallBack(final int errorCode, final int arg) {
         showProgressBar(false);
-        String format = getString(R.string.contents_player_fail_error_code_format);
-        String errorMsg = getString(R.string.contents_player_fail_msg);
-        errorMsg = errorMsg.replace(format, String.valueOf(errorCode));
+        Pair<String, Integer> errorResultPair = DlnaUtils.getConvertErrorResult(ContentDetailActivity.this, errorCode, arg);
         //通信エラーの場合はリトライする
         if (errorCode >= ContentDetailUtils.RETRY_ERROR_START) {
             DTVTLogger.debug("not close");
             //自動再生コンテンツ再生準備
             setPlayRetryArrow();
             //OKで閉じないダイアログで表示
-            showDialogToConfirm(errorMsg);
+            showCommonControlErrorDialog(errorResultPair.first, null, null, null, null);
         } else {
             //再開不能エラーは従来通り終了するダイアログを使用する
             DTVTLogger.debug("close");
-            showDialogToConfirmClose(errorMsg);
+            showCommonControlErrorDialog(errorResultPair.first, CustomDialog.ErrorDialogType.SECURE_PLAYER_ERROR, null, null, null);
         }
+        //GAエラーレポート送信
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+        final String formatErrorCode = getString(R.string.error_prefix_type_media_player_code_error,
+                String.valueOf(errorResultPair.second));
+        GoogleAnalyticsUtils.sendErrorReport(
+                GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), formatErrorCode);
         mPlayerViewLayout.removeSendMessage();
     }
 
@@ -2330,6 +2304,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         initDisplayMetrics();
         int height = getHeightDensity();
         mPlayerViewLayout.setScreenSize(width, height);
+    }
+
+    @Override
+    public void onSettingFileErrorCallback(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+                                           final CustomDialog.ApiOKCallback okCallback, final CustomDialog.ApiCancelCallback cancelCallback,
+                                           final  CustomDialog.DismissCallback dismissCallback) {
+        showCommonControlErrorDialog(errorMessage, errorDialogType, okCallback, cancelCallback, dismissCallback);
+    }
+
+    @Override
+    public void onSettingFileGetErrorCallback() {
+        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+        String errorMessage = getString(R.string.contents_detail_secure_player_setting_file_load_fail, String.valueOf(DlnaUtils.SECURE_PLAYER_SETTING_FILE_ERROR));
+        String formatErrorCode = getString(R.string.error_prefix_type_plala_server_error, String.valueOf(DlnaUtils.SECURE_PLAYER_SETTING_FILE_ERROR));
+        showCommonControlErrorDialog(errorMessage, null, null, null, null);
+        GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), formatErrorCode);
     }
 
     /**
@@ -2396,7 +2386,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 if (DlnaUtils.RemoteConnectErrorType.START_DTCP.equals(errorType)
                                         || DlnaUtils.RemoteConnectErrorType.START_DIRAG.equals(errorType)) {
                                     Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this, errorType, errorCode);
-                                    showErrorDialog(errorInfoPair.first);
+                                    showCommonControlErrorDialog(errorInfoPair.first, null, null, null, null);
                                     GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                                 } else {
                                     showGetDataFailedToast();
@@ -2414,7 +2404,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 showRemotePlayingProgress(false);
                                 Pair<String, String> errorInfoPair = DlnaUtils.getDlnaErrorMessage(ContentDetailActivity.this,
                                         DlnaUtils.RemoteConnectErrorType.REMOTE_CONNECT_STATUS, errorCode);
-                                showErrorDialog(errorInfoPair.first);
+                                showCommonControlErrorDialog(errorInfoPair.first, null, null, null, null);
                                 GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), errorInfoPair.second);
                                 setRemotePlayArrow(null);
                             }
@@ -2428,7 +2418,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
+                                showCommonControlErrorDialog(getString(R.string.remote_connect_error_timeout, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)), null, null, null, null);
                                 GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement),
                                         getString(R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_REMOTE_CONNECT_TIME_OUT)));
                                 setRemotePlayArrow(null);
@@ -2851,7 +2841,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         } else {
                             switch (StbConnectionManager.shared().getConnectionStatus()) {
                                 case NONE_LOCAL_REGISTRATION:
-                                    showErrorDialog(getString(R.string.remote_connect_error_local_registration_unset, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET)));
+                                    showCommonControlErrorDialog(getString(R.string.remote_connect_error_local_registration_unset,
+                                            String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET)), null, null, null, null);
                                     GoogleAnalyticsUtils.sendErrorReport(GoogleAnalyticsUtils.getClassNameAndMethodName(stackTraceElement), getString(
                                             R.string.error_prefix_type_remote_connect_error, String.valueOf(DlnaUtils.ERROR_CODE_LOCAL_REGISTRATION_UNSET)));
                                     break;
@@ -3130,14 +3121,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         switch (errorType) {
             case contentDetailGet:
                 errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
-                okCallback = showDialogOkToBack();
                 break;
             case tvScheduleListGet:
                 errorState = mScaledDownProgramListDataProvider.getmTvScheduleError();
                 break;
             case recommendDetailGet:
                 errorState = mStbMetaInfoGetDataProvider.getError();
-                okCallback = showDialogOkToBack();
                 break;
             case channelListGet:
             case rentalChannelListGet:
@@ -3146,39 +3135,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
-        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this,
-                CustomDialog.DialogType.ERROR);
-        //表示するダイアログの切り替え判定
+        String contentMessage;
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
-            //そもそも通信が行われていないか、通信自体には成功しその上でデータが無いならば、コンテンツが無い事を表示
-            customDialog.setContent(getString(R.string.common_empty_data_message));
+            contentMessage = getString(R.string.common_empty_data_message);
         } else {
-            //契約誘導ダイアログを表示
-            customDialog.setContent(errorState.getApiErrorMessage(this));
+            contentMessage = errorState.getApiErrorMessage(this);
         }
-        if (okCallback != null) {
-            customDialog.setOkCallBack(okCallback);
-        }
-        customDialog.setOnTouchOutside(false);
-        customDialog.setCancelable(false);
-        customDialog.setOnTouchBackkey(false);
-        customDialog.showDialog();
+        showCommonControlErrorDialog(contentMessage, CustomDialog.ErrorDialogType.CONTENT_DETAIL_GET_ERROR, null, null, null);
         DTVTLogger.end();
     }
-
-    /**
-     * OKボタン押下後前画面に戻る.
-     * @return OKコールバック
-     */
-    private CustomDialog.ApiOKCallback showDialogOkToBack() {
-        return new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                finish();
-            }
-        };
-    }
-
     /**
      * クリップボタンの更新.
      * @param targetId 更新対象

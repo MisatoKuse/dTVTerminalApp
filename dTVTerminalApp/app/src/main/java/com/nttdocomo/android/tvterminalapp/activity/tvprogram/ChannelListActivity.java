@@ -27,16 +27,15 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -339,7 +338,8 @@ public class ChannelListActivity extends BaseActivity implements
             ChannelInfo channelInfo = channelList.get(pos);
             mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getServiceIdUniq());
         } else {
-            showErrorDialog(getString(R.string.network_nw_error_message_dialog));
+            showCommonControlErrorDialog(getString(R.string.network_nw_error_message_dialog),
+                    null, null, null, null);
         }
     }
 
@@ -347,7 +347,8 @@ public class ChannelListActivity extends BaseActivity implements
     public void onContentDataGet(final ContentsData data) {
         if (data == null) {
             //Now On Airコンテンツがない場合はダイアログ表示
-            showErrorDialog(getString(R.string.contents_detail_now_on_air_contents_nothing));
+            showCommonControlErrorDialog(getString(R.string.contents_detail_now_on_air_contents_nothing),
+                    null, null, null, null);
             return;
         }
         Intent intent = new Intent(this, ContentDetailActivity.class);

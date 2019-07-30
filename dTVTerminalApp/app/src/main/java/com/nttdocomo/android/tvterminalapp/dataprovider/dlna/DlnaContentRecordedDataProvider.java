@@ -53,13 +53,6 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     }
 
     /**
-     * コールバックリスナーを停止.
-     */
-    public void stopListen() {
-        mCallbackListener = null;
-    }
-
-    /**
      * ブラウズ処理.
      * @param context コンテキスト
      * @param requestIndex ページングインデックス
