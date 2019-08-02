@@ -175,8 +175,7 @@ public class SearchTopActivity extends BaseActivity
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_top_main_layout);
+        DTVTLogger.start();
         if (savedInstanceState != null) {
             mTabIndex = savedInstanceState.getInt(TAB_INDEX);
             mIsShowed = savedInstanceState.getBoolean(KEYBOARD_STATUS);
@@ -185,6 +184,9 @@ public class SearchTopActivity extends BaseActivity
             mSearchIconWidth = savedInstanceState.getInt(SEARCH_ICON_WIDTH);
             savedInstanceState.clear();
         }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.search_top_main_layout);
         //Headerの設定
         setTitleText(getString(R.string.keyword_search_title));
         Intent intent = getIntent();
@@ -197,6 +199,7 @@ public class SearchTopActivity extends BaseActivity
         initData();
         initView();
         setSearchViewState();
+        DTVTLogger.end();
     }
 
     /**
