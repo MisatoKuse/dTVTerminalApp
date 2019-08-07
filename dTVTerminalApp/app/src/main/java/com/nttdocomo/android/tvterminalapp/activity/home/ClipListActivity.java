@@ -108,11 +108,7 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         DTVTLogger.start();
-        setContentView(R.layout.clip_list_main);
-        //Headerの設定
-        setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
         mStartPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
@@ -123,6 +119,11 @@ public class ClipListActivity extends BaseActivity implements
             mStartPageNo = savedInstanceState.getInt(TAB_INDEX);
             savedInstanceState.clear();
         }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.clip_list_main);
+        //Headerの設定
+        setTitleText(getString(R.string.str_clip_activity_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
 

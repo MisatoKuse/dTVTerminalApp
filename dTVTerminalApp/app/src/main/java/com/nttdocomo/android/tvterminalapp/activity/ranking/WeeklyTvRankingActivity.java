@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,15 +71,17 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        DTVTLogger.start();
+        if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
+            savedInstanceState.clear();
+        }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weekly_tv_ranking_main_layout);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);
         menuImageView.setOnClickListener(this);
-        if (savedInstanceState != null) {
-            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
-            savedInstanceState.clear();
-        }
 
         //Headerの設定
         setTitleText(getString(R.string.weekly_tv_ranking_title));
@@ -89,6 +90,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         initView();
         resetPaging(mViewPager, mRankingFragmentFactory);
+        DTVTLogger.end();
     }
 
     @Override

@@ -131,13 +131,14 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         DTVTLogger.start();
-        setContentView(R.layout.channel_list_main_layout);
         if (savedInstanceState != null) {
             mTabIndex = savedInstanceState.getInt(TAB_INDEX_BEFORE);
             savedInstanceState.clear();
         }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.channel_list_main_layout);
         setTitleText(getString(R.string.channel_list_activity_title));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);

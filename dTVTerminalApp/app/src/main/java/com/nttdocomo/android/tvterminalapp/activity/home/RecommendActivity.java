@@ -144,17 +144,24 @@ public class RecommendActivity extends BaseActivity implements
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.recommend_main_layout);
-
-        //Headerの設定
-        setTitleText(getString(R.string.recommend_list_title));
+        DTVTLogger.start();
         Intent intent = getIntent();
         int startPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             startPageNo = RECOMMEND_LIST_PAGE_NO_OF_TV;
         }
+        if (savedInstanceState != null) {
+            startPageNo = savedInstanceState
+                    .getInt(RECOMMEND_VIEWPAGER_POSITION);
+            savedInstanceState.clear();
+        }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.recommend_main_layout);
+
+        //Headerの設定
+        setTitleText(getString(R.string.recommend_list_title));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
 
@@ -164,16 +171,9 @@ public class RecommendActivity extends BaseActivity implements
         //初回起動フラグをONにする
         mIsFirst = true;
         //初回表示のみ前画面からのタブ指定を反映する
-        if (savedInstanceState != null) {
-            int viewPagerPosition = savedInstanceState
-                    .getInt(RECOMMEND_VIEWPAGER_POSITION);
-            mRecommendViewPager.setCurrentItem(viewPagerPosition);
-            mTabLayout.setTab(viewPagerPosition);
-            savedInstanceState.clear();
-        } else {
-            mRecommendViewPager.setCurrentItem(startPageNo);
-            mTabLayout.setTab(startPageNo);
-        }
+        mRecommendViewPager.setCurrentItem(startPageNo);
+        mTabLayout.setTab(startPageNo);
+        DTVTLogger.end();
     }
 
     @Override
