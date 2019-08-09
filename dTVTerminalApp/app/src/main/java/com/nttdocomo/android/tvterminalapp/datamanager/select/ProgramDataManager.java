@@ -159,7 +159,8 @@ public class ProgramDataManager {
             }
 
             //androidではdatabaseフォルダのファイルのみ取り扱えるため、DBをdatabaseフォルダ(2階層上)へコピーする.
-            File databaseFile = new File(databasePath, serviceIdUniq);
+            String fileName = StringUtils.getConnectStrings(chInfoGetDate, serviceIdUniq);
+            File databaseFile = new File(databasePath, fileName);
             try {
                 if (!databaseFile.createNewFile()) {
                     DTVTLogger.error("Failed to create copy file");
@@ -174,7 +175,7 @@ public class ProgramDataManager {
 
             //テーブルの存在チェック.
             List<Map<String, String>> list;
-            if (!DataBaseUtils.isChCachingRecord(mContext, DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, serviceIdUniq)) {
+            if (!DataBaseUtils.isChCachingRecord(mContext, DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, fileName)) {
                 //databaseフォルダにコピーしたファイルを削除
                 if (!databaseFile.delete()) {
                     DTVTLogger.error("Failed to delete copy DB file");
@@ -197,7 +198,7 @@ public class ProgramDataManager {
 
 
             //Daoクラス使用準備
-            DataBaseHelperChannel channelListDBHelper = new DataBaseHelperChannel(mContext, serviceIdUniq);
+            DataBaseHelperChannel channelListDBHelper = new DataBaseHelperChannel(mContext, fileName);
             DataBaseManager.clearChInfo();
             DataBaseManager.initializeInstance(channelListDBHelper);
             DataBaseManager databaseManager = DataBaseManager.getChInstance();
