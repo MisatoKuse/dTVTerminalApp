@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/dtv_contents_episode_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@drawable/content_detail_channel_list_item_selector"/>
+    <!-- プログレスバー -->
+    <RelativeLayout
+        android:id="@+id/episode_progress_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/episode_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/dtv_contents_episode_list_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/list_no_items_text_left"
+        android:layout_marginTop="@dimen/list_no_items_text_top"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/tab_text_size_14dp"
+        android:text="@string/common_empty_data_message"
+        android:visibility="gone"/>
+
+</RelativeLayout>

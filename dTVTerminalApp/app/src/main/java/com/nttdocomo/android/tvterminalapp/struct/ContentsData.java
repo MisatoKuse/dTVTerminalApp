@@ -46,6 +46,8 @@ public class ContentsData {
     private String mEventId = null;
     /**タイトルID.*/
     private String mTitleId = null;
+    /**エピソードID.*/
+    private String mEpisodeId = null;
     /**番組種別.*/
     private String mDispType = null;
     /**日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ).*/
@@ -112,18 +114,14 @@ public class ContentsData {
     private ImageView mClipButton = null;
     /**クリップリクエストデータ.*/
     private ClipRequestData mRequestData = new ClipRequestData();
-
-
     /**ダウンロードフラグ.*/
     private int mDownloadFlg = 0;
     /**ダウンロードステータス（進捗）.*/
     private String mDownloadStatus = null;
     /**ダウンロードパス.*/
     private String mDlFileFullPath = null;
-
     /**ダウンロードボタンを隠すフラグ.*/
     private boolean mDownloadBtnHide = false;
-
     /**チャンネルID.*/
     private String mChannelId = null;
     /**チャンネルNo.*/
@@ -158,6 +156,57 @@ public class ContentsData {
     private boolean mIsRental = false;
     /** コピーライト.*/
     private String mCopyright = null;
+    /** コンテンツ尺長.*/
+    private int mDurationTime;
+    /** あらすじ情報表示状態.*/
+    private boolean mIsShowSynop = false;
+    /** 全文表示状態.*/
+    private boolean mIsShowSynopAll = false;
+
+    /**
+     * あらすじ情報全文表示状態取得.
+     */
+    public boolean isSynopIsAllShow() {
+        return mIsShowSynopAll;
+    }
+
+    /**
+     * あらすじ情報全文表示状態設定.
+     * @param isShowSynopAll isShowSynopAll
+     */
+    public void setSynopIsAllShow(final boolean isShowSynopAll) {
+        this.mIsShowSynopAll = isShowSynopAll;
+    }
+
+    /**
+     * あらすじ情報表示状態取得.
+     */
+    public boolean isShowSynop() {
+        return mIsShowSynop;
+    }
+
+    /**
+     * あらすじ情報表示状態設定.
+     * @param mIsShowSynop mIsShowSynop
+     */
+    public void setIsShowSynop(final boolean mIsShowSynop) {
+        this.mIsShowSynop = mIsShowSynop;
+    }
+
+    /**
+     * コンテンツ尺長取得.
+     */
+    public int getDurTime() {
+        return mDurationTime;
+    }
+
+    /**
+     * コンテンツ尺長設定.
+     * @param durationTime コンテンツ尺長
+     */
+    public void setDurTime(final int durationTime) {
+        this.mDurationTime = durationTime;
+    }
 
     /**
      * 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)取得.
@@ -545,6 +594,22 @@ public class ContentsData {
     }
 
     /**
+     * エピソードID取得.
+     * @return エピソードID
+     */
+    public String getEpisodeId() {
+        return mEpisodeId;
+    }
+
+    /**
+     * エピソードID設定.
+     * @param mEpisodeId エピソードID
+     */
+    public void setEpisodeId(final String mEpisodeId) {
+        this.mEpisodeId = mEpisodeId;
+    }
+
+    /**
      * 番組のパレンタル設定値取得.
      * @return 番組のパレンタル設定値
      */
@@ -701,9 +766,7 @@ public class ContentsData {
      * @param mSynop あらすじ
      */
     public void setSynop(final String mSynop) {
-        //TODO :レスポンスがないためダミー
-//        this.mSynop = mSynop;
-        this.mSynop = "";
+        this.mSynop = mSynop;
     }
 
     /**

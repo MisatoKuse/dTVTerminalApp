@@ -40,6 +40,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     private ApiCancelCallback mApiCancelCallback = null;
     /** Neutral押下時のコールバック. */
     private ApiNeutralCallback mApiNeutralCallback = null;
+    /**リストタップのコールバック. */
+    private ApiListItemClickCallback mApiListItemClickCallback = null;
     /** ボタンタップ以外でダイアログが閉じた時のコールバック. */
     private DismissCallback mDialogDismissCallback = null;
     /** OKボタンに表示する文字列. */
@@ -63,8 +65,10 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     private boolean mBackKeyAsFinishActivity = false;
     /**独自レイアウトView.*/
     private View mCustomView;
-    /** ErrorDialogType.*/
-    private CustomDialog.ErrorDialogType mErrorDialogType = ErrorDialogType.COMMON_DIALOG;
+    /** リストダイアログデータソース. */
+    private String[] mItemList = null;
+    /** ShowDialogType.*/
+    private ShowDialogType mShowDialogType = ShowDialogType.COMMON_DIALOG;
 
     /**
      * 最後に扱ったキーコード.
@@ -105,6 +109,17 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     }
 
     /**
+     * 排他的リスト選択のコールバック.
+     */
+    public interface ApiListItemClickCallback {
+        /**
+         * 排他的選択リストダイアログ項目押下時のコールバック.
+         * @param which ポジション
+         */
+        void onApiListItemClickCallback(int which);
+    }
+
+    /**
      * ボタンタップ以外でダイアログが閉じた時のコールバック.
      */
     public interface DismissCallback {
@@ -125,18 +140,18 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
 
     /**
      * getErrorDialogType.
-     * @return ErrorDialogType
+     * @return ShowDialogType
      */
-    public CustomDialog.ErrorDialogType getErrorDialogType() {
-        return mErrorDialogType;
+    public ShowDialogType getErrorDialogType() {
+        return mShowDialogType;
     }
 
     /**
      * setErrorDialogType.
-     * @param errorDialogType errorDialogType
+     * @param showDialogType showDialogType
      */
-    public void setErrorDialogType(final CustomDialog.ErrorDialogType errorDialogType) {
-        this.mErrorDialogType = errorDialogType;
+    public void setErrorDialogType(final ShowDialogType showDialogType) {
+        this.mShowDialogType = showDialogType;
     }
 
     /**
@@ -146,6 +161,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
      */
     public void setApiCancelCallback(final ApiCancelCallback apiCancelCallback) {
         this.mApiCancelCallback = apiCancelCallback;
+    }
+
+    /**
+     * リストタップコールバック設定.
+     * @param apiListItemClickCallback リストタップコールバック
+     */
+    public void setApiListItemClickCallback(final ApiListItemClickCallback apiListItemClickCallback) {
+        this.mApiListItemClickCallback = apiListItemClickCallback;
     }
 
     /**
@@ -205,6 +228,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     }
 
     /**
+     * 選択リストを設定.
+     * @param list リストデータ
+     */
+    public void setListSelectItems(final String[] list) {
+        this.mItemList = list;
+    }
+
+    /**
      * ダイアログタイプ.
      */
     public enum DialogType {
@@ -217,15 +248,19 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
          */
         CONFIRM,        //確認ダイアログ
         /**
-         * ダイアログタイプ：リスト(リスト表示、OK/Cancelは任意).
+         * ダイアログタイプ：リスト(独自レイアウト).
          */
-        SELECT          //選択ダイアログ
+        SELECT,          //選択ダイアログ
+        /**
+         * ダイアログタイプ：リスト(システムレイアウト).
+         */
+        LIST          //LISTダイアログ
     }
 
     /**
-     * ErrorDialogType.
+     * ShowDialogType.
      */
-    public enum ErrorDialogType {
+    public enum ShowDialogType {
         /**. dアカウントヘルプ画面へ遷移*/
         D_ACCOUNT_REGISTRATION_HELP,
         /**. dアカウント変わったため、ホーム画面に遷移*/
@@ -240,6 +275,10 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
         OPTIONAL_VERSION_UP,
         /** 設定ファイルエラー.*/
         SETTING_FILE_ERROR_DIALOG,
+        /** dtv(起動).*/
+        DTV_EPISODE_LIST_ITEM_DIALOG,
+        /** 確認ダイアログ.*/
+        LAUNCH_STB_START_DIALOG,
         /**. 画面遷移なし.*/
         COMMON_DIALOG
     }
@@ -252,6 +291,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
         OK,
         /** cancel.*/
         CANCEL,
+        /** list.*/
+        LIST,
         /** back key.*/
         BACK_KEY,
         /** not tap.*/
@@ -294,6 +335,17 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
                 break;
             case SELECT:
                 break;
+            case LIST:
+                dialogBuilder.setTitle(mTitle).setItems(mItemList, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        dismissDialog();
+                        if (mApiListItemClickCallback != null) {
+                            mIsButtonTap = true;
+                            mApiListItemClickCallback.onApiListItemClickCallback(which);
+                        }
+                    }
+                });
+                break;
             case CONFIRM:
                 dialogBuilder.setPositiveButton(mConfirmText, this);
                 dialogBuilder.setNegativeButton(mCancelText, this);
@@ -308,19 +360,21 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
         mDialog.setCancelable(mCancelable);
         mDialog.setCanceledOnTouchOutside(mCancelableOutside);
         mDialog.setOnKeyListener(sKeyListener);
-        if (mCustomView == null) {
-            if (TextUtils.isEmpty(mTitle)) {
-                Window window = mDialog.getWindow();
-                if (window != null) {
-                    window.requestFeature(Window.FEATURE_NO_TITLE);
+        if (mDialogType != DialogType.LIST) {
+            if (mCustomView == null) {
+                if (TextUtils.isEmpty(mTitle)) {
+                    Window window = mDialog.getWindow();
+                    if (window != null) {
+                        window.requestFeature(Window.FEATURE_NO_TITLE);
+                    }
+                } else {
+                    mDialog.setTitle(mTitle);
                 }
-            } else {
-                mDialog.setTitle(mTitle);
-            }
-            if (TextUtils.isEmpty(mContent)) {
-                mDialog.setMessage("");
-            } else {
-                mDialog.setMessage(mContent);
+                if (TextUtils.isEmpty(mContent)) {
+                    mDialog.setMessage("");
+                } else {
+                    mDialog.setMessage(mContent);
+                }
             }
         }
 
@@ -358,7 +412,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
      * setButtonClickListener.
      */
     private void setButtonClickListener() {
-        if (getErrorDialogType() == ErrorDialogType.OPTIONAL_VERSION_UP) {
+        if (getErrorDialogType() == ShowDialogType.OPTIONAL_VERSION_UP) {
             mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -374,7 +428,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
     /**
      * アプリ終了.
      */
-    private void finishActivity () {
+    private void finishActivity() {
         if (mContext != null && mContext instanceof BaseActivity) {
             //コンテキストがベースアクティビティから継承された物かどうかの判定
             ((BaseActivity) mContext).stopAllActivity();

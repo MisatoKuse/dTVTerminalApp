@@ -49,6 +49,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.CustomDrawerLayout;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.EpisodeAllReadActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
@@ -143,6 +144,7 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog.DismissCallback,
         CustomDialog.ApiOKCallback,
         CustomDialog.ApiCancelCallback,
+        CustomDialog.ApiListItemClickCallback,
         HomeRecyclerViewAdapter.ItemClickCallback,
         StbConnectionManager.ConnectionListener,
         ProcessSettingFile.OnShowSettingDialogListener,
@@ -266,6 +268,8 @@ public class BaseActivity extends FragmentActivity implements
     private ListView mGlobalMenuListView = null;
     /** コンテンツ種別1のコンテンツ種別名のひかりTVタイプ.*/
     private ContentUtils.HikariType mHikariType = ContentUtils.HikariType.H4D;
+    /** 詳細画面STB連携タイトル名.*/
+    private String mTitle = "";
     /** コンテンツ種別2のコンテンツ種別名.*/
     private ContentUtils.ContentsType mContentsType = ContentUtils.ContentsType.VOD;
     /** bg→fg区別.*/
@@ -954,7 +958,7 @@ public class BaseActivity extends FragmentActivity implements
                 } else {
                     contentsType1 = ContentUtils.getContentsType1(BaseActivity.this, mHikariType);
                     action = getString(R.string.google_analytics_category_action_watch_tv);
-                    label = getTitleText().toString();
+                    label = mTitle;
                 }
                 break;
             case DAZN:
@@ -987,6 +991,7 @@ public class BaseActivity extends FragmentActivity implements
                     default:
                         break;
                 }
+                customDimensions.put(ContentUtils.CUSTOMDIMENSION_DEVICE, getString(R.string.google_analytics_custom_dimension_device_tv));
             }
             sendEvent(category, action, label, customDimensions);
         }
@@ -998,6 +1003,14 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void setHikariType(final ContentUtils.HikariType hikariType) {
         mHikariType = hikariType;
+    }
+
+    /**
+     * アクション名設定.
+     * @param titleName タイトル名
+     */
+    protected void setActionName(final String titleName) {
+        mTitle = titleName;
     }
 
     /**
@@ -1157,7 +1170,7 @@ public class BaseActivity extends FragmentActivity implements
                 // チェック処理の状態で処理を分岐する
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                 // TODO アプリのキャッシュをきれいにクリアする処理が必要
-                showCommonControlErrorDialog(getString(R.string.main_setting_stb_application_launch_fail_id_notexist), CustomDialog.ErrorDialogType.D_ACCOUNT_REGISTRATION_HELP,
+                showCommonControlErrorDialog(getString(R.string.main_setting_stb_application_launch_fail_id_notexist), CustomDialog.ShowDialogType.D_ACCOUNT_REGISTRATION_HELP,
                         null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
@@ -1202,7 +1215,7 @@ public class BaseActivity extends FragmentActivity implements
                 showCommonControlErrorDialog(getResources().getString(R.string.common_service_unregistered_error), null, null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
-                showCommonControlErrorDialog(getString(R.string.main_setting_stb_application_launch_fail_id_notexist), CustomDialog.ErrorDialogType.D_ACCOUNT_REGISTRATION_HELP,
+                showCommonControlErrorDialog(getString(R.string.main_setting_stb_application_launch_fail_id_notexist), CustomDialog.ShowDialogType.D_ACCOUNT_REGISTRATION_HELP,
                         null, null, null);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
@@ -1327,61 +1340,104 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能 エラー制御ダイアログ.
      * @param errorMessage errorMessage
-     * @param errorDialogType errorDialogType
+     * @param showDialogType showDialogType
      * @param apiOKCallback apiOKCallback
      * @param apiCancelCallback apiCancelCallback
      * @param dismissCallback dismissCallback　バックキーによるダイアログクローズ
      */
-    protected void showCommonControlErrorDialog(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+    protected synchronized void showCommonControlErrorDialog(final String errorMessage, final CustomDialog.ShowDialogType showDialogType,
                                              final CustomDialog.ApiOKCallback apiOKCallback,
                                              final CustomDialog.ApiCancelCallback apiCancelCallback,
                                              final CustomDialog.DismissCallback dismissCallback) {
         DTVTLogger.debug("showCommonControlErrorDialog:" + errorMessage);
-        if (mShowDialog != null && mShowDialog.isShowing()) {
-            //設定ファイルエラー/バージョンアップダイアログ以外の場合は蓄積せずに帰る
-            if (errorDialogType != CustomDialog.ErrorDialogType.FORCED_VERSION_UP
-                    && errorDialogType != CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
-                return;
-            } else {
-                //VersionUpダイアログの場合、もし表示中であれば蓄積しない
-                if (mShowDialog.getErrorDialogType() == errorDialogType) {
-                    return;
-                }
-            }
+        if (!isNeedToInsertQue(showDialogType)) {
+            return;
         }
-        CustomDialog errorDialog;
-        if (errorDialogType == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
-            errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
-        } else {
-            errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
-        }
+        CustomDialog errorDialog = setDialogParameter(showDialogType, apiOKCallback, apiCancelCallback, dismissCallback, null);
         errorDialog.setContent(errorMessage);
-
-        //閉じたときに次のダイアログを呼ぶ処理
-        if (apiOKCallback == null) {
-            errorDialog.setOkCallBack(this);
-        } else {
-            errorDialog.setOkCallBack(apiOKCallback);
-        }
-        if (apiCancelCallback == null) {
-            errorDialog.setApiCancelCallback(this);
-        } else {
-            errorDialog.setApiCancelCallback(apiCancelCallback);
-        }
-        if (dismissCallback == null) {
-            errorDialog.setDialogDismissCallback(this);
-        } else {
-            errorDialog.setDialogDismissCallback(dismissCallback);
-        }
-        //ボタン以外タップ不可
-        errorDialog.setOnTouchOutside(false);
-        if (errorDialogType == null) {
-            errorDialog.setErrorDialogType(CustomDialog.ErrorDialogType.COMMON_DIALOG);
-        } else {
-            errorDialog.setErrorDialogType(errorDialogType);
-        }
         //ダイアログをキューにためる処理
         offerDialog(errorDialog);
+    }
+
+    /**
+     * 機能 ダイアログ制御チェック.
+     * @param showDialogType ダイアログタイプ
+     */
+    private boolean isNeedToInsertQue(final CustomDialog.ShowDialogType showDialogType) {
+        if (mShowDialog != null && mShowDialog.isShowing()) {
+            //設定ファイルエラー/バージョンアップダイアログ以外の場合は蓄積せずに帰る
+            if (showDialogType != CustomDialog.ShowDialogType.FORCED_VERSION_UP
+                    && showDialogType != CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP) {
+                return false;
+            }
+            //VersionUpダイアログの場合、もし表示中であれば蓄積しない
+            if (mShowDialog.getErrorDialogType() == showDialogType) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 機能 エラー制御ダイアログ.
+     * @param showDialogType showDialogType
+     * @param apiOKCallback apiOKCallback
+     * @param apiCancelCallback apiCancelCallback
+     * @param dismissCallback dismissCallback
+     * @param apiListItemClickCallback apiListItemClickCallback
+     */
+    private CustomDialog setDialogParameter(final CustomDialog.ShowDialogType showDialogType, final CustomDialog.ApiOKCallback apiOKCallback,
+                                            final CustomDialog.ApiCancelCallback apiCancelCallback, final CustomDialog.DismissCallback dismissCallback,
+                                            final CustomDialog.ApiListItemClickCallback apiListItemClickCallback) {
+        CustomDialog customDialog;
+        if (showDialogType != null) {
+            switch (showDialogType) {
+                case DTV_EPISODE_LIST_ITEM_DIALOG:
+                    customDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.LIST);
+                    break;
+                case OPTIONAL_VERSION_UP:
+                case LAUNCH_STB_START_DIALOG:
+                    customDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
+                    break;
+                default:
+                    customDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+                    break;
+            }
+        } else {
+            customDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        }
+        if (showDialogType == CustomDialog.ShowDialogType.LAUNCH_STB_START_DIALOG) {
+            customDialog.setConfirmText(R.string.contents_detail_pairing_button);
+            customDialog.setCancelText(R.string.common_text_close);
+        }
+        //閉じたときに次のダイアログを呼ぶ処理
+        customDialog.setOkCallBack((apiOKCallback == null) ? this : apiOKCallback);
+        customDialog.setApiCancelCallback((apiCancelCallback == null) ? this : apiCancelCallback);
+        customDialog.setDialogDismissCallback((dismissCallback == null) ? this : dismissCallback);
+        customDialog.setApiListItemClickCallback((apiListItemClickCallback == null) ? this : apiListItemClickCallback);
+        //ボタン以外タップ不可
+        customDialog.setOnTouchOutside(false);
+        customDialog.setErrorDialogType((apiOKCallback == null) ? CustomDialog.ShowDialogType.COMMON_DIALOG : showDialogType);
+        return customDialog;
+    }
+
+    /**
+     * 機能 ダイアログ制御チェック.
+     * @param title タイトル
+     * @param itemList リスト
+     * @param showDialogType ダイアログタイプ
+     * @param dismissCallback dismissCallback
+     * @param apiListItemClickCallback apiListItemClickCallback
+     */
+    protected synchronized void showCommonControlListDialog(final String title, final String[] itemList, final CustomDialog.ShowDialogType showDialogType,
+                                                            final CustomDialog.DismissCallback dismissCallback,
+                                                            final CustomDialog.ApiListItemClickCallback apiListItemClickCallback) {
+        DTVTLogger.debug("showCommonControlListDialog:" + title);
+        CustomDialog customDialog = setDialogParameter(showDialogType, null, null, dismissCallback, apiListItemClickCallback);
+        customDialog.setTitle(title);
+        customDialog.setListSelectItems(itemList);
+        //ダイアログをキューにためる処理
+        offerDialog(customDialog);
     }
 
     /**
@@ -1419,7 +1475,7 @@ public class BaseActivity extends FragmentActivity implements
         restartDialog.setOnTouchOutside(false);
         restartDialog.setContent(printMessage);
         //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
-        showCommonControlErrorDialog(printMessage, CustomDialog.ErrorDialogType.D_ACCOUNT_CHANGED, null,
+        showCommonControlErrorDialog(printMessage, CustomDialog.ShowDialogType.D_ACCOUNT_CHANGED, null,
                 null, null);
     }
 
@@ -1438,18 +1494,18 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * onVersionUpDialogShow.
-     * @param errorDialogType errorDialogType
+     * @param which which
      * @param dialogTapType dialogTapType
      */
-    private void onVersionUpDialogShow(final CustomDialog.ErrorDialogType errorDialogType,
-                                       final CustomDialog.DialogTapType dialogTapType) {
+    private void onVersionUpDialogShow(final int which, final CustomDialog.DialogTapType dialogTapType) {
+        final CustomDialog.ShowDialogType showDialogType = mShowDialog.getErrorDialogType();
         if (getLinkListSize() > 0) {
             pollDialog();
             if (mShowDialog != null) {
-                setVersionUpDialogCallBack(mShowDialog, errorDialogType, dialogTapType);
+                setVersionUpDialogCallBack(which, mShowDialog, showDialogType, dialogTapType);
             }
         } else {
-            switch (errorDialogType) {
+            switch (showDialogType) {
                 case D_ACCOUNT_CHANGED:
                     onRestartApplication();
                     break;
@@ -1463,6 +1519,16 @@ public class BaseActivity extends FragmentActivity implements
                 case CONTENT_DETAIL_GET_ERROR:
                     finish();
                     break;
+                case LAUNCH_STB_START_DIALOG:
+                    if (CustomDialog.DialogTapType.OK == dialogTapType) {
+                        intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                        intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
+                        startActivity(intent);
+                    }
+                    break;
+                case DTV_EPISODE_LIST_ITEM_DIALOG:
+                    startListDialogDismissTask(which);
+                    break;
                 case COMMON_DIALOG:
                 default:
                     startDialogDismissTask(new Pair<>(dialogTapType, CustomDialog.DialogTapType.NOT_TAP));
@@ -1473,17 +1539,18 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * versionUpダイアログ表示.
+     * @param which which
      * @param showDialog showDialog
-     * @param errorDialogType errorDialogType
+     * @param showDialogType showDialogType
      * @param dialogTapType 　最初のダイアログタップイベント
      */
-    private void setVersionUpDialogCallBack(final CustomDialog showDialog,
-                                            final CustomDialog.ErrorDialogType errorDialogType,
+    private void setVersionUpDialogCallBack(final int which, final CustomDialog showDialog,
+                                            final CustomDialog.ShowDialogType showDialogType,
                                             final CustomDialog.DialogTapType dialogTapType) {
         showDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                switch (errorDialogType) {
+                switch (showDialogType) {
                     case D_ACCOUNT_CHANGED:
                     case COMMON_DIALOG:
                     case D_ACCOUNT_REGISTRATION_HELP:
@@ -1499,7 +1566,7 @@ public class BaseActivity extends FragmentActivity implements
         showDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                switch (errorDialogType) {
+                switch (showDialogType) {
                     case D_ACCOUNT_CHANGED:
                         onRestartApplication();
                         break;
@@ -1512,6 +1579,9 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                     case SECURE_PLAYER_ERROR:
                         contentsDetailCloseKey(null);
+                        break;
+                    case DTV_EPISODE_LIST_ITEM_DIALOG:
+                        startListDialogDismissTask(which);
                         break;
                     case COMMON_DIALOG:
                     default:
@@ -1528,11 +1598,11 @@ public class BaseActivity extends FragmentActivity implements
 
             @Override
             public void otherDismissCallback() {
-                if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP) {
+                if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.FORCED_VERSION_UP) {
                     stopAllActivity();
                     return;
                 }
-                switch (errorDialogType) {
+                switch (showDialogType) {
                     case D_ACCOUNT_CHANGED:
                         onRestartApplication();
                         break;
@@ -1546,6 +1616,14 @@ public class BaseActivity extends FragmentActivity implements
                     case SECURE_PLAYER_ERROR:
                         contentsDetailCloseKey(null);
                         break;
+                    case LAUNCH_STB_START_DIALOG:
+                        intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                        intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
+                        startActivity(intent);
+                        break;
+                    case DTV_EPISODE_LIST_ITEM_DIALOG:
+                        startListDialogDismissTask(which);
+                        break;
                     case COMMON_DIALOG:
                     default:
                         startDialogDismissTask(new Pair<>(dialogTapType, CustomDialog.DialogTapType.BACK_KEY));
@@ -1553,6 +1631,16 @@ public class BaseActivity extends FragmentActivity implements
                 }
             }
         });
+    }
+
+    /**
+     * Activity内に独自の処理があればオーバライドする.
+     * @param which which
+     * errorDialogTapPair.first 最初のダイアログタップイベント
+     * errorDialogTapPair.second 最後のダイアログタップイベント
+     */
+    protected void startListDialogDismissTask(final int which) {
+        //NOP
     }
 
     /**
@@ -3285,7 +3373,8 @@ public class BaseActivity extends FragmentActivity implements
 
         //現在表示しているダイアログと新たに蓄積されるダイアログの本文を比較する
         String contentText = dialog.getContent();
-        if (mShowDialog != null && mShowDialog.getContent().equals(contentText)) {
+        if (!TextUtils.isEmpty(contentText) && mShowDialog != null
+                && mShowDialog.getContent() != null && mShowDialog.getContent().equals(contentText)) {
             //現在表示しているダイアログと本文が同じなので、蓄積せずに帰る
             return;
         }
@@ -3632,8 +3721,11 @@ public class BaseActivity extends FragmentActivity implements
     public void onClick(final View view) {
         if (view != null && view.equals(mMenuImageViewForBase)) {
             if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
-                // コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
-                contentsDetailCloseKey(view);
+                if (this instanceof EpisodeAllReadActivity) {
+                    finish();
+                } else {
+                    contentsDetailCloseKey(view);
+                }
             } else {
                 //ダブルクリックを防ぐ
                 if (isFastClick()) {
@@ -3713,15 +3805,15 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onOKCallback(final boolean isOK) {
         if (mShowDialog != null) {
-            if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP
-                    || mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP) {
+            if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP
+                    || mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.FORCED_VERSION_UP) {
                 toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
                 return;
-            } else if ((mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.SETTING_FILE_ERROR_DIALOG)) {
+            } else if ((mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.SETTING_FILE_ERROR_DIALOG)) {
                 stopAllActivity();
                 return;
             }
-            onVersionUpDialogShow(mShowDialog.getErrorDialogType(), CustomDialog.DialogTapType.OK);
+            onVersionUpDialogShow(ContentUtils.ILLEGAL_POSITION, CustomDialog.DialogTapType.OK);
         }
     }
 
@@ -3729,10 +3821,17 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onCancelCallback() {
         if (mShowDialog != null) {
-           if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
+           if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP) {
                 return;
             }
-            onVersionUpDialogShow(mShowDialog.getErrorDialogType(), CustomDialog.DialogTapType.CANCEL);
+            onVersionUpDialogShow(ContentUtils.ILLEGAL_POSITION, CustomDialog.DialogTapType.CANCEL);
+        }
+    }
+
+    @Override
+    public void onApiListItemClickCallback(final int which) {
+        if (mShowDialog != null) {
+            onVersionUpDialogShow(which, CustomDialog.DialogTapType.LIST);
         }
     }
 
@@ -3748,14 +3847,14 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void otherDismissCallback() {
         if (mShowDialog != null) {
-            if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.FORCED_VERSION_UP
-                    || mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.SETTING_FILE_ERROR_DIALOG) {
+            if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.FORCED_VERSION_UP
+                    || mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.SETTING_FILE_ERROR_DIALOG) {
                 stopAllActivity();
                 return;
-            } else if (mShowDialog.getErrorDialogType() == CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP) {
+            } else if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP) {
                 return;
             }
-            onVersionUpDialogShow(mShowDialog.getErrorDialogType(), CustomDialog.DialogTapType.BACK_KEY);
+            onVersionUpDialogShow(-1, CustomDialog.DialogTapType.BACK_KEY);
         }
     }
 
@@ -3910,15 +4009,15 @@ public class BaseActivity extends FragmentActivity implements
      * getLinkListSize.
      * @return LinkListSize
      */
-    public int getLinkListSize() {
+    private int getLinkListSize() {
         return mLinkedList.size();
     }
 
     @Override
-    public void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+    public void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ShowDialogType showDialogType,
                                         final CustomDialog.ApiOKCallback okCallback, final CustomDialog.ApiCancelCallback cancelCallback,
                                         final CustomDialog.DismissCallback dismissCallback) {
-        showCommonControlErrorDialog(errorMessage, errorDialogType, okCallback, cancelCallback, dismissCallback);
+        showCommonControlErrorDialog(errorMessage, showDialogType, okCallback, cancelCallback, dismissCallback);
     }
 
     @Override

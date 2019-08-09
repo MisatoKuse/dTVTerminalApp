@@ -59,7 +59,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     /**子コンテンツ一覧取得ウェブクライアント.*/
     private final ChildContentListGetWebClient mWebClient;
     /**コールバック.*/
-    private DataCallback mCallback = null;
+    private DataCallback mCallback;
     /**子コンテンツ一覧取得レスポンス.*/
     private ChildContentListGetResponse mChildContentListGetResponse;
     /**WebAPIエラー情報.*/
@@ -75,11 +75,11 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     /** 購入済みチャンネルリスト更新.*/
     private static final int RENTAL_VOD_UPDATE = 2;
     /** レンタルVOD一覧取得WebClient.*/
-    private RentalVodListWebClient mRentalVodListWebClient = null;
+    private RentalVodListWebClient mRentalVodListWebClient;
     /** 購入済みVODリスト情報を保持.*/
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
     /** レスポンス終了フラグ.*/
-    boolean mRentalVodResponseEndFlag = false;
+    private boolean mRentalVodResponseEndFlag = false;
     /** 購入情報取得フラグ.*/
     private boolean mIsRental = false;
     /** 購入情報.*/
@@ -99,9 +99,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse
-            ,final ErrorState errorState) {
-        super.onVodClipKeyResult(clipKeyListResponse,errorState);
+    public void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse, final ErrorState errorState) {
+        super.onVodClipKeyResult(clipKeyListResponse, errorState);
         if (mChildContentListGetResponse != null && (!mIsRental || mRentalVodResponseEndFlag)) {
             sendData(mChildContentListGetResponse);
         }
@@ -205,6 +204,10 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             }
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             final int ageReq = userInfoDataProvider.getUserAge();
+            if (mWebClient.getError() != null) {
+                mWebClient.getError().setErrorType(DtvtConstants.ErrorType.SUCCESS);
+                mWebClient.getError().setErrorMessage("");
+            }
             boolean result = mWebClient.requestChildContentListGetApi(crid, offset, filter, ageReq, this);
             if (!result) {
                 mCallback.childContentListCallback(null);
@@ -220,7 +223,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     /**
      * 購入済みVOD一覧取得.
      */
-    public void getVodListData() {
+    private void getVodListData() {
         mRentalVodResponseEndFlag = false;
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
@@ -333,6 +336,10 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setEstFlg(vodMetaFullData.getEstFlag());
             data.setChsVod(vodMetaFullData.getmChsvod());
             data.setAvailStartDate(vodMetaFullData.getAvail_start_date());
+            data.setSynop(vodMetaFullData.getSynop());
+            data.setDurTime(vodMetaFullData.getDur());
+            data.setEpisodeId(vodMetaFullData.getEpisode_id());
+            data.setTitleId(vodMetaFullData.getTitle_id());
             if (mIsRental) {
                 // activeDataList から視聴可能期限を取り出し、配信期限(AvailEndDate)として使用する(DREM-2275の仕様)
                 String result = ContentUtils.getRentalVodValidInfo(vodMetaFullData, mActiveDatas, true);
@@ -391,8 +398,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     * ページオフセットの取得
-     *
+     * ページオフセットの取得.
      * @return ページオフセット
      */
     public int getPagerOffset() {
@@ -400,8 +406,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     * 全体の件数取得
-     *
+     * 全体の件数取得.
      * @return 全体の件数
      */
     public int getTotal() {

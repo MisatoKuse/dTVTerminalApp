@@ -367,9 +367,6 @@
     <string name="contents_detail_hikari_vod_agreement">本コンテンツ（有料）はテレビで視聴できます。\nコンテンツの契約状態はテレビでご確認ください。</string>
     <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
     <string name="contents_detail_bs_premium_ch">本チャンネル（有料）はテレビで視聴できます。\nチャンネルの契約状態はテレビでご確認ください。</string>
-    <string-array name="contents_detail_tab_vod">
-        <item>@string/contents_detail_tab_contents_info</item>
-    </string-array>
     <string-array name="contents_detail_tab_other_service_vod">
         <item>@string/contents_detail_tab_contents_info</item>
     </string-array>
@@ -379,6 +376,10 @@
     <string-array name="contents_detail_tabs_tv_ch">
         <item>@string/contents_detail_tab_program_detail</item>
         <item>@string/contents_detail_tab_channel</item>
+    </string-array>
+    <string-array name="contents_detail_tabs_vod_episode">
+        <item>@string/contents_detail_tab_contents_info</item>
+        <item>@string/contents_detail_tab_episode</item>
     </string-array>
     <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました</string>
     <string name="recording_reservation_failed_dialog_msg">録画予約に失敗しました</string>
@@ -413,6 +414,11 @@
     <string name="contents_detail_secure_player_fail_specified_content_format_not_support">再生ができませんでした。\n対応されていないコンテンツ形式のため再生できません。(MP-%s)</string>
     <string name="contents_detail_secure_player_fail_remote_setting_one_more_time">再生ができませんでした。\n再度「リモート視聴設定」が必要です。\n「メニュー＞設定＞リモート視聴設定」からリモート視聴設定を行ってください。(MP-%s)</string>
     <string name="contents_detail_secure_player_fail_http_error">再生ができませんでした。\nほかのユーザーが既に再生しているため、現在ご利用になれません。(MP-%s)</string>
+    <string name="contents_detail_episode_dialog_title">視聴しますか？</string>
+    <string name="contents_detail_episode_dialog_dtv_start">dTVで視聴する</string>
+    <string name="contents_detail_episode_detail_all_read">全文を読む</string>
+    <string name="contents_detail_episode_dialog_start_stb_dtv_error">テレビで視聴するにはドコモテレビターミナルとペアリングが必要です。</string>
+    <string name="contents_detail_episode_dialog_start_stb_dtv_toast">Wi-Fi接続を確認してください</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
@@ -548,6 +554,7 @@
     <string name="google_analytics_screen_name_content_detail_other_dtv_ch">コンテンツ詳細_pure dTVチャンネル</string>
     <string name="google_analytics_screen_name_content_detail_other_danime">コンテンツ詳細_pure dアニメストア</string>
     <string name="google_analytics_screen_name_content_detail_other_dazn">コンテンツ詳細_pure DAZN</string>
+    <string name="google_analytics_screen_name_dtv_read_all">あらすじ</string>
     <string name="google_analytics_screen_name_recording_list">録画一覧_すべて</string>
     <string name="google_analytics_screen_name_recording_list_takeout">録画一覧_持ち出し</string>
     <string name="google_analytics_screen_name_recording_reservation">録画予約</string>
@@ -646,6 +653,10 @@
     <string name="google_analytics_category_action_dtv_ch">dTVチャンネルをタップ</string>
     <string name="google_analytics_category_action_danime">dアニメをタップ</string>
     <string name="google_analytics_category_action_dazn">DAZNをタップ</string>
+    <string name="google_analytics_category_action_sp_dtv">dTVで視聴するをタップ</string>
+    <string name="google_analytics_category_action_sp_dtv_ch">dTVチャンネルで視聴するをタップ</string>
+    <string name="google_analytics_category_action_sp_danime">dアニメで視聴するをタップ</string>
+    <string name="google_analytics_category_action_sp_dazn">DAZNで視聴するをタップ</string>
     <string name="google_analytics_category_action_contents_play">コンテンツ再生</string>
     <string name="google_analytics_category_action_record_contents_play">録画コンテンツ再生</string>
     <string name="google_analytics_category_action_recording_reservation">録画予約</string>
@@ -695,6 +706,10 @@
     <string name="google_analytics_custom_dimension_contents_type2_live">放送</string>
     <string name="google_analytics_custom_dimension_contents_type2_void">VOD</string>
     <string name="google_analytics_custom_dimension_contents_type2_record">録画</string>
+
+    <!-- 視聴デバイス-->
+    <string name="google_analytics_custom_dimension_device_tv">TV視聴</string>
+    <string name="google_analytics_custom_dimension_device_sp">SP視聴</string>
 
     <!-- Google Analytics カスタムディメンション 遷移元画面-->
     <string name="google_analytics_custom_dimension_from_content_detail">コンテンツ詳細</string>

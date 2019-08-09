@@ -96,12 +96,8 @@ public class GoogleAnalyticsUtils {
         Tracker tracker = TrackerManager.shared().getDefaultTracker();
         HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
         builder.setCategory(category);
-        builder.setAction(action);
-        if (TextUtils.isEmpty(label)) {
-            builder.setLabel("");
-        } else {
-            builder.setLabel(label);
-        }
+        builder.setAction(action == null ? "" : action);
+        builder.setLabel(label == null ? "" : label);
         DTVTLogger.debug("[GA][E]:" + " category: " + category + " action: " + action + " label: " + label + " eventValue: " + 1);
         //valueデフォルト値1
         builder.setValue(1);

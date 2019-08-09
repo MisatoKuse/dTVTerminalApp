@@ -4,42 +4,39 @@
 package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.support.v4.app.Fragment;
+import android.util.SparseArray;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-
-import java.util.HashMap;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 
 /**
- * DTVコンテンツ詳細フラグメントファクトリー.
+ * コンテンツ詳細フラグメントファクトリー.
  */
 public class DtvContentsDetailFragmentFactory {
     /**フラグメント初期化.*/
-    private final HashMap<Integer, Fragment> mFragments = new HashMap<>();
+    private final SparseArray<Fragment> mFragments = new SparseArray<>();
 
     /**
      * フラグメントクラスの生成、取得.
-     *
-     * @param position position
+     * @param position タブポジション
+     * @param tabType タブタイプ
      * @return fragment
      */
-    public Fragment createFragment(final int position) {
+    public Fragment createFragment(final int position, final ContentDetailUtils.TabType tabType) {
         DTVTLogger.start();
         Fragment fragment = mFragments.get(position);
         if (fragment == null) {
             if (position == 0) {
                 fragment = new DtvContentsDetailFragment();
             } else {
-                fragment = new DtvContentsChannelFragment();
+                if (ContentDetailUtils.TabType.VOD_EPISODE == tabType) {
+                    fragment = new DtvContentsEpisodeFragment();
+                } else {
+                    fragment = new DtvContentsChannelFragment();
+                }
             }
             mFragments.put(position, fragment);
         }
         return fragment;
-    }
-
-    /**
-     * フラグメントクラスの削除.
-     */
-    public void delFragment() {
-        mFragments.remove(1);
     }
 }

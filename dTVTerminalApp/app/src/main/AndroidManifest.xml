@@ -194,6 +194,11 @@
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
             android:screenOrientation="portrait"
             android:exported="false" />
+        <activity
+            android:name=".activity.detail.EpisodeAllReadActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <!-- ======================================  Player グループ End ====================================== -->
 
 

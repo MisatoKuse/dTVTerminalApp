@@ -30,10 +30,7 @@ public class TvtApplication extends Application implements Application.ActivityL
      * Started状態の前回状態を保存.
      */
     private int mTmpStartedCounter = 0;
-    /**
-     * Tracker.
-     */
-    private static Tracker sTracker;
+    
     @Override
     public void onCreate() {
         super.onCreate();

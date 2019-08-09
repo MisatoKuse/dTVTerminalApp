@@ -311,7 +311,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
          * @param cancelCallback cancelCallback
          * @param dismissCallback dismissCallback
          */
-        void onSettingFileErrorCallback(final String errorMessage, final CustomDialog.ErrorDialogType dialogType,
+        void onSettingFileErrorCallback(final String errorMessage, final CustomDialog.ShowDialogType dialogType,
                                         final CustomDialog.ApiOKCallback okCallback,
                                         final CustomDialog.ApiCancelCallback cancelCallback,
                                         final CustomDialog.DismissCallback dismissCallback);
@@ -1898,11 +1898,11 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
 
 
     @Override
-    public void onShowSettingFileDialog(final String errorMessage, final  CustomDialog.ErrorDialogType errorDialogType,
+    public void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ShowDialogType showDialogType,
                                         final  CustomDialog.ApiOKCallback okCallback, final  CustomDialog.ApiCancelCallback cancelCallback,
                                         final  CustomDialog.DismissCallback dismissCallback) {
         if (mSettingFilerListener != null) {
-            mSettingFilerListener.onSettingFileErrorCallback(errorMessage, errorDialogType, okCallback, cancelCallback, dismissCallback);
+            mSettingFilerListener.onSettingFileErrorCallback(errorMessage, showDialogType, okCallback, cancelCallback, dismissCallback);
         }
     }
 

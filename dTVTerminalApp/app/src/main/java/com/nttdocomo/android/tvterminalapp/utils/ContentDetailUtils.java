@@ -124,7 +124,7 @@ public class ContentDetailUtils {
     /** 番組詳細 or 作品情報タブ.*/
     public static final int CONTENTS_DETAIL_INFO_TAB_POSITION = 0;
     /** チャンネルタブ.*/
-    public static final int CONTENTS_DETAIL_CHANNEL_TAB_POSITION = 1;
+    public static final int CONTENTS_DETAIL_CHANNEL_EPISODE_TAB_POSITION = 1;
     /**他サービス起動リクエストコード.*/
     public static final int START_APPLICATION_REQUEST_CODE = 0;
     /** 画面すべてのクリップボタンを更新.*/
@@ -138,13 +138,19 @@ public class ContentDetailUtils {
     /**プレイヤーとコンテンツ詳細.*/
     public final static int PLAYER_AND_CONTENTS_DETAIL = 2;
     /** サムネイルにかけるシャドウのアルファ値.*/
-    public static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
+    public static final float THUMBNAIL_SHADOW_ALPHA = 0.7f;
     /** 多チャンネル放送.*/
     private static final int PLATFORM_TYPE_H4D = 1;
     /** 地デジ.*/
     private static final int PLATFORM_TYPE_TTB = 2;
     /** BS.*/
     private static final int PLATFORM_TYPE_BS = 3;
+    /** エピソードタイトル.*/
+    public static final String EPISODE_TITLE = "episode_title";
+    /** エピソード情報.*/
+    public static final String EPISODE_MESSAGE = "episode_message";
+    /** 他サービス.*/
+    public static final String EPISODE_OTHERSERVICE = "other_service";
 
     /** エラータイプ.*/
     public enum ErrorType {
@@ -173,7 +179,9 @@ public class ContentDetailUtils {
         /**番組詳細のみ.*/
         TV_ONLY,
         /**番組詳細＆チャンネル.*/
-        TV_CH
+        TV_CH,
+        /**作品情報＆エピソード.*/
+        VOD_EPISODE
     }
 
     /**
@@ -554,7 +562,7 @@ public class ContentDetailUtils {
      * @return 起動URL
      */
     public static String getStartDtvAppUrl(final OtherContentsDetailData detailData, final Context context) {
-        String packageName = getStartAppPackageName(ContentDetailUtils.StartAppServiceType.DTV);
+        String packageName = getStartAppPackageName(StartAppServiceType.DTV);
         long localVersionCode = getVersionCode(packageName, context);
         // contentsId が16桁の場合に下8桁を使用する。※前提条件:contentsId は8桁または16桁である
         String contentsId = detailData.getContentsId().substring(detailData.getContentsId().length() - CONTENTS_ID_VALID_LENGTH);
@@ -674,13 +682,50 @@ public class ContentDetailUtils {
     }
 
     /**
+     * 機能：dTVAPP起動（エピソードシリーズ専用）（ぷららサーバ）.
+     * @param titleId タイトルID
+     * @param episodeId エピソードID
+     * @param context コンテキスト
+     * @return 起動URL
+     */
+    public static String getStartDtvEpisodeAppUrl(final String titleId, final String episodeId, final Context context) {
+        String packageName = getStartAppPackageName(StartAppServiceType.DTV);
+        long localVersionCode = getVersionCode(packageName, context);
+        DTVTLogger.debug("title_id:" + titleId + " episode_id:" + episodeId);
+        if (dTVAppIsNewVersion(localVersionCode)) {
+            return getStartDtvEpisodeUrlByPlalaNewVersion(episodeId);
+        } else {
+            return getStartDtvEpisodeUrlByPlalaOldVersion(titleId, episodeId);
+        }
+    }
+
+    /**
+     * 機能：dTV APP起動（エピソードシリーズ専用）（ぷららサーバ）（新dTVバージョン：60000以上）.
+     * @param episodeId エピソードID
+     * @return 起動URL
+     */
+    private static String getStartDtvEpisodeUrlByPlalaNewVersion(final String episodeId) {
+        return UrlConstants.WebUrl.NEW_PRODUCT_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, episodeId);
+    }
+
+    /**
+     * 機能：dTV APP起動（エピソードシリーズ専用）（旧dTVバージョン：60000未満）.
+     * @param titleId タイトルID
+     * @param episodeId エピソードID
+     * @return 起動URL
+     */
+    private static String getStartDtvEpisodeUrlByPlalaOldVersion(final String titleId, final String episodeId) {
+        return String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, titleId, episodeId);
+    }
+
+    /**
      * 機能：dTVAPP起動（ぷららサーバ）.
      * @param detailData ぷららサーバメタデータ
      * @param context コンテキスト
      * @return 起動URL
      */
     public static String getStartDtvAppUrl(final VodMetaFullData detailData, final Context context) {
-        String packageName = getStartAppPackageName(ContentDetailUtils.StartAppServiceType.DTV);
+        String packageName = getStartAppPackageName(StartAppServiceType.DTV);
         long localVersionCode = getVersionCode(packageName, context);
         DTVTLogger.debug("dtv_type[" + detailData.getDtvType() + "] title_id:" + detailData.getTitle_id() + " episode_id:" + detailData.getEpisode_id());
         if (dTVAppIsNewVersion(localVersionCode)) {
@@ -1025,6 +1070,33 @@ public class ContentDetailUtils {
     }
 
     /**
+     * タブ名取得.
+     * @param tabType タブタイプ
+     * @param context context
+     * @return 録画予約確認ダイアログ
+     */
+    public static String[] getTabNames(final ContentDetailUtils.TabType tabType, final Context context) {
+        String[] mTabNames = null;
+        switch (tabType) {
+            case VOD:
+                mTabNames = context.getResources().getStringArray(R.array.contents_detail_tab_other_service_vod);
+                break;
+            case TV_ONLY:
+                mTabNames = context.getResources().getStringArray(R.array.contents_detail_tab_other_service_tv);
+                break;
+            case TV_CH:
+                mTabNames = context.getResources().getStringArray(R.array.contents_detail_tabs_tv_ch);
+                break;
+            case VOD_EPISODE:
+                mTabNames = context.getResources().getStringArray(R.array.contents_detail_tabs_vod_episode);
+                break;
+            default:
+                break;
+        }
+        return mTabNames;
+    }
+
+    /**
      * 録画予約確認ダイアログを表示.
      * @param context コンテキスト
      * @return 録画予約確認ダイアログ
@@ -1040,20 +1112,6 @@ public class ContentDetailUtils {
         recordingReservationConfirmDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
         recordingReservationConfirmDialog.setCancelable(false);
         return recordingReservationConfirmDialog;
-    }
-
-    /**
-     * 録画予約失敗時エラーダイアログ表示.
-     * @param context コンテキスト.
-     * @param errorMessage エラーメッセージ.
-     * @return 録画予約失敗エラーダイアログ
-     */
-    public static CustomDialog createErrorDialog(final Context context, final String errorMessage) {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
-        failedRecordingReservationDialog.setContent(errorMessage);
-        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
-        failedRecordingReservationDialog.setCancelable(false);
-        return failedRecordingReservationDialog;
     }
 
     /**

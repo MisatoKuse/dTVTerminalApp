@@ -145,9 +145,11 @@ public class ContentUtils {
     /** コンテンツ種別2.*/
     public static final int CUSTOMDIMENSION_CONTENTSTYPE2 = 6;
     /** コンテンツ名.*/
-    private static final int CUSTOMDIMENSION_CONTENTNAME = 7;
+    public static final int CUSTOMDIMENSION_CONTENTNAME = 7;
     /** 検索キーワード.*/
     public static final int CUSTOMDIMENSION_KEYWORD = 8;
+    /** 視聴デバイス.*/
+    public static final int CUSTOMDIMENSION_DEVICE = 9;
     /** ジャンル.*/
     public static final int CUSTOMDIMENSION_GENRE = 10;
     /**リモート視聴設定.*/
@@ -212,6 +214,8 @@ public class ContentUtils {
     public static final String MY_CHANNEL_ADULT_TYPE_ADULT = "adult";
     /** チャンネルのパレンタル設定値(G).*/
     public static final String MY_CHANNEL_R_VALUE_G = "G";
+    /** minus one.*/
+    public static final int ILLEGAL_POSITION = -1;
     //endregion
 
     /**
@@ -1555,7 +1559,7 @@ public class ContentUtils {
      *
      * @param context コンテキスト
      * @param id サービスID
-     * @return 他サービスのコンテンツ種別1名名
+     * @return 他サービスのコンテンツ種別1名
      */
     public static String getContentsType1(final Context context, final int id) {
         String contentsType1 = null;
@@ -1597,6 +1601,41 @@ public class ContentUtils {
                 contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_hikari_dtv_ch);
                 break;
             default:
+                break;
+        }
+        return contentsType1;
+    }
+
+    /**
+     * コンテンツ種別1名取得.
+     *
+     * @param context context
+     * @param contentsType contentsType
+     * @return 他サービスのコンテンツ種別1名
+     */
+    private static String getContentsType1(final ContentsType contentsType, final Context context) {
+        String contentsType1;
+        switch (contentsType) {
+            case HIKARI_IN_DTV:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_hikari_dtv);
+                break;
+            case HIKARI_IN_DCH:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_hikari_dtv_ch);
+                break;
+            case PURE_DTV:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv);
+                break;
+            case PURE_DTV_CHANNEL:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dtv_ch);
+                break;
+            case D_ANIME_STORE:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_danime);
+                break;
+            case DAZN:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_pure_dazn);
+                break;
+            default:
+                contentsType1 = context.getString(R.string.google_analytics_custom_dimension_contents_type1_h4d);
                 break;
         }
         return contentsType1;
@@ -2171,6 +2210,81 @@ public class ContentUtils {
         }
         return result;
     }
+
+    /**
+     * [アプリ名で視聴するをタップ]のアクション名取得.
+     *  @param contentsType contentsType
+     *  @param context context
+     *  @return サービス
+     */
+    private static String getActionNameByServiceId(final ContentsType contentsType, final Context context) {
+        String result = null;
+        switch (contentsType) {
+            case PURE_DTV:
+            case HIKARI_IN_DTV:
+                result = context.getString(R.string.google_analytics_category_action_sp_dtv);
+                break;
+            case HIKARI_IN_DCH:
+            case PURE_DTV_CHANNEL:
+                result = context.getString(R.string.google_analytics_category_action_sp_dtv_ch);
+                break;
+            case D_ANIME_STORE:
+                result = context.getString(R.string.google_analytics_category_action_sp_danime);
+                break;
+            case DAZN:
+                result = context.getString(R.string.google_analytics_category_action_sp_dazn);
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * [アプリ名で視聴するをタップ]のカテゴリ名取得.
+     *  @param contentsType contentsType
+     *  @param context context
+     *  @return サービス
+     */
+    private static String getCategoryByServiceId(final ContentsType contentsType, final Context context) {
+        String result;
+        switch (contentsType) {
+            case PURE_DTV:
+                result = context.getString(R.string.google_analytics_category_service_name_dtv);
+                break;
+            case PURE_DTV_CHANNEL:
+                result = context.getString(R.string.google_analytics_category_service_name_dtv_ch);
+                break;
+            case D_ANIME_STORE:
+                result = context.getString(R.string.google_analytics_category_service_name_danime);
+                break;
+            case DAZN:
+                result = context.getString(R.string.google_analytics_category_service_name_dazn);
+                break;
+            default:
+                result = context.getString(R.string.google_analytics_category_service_name_h4d);
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * [アプリ名で視聴するをタップ]のイベント送信.
+     *  @param contentsType コンテンツタイプ
+     *  @param contentsName コンテンツ名
+     *  @param context context
+     */
+    public static void sendStartSpAppEvent(final ContentsType contentsType, final String contentsName, final Context context) {
+        String actionName = getActionNameByServiceId(contentsType, context);
+        String categoryName = getCategoryByServiceId(contentsType, context);
+        String contentsType1 = getContentsType1(contentsType, context);
+        SparseArray<String> customDimensions = new SparseArray<>();
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE1, contentsType1);
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_CONTENTSTYPE2, context.getString(R.string.google_analytics_custom_dimension_contents_type2_void));
+        customDimensions.put(ContentUtils.CUSTOMDIMENSION_DEVICE, context.getString(R.string.google_analytics_custom_dimension_device_sp));
+        GoogleAnalyticsUtils.sendEventInfo(categoryName, actionName, contentsName, customDimensions);
+    }
+
 
     /**
      * 予約されたサービス.

@@ -1110,8 +1110,7 @@ public class WebApiBasePlala {
             }
 
             //圏外等の判定
-            if (mContext == null
-                    || (mContext != null && !NetWorkUtils.isOnline(mContext))) {
+            if (mContext == null || !NetWorkUtils.isOnline(mContext)) {
                 //そもそも通信のできない状態なので、ネットワークエラーとする
                 mReturnCode.errorState.setErrorType(
                         DtvtConstants.ErrorType.NETWORK_ERROR);

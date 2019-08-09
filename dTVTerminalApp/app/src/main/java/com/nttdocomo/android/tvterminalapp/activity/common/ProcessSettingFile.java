@@ -90,12 +90,12 @@ public class ProcessSettingFile {
         /**
          * 設定ファイルダイアログ表示コールバック.
          * @param errorMessage errorMessage
-         * @param errorDialogType dialogType
+         * @param showDialogType dialogType
          * @param okCallback okCallback
          * @param cancelCallback cancelCallback
          * @param dismissCallback dismissCallback
          */
-        void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ErrorDialogType errorDialogType,
+        void onShowSettingFileDialog(final String errorMessage, final CustomDialog.ShowDialogType showDialogType,
                                      final CustomDialog.ApiOKCallback okCallback,
                                      final CustomDialog.ApiCancelCallback cancelCallback,
                                      final CustomDialog.DismissCallback dismissCallback);
@@ -315,7 +315,7 @@ public class ProcessSettingFile {
         }
         if (printMessage != null) {
             if (mOnShowSettingDialogListener != null) {
-                mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ErrorDialogType.SETTING_FILE_ERROR_DIALOG, null, null, null);
+                mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ShowDialogType.SETTING_FILE_ERROR_DIALOG, null, null, null);
             }
         }
     }
@@ -335,11 +335,11 @@ public class ProcessSettingFile {
         mGooglePlay = true;
         if (isCancel) {
             printMessage = mContext.getString(R.string.setting_file_download);
-            mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ErrorDialogType.OPTIONAL_VERSION_UP,
+            mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP,
                     null, getDownloadCancelCallback(), null);
         } else {
             printMessage = mContext.getString(R.string.setting_file_force_download);
-            mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ErrorDialogType.FORCED_VERSION_UP,
+            mOnShowSettingDialogListener.onShowSettingFileDialog(printMessage, CustomDialog.ShowDialogType.FORCED_VERSION_UP,
                     null, null, null);
         }
     }

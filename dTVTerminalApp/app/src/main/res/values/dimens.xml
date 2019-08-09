@@ -179,6 +179,13 @@
     <dimen name="contents_detail_service_icon_label_margin">8dp</dimen>
     <dimen name="contents_detail_service_icon_label_height">20dp</dimen>
     <dimen name="contents_detail_service_icon_label_dazn_width_height">25dp</dimen>
+    <dimen name="contents_detail_episode_txt_size">14dp</dimen>
+    <dimen name="contents_detail_episode_read_all_title_height">40dp</dimen>
+    <dimen name="contents_detail_episode_8_dp">8dp</dimen>
+    <dimen name="contents_detail_episode_10_dp">10dp</dimen>
+    <dimen name="contents_detail_episode_24_dp">24dp</dimen>
+    <dimen name="contents_detail_episode_30_dp">30dp</dimen>
+    <dimen name="contents_detail_episode_44_dp">44dp</dimen>
 
     <!--リモコン -->
     <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>

@@ -14,8 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -42,112 +45,58 @@ import java.util.List;
 public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     //region variable
-    /**
-     * 各Activityインスタンス.
-     */
+    /** 各Activityインスタンス.*/
     private Context mContext;
-    /**
-     * リスト用データソース.
-     */
+    /** リスト用データソース.*/
     private List<ContentsData> mListData;
-    /**
-     * サムネイル取得用プロバイダー.
-     */
+    /** サムネイル取得用プロバイダー.*/
     private ThumbnailProvider mThumbnailProvider;
-    /**
-     * 表示項目のタイプ.
-     */
+    /** 表示項目のタイプ.*/
     private ActivityTypeItem mType;
-    /**
-     * ビューの生成.
-     */
+    /** ビューの生成.*/
     private final LayoutInflater mInflater;
-    /**
-     * タブのタイプ.
-     */
+    /** タブのタイプ.*/
     private TabTypeItem mTabType;
-
-    /**
-     * サムネイルmarginleft.
-     */
+    /** サムネイルmarginleft.*/
     private final static int THUMBNAIL_MARGIN_LEFT = 16;
-    /**
-     * サムネイルmargintop.
-     */
+    /** サムネイルmargintop.*/
     private final static int THUMBNAIL_MARGIN_END = 10;
-    /**
-     * サムネイルmarginbottom.
-     */
+    /** サムネイルmarginbottom.*/
     private final static int THUMBNAIL_MARGIN_BOTTOM = 10;
-    /**
-     * status　margintop.
-     */
+    /** status　margintop.*/
     private final static int STATUS_MARGIN_TOP17 = 17;
-    /**
-     * status　margintop.
-     */
+    /** status　margintop.*/
     private final static int STATUS_MARGIN_TOP10 = 10;
-
-    /**
-     * 番組タイトル margintop.
-     */
+    /** 番組タイトル margintop.*/
     private final static int TITLE_MARGIN_TOP17 = 17;
-
-    /**
-     * 番組タイトル margintop.
-     */
+    /** 番組タイトル margintop.*/
     private final static int TITLE_MARGIN_TOP20 = 20;
-
-    /**
-     * クリップアイコンmargintop.
-     */
-    private final static int CLIP_MARGIN_TOP35 = 35;
-    /**
-     * 時刻テキストサイズ.
-     */
+    /** 時刻テキストサイズ.*/
     private final static int TIME_TEXT_SIZE = 12;
-    /**
-     * margin0.
-     */
+    /** margin0.*/
     private final static int THUMBNAIL_MARGIN0 = 0;
-    /**
-     * ダウンロードStatus種別.
-     */
+    /** ダウンロードStatus種別.*/
     public final static int DOWNLOAD_STATUS_ALLOW = 0;
-    /**
-     * ダウンロードStatus種別.
-     */
+    /** ダウンロードStatus種別.*/
     public final static int DOWNLOAD_STATUS_LOADING = 1;
-
-    /**
-     * ダウンロードStatus種別.
-     */
+    /** ダウンロードStatus種別.*/
     public final static int DOWNLOAD_STATUS_COMPLETED = 2;
-    /**
-     * アイテムposition.
-     */
+    /** アイテムposition.*/
     private final static int CONTENT_POSITION_ONE = 0;
-    /**
-     * アイテムposition.
-     */
+    /** アイテムposition.*/
     private final static int CONTENT_POSITION_TWO = 1;
-    /**
-     * アイテムposition.
-     */
+    /** アイテムposition.*/
     private final static int CONTENT_POSITION_THREE = 2;
-
-    /**
-     * ダウンロードcallback.
-     */
+    /** ダウンロードcallback.*/
     private DownloadCallback mDownloadCallback;
-    /**
-     * ダウンロード禁止判定フラグ.
-     */
+    /** エピソードコールバック.*/
+    private EpisodeItemClickCallback mEpisodeItemClickCallback;
+    /** ダウンロード禁止判定フラグ.*/
     private boolean isDownloadStop = false;
-    /**
-     * 再利用のビュー最大count.
-     */
+    /** 再利用のビュー最大count.*/
     private int mMaxItemCount = 0;
+    /** エピソード最大行数.*/
+    private final int DETAIL_INFO_TEXT_MAX_LINE = 11;
     //endregion variable
 
     /**
@@ -181,6 +130,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         TYPE_SEARCH_LIST,
         /**コンテンツ詳細チャンネル一覧.*/
         TYPE_CONTENT_DETAIL_CHANNEL_LIST,
+        /**コンテンツ詳細エピソード一覧.*/
+        TYPE_CONTENT_DETAIL_EPISODE_LIST,
         /**おすすめ番組・ビデオ.*/
         TYPE_RECOMMEND_LIST
     }
@@ -190,34 +141,20 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * 共通タブーを使う.
      */
     public enum TabTypeItem {
-        /**
-         * テレビ.
-         */
+        /** テレビ.*/
         TAB_TV,
-        /**
-         * ビデオ.
-         */
+        /** ビデオ.*/
         TAB_VIDEO,
-        /**
-         * dTV.
-         */
+        /** dTV.*/
         TAB_D_TV,
-        /**
-         * dTVチャンネル.
-         */
+        /** dTVチャンネル.*/
         TAB_D_CHANNEL,
-        /**
-         * dアニメ.
-         */
+        /** dアニメ.*/
         TAB_D_ANIMATE,
-        /**
-         * DAZN.
-         */
+        /** DAZN.*/
         TAB_DAZN,
-        /**
-         * デフォルト.
-         */
-        TAB_DEFAULT,
+        /** デフォルト.*/
+        TAB_DEFAULT
     }
 
     /**
@@ -242,6 +179,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     public void setTabTypeItem(final TabTypeItem tabTypeItem) {
         this.mTabType = tabTypeItem;
+    }
+
+    /**
+     * エピソードコールバック設定.
+     * @param episodeItemClickCallback エピソードコールバック
+     */
+    public void setEpisodeThumbnailClickCallback(final EpisodeItemClickCallback episodeItemClickCallback) {
+        this.mEpisodeItemClickCallback = episodeItemClickCallback;
     }
 
     /**
@@ -321,7 +266,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (listContentInfo.hasChildContentList()) {
             setTitleData(holder, listContentInfo);
         } else {
-            setShowDataVisibility(holder);
+            setShowDataVisibility(holder, contentView);
             setContentsData(holder, listContentInfo, contentView);
             setClipButtonItem(position, holder, contentView, listContentInfo);
             setMarginLayout(position, holder, contentView);
@@ -340,6 +285,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setClipButtonItem(final int position, final ViewHolder holder, final View contentView, final ContentsData listContentInfo) {
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
+            if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
+                setEpisodeClickListener(holder, contentView, listContentInfo);
+                return;
+            }
             //クリップボタン処理を設定する
             final ClipRequestData requestData = listContentInfo.getRequestData();
             final ImageView clipButton = contentView.findViewById(R.id.item_common_result_clip_tv);
@@ -381,6 +330,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST:
+            case TYPE_CONTENT_DETAIL_EPISODE_LIST:
                 textMargin = STATUS_MARGIN_TOP17;
                 setTextMargin(textMargin, holder, contentView);
                 break;
@@ -537,6 +487,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setNowOnAirData(holder, listContentInfo, contentView);
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
+        } else if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
+            setDurTime(contentView, listContentInfo);
+            isNeedShowPullDown(holder, listContentInfo, contentView);
         }
     }
 
@@ -718,6 +671,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_DAILY_RANK: // 今日の番組ランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_CONTENT_DETAIL_EPISODE_LIST: // コンテンツ詳細エピソード一覧
                 ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
@@ -838,6 +792,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, thumbnail);
             if (thumbnailImage != null) {
                 holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+            }
+            if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST) {
+                holder.iv_thumbnail.setAlpha(ContentDetailUtils.THUMBNAIL_SHADOW_ALPHA);
             }
         }
     }
@@ -1026,6 +983,56 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
+     * コンテンツ尺長設定.
+     * @param contentView contentView
+     * @param listContentInfo ContentsData
+     */
+    private void setDurTime(final View contentView, final ContentsData listContentInfo) {
+        TextView durTextView = contentView.findViewById(R.id.item_common_result_dur_time);
+        durTextView.setVisibility(View.VISIBLE);
+        int dur = listContentInfo.getDurTime();
+        int durTime = dur / DateUtils.EPOCH_TIME_ONE_MIN;
+        if (dur % DateUtils.EPOCH_TIME_ONE_MIN != 0) {
+            durTime = durTime + 1;
+        }
+        String result = durTime + mContext.getResources().getString(R.string.common_contents_min);
+        durTextView.setText(result);
+    }
+
+    /**
+     * プルダウンの表示を判定.
+     * @param holder ViewHolder
+     * @param listContentInfo ContentsData
+     * @param contentView contentView
+     */
+    private void isNeedShowPullDown(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+        holder.tv_episode_synop.setText("");
+        holder.tv_episode_synop.setVisibility(View.GONE);
+        holder.tv_episode_all_synop.setVisibility(View.GONE);
+        final LinearLayout ll = contentView.findViewById(R.id.item_common_result_episode);
+        ll.setVisibility(View.GONE);
+        holder.tv_line.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(listContentInfo.getSynop())) {
+            holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_bottom);
+            holder.tv_episode_synop.setText(listContentInfo.getSynop());
+            holder.tv_episode_all_synop.setVisibility(View.GONE);
+            if (listContentInfo.isShowSynop()) {
+                holder.tv_episode_synop.setVisibility(View.VISIBLE);
+                holder.tv_episode_synop.setMaxLines(DETAIL_INFO_TEXT_MAX_LINE);
+                holder.tv_episode_synop.setEllipsize(TextUtils.TruncateAt.END);
+                if (listContentInfo.isSynopIsAllShow()) {
+                    holder.tv_episode_all_synop.setVisibility(View.VISIBLE);
+                    holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_top);
+                }
+                holder.tv_line.setVisibility(View.GONE);
+                ll.setVisibility(View.VISIBLE);
+            }
+        } else {
+            holder.tv_clip.setImageResource(R.mipmap.icon_grayout_arrow_bottom);
+        }
+    }
+
+    /**
      * 共通Itemの設定.
      *
      * @param holder ViewHolder
@@ -1042,6 +1049,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
         holder.ll_rating = view.findViewById(R.id.item_common_result_content_rating);
         holder.tv_line = view.findViewById(R.id.item_common_result_line);
+        if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
+            holder.tv_episode_synop = view.findViewById(R.id.item_common_result_episode_info);
+            holder.tv_episode_all_synop = view.findViewById(R.id.item_common_result_episode_info_show_all);
+        }
         return holder;
     }
 
@@ -1058,13 +1069,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     /**
      * Itemのパターンを設定.
-     *
      * @param holder ViewHolder
      * @param view   View
      */
     private void setListItemPattern(final ViewHolder holder, final View view) {
         DTVTLogger.start();
-        // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         ViewHolder viewHolder = holder;
         view.setTag(viewHolder);
         viewHolder.isCommonContent = true;
@@ -1091,6 +1100,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_CONTENT_DETAIL_EPISODE_LIST: // コンテンツ詳細エピソード一覧
                 viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
@@ -1130,11 +1140,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     /**
      * データの設定.
-     *
      * @param holder 設定済みViewHolder
+     * @param contentView 親ビュー
      */
     @SuppressWarnings("OverlyLongMethod")
-    private void setShowDataVisibility(final ViewHolder holder) {
+    private void setShowDataVisibility(final ViewHolder holder, final View contentView) {
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
                 setTabContentLayout(holder);
@@ -1176,6 +1186,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
+            case TYPE_CONTENT_DETAIL_EPISODE_LIST: // コンテンツ詳細エピソード一覧
+                setEpisodeItemView(holder, contentView);
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
@@ -1190,6 +1202,30 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
+     * エピソードアイテムビュー表示.
+     * @param holder holder view
+     * @param contentView 親ビュー
+     */
+    private void setEpisodeItemView(final ViewHolder holder, final View contentView) {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                (int) mContext.getResources().getDimension(R.dimen.contents_detail_episode_44_dp),
+                (int) mContext.getResources().getDimension(R.dimen.contents_detail_episode_44_dp));
+        layoutParams.setMarginStart((int) mContext.getResources().getDimension(R.dimen.contents_detail_episode_8_dp));
+        layoutParams.setMarginEnd((int) mContext.getResources().getDimension(R.dimen.contents_detail_episode_10_dp));
+        holder.tv_clip.setLayoutParams(layoutParams);
+        holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_bottom);
+        holder.tv_clip.setClickable(false);
+        ImageView imageView = new ImageView(mContext);
+        layoutParams = new RelativeLayout.LayoutParams((int) mContext.getResources().getDimension(R.dimen.contents_detail_episode_30_dp),
+                (int) mContext.getResources().getDimension(R.dimen.contents_detail_episode_30_dp));
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, R.id.item_common_result_thumbnail_iv_rl);
+        imageView.setLayoutParams(layoutParams);
+        imageView.setBackgroundResource(R.mipmap.mediacontrol_icon_white_play_arrow2);
+        RelativeLayout imageViewRl = contentView.findViewById(R.id.item_common_result_thumbnail_iv_rl);
+        imageViewRl.addView(imageView);
+    }
+
+    /**
      * クリップ表示処理.
      *
      * @param holder          クリップアイコン
@@ -1197,6 +1233,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setClipButton(final ViewHolder holder, final ContentsData listContentInfo) {
         if (holder.tv_clip != null) {
+            if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
+                holder.tv_clip.setVisibility(View.VISIBLE);
+                return;
+            }
             if (listContentInfo.getRequestData() != null) {
                 String clipType = listContentInfo.getRequestData().getType();
                 //ひかりコンテンツ判定
@@ -1224,6 +1264,100 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_clip.setVisibility(View.GONE);
             }
         }
+    }
+
+    /**
+     * エピソードリスナーを設定.
+     * @param holder  ViewHolder
+     * @param listContentInfo listContentInfo
+     * @param contentView  親ビュー
+     * @param isShow isShow
+     */
+    private void showOrHideEpisodePullDown(final ViewHolder holder, final View contentView, final ContentsData listContentInfo, final boolean isShow) {
+        final LinearLayout ll = contentView.findViewById(R.id.item_common_result_episode);
+        if (isShow) {
+            holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_top);
+            holder.tv_line.setVisibility(View.GONE);
+            holder.tv_episode_synop.setEllipsize(null);
+            holder.tv_episode_synop.setMaxLines(Integer.MAX_VALUE);
+            ll.setVisibility(View.VISIBLE);
+            holder.tv_episode_synop.setVisibility(View.VISIBLE);
+            holder.tv_episode_synop.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    if (holder.tv_episode_synop.getLineCount() > 0) {
+                        holder.tv_episode_synop.getViewTreeObserver().removeOnPreDrawListener(this);
+                    }
+                    int intTextViewCount = holder.tv_episode_synop.getLineCount();
+                    if (!listContentInfo.isSynopIsAllShow() && intTextViewCount > DETAIL_INFO_TEXT_MAX_LINE) {
+                        listContentInfo.setSynopIsAllShow(true);
+                        if (listContentInfo.isShowSynop()) {
+                            holder.tv_episode_all_synop.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    if (holder.tv_episode_synop.getLineCount() > 0) {
+                        holder.tv_episode_synop.setEllipsize(TextUtils.TruncateAt.END);
+                        holder.tv_episode_synop.setMaxLines(DETAIL_INFO_TEXT_MAX_LINE);
+                        ll.setVisibility(View.VISIBLE);
+                    }
+                    return true;
+                }
+            });
+            holder.tv_episode_all_synop.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    if (mEpisodeItemClickCallback != null) {
+                        mEpisodeItemClickCallback.onMoreBtnClick(listContentInfo);
+                    }
+                }
+            });
+        } else {
+            holder.tv_episode_synop.setVisibility(View.GONE);
+            holder.tv_episode_all_synop.setVisibility(View.GONE);
+            holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_bottom);
+            holder.tv_line.setVisibility(View.VISIBLE);
+            ll.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * エピソードリスナーを設定.
+     * @param holder  ViewHolder
+     * @param contentView  親ビュー
+     * @param listContentInfo アイテムデータ
+     */
+    private void setEpisodeClickListener(final ViewHolder holder, final View contentView, final ContentsData listContentInfo) {
+        RelativeLayout mRelativeRl = contentView.findViewById(R.id.item_common_result_item_rl);
+        if (!TextUtils.isEmpty(listContentInfo.getSynop())) {
+            mRelativeRl.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    if (!listContentInfo.isShowSynop()) {
+                        showOrHideEpisodePullDown(holder, contentView, listContentInfo, true);
+                        listContentInfo.setIsShowSynop(true);
+                        if (listContentInfo.isSynopIsAllShow()) {
+                            holder.tv_episode_all_synop.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        showOrHideEpisodePullDown(holder, contentView, listContentInfo, false);
+                        listContentInfo.setIsShowSynop(false);
+                        holder.tv_episode_all_synop.setVisibility(View.GONE);
+                    }
+                }
+            });
+        } else {
+            mRelativeRl.setOnClickListener(null);
+            holder.tv_episode_synop.setVisibility(View.GONE);
+            holder.tv_episode_all_synop.setVisibility(View.GONE);
+        }
+        holder.iv_thumbnail.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (mEpisodeItemClickCallback != null) {
+                    mEpisodeItemClickCallback.onThumbnailClick(listContentInfo);
+                }
+            }
+        });
     }
 
     /**
@@ -1333,6 +1467,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          */
         TextView tv_sub_title = null;
         /**
+         * あらすじ情報.
+         */
+        TextView tv_episode_synop = null;
+        /**
+         * 全文を読む.
+         */
+        TextView tv_episode_all_synop = null;
+        /**
          * 共通コンテンツなのか.
          */
         boolean isCommonContent = true;
@@ -1348,6 +1490,22 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * @param v 　View
          */
         void downloadClick(View v);
+    }
+
+    /**
+     * エピソードエピソード再生アイコンコールバック.
+     */
+    public interface EpisodeItemClickCallback {
+        /**
+         * エピソード再生アイコンタップコールバック.
+         * @param contentsData contentsData
+         */
+        void onThumbnailClick(ContentsData contentsData);
+        /**
+         * 全文を読むタップコールバック.
+         * @param contentsData contentsData
+         */
+        void onMoreBtnClick(ContentsData contentsData);
     }
 
     @Override

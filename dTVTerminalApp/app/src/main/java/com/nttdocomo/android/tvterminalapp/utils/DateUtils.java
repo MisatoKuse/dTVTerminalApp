@@ -180,7 +180,8 @@ public class DateUtils {
 
     /** 1日のエポック秒(用途ができたので、public化). */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
-
+    /** 1分の秒数. */
+    public static final int EPOCH_TIME_ONE_MIN = 60;
     /** TIMEZONE(TOKYO). */
     public static final String TIMEZONE_TOKYO = "Asia/Tokyo";
     /** 1時間のエポック秒. */
