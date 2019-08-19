@@ -174,7 +174,7 @@ public class ContentsData {
      * あらすじ情報全文表示状態設定.
      * @param isShowSynopAll isShowSynopAll
      */
-    public void setSynopIsAllShow(final boolean isShowSynopAll) {
+    public void setIsShowSynopAll(final boolean isShowSynopAll) {
         this.mIsShowSynopAll = isShowSynopAll;
     }
 

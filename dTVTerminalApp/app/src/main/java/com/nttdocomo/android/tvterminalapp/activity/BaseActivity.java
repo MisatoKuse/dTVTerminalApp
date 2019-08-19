@@ -1417,7 +1417,7 @@ public class BaseActivity extends FragmentActivity implements
         customDialog.setApiListItemClickCallback((apiListItemClickCallback == null) ? this : apiListItemClickCallback);
         //ボタン以外タップ不可
         customDialog.setOnTouchOutside(false);
-        customDialog.setErrorDialogType((apiOKCallback == null) ? CustomDialog.ShowDialogType.COMMON_DIALOG : showDialogType);
+        customDialog.setErrorDialogType((showDialogType == null) ? CustomDialog.ShowDialogType.COMMON_DIALOG : showDialogType);
         return customDialog;
     }
 

@@ -489,7 +489,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             setSubTitle(holder, listContentInfo);
         } else if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
             setDurTime(contentView, listContentInfo);
-            isNeedShowPullDown(holder, listContentInfo, contentView);
+            showPullDownIfNeed(holder, listContentInfo, contentView);
         }
     }
 
@@ -1005,7 +1005,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo ContentsData
      * @param contentView contentView
      */
-    private void isNeedShowPullDown(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+    private void showPullDownIfNeed(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
         holder.tv_episode_synop.setText("");
         holder.tv_episode_synop.setVisibility(View.GONE);
         holder.tv_episode_all_synop.setVisibility(View.GONE);
@@ -1290,7 +1290,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     }
                     int intTextViewCount = holder.tv_episode_synop.getLineCount();
                     if (!listContentInfo.isSynopIsAllShow() && intTextViewCount > DETAIL_INFO_TEXT_MAX_LINE) {
-                        listContentInfo.setSynopIsAllShow(true);
+                        listContentInfo.setIsShowSynopAll(true);
                         if (listContentInfo.isShowSynop()) {
                             holder.tv_episode_all_synop.setVisibility(View.VISIBLE);
                         }
