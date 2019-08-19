@@ -311,11 +311,13 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         for (VodMetaFullData vodMetaFullData : metaFullData) {
             ContentsData data = new ContentsData();
             String title = vodMetaFullData.getTitle();
+            String epiTitle = vodMetaFullData.getEpititle();
             String searchOk = vodMetaFullData.getmSearch_ok();
             String dispType = vodMetaFullData.getDisp_type();
             String dtv = vodMetaFullData.getDtv();
             String dtvType = vodMetaFullData.getDtvType();
             data.setTitle(title);
+            data.setEpisodeTitle(epiTitle);
             //エポック秒から文字に変換
             data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
             if (ContentUtils.DTV_FLAG_ONE.equals(dtv)) {
@@ -344,7 +346,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
                 // activeDataList から視聴可能期限を取り出し、配信期限(AvailEndDate)として使用する(DREM-2275の仕様)
                 String result = ContentUtils.getRentalVodValidInfo(vodMetaFullData, mActiveDatas, true);
                 long activeEndDate = Long.parseLong(result);
-                data.setAvailEndDate(activeEndDate);
+                data.setAvailEndDate(activeEndDate == 0 ? vodMetaFullData.getAvail_end_date() : activeEndDate);
                 data.setIsRental(mIsRental);
             } else {
                 data.setAvailEndDate(vodMetaFullData.getAvail_end_date());

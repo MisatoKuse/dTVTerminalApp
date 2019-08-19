@@ -243,7 +243,6 @@
             android:layout_marginTop="@dimen/contents_detail_episode_24_dp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/channel_list_divider_height"
-            android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
             android:background="@color/setting_list_divider_color"
             android:visibility="visible"/>
     </LinearLayout>

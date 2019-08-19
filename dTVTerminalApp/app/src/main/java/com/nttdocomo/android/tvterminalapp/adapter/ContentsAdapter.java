@@ -633,8 +633,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 　ContentsData
      */
     private void setTitleData(final ViewHolder holder, final ContentsData listContentInfo) {
-        if (!TextUtils.isEmpty(listContentInfo.getTitle())) { //タイトル
-            String title = listContentInfo.getTitle() + mContext.getResources().getString(R.string.common_ranking_enter);
+        String title;
+        if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST) {
+            title = listContentInfo.getEpisodeTitle();
+        } else {
+            title = listContentInfo.getTitle();
+        }
+        title = title + mContext.getResources().getString(R.string.common_ranking_enter);
+        if (!TextUtils.isEmpty(title)) {
             holder.tv_title.setText(title);
         } else {
             holder.tv_title.setText(mContext.getResources().getString(R.string.common_ranking_enter));

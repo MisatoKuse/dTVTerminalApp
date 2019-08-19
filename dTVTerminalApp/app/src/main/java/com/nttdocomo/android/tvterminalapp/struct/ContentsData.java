@@ -22,6 +22,8 @@ public class ContentsData {
     private String mTime = null;
     /**メインタイトル.*/
     private String mTitle = null;
+    /**エピソードタイトル.*/
+    private String mEpisodeTitle = null;
     /**評価ポイント.*/
     private String mRatStar = null;
     /**サムネイルURL(リスト).*/
@@ -369,19 +371,35 @@ public class ContentsData {
     }
 
     /**
-     * タイトルID取得.
-     * @return タイトルID
+     * タイトル取得.
+     * @return タイトル
      */
     public String getTitle() {
         return mTitle;
     }
 
     /**
-     * タイトルID設定.
-     * @param title タイトルID
+     * タイトル設定.
+     * @param title タイトル
      */
     public void setTitle(final String title) {
         this.mTitle = title;
+    }
+
+    /**
+     * エピソードタイトル取得.
+     * @return  title エピソードタイトル
+     */
+    public String getEpisodeTitle() {
+        return mEpisodeTitle;
+    }
+
+    /**
+     * エピソードタイトル設定.
+     * @param episodeTitle エピソードタイトル
+     */
+    public void setEpisodeTitle(final String episodeTitle) {
+        this.mEpisodeTitle = episodeTitle;
     }
 
     /**

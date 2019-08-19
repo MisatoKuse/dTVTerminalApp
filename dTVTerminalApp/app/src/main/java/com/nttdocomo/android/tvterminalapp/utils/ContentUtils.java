@@ -1337,7 +1337,7 @@ public class ContentUtils {
         String licenseId = "";
         //現在Epoch秒
         long nowDate = DateUtils.getNowTimeFormatEpoch();
-        if (!TextUtils.isEmpty(puid)) {
+        if (!TextUtils.isEmpty(puid) && activeList != null) {
             for (ActiveData activeData : activeList) {
                 String license_id = activeData.getLicenseId();
                 if (puid.equals(license_id)) {

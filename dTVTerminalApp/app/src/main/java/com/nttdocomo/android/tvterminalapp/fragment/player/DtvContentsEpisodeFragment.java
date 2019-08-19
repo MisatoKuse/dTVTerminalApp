@@ -176,7 +176,7 @@ public class DtvContentsEpisodeFragment extends Fragment implements AbsListView.
         mFootView.setVisibility(View.VISIBLE);
         mIsLoading = true;
         if (mChangedScrollLoadListener != null) {
-            mChangedScrollLoadListener.onEpisodeLoadMore(getContentsData().size());
+            mChangedScrollLoadListener.onEpisodeLoadMore(getContentsData().size() + 1);
         }
     }
 

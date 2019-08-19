@@ -2477,8 +2477,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void startListDialogDismissTask(final int which) {
         super.startListDialogDismissTask(which);
-        if (mItems != null && which != -1) {
+        if (mItems != null && which != ContentUtils.ILLEGAL_POSITION) {
             if (getString(R.string.contents_detail_episode_dialog_dtv_start).equals(mItems[which])) {
+                ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.HIKARI_IN_DTV, mContentsData.getTitle(), ContentDetailActivity.this);
+                if (!checkIsAppInstalled(ContentDetailUtils.StartAppServiceType.H4D_DTV)) {
+                    return;
+                }
                 String message = ContentDetailUtils.getStartAppVersionMessage(ContentDetailUtils.StartAppServiceType.H4D_DTV, ContentDetailActivity.this);
                 if (TextUtils.isEmpty(message)) {
                     String url = ContentDetailUtils.getStartDtvEpisodeAppUrl(mContentsData.getTitleId(),
@@ -2490,7 +2494,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     showCommonControlErrorDialog(message, null, null, null, null);
                 }
-                ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.HIKARI_IN_DTV, mContentsData.getTitle(), ContentDetailActivity.this);
             } else if (getString(R.string.remote_controller_viewpager_watch_by_tv).equals(mItems[which])) {
                 switch (StbConnectionManager.shared().getConnectionStatus()) {
                     case NONE_PAIRING:
@@ -2501,7 +2504,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setRemoteProgressVisible(View.VISIBLE);
                         createRemoteControllerView(true);
                         getRemoteControllerView().startRemoteUI(true);
-                        setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV);
+                        if (ContentUtils.DTV_FLAG_ONE.equals(mContentsData.getDtv())) {
+                            setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV);
+                        } else {
+                            setHikariType(ContentUtils.HikariType.H4D);
+                        }
                         setActionName(mContentsData.getTitle());
                         requestStartApplicationHikariTvCategoryDtvSvod(mContentsData.getCrid());
                         break;
