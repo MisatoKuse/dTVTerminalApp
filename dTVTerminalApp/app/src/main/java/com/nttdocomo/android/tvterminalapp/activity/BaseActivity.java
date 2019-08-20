@@ -1550,17 +1550,7 @@ public class BaseActivity extends FragmentActivity implements
         showDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                switch (showDialogType) {
-                    case D_ACCOUNT_CHANGED:
-                    case COMMON_DIALOG:
-                    case D_ACCOUNT_REGISTRATION_HELP:
-                    case CONTENT_DETAIL_GET_ERROR:
-                    case SECURE_PLAYER_ERROR:
-                        toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
-                        break;
-                    default:
-                        break;
-                }
+                toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
             }
         });
         showDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
