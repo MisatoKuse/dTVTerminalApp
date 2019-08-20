@@ -1186,12 +1186,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 holder.rl_thumbnail.setVisibility(View.GONE);
+                contentView.findViewById(R.id.item_common_result_thumbnail_iv_rl).setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.rl_thumbnail.setVisibility(View.GONE);
+                contentView.findViewById(R.id.item_common_result_thumbnail_iv_rl).setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
