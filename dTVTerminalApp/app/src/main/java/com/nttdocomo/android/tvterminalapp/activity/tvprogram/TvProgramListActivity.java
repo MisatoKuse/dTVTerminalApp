@@ -164,6 +164,12 @@ public class TvProgramListActivity extends BaseActivity implements
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        DTVTLogger.start();
+        if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
+            savedInstanceState.clear();
+        }
+        //call super.onCreate() after savedInstanceState.clear() to work around the bug caused by dashO.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_program_list_main_layout);
 
@@ -180,17 +186,14 @@ public class TvProgramListActivity extends BaseActivity implements
         setTvProgramTitleArrowVisibility(true);
         //タブ設定
         setTabView();
-        if (savedInstanceState != null) {
-            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
-            mTabLayout.setTab(mTabIndex);
-            savedInstanceState.clear();
-        }
+        mTabLayout.setTab(mTabIndex);
         //タグ設定
         setTagView();
         //タイトル設定
         setTitle();
         //チャンネルデータ取得
         getClipKeyList();
+        DTVTLogger.end();
     }
 
     @Override

@@ -211,6 +211,8 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     private static final int FULL_SCREEN_BUTTON_RIGHT_MARGIN = 16;
     /**コントローラービューを非表示になるまでの待ち時間.*/
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
+    /** 再生開始バッファーサイズ.*/
+    private static final int START_RECEIVE_SIZE = 400 * 1024;
     /**secureplayer-core 側でもタイムアウト待ちが発生するので実質90秒ほどになる.*/
     private static final long REMOTEACCESS_RECONNECT_TIMEOUT = 1000 * 60;
     /**secureplayer-core 側でもタイムアウト待ちが発生するので実質90秒ほどになる.*/
@@ -754,6 +756,9 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
     public void onPlayerEvent(final MediaPlayerController mediaPlayerController, final int event, final long arg) {
         switch (event) {
             case MediaPlayerDefinitions.PE_OPENED:
+                if (mPlayerController != null) {
+                    mPlayerController.setStartReceiveSize(START_RECEIVE_SIZE);
+                }
                 break;
             case MediaPlayerDefinitions.PE_COMPLETED:
                 mIsCompleted = true;
