@@ -215,7 +215,7 @@ public class ContentUtils {
     /** チャンネルのパレンタル設定値(G).*/
     public static final String MY_CHANNEL_R_VALUE_G = "G";
     /** minus one.*/
-    public static final int ILLEGAL_POSITION = -1;
+    public static final int ILLEGAL_VALUE = -1;
     //endregion
 
     /**
@@ -1327,7 +1327,7 @@ public class ContentUtils {
      * @param isEndDate isEndDate
      * @return isEndDate true:valid_end_date false:ライセンスID
      */
-    public static String getRentalVodValidInfo(final VodMetaFullData metaFullData, final ArrayList<ActiveData> activeList, final boolean isEndDate) {
+    public static String getRentalVodValidInfo(final VodMetaFullData metaFullData, final List<ActiveData> activeList, final boolean isEndDate) {
         //購入済みVOD取得からの戻り(視聴可否判定)
         String[] liinfArray = metaFullData.getmLiinf_array();
         String puid = metaFullData.getPuid();

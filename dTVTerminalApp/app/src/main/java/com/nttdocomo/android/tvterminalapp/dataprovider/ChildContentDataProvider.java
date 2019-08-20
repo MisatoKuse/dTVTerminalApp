@@ -49,10 +49,11 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
      */
     public interface DataCallback {
         /**
-         *
+         * 子コンテンツ一覧取得コールバック.
          * @param list コンテンツリスト
+         * @param activeDatas 購入済み情報
          */
-        void childContentListCallback(@Nullable List<ContentsData> list);
+        void childContentListCallback(@Nullable List<ContentsData> list, ArrayList<ActiveData> activeDatas);
     }
 
     // region variable
@@ -83,7 +84,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     /** 購入情報取得フラグ.*/
     private boolean mIsRental = false;
     /** 購入情報.*/
-    private ArrayList<ActiveData> mActiveDatas;
+    private List<ActiveData> mActiveDatas;
     // endregion variable
 
     /**
@@ -112,7 +113,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             if (mWebClient.getError() != null) {
                 mError = mWebClient.getError();
             }
-            mCallback.childContentListCallback(null);
+            mCallback.childContentListCallback(null, null);
         } else {
             if (response.getPager().getOffset() >= 0 && response.getPager().getCount() >= 0) {
                 mPagerOffset = response.getPager().getOffset() + response.getPager().getCount();
@@ -210,13 +211,13 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             }
             boolean result = mWebClient.requestChildContentListGetApi(crid, offset, filter, ageReq, this);
             if (!result) {
-                mCallback.childContentListCallback(null);
+                mCallback.childContentListCallback(null, null);
             }
             if (mIsRental) {
                 getVodListData();
             }
         } else {
-            mCallback.childContentListCallback(null);
+            mCallback.childContentListCallback(null, null);
         }
     }
 
@@ -353,6 +354,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             }
             data.setVodStartDate(vodMetaFullData.getmVod_start_date());
             data.setVodEndDate(vodMetaFullData.getmVod_end_date());
+            data.setVodMetaFullData(vodMetaFullData);
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
@@ -396,7 +398,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
      */
     private void sendData(final ChildContentListGetResponse response) {
         List<ContentsData> list = makeContentsData(response);
-        mCallback.childContentListCallback(list);
+        mCallback.childContentListCallback(list, new ArrayList<>(mActiveDatas));
     }
 
     /**

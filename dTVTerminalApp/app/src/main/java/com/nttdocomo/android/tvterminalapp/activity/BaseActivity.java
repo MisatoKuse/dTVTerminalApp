@@ -3813,7 +3813,7 @@ public class BaseActivity extends FragmentActivity implements
                 stopAllActivity();
                 return;
             }
-            onVersionUpDialogShow(ContentUtils.ILLEGAL_POSITION, CustomDialog.DialogTapType.OK);
+            onVersionUpDialogShow(ContentUtils.ILLEGAL_VALUE, CustomDialog.DialogTapType.OK);
         }
     }
 
@@ -3824,7 +3824,7 @@ public class BaseActivity extends FragmentActivity implements
            if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP) {
                 return;
             }
-            onVersionUpDialogShow(ContentUtils.ILLEGAL_POSITION, CustomDialog.DialogTapType.CANCEL);
+            onVersionUpDialogShow(ContentUtils.ILLEGAL_VALUE, CustomDialog.DialogTapType.CANCEL);
         }
     }
 

@@ -69,7 +69,7 @@ public class VodMetaFullData implements Serializable {
     /**コピーライト.*/
     private String mCopyright = null;
     /**尺長.*/
-    private int mDur = 0;
+    private int mDur = ContentUtils.ILLEGAL_VALUE;
     /**デモフラグ.*/
     private String mDemong = null;
     /**見放題フラグ.*/

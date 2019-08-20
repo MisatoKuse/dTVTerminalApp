@@ -995,14 +995,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setDurTime(final View contentView, final ContentsData listContentInfo) {
         TextView durTextView = contentView.findViewById(R.id.item_common_result_dur_time);
-        durTextView.setVisibility(View.VISIBLE);
-        int dur = listContentInfo.getDurTime();
-        int durTime = dur / DateUtils.EPOCH_TIME_ONE_MIN;
-        if (dur % DateUtils.EPOCH_TIME_ONE_MIN != 0) {
-            durTime = durTime + 1;
+        durTextView.setText("");
+        if (listContentInfo.getDurTime() != ContentUtils.ILLEGAL_VALUE) {
+            durTextView.setVisibility(View.VISIBLE);
+            int dur = listContentInfo.getDurTime();
+            int durTime = dur / DateUtils.EPOCH_TIME_ONE_MIN;
+            if (dur % DateUtils.EPOCH_TIME_ONE_MIN != 0) {
+                durTime = durTime + 1;
+            }
+            String result = durTime + mContext.getResources().getString(R.string.common_contents_min);
+            durTextView.setText(result);
         }
-        String result = durTime + mContext.getResources().getString(R.string.common_contents_min);
-        durTextView.setText(result);
     }
 
     /**

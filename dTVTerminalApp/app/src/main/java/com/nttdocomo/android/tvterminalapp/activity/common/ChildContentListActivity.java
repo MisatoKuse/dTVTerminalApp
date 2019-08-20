@@ -26,12 +26,11 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ChildContentDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopChildContentDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -280,7 +279,7 @@ public class ChildContentListActivity extends BaseActivity implements
     }
 
     @Override
-    public void childContentListCallback(@Nullable final List<ContentsData> contentsDataList) {
+    public void childContentListCallback(@Nullable final List<ContentsData> contentsDataList, final ArrayList<ActiveData> activeDatas) {
         // クリップ状態の判定Status変更済みコンテンツデータリスト
         final List<ContentsData> clipStatusContentsDataList = mChildContentDataProvider.checkClipStatus(contentsDataList);
         runOnUiThread(new Runnable() {

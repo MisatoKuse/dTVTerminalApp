@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 /**
@@ -164,6 +165,23 @@ public class ContentsData {
     private boolean mIsShowSynop = false;
     /** 全文表示状態.*/
     private boolean mIsShowSynopAll = false;
+    /** メタデータ.*/
+    private VodMetaFullData mVodMetaFullData;
+
+    /**
+     * メタデータ取得.
+     */
+    public VodMetaFullData getVodMetaFullData() {
+        return mVodMetaFullData;
+    }
+
+    /**
+     * メタデータ設定.
+     * @param vodMetaFullData メタデータ
+     */
+    public void setVodMetaFullData(final VodMetaFullData vodMetaFullData) {
+        this.mVodMetaFullData = vodMetaFullData;
+    }
 
     /**
      * あらすじ情報全文表示状態取得.

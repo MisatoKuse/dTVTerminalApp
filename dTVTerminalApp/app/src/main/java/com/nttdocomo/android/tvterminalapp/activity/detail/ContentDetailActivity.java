@@ -258,6 +258,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private String[] mItems;
     /** エピソード選択したアイテムデータ.*/
     private ContentsData mContentsData;
+    /** エピソード購入済み情報.*/
+    private ArrayList<ActiveData> mActiveDatas;
     // endregion
 
     @Override
@@ -976,6 +978,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(position);
             }
         });
+        if (mViewPagerIndex >= 0 && tabType == ContentDetailUtils.TabType.VOD_EPISODE) {
+            mViewPager.setCurrentItem(mViewPagerIndex);
+            mViewPagerIndex = DEFAULT_TAB_INDEX;
+        }
     }
 
     /**
@@ -1656,8 +1662,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void childContentListCallback(@Nullable final List<ContentsData> list) {
+    public void childContentListCallback(@Nullable final List<ContentsData> list, final ArrayList<ActiveData> activeDatas) {
         DTVTLogger.start();
+        if (list != null) {
+            this.mActiveDatas = activeDatas;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1891,7 +1900,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (mDetailFullData == null) {
                         break;
                     }
-                    startHikariApplication();
+                    startHikariApplication(mDetailFullData, false);
                     break;
             }
         } else if (mDetailData != null && !isFromHeader
@@ -1913,7 +1922,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     //「契約する」ボタンの動線でのひかりTVのサービスアプリ連携
                     DTVTLogger.debug("contract button to start application HikariTv");
                     setRelayClientHandler();
-                    startHikariApplication();
+                    startHikariApplication(mDetailFullData, false);
                     break;
             }
         }
@@ -1951,9 +1960,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * STBのサービスアプリ起動（ひかり）.
+     * @param mDetailFullData mDetailFullData
+     * @param isFromEpisode エピソードコンテンツであるかどうか
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    private void startHikariApplication() {
+    private void startHikariApplication(final VodMetaFullData mDetailFullData, final boolean isFromEpisode) {
         showStartStbProgress(View.VISIBLE);
         if (ContentUtils.VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())) {
             if (ContentUtils.DTV_FLAG_ZERO.equals(mDetailFullData.getDtv()) || TextUtils.isEmpty(mDetailFullData.getDtv())
@@ -1962,12 +1973,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
                             mDetailFullData.getCid(), mDetailFullData.getCrid());
                 } else if (ContentDetailUtils.BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
-                    if (mPurchasedVodListResponse == null) {
-                        showStartStbProgress(View.GONE);
-                        return;
+                    ArrayList<ActiveData> activeDatas;
+                    if (!isFromEpisode) {
+                        if (mPurchasedVodListResponse == null) {
+                            showStartStbProgress(View.GONE);
+                            return;
+                        }
+                        activeDatas = mPurchasedVodListResponse.getVodActiveData();
+                    } else {
+                        activeDatas = mActiveDatas;
                     }
-                    // 購入済みVOD一覧
-                    ArrayList<ActiveData> activeDatas = mPurchasedVodListResponse.getVodActiveData();
                     // ライセンスID取得
                     String validLicenseId = ContentUtils.getRentalVodValidInfo(mDetailFullData, activeDatas, false);
                     //購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
@@ -2477,7 +2492,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void startListDialogDismissTask(final int which) {
         super.startListDialogDismissTask(which);
-        if (mItems != null && which != ContentUtils.ILLEGAL_POSITION) {
+        if (mItems != null && which != ContentUtils.ILLEGAL_VALUE) {
             if (getString(R.string.contents_detail_episode_dialog_dtv_start).equals(mItems[which])) {
                 ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.HIKARI_IN_DTV, mContentsData.getTitle(), ContentDetailActivity.this);
                 if (!checkIsAppInstalled(ContentDetailUtils.StartAppServiceType.H4D_DTV)) {
@@ -2504,13 +2519,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setRemoteProgressVisible(View.VISIBLE);
                         createRemoteControllerView(true);
                         getRemoteControllerView().startRemoteUI(true);
-                        if (ContentUtils.DTV_FLAG_ONE.equals(mContentsData.getDtv())) {
-                            setHikariType(ContentUtils.HikariType.HIKARITV_IN_DTV);
-                        } else {
-                            setHikariType(ContentUtils.HikariType.H4D);
-                        }
-                        setActionName(mContentsData.getTitle());
-                        requestStartApplicationHikariTvCategoryDtvSvod(mContentsData.getCrid());
+                        setActionName(mContentsData.getEpisodeTitle());
+                        startHikariApplication(mContentsData.getVodMetaFullData(), true);
                         break;
                     default:
                         showGetDataFailedToast(getString(R.string.contents_detail_episode_dialog_start_stb_dtv_toast));
