@@ -279,7 +279,7 @@ public class ChildContentListActivity extends BaseActivity implements
     }
 
     @Override
-    public void childContentListCallback(@Nullable final List<ContentsData> contentsDataList, final ArrayList<ActiveData> activeDatas) {
+    public void childContentListCallback(@Nullable final List<ContentsData> contentsDataList, final List<ActiveData> activeDatas) {
         // クリップ状態の判定Status変更済みコンテンツデータリスト
         final List<ContentsData> clipStatusContentsDataList = mChildContentDataProvider.checkClipStatus(contentsDataList);
         runOnUiThread(new Runnable() {

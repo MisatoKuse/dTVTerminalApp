@@ -259,7 +259,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /** エピソード選択したアイテムデータ.*/
     private ContentsData mContentsData;
     /** エピソード購入済み情報.*/
-    private ArrayList<ActiveData> mActiveDatas;
+    private List<ActiveData> mActiveDatas;
     // endregion
 
     @Override
@@ -706,6 +706,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void getEpisodeData(final int position) {
         if (mChildContentDataProvider == null) {
             mChildContentDataProvider = new ChildContentDataProvider(this);
+            mChildContentDataProvider.setIsEpisode();
         }
         DtvContentsEpisodeFragment episodeFragment = getEpisodeFragment();
         if (episodeFragment != null) {
@@ -1662,7 +1663,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void childContentListCallback(@Nullable final List<ContentsData> list, final ArrayList<ActiveData> activeDatas) {
+    public void childContentListCallback(@Nullable final List<ContentsData> list, final List<ActiveData> activeDatas) {
         DTVTLogger.start();
         if (list != null) {
             this.mActiveDatas = activeDatas;
@@ -1973,7 +1974,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
                             mDetailFullData.getCid(), mDetailFullData.getCrid());
                 } else if (ContentDetailUtils.BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
-                    ArrayList<ActiveData> activeDatas;
+                    List<ActiveData> activeDatas;
                     if (!isFromEpisode) {
                         if (mPurchasedVodListResponse == null) {
                             showStartStbProgress(View.GONE);

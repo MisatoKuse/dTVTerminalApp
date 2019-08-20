@@ -53,7 +53,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
          * @param list コンテンツリスト
          * @param activeDatas 購入済み情報
          */
-        void childContentListCallback(@Nullable List<ContentsData> list, ArrayList<ActiveData> activeDatas);
+        void childContentListCallback(@Nullable List<ContentsData> list, List<ActiveData> activeDatas);
     }
 
     // region variable
@@ -85,6 +85,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     private boolean mIsRental = false;
     /** 購入情報.*/
     private List<ActiveData> mActiveDatas;
+    /** エピソードコンテンツフラグ.*/
+    private boolean mIsEpisode = false;
     // endregion variable
 
     /**
@@ -180,6 +182,13 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
                 break;
         }
         return resultSet;
+    }
+
+    /**
+     * 詳細画面のエピソードコンテンツ区別フラグ.
+     */
+    public void setIsEpisode() {
+        mIsEpisode = true;
     }
 
     /**
@@ -347,7 +356,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
                 // activeDataList から視聴可能期限を取り出し、配信期限(AvailEndDate)として使用する(DREM-2275の仕様)
                 String result = ContentUtils.getRentalVodValidInfo(vodMetaFullData, mActiveDatas, true);
                 long activeEndDate = Long.parseLong(result);
-                data.setAvailEndDate(activeEndDate == 0 ? vodMetaFullData.getAvail_end_date() : activeEndDate);
+                data.setAvailEndDate((activeEndDate == 0 && mIsEpisode) ? vodMetaFullData.getAvail_end_date() : activeEndDate);
                 data.setIsRental(mIsRental);
             } else {
                 data.setAvailEndDate(vodMetaFullData.getAvail_end_date());
@@ -398,7 +407,11 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
      */
     private void sendData(final ChildContentListGetResponse response) {
         List<ContentsData> list = makeContentsData(response);
-        mCallback.childContentListCallback(list, new ArrayList<>(mActiveDatas));
+        List<ActiveData> activeData = null;
+        if (mActiveDatas != null) {
+            activeData = new ArrayList<>(mActiveDatas);
+        }
+        mCallback.childContentListCallback(list, activeData);
     }
 
     /**
