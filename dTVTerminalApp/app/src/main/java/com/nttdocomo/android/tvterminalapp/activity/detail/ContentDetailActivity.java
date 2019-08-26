@@ -1461,11 +1461,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
                     if (mDetailFullData != null) {
                         String[] credit_array = mDetailFullData.getmCredit_array();
-                        List<String> staffList = ContentDetailUtils.getRoleList(credit_array, roleListInfo);
+                        Map<String, String> staffList = ContentDetailUtils.getRoleList(credit_array, roleListInfo);
                         if (staffList.size() > 0) {
                             OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                             if (detailData != null) {
-                                detailData.setStaffList(staffList);
+                                detailData.setStaffInfo(staffList);
                                 detailFragment.setOtherContentsDetailData(detailData);
                                 detailFragment.refreshStaff();
                             }

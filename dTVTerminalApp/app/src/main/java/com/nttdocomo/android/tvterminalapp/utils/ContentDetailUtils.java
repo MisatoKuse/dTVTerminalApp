@@ -9,8 +9,12 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -28,15 +32,16 @@ import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.StbMetaInfoResponseData;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * コンテンツ詳細Utilクラス.
@@ -45,10 +50,8 @@ public class ContentDetailUtils {
 
     /** STR_FORMAT.*/
     private static final String STR_SPLIT_FORMAT = "\\|";
-    /** STR_KONMA.*/
-    private static final String STR_KONMA = ",";
     /** STR_COMMA.*/
-    private static final String STR_COMMA = "、";
+    private static final String STR_COMMA = ",";
     /**DTVパッケージ名.*/
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
     /**DTV schema url 変換.*/
@@ -318,14 +321,12 @@ public class ContentDetailUtils {
 
     /**
      * ロールリスト取得.
-     *
      * @param credit_array スタッフ情報
      * @param roleListInfo ロールリスト情報
-     * @return ロールリスト
+     * @return ロールリスト key:カテゴリ名 value:該当カテゴリのスタッフ情報
      */
-    public static List<String> getRoleList(final String[] credit_array, final ArrayList<RoleListMetaData> roleListInfo) {
-        List<String> staffList = new ArrayList<>();
-        StringBuilder ids = new StringBuilder();
+    public static Map<String, String> getRoleList(final String[] credit_array, final ArrayList<RoleListMetaData> roleListInfo) {
+        Map<String, String> arrayMap = new LinkedHashMap<>();
         for (String aCredit_array : credit_array) {
             String[] creditInfo = aCredit_array.split(STR_SPLIT_FORMAT);
             if (creditInfo.length == 4) {
@@ -335,18 +336,12 @@ public class ContentDetailUtils {
                     for (int j = 0; j < roleListInfo.size(); j++) {
                         RoleListMetaData roleListMetaData = roleListInfo.get(j);
                         if (creditId.equals(roleListMetaData.getId())) {
-                            if (!ids.toString().contains(creditId + STR_KONMA)) {
-                                ids.append(creditId);
-                                ids.append(STR_KONMA);
-                                staffList.add(roleListMetaData.getName() + File.separator);
-                                staffList.add(creditName);
+                            String categoryName = roleListMetaData.getName();
+                            if (TextUtils.isEmpty(arrayMap.get(categoryName))) {
+                                arrayMap.put(categoryName, creditName);
                             } else {
-                                String[] oldData = ids.toString().split(STR_KONMA);
-                                for (int k = 0; k < oldData.length; k++) {
-                                    if (creditId.equals(oldData[k])) {
-                                        staffList.set(k * 2 + 1, staffList.get(k * 2 + 1) + STR_COMMA + creditName);
-                                    }
-                                }
+                                String name = arrayMap.get(categoryName);
+                                arrayMap.put(categoryName, name + STR_COMMA + creditName);
                             }
                             break;
                         }
@@ -354,7 +349,33 @@ public class ContentDetailUtils {
                 }
             }
         }
-        return staffList;
+        return arrayMap;
+    }
+
+    /**
+     * スタッフ情報LayoutParams取得.
+     * @param context context
+     * @return LayoutParams
+     */
+    public static LinearLayout.LayoutParams createStaffTextViewParams(final Context context) {
+        LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        contentParams.setMargins(0, (int) context.getResources().getDimension(R.dimen.contents_detail_staff_margin_top), 0, 0);
+        return contentParams;
+    }
+
+    /**
+     * スタッフ情報TextView作成.
+     * @param context context
+     * @return textView
+     */
+    public static TextView createStaffTextView(final Context context) {
+        TextView textView = new TextView(context);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
+        textView.setLineSpacing(context.getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
+        return textView;
     }
 
     /**

@@ -8,7 +8,8 @@ import android.os.Parcel;
 
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -63,7 +64,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     /**モバイル視聴可否フラグ.*/
     private String mobileViewingFlg;
     /**スタッフ情報.*/
-    private List<String> staffList;
+    private Map<String, String> mStaffInfo = new LinkedHashMap<>();
     /**クリップ情報取得用.*/
     private VodMetaFullData mVodMetaFullData = null;
     /**コンテンツIDを追加.*/
@@ -282,18 +283,18 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
 
     /**
      * スタッフ情報取得.
-     * @return スタッフ情報
+     * @return スタッフ情報 key:カテゴリ名 value:該当カテゴリのスタッフ情報
      */
-    public List<String> getStaffList() {
-        return staffList;
+    public Map<String, String> getStaffInfo() {
+        return mStaffInfo;
     }
 
     /**
      * スタッフ情報設定.
-     * @param staffList スタッフ情報
+     * @param staffInfo スタッフ情報
      */
-    public void setStaffList(final List<String> staffList) {
-        this.staffList = staffList;
+    public void setStaffInfo(final Map<String, String> staffInfo) {
+        this.mStaffInfo = staffInfo;
     }
 
     /**
@@ -984,7 +985,11 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mReserved4);
         dest.writeString(this.mReserved5);
         dest.writeString(this.mobileViewingFlg);
-        dest.writeStringList(this.staffList);
+        dest.writeInt(this.mStaffInfo.size());
+        for (Map.Entry<String, String> entry : this.mStaffInfo.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue());
+        }
         dest.writeSerializable(this.mVodMetaFullData);
         dest.writeString(this.mContentsId);
         dest.writeString(this.mChannelId);
@@ -1048,7 +1053,13 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mReserved4 = in.readString();
         this.mReserved5 = in.readString();
         this.mobileViewingFlg = in.readString();
-        this.staffList = in.createStringArrayList();
+        int staffListSize = in.readInt();
+        this.mStaffInfo = new LinkedHashMap<>(staffListSize);
+        for (int i = 0; i < staffListSize; i++) {
+            String key = in.readString();
+            String value = in.readString();
+            this.mStaffInfo.put(key, value);
+        }
         this.mVodMetaFullData = (VodMetaFullData) in.readSerializable();
         this.mContentsId = in.readString();
         this.mChannelId = in.readString();
