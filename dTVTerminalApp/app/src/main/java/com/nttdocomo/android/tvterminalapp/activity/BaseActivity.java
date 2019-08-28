@@ -1924,9 +1924,11 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param type       アプリのタイプ
      * @param contentsId コンテンツID
+     * @param episodeId episodeId
+     * @param isFromEpisode isFromEpisode
      */
-    protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
-        mRemoteControllerView.sendStartApplicationRequest(type, contentsId);
+    protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId, final String episodeId, final boolean isFromEpisode) {
+        mRemoteControllerView.sendStartApplicationRequest(type, contentsId, episodeId, isFromEpisode);
     }
 
     /**

@@ -4,7 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
+import android.text.TextUtils;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * STBメタデータ取得結果返却用データクラス.
@@ -205,5 +208,43 @@ public class StbMetaInfoResponseData {
             index++;
         }
         return this.mContent.mEpisodeList.get(index);
+    }
+
+    /**
+     * エピソードデータ整形.
+     * @return エピソードデータ
+     */
+    public List<ContentsData> getEpisodeListData() {
+        List<ContentsData> episodeListData = new ArrayList<>();
+        for (Episode episode: mContent.mEpisodeList) {
+            ContentsData episodeContentInfo = new ContentsData();
+            episodeContentInfo.setEpisodeId(episode.mEpisodeId);
+            episodeContentInfo.setEpisodeTitle(episode.mSubTitle);
+            episodeContentInfo.setSynop(episode.mSummary);
+            episodeContentInfo.setStartViewing(episode.mStartViewing);
+            episodeContentInfo.setEndViewing(episode.mEndViewing);
+            if (!TextUtils.isEmpty(episode.mCtPicURL2)) {
+                episodeContentInfo.setThumURL(episode.mCtPicURL2);
+            } else {
+                episodeContentInfo.setThumURL(episode.mCtPicURL1);
+            }
+            episodeContentInfo.setEpisodeNumber(episode.mEpisodeNumber);
+            episodeContentInfo.setEpisodeNumberNotation(episode.mEpisodeNumberNotation);
+            episodeContentInfo.setDurTime(episode.mContentsLength);
+            episodeContentInfo.setReserved1(episode.mReserved1);
+            episodeContentInfo.setReserved2(episode.mReserved2);
+            episodeContentInfo.setReserved3(episode.mReserved3);
+            episodeContentInfo.setReserved4(episode.mReserved4);
+            episodeContentInfo.setReserved5(episode.mReserved5);
+            episodeContentInfo.setReserved6(episode.mReserved6);
+            episodeContentInfo.setReserved7(episode.mReserved7);
+            episodeContentInfo.setReserved8(episode.mReserved8);
+            episodeContentInfo.setReserved9(episode.mReserved9);
+            episodeContentInfo.setReserved10(episode.mReserved10);
+            episodeContentInfo.setOtherServiceEpisode(true);
+            episodeContentInfo.setContentsId(mContent.mContentsId);
+            episodeListData.add(episodeContentInfo);
+        }
+        return episodeListData;
     }
 }

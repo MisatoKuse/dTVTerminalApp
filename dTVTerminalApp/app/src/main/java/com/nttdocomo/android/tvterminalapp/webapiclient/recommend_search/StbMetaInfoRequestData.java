@@ -17,8 +17,8 @@ public class StbMetaInfoRequestData {
 
     //optional
     /**エピソード取得開始位置*/
-    int episodeStartIndex = 0;
+    public int episodeStartIndex = 1;
 
     /**エピソード取得最大件数*/
-    int episodeMaxResult = 0;
+    int episodeMaxResult = 50;
 }

@@ -635,7 +635,18 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTitleData(final ViewHolder holder, final ContentsData listContentInfo) {
         String title;
         if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST) {
-            title = listContentInfo.getEpisodeTitle();
+            if (listContentInfo.isOtherServiceEpisode()) {
+                String episodeNumberNotation = listContentInfo.getEpisodeNumberNotation();
+                if (TextUtils.isEmpty(episodeNumberNotation)) {
+                    //episodeNumberNotationの値がない場合
+                    title = listContentInfo.getEpisodeTitle();
+                } else {
+                    //episodeNumberNotationの値がある場合
+                    title = episodeNumberNotation + ContentUtils.STR_SPACE + listContentInfo.getEpisodeTitle();
+                }
+            } else {
+                title = listContentInfo.getEpisodeTitle();
+            }
         } else {
             title = listContentInfo.getTitle();
         }
@@ -678,7 +689,18 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_DAILY_RANK: // 今日の番組ランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_CONTENT_DETAIL_EPISODE_LIST: // コンテンツ詳細エピソード一覧
-                ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
+                if (listContentInfo.isOtherServiceEpisode()) {
+                    //他サービスエピソード
+                    if (!TextUtils.isEmpty(listContentInfo.getStartViewing())) {
+                        String date = getOtherServicePeriodText(listContentInfo);
+                        if (!TextUtils.isEmpty(date)) {
+                            holder.tv_time.setVisibility(View.VISIBLE);
+                            holder.tv_time.setText(date);
+                        }
+                    }
+                } else {
+                    ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
+                }
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
@@ -690,6 +712,23 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             default:
                 break;
         }
+    }
+
+    /**
+     * 他サービス視聴期限日付け取得.
+     * @param listContentInfo listContentInfo
+     * @return 他サービス視聴期限日付け
+     */
+    private String getOtherServicePeriodText(final  ContentsData listContentInfo) {
+        String date =  "";
+        //配信前　m/d（曜日）から
+        if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+            date = DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true);
+        } else if (DateUtils.isIn31Day(listContentInfo.getEndViewing())) {
+            // 31日以内　m/d（曜日）まで
+            date = DateUtils.getContentsDateString(mContext, listContentInfo.getEndViewing(), false);
+        }
+        return date;
     }
 
     /**
@@ -722,15 +761,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             //番組 m/d（曜日）h:ii
                             date = DateUtils.getContentsDateString(listContentInfo.getStartViewing());
                         } else if (contentsType == ContentUtils.ContentsType.VOD) {
-                            //配信前　m/d（曜日）から
-                            if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
-                                date = DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true);
-                            } else {
-                                // 31日以内　m/d（曜日）まで
-                                if (DateUtils.isIn31Day(listContentInfo.getEndViewing())) {
-                                    date = DateUtils.getContentsDateString(mContext, listContentInfo.getEndViewing(), false);
-                                }
-                            }
+                            date = getOtherServicePeriodText(listContentInfo);
                         }
                     }
                     if (!TextUtils.isEmpty(date)) {
@@ -1019,12 +1050,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         holder.tv_episode_synop.setVisibility(View.GONE);
         holder.tv_episode_all_synop.setVisibility(View.GONE);
         final LinearLayout ll = contentView.findViewById(R.id.item_common_result_episode);
+        final TextView resultLine = contentView.findViewById(R.id.item_common_synop_result_line);
         ll.setVisibility(View.GONE);
         holder.tv_line.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(listContentInfo.getSynop())) {
             holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_bottom);
             holder.tv_episode_synop.setText(listContentInfo.getSynop());
             holder.tv_episode_all_synop.setVisibility(View.GONE);
+            resultLine.setVisibility(View.VISIBLE);
             if (listContentInfo.isShowSynop()) {
                 holder.tv_episode_synop.setVisibility(View.VISIBLE);
                 holder.tv_episode_synop.setMaxLines(DETAIL_INFO_TEXT_MAX_LINE);
@@ -1032,6 +1065,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (listContentInfo.isSynopIsAllShow()) {
                     holder.tv_episode_all_synop.setVisibility(View.VISIBLE);
                     holder.tv_clip.setImageResource(R.mipmap.icon_normal_arrow_top);
+                    resultLine.setVisibility(View.GONE);
                 }
                 holder.tv_line.setVisibility(View.GONE);
                 ll.setVisibility(View.VISIBLE);
@@ -1293,6 +1327,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_episode_synop.setMaxLines(Integer.MAX_VALUE);
             ll.setVisibility(View.VISIBLE);
             holder.tv_episode_synop.setVisibility(View.VISIBLE);
+            final TextView resultLine = contentView.findViewById(R.id.item_common_synop_result_line);
+            resultLine.setVisibility(View.VISIBLE);
             holder.tv_episode_synop.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -1304,6 +1340,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         listContentInfo.setIsShowSynopAll(true);
                         if (listContentInfo.isShowSynop()) {
                             holder.tv_episode_all_synop.setVisibility(View.VISIBLE);
+                            resultLine.setVisibility(View.GONE);
                         }
                     }
                     if (holder.tv_episode_synop.getLineCount() > 0) {

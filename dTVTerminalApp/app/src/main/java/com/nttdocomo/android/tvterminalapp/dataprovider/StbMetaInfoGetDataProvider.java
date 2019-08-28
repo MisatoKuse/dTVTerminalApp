@@ -60,13 +60,14 @@ public class StbMetaInfoGetDataProvider implements StbMetaInfoGetWebApiDelegate 
      * @param categoryId カテゴリId
      * @param context context
      */
-    public void getStbMetaInfo(final String contentsId, final String serviceId, final String categoryId, final Context context) {
+    public void getStbMetaInfo(final int episodeStartIndex, final String contentsId, final String serviceId, final String categoryId, final Context context) {
         if (!mIsCancel) {
             StbMetaInfoRequestData request = new StbMetaInfoRequestData();
             String serviceCategory = serviceId.concat(COLON_SEPARATOR).concat(categoryId);
 
             request.contentsId = contentsId;
             request.serviceCategory = serviceCategory;
+            request.episodeStartIndex = episodeStartIndex;
 
             mStbMetaInfoGetWebApi = new StbMetaInfoGetWebApi(context);
             mStbMetaInfoGetWebApi.setDelegate(this);

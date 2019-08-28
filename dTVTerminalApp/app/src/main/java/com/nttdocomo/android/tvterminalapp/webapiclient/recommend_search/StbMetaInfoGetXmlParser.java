@@ -368,7 +368,7 @@ class StbMetaInfoGetXmlParser extends AsyncTask<String, Integer, String> {
                         break;
                     case XmlPullParser.END_TAG:
                         String name = parser.getName();
-                        if (name != null && 0 < name.length()) {
+                        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(xmlValue)) {
                             parseProc(name, xmlValue);
                         }
                         break;

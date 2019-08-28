@@ -165,7 +165,7 @@ public class ContentUtils {
     /** tv_service(4).*/
     private static final String CH_TYPE_TV_SERVICE_BS = "4";
     /** スペース.*/
-    private static final String STR_SPACE = " ";
+    public static final String STR_SPACE = " ";
     /** 空白.*/
     public static final String STR_BLANK = "";
     /** ドット.*/

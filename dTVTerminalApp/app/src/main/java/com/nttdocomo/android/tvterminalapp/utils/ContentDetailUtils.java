@@ -53,17 +53,17 @@ public class ContentDetailUtils {
     /** STR_COMMA.*/
     private static final String STR_COMMA = ",";
     /**DTVパッケージ名.*/
-    private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
+    public static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
     /**DTV schema url 変換.*/
     private static final String DTV_URL_FORMAT_CHANGE = "XXXX";
     /**DTV 新バージョン.*/
     private static final int DTV_VERSION_NEW = 60000;
     /**DTVバージョン.*/
-    private static final int DTV_VERSION_STANDARD = 52000;
+    private static final int DTV_VERSION_STANDARD = 52301;
     /**dアニメストアパッケージ名.*/
-    private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
+    public static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
     /**dアニメストアバージョン.*/
-    private static final int DANIMESTORE_VERSION_STANDARD = 132;
+    private static final int DANIMESTORE_VERSION_STANDARD = 856;
     /**dTVチャンネルパッケージ名.*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
     /**dTVチャンネルバージョン.*/
@@ -641,8 +641,8 @@ public class ContentDetailUtils {
                 startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
                 //その他の場合
             } else {
-                // "totalEpisodeCount"が1の場合は「単話」、それ以外は「シリーズ」
-                if (totalEpisodeCount == 1) {
+                // "totalEpisodeCount"が1/0の場合は「単話」、それ以外は「シリーズ」
+                if (totalEpisodeCount == 1 || totalEpisodeCount == 0) {
                     startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
                 } else {
                     startUrl = UrlConstants.WebUrl.NEW_TITLE_VIEW_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
@@ -739,6 +739,56 @@ public class ContentDetailUtils {
         return String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, titleId, episodeId);
     }
 
+
+    /**
+     * 機能：dTVAPP起動（エピソードシリーズ専用）（検レコ）.
+     * @param contentId タイトルID
+     * @param episodeId エピソードID
+     * @param context コンテキスト
+     * @return 起動URL
+     */
+    public static String getStartDtvOtherEpisodeAppUrl(final String contentId, final String episodeId, final Context context) {
+        String packageName = getStartAppPackageName(StartAppServiceType.DTV);
+        long localVersionCode = getVersionCode(packageName, context);
+        DTVTLogger.debug("title_id:" + contentId + " episode_id:" + episodeId);
+        if (dTVAppIsNewVersion(localVersionCode)) {
+            return getStartDtvEpisodeUrlByOtherNewVersion(episodeId);
+        } else {
+            return getStartDtvEpisodeUrlByOtherOldVersion(episodeId, contentId);
+        }
+    }
+
+    /**
+     * 機能：dTV APP起動（エピソードシリーズ専用）（検レコ）（新dTVバージョン：60000以上）.
+     * @param episodeId エピソードID
+     * @return 起動URL
+     */
+    private static String getStartDtvEpisodeUrlByOtherNewVersion(final String episodeId) {
+        return UrlConstants.WebUrl.NEW_PRODUCT_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, episodeId);
+    }
+
+    /**
+     * 機能：dTV APP起動（エピソードシリーズ専用）（旧dTVバージョン：60000未満）.
+     * @param contentId タイトルID
+     * @param episodeId episodeId
+     * @return 起動URL
+     */
+    private static String getStartDtvEpisodeUrlByOtherOldVersion(final String episodeId, final String contentId) {
+        if (TextUtils.isEmpty(episodeId)) {
+            return UrlConstants.WebUrl.TITTLE_START_TYPE + contentId;
+        } else {
+            return String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, contentId, episodeId);
+        }
+    }
+
+    /**
+     * エピソードからdアニメをテレビで視聴するurlを取得.
+     *
+     * @param episodeId episodeId
+     */
+    public static String getStartDanimeEpisodeUrl(final String episodeId) {
+        return String.format(UrlConstants.WebUrl.D_ANIME_STORE_START_PLAY_URL, episodeId);
+    }
     /**
      * 機能：dTVAPP起動（ぷららサーバ）.
      * @param detailData ぷららサーバメタデータ
