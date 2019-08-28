@@ -91,6 +91,7 @@
     <color name="contents_detail_schedule_detail_schedule_info">#cccccc</color>
     <color name="contents_detail_channel_line_color">#333333</color>
     <color name="contents_detail_video_miss_color">#ffbb4e</color>
+    <color name="contents_detail_line_color">#4a4a4a</color>
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>
@@ -132,6 +133,9 @@
     <color name="remote_watch_by_tv_bottom_corners_dtvchannel_and_hikari">#00A2E6</color>
     <color name="remote_controller_background">#F5F5F5</color>
     <color name="remote_watch_by_tv_bottom_dazn_text">#0C161C</color>
+    <color name="remote_watch_by_status_for_home_out_text">#979797</color>
+    <color name="remote_watch_default_highlight_text">#D9D9D9</color>>
+    <color name="remote_watch_dazn_highlight_text">#999999</color>>
     <!--//チャンネルリスト-->
     <color name="list_view_divider">#333333</color>
 

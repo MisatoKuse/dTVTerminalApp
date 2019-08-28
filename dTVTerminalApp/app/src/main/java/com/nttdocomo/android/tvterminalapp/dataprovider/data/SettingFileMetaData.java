@@ -58,7 +58,7 @@ public class SettingFileMetaData  implements Serializable {
      * アプリの実行を停止するフラグを取得.
      * @return 停止：true else false
      */
-    public boolean isIsStop() {
+    public boolean isStop() {
         return mIsStop;
     }
 

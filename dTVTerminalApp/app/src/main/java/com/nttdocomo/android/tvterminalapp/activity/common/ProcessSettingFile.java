@@ -174,7 +174,7 @@ public class ProcessSettingFile {
 
                     //取得した値を次回の為に格納する
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsStop(
-                            mContext, mSettingData.isIsStop());
+                            mContext, mSettingData.isStop());
                     SharedPreferencesUtils.setSharedPreferencesSettingFileStopMessage(
                             mContext, mSettingData.getDescription());
                     SharedPreferencesUtils.setSharedPreferencesSettingFileForceUpdate(
@@ -249,7 +249,7 @@ public class ProcessSettingFile {
         boolean dialogSwitch = false;
 
         //停止の有無を見る
-        if (mSettingData.isIsStop()) {
+        if (mSettingData.isStop()) {
             //停止処理を行う
             stopAllActivityDialog();
             //ダイアログを表示する分岐に入ったのでtrue

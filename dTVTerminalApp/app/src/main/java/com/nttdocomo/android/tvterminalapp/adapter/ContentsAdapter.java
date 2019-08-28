@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -661,7 +662,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 setTabTimeData(holder, listContentInfo);
                 break;
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                if (listContentInfo.isIsAfterLimitContents()) {
+                if (listContentInfo.isAfterLimitContents()) {
                     //期限切れコンテンツの場合は「配信終了」を表示　※VODクリップのみ
                     holder.tv_time.setVisibility(View.VISIBLE);
                     holder.tv_time.setText(mContext.getString(R.string.str_clip_subtitle_delivery_end));
@@ -1058,9 +1059,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
         holder.ll_rating = view.findViewById(R.id.item_common_result_content_rating);
         holder.tv_line = view.findViewById(R.id.item_common_result_line);
+        if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
+            holder.tv_line.setBackgroundColor(ContextCompat.getColor(mContext, R.color.contents_detail_line_color));
+        }
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
             holder.tv_episode_synop = view.findViewById(R.id.item_common_result_episode_info);
             holder.tv_episode_all_synop = view.findViewById(R.id.item_common_result_episode_info_show_all);
+            holder.tv_line.setBackgroundColor(ContextCompat.getColor(mContext, R.color.contents_detail_line_color));
+            view.findViewById(R.id.item_common_synop_result_line).
+                    setBackgroundColor(ContextCompat.getColor(mContext, R.color.contents_detail_line_color));
         }
         return holder;
     }
@@ -1260,9 +1267,19 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                                 holder.tv_clip.setImageResource(R.mipmap.icon_tap_circle_normal_clip);
                             } else {
                                 if (listContentInfo.isClipStatus()) {
-                                    holder.tv_clip.setImageResource(R.drawable.common_clip_active_selector);
+                                    // コンテンツ詳細の場合は別クリップアイコンを使用する
+                                    if (mContext instanceof ContentDetailActivity) {
+                                        holder.tv_clip.setImageResource(R.drawable.common_clip_detail_active_selector);
+                                    } else {
+                                        holder.tv_clip.setImageResource(R.drawable.common_clip_active_selector);
+                                    }
                                 } else {
-                                    holder.tv_clip.setImageResource(R.drawable.common_clip_normal_selector);
+                                    // コンテンツ詳細の場合は別クリップアイコンを使用する
+                                    if (mContext instanceof ContentDetailActivity) {
+                                        holder.tv_clip.setImageResource(R.drawable.common_clip_detail_normal_selector);
+                                    } else {
+                                        holder.tv_clip.setImageResource(R.drawable.common_clip_normal_selector);
+                                    }
                                 }
                             }
                             holder.tv_clip.setVisibility(View.VISIBLE);

@@ -629,7 +629,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             ContentsData contentsData = contentsDataList.get(i);
             //クリップ状態の判定
             //期限切れクリップコンテンツはクリップキー上存在せず、UI側の状態を維持するために飛ばす
-            if (!contentsData.isIsAfterLimitContents()) {
+            if (!contentsData.isAfterLimitContents()) {
                 contentsData.setClipStatus(ClipUtils.setClipStatusContentsData(contentsData, clipList));
             }
             list.add(contentsData);

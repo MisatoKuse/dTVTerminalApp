@@ -713,7 +713,7 @@ public class ContentsData {
      * 視聴通知判定取得.
      * @return 視聴通知判定
      */
-    public String isIsNotify() {
+    public String isNotify() {
         return mIsNotify;
     }
 
@@ -1316,7 +1316,7 @@ public class ContentsData {
      *
      * @return 期限切れコンテンツフラグ
      */
-    public boolean isIsAfterLimitContents() {
+    public boolean isAfterLimitContents() {
         return mIsAfterLimitContents;
     }
 

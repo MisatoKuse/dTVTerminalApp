@@ -367,7 +367,7 @@ public class ClipListBaseFragment extends Fragment
 
         if (mContext != null) {
             ContentsData contentsData = mClipListData.get(i);
-            if (!contentsData.isIsAfterLimitContents()) {
+            if (!contentsData.isAfterLimitContents()) {
                 ClipListActivity clipListActivity = (ClipListActivity) mContext;
                 if (ContentUtils.isChildContentList(contentsData)) {
                     clipListActivity.startChildContentListActivity(contentsData);

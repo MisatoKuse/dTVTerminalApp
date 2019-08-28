@@ -67,7 +67,7 @@ public class TabItemLayout extends HorizontalScrollView {
         /**TvProgramListActivity.*/
         PROGRAM_LIST_ACTIVITY,
         /**ContentDetailActivity.*/
-        DTV_CONTENTS_DETAIL_ACTIVITY,
+        CONTENTS_DETAIL_ACTIVITY
     }
 
     /**
@@ -194,7 +194,7 @@ public class TabItemLayout extends HorizontalScrollView {
             tabTextView.setTag(i);
             if (i == 0) {
                 tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
-                tabTextView.setBackgroundResource(setBackgroundResourceIndicating(true));
+                tabTextView.setBackgroundResource(getBackgroundResourceIndicating(true));
             } else {
                 tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
                 tabTextView.setBackgroundResource(0);
@@ -214,7 +214,7 @@ public class TabItemLayout extends HorizontalScrollView {
             }
             mLinearLayout.addView(tabTextView);
         }
-        mLinearLayout.setBackgroundResource(setBackgroundResourceIndicating(false));
+        mLinearLayout.setBackgroundResource(getBackgroundResourceIndicating(false));
 
         DTVTLogger.end();
     }
@@ -249,7 +249,7 @@ public class TabItemLayout extends HorizontalScrollView {
             TextView textView = (TextView) mLinearLayout.getChildAt(i);
             if (position == i) {
                 scrollOffsetCheck(textView);
-                textView.setBackgroundResource(setBackgroundResourceIndicating(true));
+                textView.setBackgroundResource(getBackgroundResourceIndicating(true));
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
             } else {
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
@@ -321,7 +321,7 @@ public class TabItemLayout extends HorizontalScrollView {
             case WEEKLY_RANKING_ACTIVITY:
             case RECOMMEND_LIST_ACTIVITY:
             case RECORDED_LIST_ACTIVITY:
-            case DTV_CONTENTS_DETAIL_ACTIVITY:
+            case CONTENTS_DETAIL_ACTIVITY:
                 returnTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_15dp) / density;
                 break;
             case CHANNEL_LIST_ACTIVITY:
@@ -356,7 +356,7 @@ public class TabItemLayout extends HorizontalScrollView {
                         mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero));
                 break;
             case CLIP_LIST_ACTIVITY:
-            case DTV_CONTENTS_DETAIL_ACTIVITY:
+            case CONTENTS_DETAIL_ACTIVITY:
             case RECORDED_LIST_ACTIVITY:
                 layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -402,8 +402,9 @@ public class TabItemLayout extends HorizontalScrollView {
      * 設定するインジケータの取得.
      * @param isFocus フォーカスフラグ
      * @return リソースID
+     * 　　　　 コンテンツ詳細の場合、"0（リソースIDなし）"が返却される可能性あり
      */
-    private int setBackgroundResourceIndicating(final boolean isFocus) {
+    private int getBackgroundResourceIndicating(final boolean isFocus) {
         int resId;
         switch (mActivityType) {
             case CHANNEL_LIST_ACTIVITY:
@@ -413,12 +414,18 @@ public class TabItemLayout extends HorizontalScrollView {
                     resId = R.drawable.indicating_no_channel_list;
                 }
                 break;
-            case DTV_CONTENTS_DETAIL_ACTIVITY:
+            case CONTENTS_DETAIL_ACTIVITY:
+                if (isFocus) {
+                    resId = R.drawable.indicating_background_black;
+                } else {
+                    resId = 0;
+                }
+                break;
             case PROGRAM_LIST_ACTIVITY:
                 if (isFocus) {
-                    resId = R.drawable.indicating_background_brack;
+                    resId = R.drawable.indicating_background_black;
                 } else {
-                    resId = R.drawable.indicating_no_background_brack;
+                    resId = R.drawable.indicating_no_background_black;
                 }
                 break;
             case SEARCH_ACTIVITY:

@@ -699,7 +699,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * コンテンツ詳細リクエストステータスフラグ返却.
      * @return リクエストステータス
      */
-    public boolean isIsInContentsDetailRequest() {
+    public boolean isInContentsDetailRequest() {
         return mIsInContentsDetailRequest;
     }
 
@@ -707,7 +707,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * ロールリストリクエストステータスフラグ返却.
      * @return リクエストステータス
      */
-    public boolean isIsInRoleListRequest() {
+    public boolean isInRoleListRequest() {
         return mIsInRoleListRequest;
     }
 
@@ -715,7 +715,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * レンタルVodリストリクエストステータスフラグ返却.
      * @return リクエストステータス
      */
-    public boolean isIsInRentalVodListRequest() {
+    public boolean isInRentalVodListRequest() {
         return mIsInRentalVodListRequest;
     }
 
@@ -723,7 +723,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * レンタルChリストリクエストステータスフラグ返却.
      * @return リクエストステータス
      */
-    public boolean isIsInRentalChListRequest() {
+    public boolean isInRentalChListRequest() {
         return mIsInRentalChListRequest;
     }
     // endregion

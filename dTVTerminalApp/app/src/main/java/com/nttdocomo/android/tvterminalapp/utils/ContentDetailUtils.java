@@ -101,8 +101,6 @@ public class ContentDetailUtils {
     public static final String RECORD_LIST_KEY = "recordListKey";
     /** プレイヤー前回のポジション.*/
     public static final String PLAY_START_POSITION = "playStartPosition";
-    /** 前回リモートコントローラービュー表示フラグ.*/
-    public static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
     /** 再生停止フラグ.*/
     public static final String IS_PLAYER_PAUSED = "isPlayerPaused";
     /** 前回ViewPagerのタブ位置.*/
@@ -167,7 +165,11 @@ public class ContentDetailUtils {
         /** 番組データ取得.*/
         tvScheduleListGet,
         /** あらすじ取得.*/
-        recommendDetailGet
+        recommendDetailGet,
+        /** リモコン使用不可.*/
+        unableToUseRemoteController,
+        /** STB視聴不可（pure dTVのみ発生）.*/
+        stbViewingNg,
     }
 
     /**
@@ -210,6 +212,74 @@ public class ContentDetailUtils {
         VOD,
         /** その他.*/
         OTHER
+    }
+
+    /**
+     * リモコンタイプ
+     */
+    public enum RemoteControllerType {
+        /** ひかりTV.*/
+        HIKARI_TV(R.mipmap.cast_card_hikari_bg, R.mipmap.cast_card_hikari_bg_tap, R.mipmap.arrow_top_hikari, R.mipmap.arrow_top_hikari_tap),
+        /** dTV（STB視聴可能）.*/
+        DTV_VIEWING_OK(R.mipmap.cast_card_dtv_bg, R.mipmap.cast_card_dtv_bg_tap, R.mipmap.arrow_top_dtv, R.mipmap.arrow_top_dtv_tap),
+        /** dTV（STB視聴不可）.*/
+        DTV_VIEWING_NG(R.mipmap.cast_card_connect_outside_bg, R.mipmap.cast_card_connect_outside_bg, R.mipmap.arrow_top_connect_outside, R.mipmap.arrow_top_connect_outside),
+        /** dTVチャンネル.*/
+        DTV_CHANNEL(R.mipmap.cast_card_dch_bg, R.mipmap.cast_card_dch_bg_tap, R.mipmap.arrow_top_dch, R.mipmap.arrow_top_dch_tap),
+        /** dアニメストア.*/
+        DANIME(R.mipmap.cast_card_danime_bg, R.mipmap.cast_card_danime_bg_tap, R.mipmap.arrow_top_danime, R.mipmap.arrow_top_danime_tap),
+        /** DAZN.*/
+        DAZN(R.mipmap.cast_card_dazn_bg, R.mipmap.cast_card_dazn_bg_tap, R.mipmap.arrow_top_dazn, R.mipmap.arrow_top_dazn_tap),
+        /** 利用不可（宅外利用時）.*/
+        UNABLE_TO_USE(R.mipmap.cast_card_connect_outside_bg, R.mipmap.cast_card_connect_outside_bg, R.mipmap.arrow_top_connect_outside, R.mipmap.arrow_top_connect_outside);
+
+        /** バックグラウンドリソースID.*/
+        private final int mBackgroundResourceId;
+        /** タップ時のバックグラウンドリソースID.*/
+        private final int mBackgroundTapResourceId;
+        /** 表示リソースID.*/
+        private final int mArrowResourceId;
+        /** タップ時の表示リソースID.*/
+        private final int mArrowTapResourceId;
+
+        RemoteControllerType(int backgroundResourceId, int backgroundTapResourceId, int arrowResourceId, int arrowTapResourceId) {
+            mBackgroundResourceId = backgroundResourceId;
+            mBackgroundTapResourceId = backgroundTapResourceId;
+            mArrowResourceId = arrowResourceId;
+            mArrowTapResourceId = arrowTapResourceId;
+        }
+
+        /**
+         * バックグラウンドリソースID取得
+         * @return バックグラウンドリソースID
+         */
+        public int getBackgroundResourceId() {
+            return mBackgroundResourceId;
+        }
+
+        /**
+         * タップ時のバックグラウンドリソースID取得
+         * @return タップ時のバックグラウンドリソースID
+         */
+        public int getBackgroundTapResourceId() {
+            return mBackgroundTapResourceId;
+        }
+
+        /**
+         * 表示リソースID取得
+         * @return 表示リソースID
+         */
+        public int getArrowResourceId() {
+            return mArrowResourceId;
+        }
+
+        /**
+         * タップ時の表示リソースID取得
+         * @return タップ時の表示リソースID
+         */
+        public int getArrowTapResourceId() {
+            return mArrowTapResourceId;
+        }
     }
 
     /**

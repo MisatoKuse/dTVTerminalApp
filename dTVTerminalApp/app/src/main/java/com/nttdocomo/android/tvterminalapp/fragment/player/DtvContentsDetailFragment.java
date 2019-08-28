@@ -240,10 +240,10 @@ public class DtvContentsDetailFragment extends Fragment {
                     clipButton.setImageResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
                     if (mOtherContentsDetailData.isClipStatus()) {
-                        clipButton.setImageResource(R.drawable.common_clip_active_selector);
+                        clipButton.setImageResource(R.drawable.common_clip_detail_active_selector);
                         clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                     } else {
-                        clipButton.setImageResource(R.drawable.common_clip_normal_selector);
+                        clipButton.setImageResource(R.drawable.common_clip_detail_normal_selector);
                         clipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                     }
 

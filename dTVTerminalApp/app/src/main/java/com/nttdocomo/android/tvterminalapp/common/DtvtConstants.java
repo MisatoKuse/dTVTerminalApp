@@ -92,6 +92,8 @@ public class DtvtConstants {
     public static final int NEW_CACHE_DATA_VERDION = 1;
     /** アプリケーションプライバシーポリシー最新バージョン */
     public static final int NEW_APPLICATION_PRIVACY_POLICY_VERSION = 0;
+    /** リモコン表示時のアニメーション設定タイムDtv（ms） */
+    public static final int REMOTE_CONTROLLER_ANIMATION_TIME = 250;
 
     //==================================== 定数定義 End ===================================
 

@@ -1731,7 +1731,7 @@ public class PlayerViewLayout extends RelativeLayout implements MediaPlayerContr
         } else {
             type2 = type;
         }
-        mIsVideoBroadcast = playerData.isIsLive();
+        mIsVideoBroadcast = playerData.isLive();
         boolean isSupportedByteSeek = false;
         boolean isSupportedTimeSeek = false;
         boolean isAvailableConnectionStalling = false;

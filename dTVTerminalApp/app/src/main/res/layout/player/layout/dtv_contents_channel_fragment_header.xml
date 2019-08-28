@@ -39,6 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/channel_list_divider_height"
         android:layout_alignParentBottom="true"
-        android:background="@color/contents_detail_channel_line_color" />
+        android:background="@color/contents_detail_line_color" />
 
 </RelativeLayout>

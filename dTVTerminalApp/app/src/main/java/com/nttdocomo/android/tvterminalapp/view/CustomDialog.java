@@ -277,8 +277,10 @@ public class CustomDialog implements DialogInterface.OnClickListener, DialogInte
         SETTING_FILE_ERROR_DIALOG,
         /** dtv(起動).*/
         DTV_EPISODE_LIST_ITEM_DIALOG,
-        /** 確認ダイアログ.*/
+        /** 未ペアリング確認ダイアログ（シリーズコンテンツ等）.*/
         LAUNCH_STB_START_DIALOG,
+        /** 未ペアリング確認ダイアログ（リモコン表示時）.*/
+        REMOTE_CONTROL_START_PAIRING_DIALOG,
         /**. 画面遷移なし.*/
         COMMON_DIALOG
     }

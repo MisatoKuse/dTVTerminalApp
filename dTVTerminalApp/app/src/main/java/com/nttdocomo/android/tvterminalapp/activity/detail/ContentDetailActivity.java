@@ -12,6 +12,8 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -207,8 +209,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private String mVodEndDateText = null;
     /** 操作履歴送信.*/
     private SendOperateLog mSendOperateLog = null;
-    /** 二回目リモコン送信防止.*/
-    private boolean mIsSend = false;
     /** ヘッダーチェック.*/
     private boolean mIsFromHeader = false;
     /** チャンネル日付.*/
@@ -225,8 +225,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private int mPlayStartPosition;
     /** 再生停止フラグ.*/
     private boolean mIsPlayerPaused = false;
-    /** 前回リモートコントローラービュー表示フラグ.*/
-    private boolean mVisibility = false;
     /** ディスプレイ幅.*/
     private int mWidth;
     /** ディスプレイ高さ.*/
@@ -267,7 +265,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         if (savedInstanceState != null) {
             mPlayStartPosition = savedInstanceState.getInt(ContentDetailUtils.PLAY_START_POSITION);
-            mVisibility = savedInstanceState.getBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY);
             mViewPagerIndex = savedInstanceState.getInt(ContentDetailUtils.VIEWPAGER_INDEX);
             mIsPlayerPaused = savedInstanceState.getBoolean(ContentDetailUtils.IS_PLAYER_PAUSED);
             savedInstanceState.clear();
@@ -354,7 +351,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mPlayerData == null || mPlayerData.isRemote()) {
                     setRemotePlayArrow(mPlayerData);
                 } else {
-                    if (mPlayerData.isIsLive()) {
+                    if (mPlayerData.isLive()) {
                         mPlayerViewLayout.setVisibility(View.VISIBLE);
                         if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
                             showPlayerView();
@@ -461,7 +458,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
             outState.putInt(ContentDetailUtils.PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
-        outState.putBoolean(ContentDetailUtils.REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
         if (mViewPager != null) {
             outState.putInt(ContentDetailUtils.VIEWPAGER_INDEX, mViewPager.getCurrentItem());
         }
@@ -552,7 +548,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (isFirstTouch) {
             String category = getString(R.string.google_analytics_category_service_name_h4d);
             String action;
-            if (playerData.isIsLive()) {
+            if (playerData.isLive()) {
                 action = getString(R.string.google_analytics_category_action_contents_play);
             } else {
                 action = getString(R.string.google_analytics_category_action_record_contents_play);
@@ -604,7 +600,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             } else {
                 setRemotePlayArrow(playerData);
             }
-            if (!playerData.isIsLive()) {
+            if (!playerData.isLive()) {
                 showPlayerOnlyView(playerData);
             }
             super.sendScreenView(getString(R.string.google_analytics_screen_name_player_recording), //録画再生カスタムディメンション送信
@@ -931,10 +927,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         String contentsId = mIntent.getStringExtra(ContentUtils.PLALA_INFO_BUNDLE_KEY);
-        if (ContentDetailUtils.getStbStatus() || mVisibility) {
-            createRemoteControllerView(true);
-            findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
-        }
+        createRemoteControllerView(true);
+        findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
         if (!TextUtils.isEmpty(contentsId)) { //ぷらら
             if (mDetailData == null) {
                 mDetailData = new OtherContentsDetailData();
@@ -1063,7 +1057,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mTabLayout == null) {
             mTabLayout = new TabItemLayout(this);
             mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.DTV_CONTENTS_DETAIL_ACTIVITY);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.CONTENTS_DETAIL_ACTIVITY);
             RelativeLayout tabRelativeLayout = findViewById(R.id.rl_dtv_contents_detail_tab);
             tabRelativeLayout.setVisibility(View.VISIBLE);
             tabRelativeLayout.addView(mTabLayout);
@@ -1223,7 +1217,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mStbMetaInfoGetDataProvider = new StbMetaInfoGetDataProvider();
         }
         if (mDetailData != null) {
-            if (mDetailData.getContentsId() == null ||  mDetailData.getCategoryId() == null) {
+            if (mDetailData.getContentsId() == null || mDetailData.getCategoryId() == null) {
                 // ダイアログを表示
                 showProgressBar(false);
                 showDialogToClose(this, getString(R.string.common_failed_get_info));
@@ -1371,9 +1365,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         mContentsDetailDataProvider.getRoleListData();
                     }
                     if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                        if (ContentDetailUtils.getStbStatus() || mVisibility) {
-                            showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari);
-                        }
+                        showRemoteViewControl();
                     } else { //レコメンドサーバー以外のひかりTV
                         if (mDetailFullData != null) {
                             mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
@@ -1383,9 +1375,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         if (mViewIngType != null) {
                             changeUIBasedContractInfo();
                         }
-                        if (ContentDetailUtils.getStbStatus() || mVisibility) {
-                            showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari);
-                        }
+                        showRemoteViewControl();
                     }
                 } else {
                     tabType = ContentDetailUtils.TabType.VOD;
@@ -1393,9 +1383,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mThumbnail.setImageResource(R.mipmap.error_movie);
                 }
                 sendOperateLog();
-                if (ContentDetailUtils.getStbStatus() || mVisibility) {
-                    findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
-                }
                 if (mDetailFullData != null && !TextUtils.isEmpty(mDetailFullData.getServiceIdUniq())) {
                     mServiceIdUniq = mDetailFullData.getServiceIdUniq();
                     //チャンネル情報取得(取得後に視聴可否判定)
@@ -1491,10 +1478,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void responseResultCheck(final ContentUtils.ViewIngType viewIngType, final ContentUtils.ContentsType contentsType) {
         if (mContentsDetailDataProvider == null
-                || (!mContentsDetailDataProvider.isIsInContentsDetailRequest()
-                    && !mContentsDetailDataProvider.isIsInRentalChListRequest()
-                    && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
-                    && !mContentsDetailDataProvider.isIsInRoleListRequest())) {
+                || (!mContentsDetailDataProvider.isInContentsDetailRequest()
+                && !mContentsDetailDataProvider.isInRentalChListRequest()
+                && !mContentsDetailDataProvider.isInRentalVodListRequest()
+                && !mContentsDetailDataProvider.isInRoleListRequest())) {
             //ログアウト状態ならそのまま表示する
             UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
@@ -1859,10 +1846,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     @Override
     public void onStartRemoteControl(final boolean isFromHeader) {
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showCommonControlErrorDialog(getString(R.string.contents_detail_episode_dialog_start_stb_dtv_error),
+                            CustomDialog.ShowDialogType.REMOTE_CONTROL_START_PAIRING_DIALOG, null, null, null);
+                }
+            }, DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
+            return;
+        }
         mIsFromHeader = isFromHeader;
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
-        if (mDetailData != null && !mIsSend && !isFromHeader) {
+        TextView headerTextView = getRemoteControllerView().findViewById(R.id.watch_by_tv);
+        boolean isStarted = false;
+        if (getString(R.string.remote_controller_viewpager_text_use_remote).equals(headerTextView.getText().toString())) {
+            isStarted = true;
+        }
+        if (mDetailData != null && !isStarted && !isFromHeader) {
             setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
                 case ContentUtils.DTV_CONTENTS_SERVICE_ID: // dTV
@@ -2082,40 +2084,27 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 && mViewPager.getCurrentItem() == ContentDetailUtils.CONTENTS_DETAIL_CHANNEL_EPISODE_TAB_POSITION) {
             setRemoteControllerViewVisibility(View.GONE);
         }
-        if (!mIsFromHeader) {
-            mIsSend = true;
-            RemoteControllerView mRemoteControllerView = getRemoteControllerView();
-            if (mRemoteControllerView != null) {
-                TextView mTextView = mRemoteControllerView.findViewById(R.id.watch_by_tv);
-                mTextView.setText(getString(R.string.remote_controller_viewpager_text_use_remote));
-            }
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
+            // 未ペアリングの場合は、STB連携を行わない
+            setRemoteControllerView();
+            return;
         }
         if (mDetailData != null) {
-            switch (mDetailData.getServiceId()) {
-                case ContentUtils.DTV_CONTENTS_SERVICE_ID:
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
-                    break;
-                case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
-                    break;
-                case ContentUtils.DAZN_CONTENTS_SERVICE_ID:
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.remote_watch_by_tv_bottom_corner_dazn, null));
-                    break;
-                case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID:
-                default:
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
-                    break;
-            }
+            setRemoteControllerView();
         }
         //「契約する」ボタンが押下された契機でリモコンが表示されていた場合は押下フラグを下げる。
         // （「契約する」ボタンの押下を判定してmIsSend に因らず毎回、ひかりTVアプリの連携起動するため）
         mThumbnailContractButtonClicked = false;
         super.onEndRemoteControl();
+    }
+
+    @Override
+    public void onErrorRemoteControl(final ContentDetailUtils.RemoteControllerType remoteControllerType) {
+        ContentDetailUtils.ErrorType errorType = remoteControllerType == ContentDetailUtils.RemoteControllerType.UNABLE_TO_USE
+                ? ContentDetailUtils.ErrorType.unableToUseRemoteController : ContentDetailUtils.ErrorType.stbViewingNg;
+
+        // トーストでエラー表示
+        showErrorToast(errorType);
     }
 
     /**
@@ -2157,7 +2146,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     errorMessage = getString(R.string.recording_reservation_failed_dialog_msg);
                 }
-               showCommonControlErrorDialog(errorMessage, null, null, null, null);
+                showCommonControlErrorDialog(errorMessage, null, null, null, null);
             } else {
                 if (mToast != null) {
                     mToast.cancel();
@@ -2218,7 +2207,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //取得を行ったコンテンツ種別が、録画ボタン表示対象以外かどうかの確認
             //(H4d契約は成立しなければボタンは表示されないので、ここでは見なくて良いでしょう)
             if (!(contentsType == ContentUtils.ContentsType.HIKARI_TV
-               || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
+                    || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
                 //録画ボタン表示対象の種別以外ならば、録画可能時間外や放送中等なので、録画不能のダイアログを出して、falseを返す
                 showCommonControlErrorDialog(getString(R.string.recording_reservation_failed_dialog_msg), null, null, null, null);
                 return false;
@@ -2450,7 +2439,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onSettingFileErrorCallback(final String errorMessage, final CustomDialog.ShowDialogType showDialogType,
                                            final CustomDialog.ApiOKCallback okCallback, final CustomDialog.ApiCancelCallback cancelCallback,
-                                           final  CustomDialog.DismissCallback dismissCallback) {
+                                           final CustomDialog.DismissCallback dismissCallback) {
         showCommonControlErrorDialog(errorMessage, showDialogType, okCallback, cancelCallback, dismissCallback);
     }
 
@@ -2580,7 +2569,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onConnectErrorCallback(final int errorCode) {
-                       final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+                        final StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -3265,6 +3254,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         showProgressBar(false);
         ErrorState errorState = null;
+        String errorMessage = null;
         switch (errorType) {
             case rentalChannelListGet:
                 errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.rentalChList);
@@ -3278,16 +3268,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case roleListGet:
                 errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.roleList);
                 break;
+            case unableToUseRemoteController:
+                errorMessage = getString(R.string.contents_detail_episode_dialog_start_stb_dtv_toast);
+                break;
+            case stbViewingNg:
+                errorMessage = getString(R.string.remote_controller_stb_viewing_ng_toast);
+                break;
             case contentDetailGet:
             case recommendDetailGet:
             default:
                 break;
         }
-        if (errorState != null) {
-            showGetDataFailedToast(errorState.getErrorMessage());
-        } else {
-            showGetDataFailedToast();
-        }
+        errorMessage = errorState != null ? errorState.getErrorMessage() : errorMessage;
+        showGetDataFailedToast(errorMessage);
         DTVTLogger.end();
     }
 
@@ -3393,13 +3386,115 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * テレビで視聴するボタン表示.
-     * @param resourceId リソースID
      */
-    private void showRemoteViewControl(final int resourceId) {
+    private void showRemoteViewControl() {
         createRemoteControllerView(true);
+        findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
         mIsControllerVisible = true;
-        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), resourceId, null));
+        setRemoteControllerView();
         setStartRemoteControllerUIListener(this);
+    }
+
+    @Override
+    protected void noticeConnectionChange() {
+        super.noticeConnectionChange();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRemoteControllerView();
+            }
+        });
+    }
+
+    /**
+     * リモコンView設定
+     */
+    private void setRemoteControllerView() {
+        if (mFrameLayout == null) {
+            mFrameLayout = findViewById(R.id.header_watch_by_tv);
+        }
+        mFrameLayout.setVisibility(View.VISIBLE);
+        RemoteControllerView remoteControllerView = getRemoteControllerView();
+        TextView textView = remoteControllerView.findViewById(R.id.watch_by_tv);
+        ImageView tvIcon = remoteControllerView.findViewById(R.id.remote_tv_play_icon);
+        TextView statusTextView = remoteControllerView.findViewById(R.id.remote_control_status);
+        ImageView downIcon = remoteControllerView.findViewById(R.id.remote_controller_down);
+        StbConnectionManager.ConnectionStatus status = StbConnectionManager.shared().getConnectionStatus();
+        ContentDetailUtils.RemoteControllerType remoteControllerType = null;
+        switch (status) {
+            case HOME_IN: // 宅内利用時
+            case NONE_PAIRING: // 未ペアリング
+                textView.setTextColor(ContextCompat.getColor(this, R.color.basic_text_color_white));
+                statusTextView.setText(getString(status == StbConnectionManager.ConnectionStatus.HOME_IN
+                        ? R.string.remote_controller_viewpager_text_status_home_in : R.string.remote_controller_viewpager_text_status_none_paring));
+                statusTextView.setTextColor(ContextCompat.getColor(this, R.color.basic_text_color_white));
+                tvIcon.setImageResource(R.mipmap.tv);
+                if (mIsOtherService) { // 検レコメンドサーバコンテンツ
+                    int serviceId = mDetailData.getServiceId();
+                    switch (serviceId) {
+                        case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメストア
+                            remoteControllerType = ContentDetailUtils.RemoteControllerType.DANIME;
+                            remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.DANIME);
+                            break;
+                        case ContentUtils.DAZN_CONTENTS_SERVICE_ID: // DAZN
+                            remoteControllerType = ContentDetailUtils.RemoteControllerType.DAZN;
+                            remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.DAZN);
+                            textView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_tv_bottom_dazn_text));
+                            tvIcon.setImageResource(R.mipmap.tv_black);
+                            statusTextView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_tv_bottom_dazn_text));
+                            break;
+                        case ContentUtils.DTV_CONTENTS_SERVICE_ID: // dTV
+                            // STB視聴不可の場合は、「宅外利用時」と同じ扱い
+                            if (ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                                remoteControllerType = ContentDetailUtils.RemoteControllerType.DTV_VIEWING_NG;
+                                statusTextView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_status_for_home_out_text));
+                                tvIcon.setImageResource(R.mipmap.tv_connect_outside);
+                                textView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_status_for_home_out_text));
+                                remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.DTV_VIEWING_NG);
+                            } else {
+                                remoteControllerType = ContentDetailUtils.RemoteControllerType.DTV_VIEWING_OK;
+                                remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.DTV_VIEWING_OK);
+                            }
+                            break;
+                        case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID: // dTVチャンネル
+                            remoteControllerType = ContentDetailUtils.RemoteControllerType.DTV_CHANNEL;
+                            remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.DTV_CHANNEL);
+                            break;
+                        default: // ひかりTV
+                            remoteControllerType = ContentDetailUtils.RemoteControllerType.HIKARI_TV;
+                            remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.HIKARI_TV);
+                            break;
+                    }
+                } else { // ぷららサーバコンテンツ
+                    remoteControllerType = ContentDetailUtils.RemoteControllerType.HIKARI_TV;
+                    remoteControllerView.setRemoteControllerType(ContentDetailUtils.RemoteControllerType.HIKARI_TV);
+                }
+                break;
+            case HOME_OUT: // 宅外利用
+            case NONE_LOCAL_REGISTRATION: // 宅外利用、リモート視聴設定未設定
+            case HOME_OUT_CONNECT: // 宅外利用、リモート接続済み
+                statusTextView.setText(getString(R.string.remote_controller_viewpager_text_status_home_out));
+                statusTextView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_status_for_home_out_text));
+                tvIcon.setImageResource(R.mipmap.tv_connect_outside);
+                textView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_status_for_home_out_text));
+                remoteControllerType = ContentDetailUtils.RemoteControllerType.UNABLE_TO_USE;
+                // 「pure dTV」コンテンツかつSTB視聴不可の場合
+                if (mIsOtherService) {
+                    if (mDetailData.getServiceId() == ContentUtils.DTV_CONTENTS_SERVICE_ID && ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                        remoteControllerType = ContentDetailUtils.RemoteControllerType.DTV_VIEWING_NG;
+                    }
+                }
+                remoteControllerView.setRemoteControllerType(remoteControllerType);
+                break;
+            default:
+                break;
+        }
+        downIcon.setImageResource(remoteControllerType.getArrowResourceId());
+        // リモコン表示時にペアリング状況が変わった場合はリモコンヘッダーの背景色を変更しない
+        RelativeLayout relativeLayout = remoteControllerView.findViewById(R.id.bottom_view_ll);
+        if (relativeLayout.getVisibility() == View.VISIBLE) {
+            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), remoteControllerType.getBackgroundResourceId(), null));
+        }
     }
 
     /**
@@ -3408,36 +3503,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void checkRecommendResponse() {
         int serviceId = mDetailData.getServiceId();
         contentType = ContentDetailUtils.ContentTypeForGoogleAnalytics.OTHER;
-        if (ContentDetailUtils.getStbStatus() || mVisibility) { // STBに接続している 「テレビで視聴」が表示
-            findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
-            switch (serviceId) {
-                case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
-                    showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_d_anime);
-                    break;
-                case ContentUtils.DAZN_CONTENTS_SERVICE_ID:
-                    RemoteControllerView mRemoteControllerView = getRemoteControllerView();
-                    if (mRemoteControllerView != null) {
-                        TextView mTextView = mRemoteControllerView.findViewById(R.id.watch_by_tv);
-                        mTextView.setTextColor(ContextCompat.getColor(this, R.color.remote_watch_by_tv_bottom_dazn_text));
-                        ImageView mTvIcon = mRemoteControllerView.findViewById(R.id.remote_tv_play_icon);
-                        mTvIcon.setImageResource(R.mipmap.tv_black);
-                        ImageView mTopIcon = mRemoteControllerView.findViewById(R.id.remote_controller_down);
-                        mTopIcon.setImageResource(R.mipmap.arrow_top_black);
-                    }
-                    showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dazn);
-                    break;
-                case ContentUtils.DTV_CONTENTS_SERVICE_ID: // 「reserved1」が「1」STB視聴不可
-                    if (!ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
-                        showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dtv);
-                    }
-                    break;
-                case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                    showRemoteViewControl(R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari);
-                    break;
-                default:
-                    break;
-            }
-        }
+        showRemoteViewControl();
         //コンテンツタイプ取得
         ContentUtils.ContentsType type = mDetailData.getContentCategory();
         DTVTLogger.debug("display thumbnail contents type = " + type);

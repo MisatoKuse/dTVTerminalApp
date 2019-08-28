@@ -127,6 +127,11 @@
     <!-- リモコン-->
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
     <string name="remote_controller_viewpager_text_use_remote">リモコンを表示する</string>
+    <string name="remote_controller_viewpager_text_status_home_in">宅内利用中</string>
+    <string name="remote_controller_viewpager_text_status_home_out">宅外利用中</string>
+    <string name="remote_controller_viewpager_text_status_none_paring">未ペアリング</string>
+    <string name="remote_controller_stb_viewing_ng_toast">本コンテンツはテレビで視聴できません</string>
+
     <!-- Home -->
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
     <string name="home_now_on_air_channel_list">チャンネルリスト</string>

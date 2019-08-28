@@ -23,82 +23,76 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
+import com.nttdocomo.android.tvterminalapp.utils.GoogleAnalyticsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**リモートコントローラービュークラス.*/
 public class RemoteControllerView extends RelativeLayout implements ViewPager.OnPageChangeListener {
-    /**コンテキスト.*/
+    /** コンテキスト.*/
     private Context mContext = null;
-    /**タッチされたY座標とビューTOPの距離.*/
+    /** タッチDOWNされたY座標とビューTOPの距離.*/
     private int mDownY = 0;
-    /**移動した距離.*/
+    /** 移動した距離.*/
     private int mMovedY = 0;
-    /**スクロールできる最大範囲.*/
+    /** スクロールできる最大範囲.*/
     private int mScrollHeight = 0;
-    /**へだーの高さ.*/
+    /** ヘッダーの高さ.*/
     private int mHeaderHeight = 0;
-    /**TOPまで表示されてるか.*/
+    /** TOPまで表示されてるか.*/
     private boolean mIsTop = false;
-    /**最初に見える高さ.*/
+    /** 最初に見える高さ.*/
     private float mVisibilityHeight = 0;
-    /**システムTime.*/
+    /** システムTime.*/
     private long mSysTime;
-    /**クリックなのかスワイプなのか.*/
+    /** クリックなのかスワイプなのか.*/
     private boolean mIsClick = false;
-    /**最初から表示されているか否か.*/
+    /** 最初から表示されているか否か.*/
     private boolean mIsFirstVisible = false;
-    /**子ビュー.*/
+    /** コンテンツ詳細リモコンタイプ.*/
+    private ContentDetailUtils.RemoteControllerType mRemoteControllerType;
+    /** 子ビュー.*/
     private View mChild = null;
-    /**Scroller.*/
+    /** Scroller.*/
     private Scroller mScroller = null;
-    /**リストビュー.*/
+    /** リストビュー.*/
     private final List<View> mViewList = new ArrayList<>();
-    /**ViewPager.*/
+    /** ViewPager.*/
     private ViewPager mViewPager = null;
-    /**FrameLayout.*/
+    /** FrameLayout.*/
     private FrameLayout mFrameLayout = null;
-    /**SendKeyAction.*/
+    /** SendKeyAction.*/
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction = null;
-    /**GestureDetector.*/
+    /** GestureDetector.*/
     private GestureDetector mParentGestureDetector = null;
-    /**GestureDetector.*/
+    /** GestureDetector.*/
     private GestureDetector mGestureDetector = null;
-    /**RelativeLayout.*/
+    /** RelativeLayout.*/
     private RelativeLayout mBottomLinearLayout, mTopLinearLayout = null;
-    /**リスナー.*/
+    /** リスナー.*/
     private OnStartRemoteControllerUIListener mStartUIListener = null;
-    /**
-     * 640 基準値（幅さ）.
-     */
+    /** 640 基準値（幅さ）.*/
     private static final int BASE_WIDTH = 360;
-    /**
-     * 640 基準値（高さ）.
-     */
+    /** 640 基準値（高さ）.*/
     private static final int BASE_HEIGHT = 640;
-    /**
-     * 8 基準値（左右padding）.
-     */
+    /** 8 基準値（左右padding）.*/
     private static final int BASE_LEFT_RIGHT_PADDING = 8;
-    /**
-     * 80 基準値（タイトル高さ）.
-     */
+    /** 80 基準値（タイトル高さ）.*/
     private static final int BASE_TITLE = 80;
-    /**
-     * 0 基準値（paddingTop 0）.
-     */
+    /** 0 基準値（paddingTop 0）.*/
     private static final int BASE_PADDING_TOP = 0;
-    /**
-     * 2 基準値（両側）.
-     */
+    /** 2 基準値（両側）.*/
     private static final int BASE_LEFT_RIGHT = 2;
-    /**.*/
+    /** クリック判定閾値時間(ms).*/
     private static final long CLICK_MAX_TIME = 100;
 
     /**
@@ -115,10 +109,16 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
          * リモートコントローラーUI表示閉じる.
          */
         void onEndRemoteControl();
+
+        /**
+         * 宅外利用時のエラー.
+         */
+        void onErrorRemoteControl(ContentDetailUtils.RemoteControllerType remoteControllerType);
     }
 
     /**
      * コンストラクタ.
+     *
      * @param context コンテキスト
      */
     public RemoteControllerView(final Context context) {
@@ -177,6 +177,15 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         this.setBackgroundColor(Color.TRANSPARENT);
     }
 
+    /**
+     * リモコンタイプの設定（コンテンツ詳細）
+     *
+     * @param remoteControllerType　リモコンタイプ
+     */
+    public void setRemoteControllerType(final ContentDetailUtils.RemoteControllerType remoteControllerType) {
+        this.mRemoteControllerType = remoteControllerType;
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -219,6 +228,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 if (mDownY < mChild.getMeasuredHeight() - mVisibilityHeight && !mIsTop) {
                     return false;
                 }
+                setHighlight(event);
                 //viewPagerを初期化する
                 if (mViewList.size() == 0) {
                     setPager();
@@ -226,6 +236,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 return true;
 
             case MotionEvent.ACTION_MOVE:
+                if (mRemoteControllerType == ContentDetailUtils.RemoteControllerType.DTV_VIEWING_NG
+                        || mRemoteControllerType == ContentDetailUtils.RemoteControllerType.UNABLE_TO_USE) {
+                    // スワイプ中に「宅外」に変わった場合、操作可能とする
+                    if (mMovedY == 0) {
+                        return false;
+                    }
+                }
                 int moveY = 0;
                 moveY = (int) event.getY();
                 //mDeY:移動した距離
@@ -258,6 +275,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                setHighlight(event);
                 //指が離すときの時間差を計算する
                 Long curTime = event.getEventTime();
                 Long diff = curTime - mSysTime;
@@ -269,7 +287,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 }
                 //子ビューがタップされた場合
                 if (mDownY > mScrollHeight - mVisibilityHeight && mIsClick && !mIsTop) {
-                    mScroller.startScroll(0, getScrollY(), 0, mScrollHeight - getScrollY());
+                    // 「宅外利用中」あるいは「STB視聴不可」コンテンツの場合はエラートースト表示
+                    if (mRemoteControllerType == ContentDetailUtils.RemoteControllerType.DTV_VIEWING_NG
+                            || mRemoteControllerType == ContentDetailUtils.RemoteControllerType.UNABLE_TO_USE) {
+                        mStartUIListener.onErrorRemoteControl(mRemoteControllerType);
+                        return true;
+                    }
+                    mScroller.startScroll(0, getScrollY(), 0, mScrollHeight - getScrollY(), DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
                     postInvalidate();
                     setHeaderContent(false);
                     break;
@@ -277,7 +301,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 //指が離すまで子ビュ―の移動した距離は子ビューの1/4に超えた場合、
                 // 自動的にTOPまで移動する
                 if (mMovedY > mScrollHeight / 4) {
-                    mScroller.startScroll(0, getScrollY(), 0, (mScrollHeight - getScrollY()));
+                    mScroller.startScroll(0, getScrollY(), 0, (mScrollHeight - getScrollY()), DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
                     invalidate();
                     if (!mIsTop) {
                         setHeaderContent(false);
@@ -285,7 +309,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 } else {
                     //1/4に満たしていない場合、元の位置に戻る
                     //表示するコンテンツを設定する
-                    mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+                    mScroller.startScroll(0, getScrollY(), 0, -getScrollY(), DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
                     postInvalidate();
                     mMovedY = 0;
                     mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
@@ -307,6 +331,66 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     /**
+     * ハイライト設定
+     * @param event タッチイベント
+     */
+    private void setHighlight(final MotionEvent event) {
+        if (!mIsTop) {
+            // 「宅外利用中」あるいは「STB視聴不可」コンテンツの場合はハイライト設定なし
+            if (mRemoteControllerType == ContentDetailUtils.RemoteControllerType.DTV_VIEWING_NG
+                    || mRemoteControllerType == ContentDetailUtils.RemoteControllerType.UNABLE_TO_USE) {
+                return;
+            }
+            FrameLayout backgroundView = findViewById(R.id.header_watch_by_tv);
+            ImageView tvIcon = findViewById(R.id.remote_tv_play_icon);
+            TextView textView = findViewById(R.id.watch_by_tv);
+            TextView statusTextView = findViewById(R.id.remote_control_status);
+            ImageView arrowTopIcon = findViewById(R.id.remote_controller_down);
+            int tvIconResourceId;
+            int textColorResourceId;
+            int arrowTopIconResourceId;
+            int backgroundResourceId;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    switch (mRemoteControllerType) {
+                        case DAZN:
+                            tvIconResourceId = R.mipmap.tv_dazn;
+                            textColorResourceId = R.color.remote_watch_dazn_highlight_text;
+                            break;
+                        default:
+                            tvIconResourceId = R.mipmap.tv_tap;
+                            textColorResourceId = R.color.remote_watch_default_highlight_text;
+                            break;
+                    }
+                    arrowTopIconResourceId = mRemoteControllerType.getArrowTapResourceId();
+                    backgroundResourceId = mRemoteControllerType.getBackgroundTapResourceId();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    switch (mRemoteControllerType) {
+                        case DAZN:
+                            tvIconResourceId = R.mipmap.tv_black;
+                            textColorResourceId = R.color.remote_watch_by_tv_bottom_dazn_text;
+                            break;
+                        default:
+                            tvIconResourceId = R.mipmap.tv;
+                            textColorResourceId = R.color.basic_text_color_white;
+                            break;
+                    }
+                    arrowTopIconResourceId = mRemoteControllerType.getArrowResourceId();
+                    backgroundResourceId = mRemoteControllerType.getBackgroundResourceId();
+                    break;
+                default:
+                    return;
+            }
+            backgroundView.setBackground(ResourcesCompat.getDrawable(getResources(), backgroundResourceId, null));
+            tvIcon.setImageResource(tvIconResourceId);
+            textView.setTextColor(ResourcesCompat.getColor(getResources(), textColorResourceId, null));
+            statusTextView.setTextColor(ResourcesCompat.getColor(getResources(), textColorResourceId, null));
+            arrowTopIcon.setImageResource(arrowTopIconResourceId);
+        }
+    }
+
+    /**
      * 子ビュ―が一番上まで移動した場合表示するコンテンツを設定する.
      * @param isFromHeader ヘッダーからUI表示
      */
@@ -320,6 +404,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mBottomLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
+        GoogleAnalyticsUtils.sendScreenViewInfo(getResources().getString(R.string.google_analytics_screen_name_remote_control), null);
         startRemoteControl(isFromHeader);
         DTVTLogger.end();
     }
@@ -502,7 +587,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      */
     public void closeRemoteControllerUI() {
         if (mIsTop) {
-            mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+            mScroller.startScroll(0, getScrollY(), 0, -getScrollY(), DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
             postInvalidate();
             mMovedY = 0;
             mIsTop = false;
@@ -539,9 +624,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         DTVTLogger.debug("getScrollY:" + getScrollY());
         if (mIsFirstVisible) {
-            mScroller.startScroll(0, 0, 0, mScrollHeight);
+            mScroller.startScroll(0, 0, 0, mScrollHeight, DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
         } else {
-            mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
+            mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight), DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
         }
         invalidate();
         setHeaderContent(isHeader);
@@ -575,7 +660,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * @param type       アプリ起動要求種別
      * @param contentsId コンテンツID
      */
-    public void sendStartApplicationRequest(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final  String contentsId) {
+    public void sendStartApplicationRequest(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, mContext);
         DTVTLogger.end();
@@ -586,15 +671,15 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・dTVチャンネル・カテゴリー分類に対応
      *
-     * @param type dTVチャンネル
+     * @param type                dTVチャンネル
      * @param serviceCategoryType カテゴリー分類
-     * @param crid コンテンツ識別子.
-     * @param chno チャンネル番号
+     * @param crid                コンテンツ識別子.
+     * @param chno                チャンネル番号
      */
     public void sendStartApplicationDtvChannelRequest(
-           final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-           final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-           final String crid, final String chno) {
+            final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
+            final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
+            final String crid, final String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);
         DTVTLogger.end();
@@ -641,8 +726,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * ・ひかりTVのVOD
      *
      * @param licenseId ラインセンスID
-     * @param cid コンテンツID
-     * @param crid コンテンツ識別子.
+     * @param cid       コンテンツID
+     * @param crid      コンテンツ識別子.
      */
     public void sendStartApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
                                                                        final String cid, final String crid) {
@@ -668,7 +753,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）
      *
-     * @param crid  ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）コンテンツID
+     * @param crid ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）コンテンツID
      */
     public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(final String crid) {
         DTVTLogger.start();
@@ -681,7 +766,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * ・ひかりTV内 dTVのVOD
      *
      * @param episodeId エピソードID
-     * @param crid コンテンツ識別子
+     * @param crid      コンテンツ識別子
      */
     public void sendStartApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final String crid) {
         DTVTLogger.start();

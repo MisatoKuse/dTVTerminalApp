@@ -95,7 +95,7 @@ public class RecordedContentsDetailData implements Parcelable {
      *isLive取得.
      * @return isLive
      */
-    public boolean isIsLive() {
+    public boolean isLive() {
         return mIsLive;
     }
 

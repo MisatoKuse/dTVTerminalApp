@@ -17,6 +17,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -80,6 +81,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
@@ -104,6 +106,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -1046,6 +1049,11 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                     case TITLE_DETAIL:
                         sendGoogleAnalyticsEvent(false, appType);
+                        RemoteControllerView remoteControllerView = getRemoteControllerView();
+                        if (remoteControllerView != null) {
+                            TextView headerTextView = remoteControllerView.findViewById(R.id.watch_by_tv);
+                            headerTextView.setText(getString(R.string.remote_controller_viewpager_text_use_remote));
+                        }
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                     case SET_DEFAULT_USER_ACCOUNT:
@@ -1339,16 +1347,17 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * 機能 エラー制御ダイアログ.
-     * @param errorMessage errorMessage
-     * @param showDialogType showDialogType
-     * @param apiOKCallback apiOKCallback
+     *
+     * @param errorMessage      errorMessage
+     * @param showDialogType    showDialogType
+     * @param apiOKCallback     apiOKCallback
      * @param apiCancelCallback apiCancelCallback
-     * @param dismissCallback dismissCallback　バックキーによるダイアログクローズ
+     * @param dismissCallback   dismissCallback　バックキーによるダイアログクローズ
      */
     protected synchronized void showCommonControlErrorDialog(final String errorMessage, final CustomDialog.ShowDialogType showDialogType,
-                                             final CustomDialog.ApiOKCallback apiOKCallback,
-                                             final CustomDialog.ApiCancelCallback apiCancelCallback,
-                                             final CustomDialog.DismissCallback dismissCallback) {
+                                                             final CustomDialog.ApiOKCallback apiOKCallback,
+                                                             final CustomDialog.ApiCancelCallback apiCancelCallback,
+                                                             final CustomDialog.DismissCallback dismissCallback) {
         DTVTLogger.debug("showCommonControlErrorDialog:" + errorMessage);
         if (!isNeedToInsertQue(showDialogType)) {
             return;
@@ -1397,6 +1406,7 @@ public class BaseActivity extends FragmentActivity implements
                     break;
                 case OPTIONAL_VERSION_UP:
                 case LAUNCH_STB_START_DIALOG:
+                case REMOTE_CONTROL_START_PAIRING_DIALOG:
                     customDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
                     break;
                 default:
@@ -1406,7 +1416,7 @@ public class BaseActivity extends FragmentActivity implements
         } else {
             customDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         }
-        if (showDialogType == CustomDialog.ShowDialogType.LAUNCH_STB_START_DIALOG) {
+        if (showDialogType == CustomDialog.ShowDialogType.LAUNCH_STB_START_DIALOG || showDialogType == CustomDialog.ShowDialogType.REMOTE_CONTROL_START_PAIRING_DIALOG) {
             customDialog.setConfirmText(R.string.contents_detail_pairing_button);
             customDialog.setCancelText(R.string.common_text_close);
         }
@@ -1526,6 +1536,21 @@ public class BaseActivity extends FragmentActivity implements
                         startActivity(intent);
                     }
                     break;
+                case REMOTE_CONTROL_START_PAIRING_DIALOG:
+                    if (mRemoteControllerView != null && mRemoteControllerView.isTopRemoteControllerUI()) {
+                        mRemoteControllerView.closeRemoteControllerUI();
+                    }
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (CustomDialog.DialogTapType.OK == dialogTapType) {
+                                Intent intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                                intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
+                                startActivity(intent);
+                            }
+                        }
+                    }, DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
+                    break;
                 case DTV_EPISODE_LIST_ITEM_DIALOG:
                     startListDialogDismissTask(which);
                     break;
@@ -1570,6 +1595,28 @@ public class BaseActivity extends FragmentActivity implements
                     case SECURE_PLAYER_ERROR:
                         contentsDetailCloseKey(null);
                         break;
+                    case LAUNCH_STB_START_DIALOG:
+                        if (CustomDialog.DialogTapType.OK == dialogTapType) {
+                            intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                            intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
+                            startActivity(intent);
+                        }
+                        break;
+                    case REMOTE_CONTROL_START_PAIRING_DIALOG:
+                        if (mRemoteControllerView != null && mRemoteControllerView.isTopRemoteControllerUI()) {
+                            mRemoteControllerView.closeRemoteControllerUI();
+                        }
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (CustomDialog.DialogTapType.OK == dialogTapType) {
+                                    Intent intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                                    intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
+                                    startActivity(intent);
+                                }
+                            }
+                        }, DtvtConstants.REMOTE_CONTROLLER_ANIMATION_TIME);
+                        break;
                     case DTV_EPISODE_LIST_ITEM_DIALOG:
                         startListDialogDismissTask(which);
                         break;
@@ -1607,9 +1654,14 @@ public class BaseActivity extends FragmentActivity implements
                         contentsDetailCloseKey(null);
                         break;
                     case LAUNCH_STB_START_DIALOG:
-                        intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
-                        intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
-                        startActivity(intent);
+                        if (CustomDialog.DialogTapType.OK == dialogTapType) {
+                            intent = new Intent(getApplicationContext(), LaunchStbActivity.class);
+                            intent.putExtra(ContentUtils.LAUNCH_STB_FROM, ContentUtils.LAUNCH_STB_CONTENT_DETAIL);
+                            startActivity(intent);
+                        }
+                        break;
+                    case REMOTE_CONTROL_START_PAIRING_DIALOG:
+                        mRemoteControllerView.closeRemoteControllerUI();
                         break;
                     case DTV_EPISODE_LIST_ITEM_DIALOG:
                         startListDialogDismissTask(which);
@@ -1650,7 +1702,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param okCallback OKボタンを押した時の処理
      */
     protected void showErrorDialogOfferAfterProcess(final String errorMessage
-            ,final CustomDialog.ApiOKCallback okCallback) {
+            , final CustomDialog.ApiOKCallback okCallback) {
         DTVTLogger.debug("showErrorDialogOfferAfterProcess:" + errorMessage);
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
@@ -2068,7 +2120,6 @@ public class BaseActivity extends FragmentActivity implements
                             setKeyExchangeFlag(true);
                         }
                         getRemoteControllerView().startRemoteUI(true);
-                        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control), null);
                     }
                     break;
                 default:
@@ -2103,10 +2154,9 @@ public class BaseActivity extends FragmentActivity implements
         if (visibility == View.VISIBLE && this instanceof ContentDetailActivity) {
             //リモコン表示時にScrollViewにマージンを設ける
             Resources resources = getResources();
-            int remoteButtonMargin = resources.getDimensionPixelSize(R.dimen.remote_control_display_button_height)
-                    + resources.getDimensionPixelSize(R.dimen.remote_control_display_button_top_margin);
+            int remoteButtonMargin = resources.getDimensionPixelSize(R.dimen.remote_control_display_button_height);
             mBaseLinearLayout.setPadding(0, 0, 0, remoteButtonMargin);
-            mBaseLinearLayout.setBackgroundResource(R.color.dtv_contents_detail_tab_background_color);
+            mBaseLinearLayout.setBackgroundResource(R.color.contents_detail_channel_line_color);
         } else {
             mBaseLinearLayout.setPadding(0, 0, 0, 0);
         }
@@ -2120,7 +2170,6 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug("Start RemoteControl");
             createRemoteControllerView(false);
             getRemoteControllerView().startRemoteUI(true);
-            sendScreenView(getString(R.string.google_analytics_screen_name_remote_control), null);
         }
     }
 
@@ -2131,7 +2180,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug("Start RemoteControl");
         createRemoteControllerView(true);
         getRemoteControllerView().startRemoteUI(false);
-        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control), null);
     }
 
     /**
@@ -2347,13 +2395,13 @@ public class BaseActivity extends FragmentActivity implements
         //失敗原因コードを取得
         if (mDAccountControl != null) {
             errorCode = mDAccountControl.getResult();
-            checkLastClassEnum =  mDAccountControl.getmResultClass();
+            checkLastClassEnum = mDAccountControl.getmResultClass();
         }
         boolean isNeedDialog = true;
         if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
-            || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
-            || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)
-            || DaccountControl.CheckLastClassEnum.CONTROL.equals(checkLastClassEnum)) {
+                || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+                || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)
+                || DaccountControl.CheckLastClassEnum.CONTROL.equals(checkLastClassEnum)) {
             DTVTLogger.debug("showDAccountErrorDialog errCode:" + errorCode);
             switch (errorCode) {
                 case IDimDefines.RESULT_USER_INVALID_STATE:
@@ -2514,7 +2562,7 @@ public class BaseActivity extends FragmentActivity implements
         });
 
         //コールバック指定の有無で処理を分ける
-        if(dissmissCallBack == null) {
+        if (dissmissCallBack == null) {
             //コールバックの指定が無かったので、通常の処理を行う
             logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
@@ -3323,6 +3371,7 @@ public class BaseActivity extends FragmentActivity implements
             public void allDismissCallback() {
                 stopAllActivity();
             }
+
             @Override
             public void otherDismissCallback() {
                 //NOP
@@ -3345,6 +3394,7 @@ public class BaseActivity extends FragmentActivity implements
             public void allDismissCallback() {
                 finish();
             }
+
             @Override
             public void otherDismissCallback() {
                 //NOP
@@ -3478,7 +3528,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param contentsDataList コンテンツ情報
      * @param index 遷移先
      */
-    private void setRecyclerViewData(final RecyclerView recyclerView, final  List<ContentsData> contentsDataList, final int index) {
+    private void setRecyclerViewData(final RecyclerView recyclerView, final List<ContentsData> contentsDataList, final int index) {
         int i = 0;
         if (mActivity instanceof HomeActivity) {
             i = HOME_CONTENTS_DISTINCTION_ADAPTER;
@@ -3749,6 +3799,12 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     @Override
+    public void onErrorRemoteControl(final ContentDetailUtils.RemoteControllerType remoteControllerType) {
+        // NOP
+        // コンテンツ詳細でのみ使用する
+    }
+
+    @Override
     public void onClipRegistResult() {
         //DB登録開始
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
@@ -3811,7 +3867,7 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onCancelCallback() {
         if (mShowDialog != null) {
-           if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP) {
+            if (mShowDialog.getErrorDialogType() == CustomDialog.ShowDialogType.OPTIONAL_VERSION_UP) {
                 return;
             }
             onVersionUpDialogShow(ContentUtils.ILLEGAL_VALUE, CustomDialog.DialogTapType.CANCEL);
@@ -3860,6 +3916,17 @@ public class BaseActivity extends FragmentActivity implements
         if (isStbConnectedHomeNetwork) {
             checkDAccountOnRestart();
         }
+        noticeConnectionChange();
+    }
+
+    /**
+     * ペアリング変更通知
+     *
+     * BaseActivityでペアリング状態の変更を検知した際に本メソッドをcallする。
+     * ペアリング状態変更を検知したい子クラスは本メソッドをOverrideすること。
+     */
+    protected void noticeConnectionChange() {
+        // NOP
     }
 
     /**
