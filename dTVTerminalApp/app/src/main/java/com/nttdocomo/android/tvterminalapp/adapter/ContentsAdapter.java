@@ -287,6 +287,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             if (ActivityTypeItem.TYPE_CONTENT_DETAIL_EPISODE_LIST.equals(mType)) {
                 setEpisodeClickListener(holder, contentView, listContentInfo);
+                if (listContentInfo.isSynopIsAllShow()) {
+                    holder.tv_episode_all_synop.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
+                            if (mEpisodeItemClickCallback != null) {
+                                mEpisodeItemClickCallback.onMoreBtnClick(listContentInfo);
+                            }
+                        }
+                    });
+                }
                 return;
             }
             //クリップボタン処理を設定する
@@ -1059,6 +1069,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_episode_all_synop.setVisibility(View.GONE);
             resultLine.setVisibility(View.VISIBLE);
             if (listContentInfo.isShowSynop()) {
+                resultLine.setVisibility(View.VISIBLE);
                 holder.tv_episode_synop.setVisibility(View.VISIBLE);
                 holder.tv_episode_synop.setMaxLines(DETAIL_INFO_TEXT_MAX_LINE);
                 holder.tv_episode_synop.setEllipsize(TextUtils.TruncateAt.END);
@@ -1336,7 +1347,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         holder.tv_episode_synop.getViewTreeObserver().removeOnPreDrawListener(this);
                     }
                     int intTextViewCount = holder.tv_episode_synop.getLineCount();
-                    if (!listContentInfo.isSynopIsAllShow() && intTextViewCount > DETAIL_INFO_TEXT_MAX_LINE) {
+                    if (intTextViewCount > DETAIL_INFO_TEXT_MAX_LINE) {
                         listContentInfo.setIsShowSynopAll(true);
                         if (listContentInfo.isShowSynop()) {
                             holder.tv_episode_all_synop.setVisibility(View.VISIBLE);

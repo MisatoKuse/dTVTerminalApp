@@ -848,7 +848,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             showCommonControlListDialog(title, mItems, CustomDialog.ShowDialogType.DTV_EPISODE_LIST_ITEM_DIALOG, null, null);
         } else {
             Intent intent = new Intent(ContentDetailActivity.this, EpisodeAllReadActivity.class);
-            intent.putExtra(ContentDetailUtils.EPISODE_TITLE, contentsData.getTitle());
+            intent.putExtra(ContentDetailUtils.EPISODE_TITLE, contentsData.getEpisodeTitle());
             intent.putExtra(ContentDetailUtils.EPISODE_MESSAGE, contentsData.getSynop());
             startActivity(intent);
         }
