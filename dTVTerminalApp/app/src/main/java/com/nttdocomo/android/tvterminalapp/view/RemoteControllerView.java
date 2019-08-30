@@ -659,10 +659,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      *
      * @param type       アプリ起動要求種別
      * @param contentsId コンテンツID
+     * @param episodeId episodeId
+     * @param isFromEpisode エピソードタブから起動
      */
-    public void sendStartApplicationRequest(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
+    public void sendStartApplicationRequest(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final  String contentsId, final String episodeId, final boolean isFromEpisode) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, episodeId, mContext, isFromEpisode);
         DTVTLogger.end();
     }
 

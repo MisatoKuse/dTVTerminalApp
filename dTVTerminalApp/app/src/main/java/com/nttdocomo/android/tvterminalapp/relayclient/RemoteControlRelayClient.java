@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.relayclient;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.KeyEvent;
@@ -13,10 +14,13 @@ import android.view.View;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -101,6 +105,12 @@ public class RemoteControlRelayClient {
     private static final String KEYCODE_POWER = "KEYCODE_POWER";
     /**keycode_record_list.*/
     private static final String KEYCODE_RECORD_LIST = "KEYCODE_RECORD_LIST";
+    /** dTV STB起動用URL.*/
+    private static final String DTV_APPLICATION_STB_START = "dtv://androidtv.dtv.jp/play-video-episodeid?%s";
+    /** dTV STB package名（エピソード再生用）.*/
+    private static final String STB_APPLICATION_PACKAGE_DTV = "jp.co.nttdocomo.dtv.stb2";
+    /** dアニメ STB package名（エピソード再生用）.*/
+    private static final String STB_APPLICATION_PACKAGE_DANIMESTORE = "com.nttdocomo.android.danimestb";
 
     /**
      * 受信キーコード名に対応する STBキーコード.
@@ -326,8 +336,31 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_START_STB_APPLICATION_ON_REQUEST = "ON_REQUEST";
     /** 汎用STB内アプリ連携 URL. */
     private static final String RELAY_COMMAND_START_STB_APPLICATION_SET_DATA = "setData";
+    /**汎用STB内アプリ連携 addFlags.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_ADD_FLAGS = "addFlags";
+    /**汎用STB内アプリ連携 titleId.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_TITLE_ID = "TITLE_ID|%s";
+    /**汎用STB内アプリ連携 episodeId.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_EPISODE_ID = "EPISODE_ID|%s";
+    /**汎用STB内アプリ連携 intentSettingFlag.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_INTENT_SETTING_FLAG = "intentSettingFlag";
+    /** Blank Intent設定判定用定数. */
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_INTENT_SETTING_FLAG_BLANK = "blankIntent";
     /**汎用STB内アプリ連携 h4d package name.*/
     private static final String STB_APPLICATION_PACKAGE_HIKARITV = "com.nttdocomo.hikaritv_docomo";
+    /**汎用STB内アプリ連携 danime.*/
+    private static final String RELAY_COMMAND_START_STB_D_ANIME = "com.nttdocomo.android.danimestb.PLAYBACK";
+    /**汎用STB内アプリ連携 putExtra.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_PUT_EXTRA = "putExtra";
+    /** 汎用STB内アプリ連携 FLAG_ACTIVITY_NEW_TASK.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_FLAG_ACTIVITY_NEW_TASK = "0x10000000";
+    /** 汎用STB内アプリ連携 FLAG_ACTIVITY_CLEAR_TASK.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_FLAG_ACTIVITY_CLEAR_TASK = "0X00008000";
+    /** 汎用STB内アプリ連携 FLAG_ACTIVITY_TASK_ON_HOME.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_FLAG_ACTIVITY_TASK_ON_HOME = "0X00004000";
+    /** 汎用STB内アプリ連携 ACTION_VIEW.*/
+    private static final String RELAY_COMMAND_START_STB_APPLICATION_ACTION_VIEW = "ACTION_VIEW";
+
     /**ユーザーアカウント存在.*/
     static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     /**電源キー.*/
@@ -821,10 +854,12 @@ public class RemoteControlRelayClient {
      * @param applicationType 起動アプリケーションタイプ
      * @param contentsId      コンテンツID
      * @param context         コンテキスト
+     * @param episodeId エピソードID
+     * @param isFromEpisode エピソードタブから起動
      * @return リクエスト成否
      */
     public boolean startApplicationRequest(final STB_APPLICATION_TYPES applicationType,
-                                           final String contentsId, final Context context) {
+                                           final String contentsId, final String episodeId, final Context context, final boolean isFromEpisode) {
         if (mIsCancel) {
             return false;
         }
@@ -835,7 +870,7 @@ public class RemoteControlRelayClient {
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
 
         if (applicationId != null && contentsId != null) {
-            requestParam = setTitleDetailRequest(applicationId, contentsId, userId);
+            requestParam = setTitleDetailRequest(applicationId, contentsId, episodeId, userId, isFromEpisode);
             if (requestParam != null) {
                 // アプリ起動要求を受信してインテントをSTBへ送信する
                 sendStartApplicationRequest(requestParam);
@@ -1492,17 +1527,40 @@ public class RemoteControlRelayClient {
      * @param applicationId アプリケーションID
      * @param contentsId    コンテンツID
      * @param userId        ユーザID
+     * @param episodeId episodeId
+     * @param isFromEpisode  isFromEpisode
      * @return アプリ起動要求メッセージ（JSON形式）
      */
-    private String setTitleDetailRequest(final String applicationId, final String contentsId, final String userId) {
+    private String setTitleDetailRequest(final String applicationId, final String contentsId, final String episodeId, final String userId, final boolean isFromEpisode) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
-            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID, applicationId);
-            requestJson.put(RELAY_COMMAND_ARGUMENT_CONTENTS_ID, contentsId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
+            if (isFromEpisode) {
+                requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_STB_APPLICATION);
+                requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_INTENT_SETTING_FLAG, RELAY_COMMAND_START_STB_APPLICATION_INTENT_SETTING_FLAG_BLANK);
+                JSONArray objectJSONArray = new JSONArray();
+                if (STB_APPLICATION_DTV.equals(applicationId)) {
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_DATA, String.format(DTV_APPLICATION_STB_START, episodeId));
+                    objectJSONArray.put(RELAY_COMMAND_START_STB_APPLICATION_FLAG_ACTIVITY_NEW_TASK);
+                    objectJSONArray.put(RELAY_COMMAND_START_STB_APPLICATION_FLAG_ACTIVITY_CLEAR_TASK);
+                    objectJSONArray.put(RELAY_COMMAND_START_STB_APPLICATION_FLAG_ACTIVITY_TASK_ON_HOME);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_ADD_FLAGS, objectJSONArray);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION, RELAY_COMMAND_START_STB_APPLICATION_ACTION_VIEW);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_PACKAGE_NAME, STB_APPLICATION_PACKAGE_DTV);
+                } else if (STB_APPLICATION_DANIMESTORE.equals(applicationId)) {
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_PACKAGE_NAME, STB_APPLICATION_PACKAGE_DANIMESTORE);
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_SET_ACTION, RELAY_COMMAND_START_STB_D_ANIME);
+                    objectJSONArray.put(String.format(RELAY_COMMAND_START_STB_APPLICATION_TITLE_ID, contentsId));
+                    objectJSONArray.put(String.format(RELAY_COMMAND_START_STB_APPLICATION_EPISODE_ID, episodeId));
+                    requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_PUT_EXTRA, objectJSONArray);
+                }
+            } else {
+                requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
+                requestJson.put(RELAY_COMMAND_ARGUMENT_CONTENTS_ID, contentsId);
+            }
             String stbServiceApplicationCode = getStbServiceApplicationCodeWithApplicationId(applicationId);
             if (stbServiceApplicationCode != null) {
                 requestJson.put(STB_SERVICE_APPLICATION_CODE, stbServiceApplicationCode);

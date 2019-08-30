@@ -9,8 +9,12 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -28,15 +32,16 @@ import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.StbMetaInfoResponseData;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * コンテンツ詳細Utilクラス.
@@ -45,22 +50,20 @@ public class ContentDetailUtils {
 
     /** STR_FORMAT.*/
     private static final String STR_SPLIT_FORMAT = "\\|";
-    /** STR_KONMA.*/
-    private static final String STR_KONMA = ",";
     /** STR_COMMA.*/
-    private static final String STR_COMMA = "、";
+    private static final String STR_COMMA = ",";
     /**DTVパッケージ名.*/
-    private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
+    public static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
     /**DTV schema url 変換.*/
     private static final String DTV_URL_FORMAT_CHANGE = "XXXX";
     /**DTV 新バージョン.*/
     private static final int DTV_VERSION_NEW = 60000;
     /**DTVバージョン.*/
-    private static final int DTV_VERSION_STANDARD = 52000;
+    private static final int DTV_VERSION_STANDARD = 52301;
     /**dアニメストアパッケージ名.*/
-    private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
+    public static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
     /**dアニメストアバージョン.*/
-    private static final int DANIMESTORE_VERSION_STANDARD = 132;
+    private static final int DANIMESTORE_VERSION_STANDARD = 856;
     /**dTVチャンネルパッケージ名.*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
     /**dTVチャンネルバージョン.*/
@@ -388,14 +391,12 @@ public class ContentDetailUtils {
 
     /**
      * ロールリスト取得.
-     *
      * @param credit_array スタッフ情報
      * @param roleListInfo ロールリスト情報
-     * @return ロールリスト
+     * @return ロールリスト key:カテゴリ名 value:該当カテゴリのスタッフ情報
      */
-    public static List<String> getRoleList(final String[] credit_array, final ArrayList<RoleListMetaData> roleListInfo) {
-        List<String> staffList = new ArrayList<>();
-        StringBuilder ids = new StringBuilder();
+    public static Map<String, String> getRoleList(final String[] credit_array, final ArrayList<RoleListMetaData> roleListInfo) {
+        Map<String, String> arrayMap = new LinkedHashMap<>();
         for (String aCredit_array : credit_array) {
             String[] creditInfo = aCredit_array.split(STR_SPLIT_FORMAT);
             if (creditInfo.length == 4) {
@@ -405,18 +406,12 @@ public class ContentDetailUtils {
                     for (int j = 0; j < roleListInfo.size(); j++) {
                         RoleListMetaData roleListMetaData = roleListInfo.get(j);
                         if (creditId.equals(roleListMetaData.getId())) {
-                            if (!ids.toString().contains(creditId + STR_KONMA)) {
-                                ids.append(creditId);
-                                ids.append(STR_KONMA);
-                                staffList.add(roleListMetaData.getName() + File.separator);
-                                staffList.add(creditName);
+                            String categoryName = roleListMetaData.getName();
+                            if (TextUtils.isEmpty(arrayMap.get(categoryName))) {
+                                arrayMap.put(categoryName, creditName);
                             } else {
-                                String[] oldData = ids.toString().split(STR_KONMA);
-                                for (int k = 0; k < oldData.length; k++) {
-                                    if (creditId.equals(oldData[k])) {
-                                        staffList.set(k * 2 + 1, staffList.get(k * 2 + 1) + STR_COMMA + creditName);
-                                    }
-                                }
+                                String name = arrayMap.get(categoryName);
+                                arrayMap.put(categoryName, name + STR_COMMA + creditName);
                             }
                             break;
                         }
@@ -424,7 +419,33 @@ public class ContentDetailUtils {
                 }
             }
         }
-        return staffList;
+        return arrayMap;
+    }
+
+    /**
+     * スタッフ情報LayoutParams取得.
+     * @param context context
+     * @return LayoutParams
+     */
+    public static LinearLayout.LayoutParams createStaffTextViewParams(final Context context) {
+        LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        contentParams.setMargins(0, (int) context.getResources().getDimension(R.dimen.contents_detail_staff_margin_top), 0, 0);
+        return contentParams;
+    }
+
+    /**
+     * スタッフ情報TextView作成.
+     * @param context context
+     * @return textView
+     */
+    public static TextView createStaffTextView(final Context context) {
+        TextView textView = new TextView(context);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
+        textView.setLineSpacing(context.getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
+        return textView;
     }
 
     /**
@@ -690,8 +711,8 @@ public class ContentDetailUtils {
                 startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
                 //その他の場合
             } else {
-                // "totalEpisodeCount"が1の場合は「単話」、それ以外は「シリーズ」
-                if (totalEpisodeCount == 1) {
+                // "totalEpisodeCount"が1/0の場合は「単話」、それ以外は「シリーズ」
+                if (totalEpisodeCount == 1 || totalEpisodeCount == 0) {
                     startUrl = UrlConstants.WebUrl.NEW_TITLE_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
                 } else {
                     startUrl = UrlConstants.WebUrl.NEW_TITLE_VIEW_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, contentsId);
@@ -788,6 +809,56 @@ public class ContentDetailUtils {
         return String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, titleId, episodeId);
     }
 
+
+    /**
+     * 機能：dTVAPP起動（エピソードシリーズ専用）（検レコ）.
+     * @param contentId タイトルID
+     * @param episodeId エピソードID
+     * @param context コンテキスト
+     * @return 起動URL
+     */
+    public static String getStartDtvOtherEpisodeAppUrl(final String contentId, final String episodeId, final Context context) {
+        String packageName = getStartAppPackageName(StartAppServiceType.DTV);
+        long localVersionCode = getVersionCode(packageName, context);
+        DTVTLogger.debug("title_id:" + contentId + " episode_id:" + episodeId);
+        if (dTVAppIsNewVersion(localVersionCode)) {
+            return getStartDtvEpisodeUrlByOtherNewVersion(episodeId);
+        } else {
+            return getStartDtvEpisodeUrlByOtherOldVersion(episodeId, contentId);
+        }
+    }
+
+    /**
+     * 機能：dTV APP起動（エピソードシリーズ専用）（検レコ）（新dTVバージョン：60000以上）.
+     * @param episodeId エピソードID
+     * @return 起動URL
+     */
+    private static String getStartDtvEpisodeUrlByOtherNewVersion(final String episodeId) {
+        return UrlConstants.WebUrl.NEW_PRODUCT_PLAY_START_TYPE.replace(DTV_URL_FORMAT_CHANGE, episodeId);
+    }
+
+    /**
+     * 機能：dTV APP起動（エピソードシリーズ専用）（旧dTVバージョン：60000未満）.
+     * @param contentId タイトルID
+     * @param episodeId episodeId
+     * @return 起動URL
+     */
+    private static String getStartDtvEpisodeUrlByOtherOldVersion(final String episodeId, final String contentId) {
+        if (TextUtils.isEmpty(episodeId)) {
+            return UrlConstants.WebUrl.TITTLE_START_TYPE + contentId;
+        } else {
+            return String.format(UrlConstants.WebUrl.TITTLE_EPISODE_START_TYPE, contentId, episodeId);
+        }
+    }
+
+    /**
+     * エピソードからdアニメをテレビで視聴するurlを取得.
+     *
+     * @param episodeId episodeId
+     */
+    public static String getStartDanimeEpisodeUrl(final String episodeId) {
+        return String.format(UrlConstants.WebUrl.D_ANIME_STORE_START_PLAY_URL, episodeId);
+    }
     /**
      * 機能：dTVAPP起動（ぷららサーバ）.
      * @param detailData ぷららサーバメタデータ

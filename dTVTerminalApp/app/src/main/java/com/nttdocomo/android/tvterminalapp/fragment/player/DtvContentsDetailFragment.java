@@ -15,7 +15,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,15 +29,16 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentDetailUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -93,8 +93,6 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static int TEXT_SIZE_12 = 12;
     /** スタッフ文字サイズ(内容).*/
     private final static int TEXT_SIZE_14 = 14;
-    /** スタッフ margin 0.*/
-    private final static int STAFF_MARGIN_0 = 0;
     /** パラメータ名「4kflg」 1.*/
     private final static int LABEL_STATUS_4KFLG_1 = 1;
     /** adinfo_array の adtype 9.*/
@@ -121,7 +119,7 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
     }
@@ -197,16 +195,6 @@ public class DtvContentsDetailFragment extends Fragment {
             mOtherContentsDetailData = new OtherContentsDetailData();
         }
         return mView;
-    }
-
-    /**
-     * バックグラウンド復帰時にクリップボタンを更新する.
-     */
-    public void resumeClipButton() {
-        //画面生成時は mClipButton が null のため実行されない(BG 復帰時のみ実行される)
-        if (mClipButton != null) {
-            setClipButton(mClipButton);
-        }
     }
 
     /**
@@ -365,7 +353,7 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             mTxtChannelDate.setVisibility(View.GONE);
         }
-        if (mOtherContentsDetailData.getStaffList() != null) {
+        if (mOtherContentsDetailData.getStaffInfo() != null) {
             setStaff();
         } else {
             mStaffLayout.setVisibility(View.GONE);
@@ -549,31 +537,22 @@ public class DtvContentsDetailFragment extends Fragment {
         if (mStaffLayout == null) {
             return;
         }
-        List<String> staffList = mOtherContentsDetailData.getStaffList();
+        Map<String, String> staffInfo = mOtherContentsDetailData.getStaffInfo();
         mStaffLayout.setVisibility(View.VISIBLE);
         mStaffLayout.removeAllViews();
         Context context = getContext();
-        if (context != null) {
-            for (int i = 0; i < staffList.size(); i++) {
-                TextView tabTextView = new TextView(context);
-                LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                String text = staffList.get(i);
-                tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-                tabTextView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
-                tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
-                contentParams.setMargins(STAFF_MARGIN_0, (int) getResources().getDimension(
-                        R.dimen.contents_detail_staff_margin_top), STAFF_MARGIN_0, STAFF_MARGIN_0);
-                if (text.endsWith(File.separator)) {
-                    tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
-                    tabTextView.setText(text.substring(0, text.length() - 1));
-                } else {
-                    tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_14);
-                    tabTextView.setText(text);
-                }
-                tabTextView.setLayoutParams(contentParams);
-                mStaffLayout.addView(tabTextView);
+        if (context != null && staffInfo != null) {
+            for (String key: staffInfo.keySet()) {
+                TextView categoryName = ContentDetailUtils.createStaffTextView(context);
+                categoryName.setText(key);
+                categoryName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
+                categoryName.setLayoutParams(ContentDetailUtils.createStaffTextViewParams(context));
+                mStaffLayout.addView(categoryName);
+                TextView detailName = ContentDetailUtils.createStaffTextView(context);
+                detailName.setText(staffInfo.get(key));
+                detailName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_14);
+                detailName.setLayoutParams(ContentDetailUtils.createStaffTextViewParams(context));
+                mStaffLayout.addView(detailName);
             }
         }
     }

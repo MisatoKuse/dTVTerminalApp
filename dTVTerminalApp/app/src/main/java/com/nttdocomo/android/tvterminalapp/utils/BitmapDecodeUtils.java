@@ -32,7 +32,7 @@ public class BitmapDecodeUtils {
     /** アスペクト比(16:9)の9.*/
     private static final int SCREEN_RATIO_HEIGHT_9 = 9;
     /** 色の縮小 . */
-    private static final Bitmap.Config DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565;
+    private static final Bitmap.Config DEFAULT_BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
     /**
      * 画像の処理.
@@ -164,7 +164,7 @@ public class BitmapDecodeUtils {
                 break;
         }
         float ratio = 0;
-        if (dstWidth != 0 && srcBitmap != null) {
+        if (dstWidth != 0 && srcBitmap != null && srcBitmap.getWidth() > dstWidth) {
             ratio = srcBitmap.getWidth() / dstWidth;
         }
         if (ratio > 0) {

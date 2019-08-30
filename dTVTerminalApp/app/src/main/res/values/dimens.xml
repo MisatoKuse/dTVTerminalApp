@@ -186,6 +186,7 @@
     <dimen name="contents_detail_episode_24_dp">24dp</dimen>
     <dimen name="contents_detail_episode_30_dp">30dp</dimen>
     <dimen name="contents_detail_episode_44_dp">44dp</dimen>
+    <dimen name="contents_detail_episode_all_text_read">56dp</dimen>
 
     <!--リモコン -->
     <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>

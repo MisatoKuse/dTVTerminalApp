@@ -254,6 +254,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private boolean mIsScreenViewSent = false;
     /** エピソードダイアログ配列.*/
     private String[] mItems;
+    /**他サービスエピソードデータ.*/
+    private List<ContentsData> mOtherEpisodeListData = null;
     /** エピソード選択したアイテムデータ.*/
     private ContentsData mContentsData;
     /** エピソード購入済み情報.*/
@@ -791,7 +793,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onEpisodeLoadMore(final int position) {
-        getEpisodeData(position);
+        if (mIsOtherService) {
+            getContentDetailInfoFromSearchServer(position);
+        } else {
+            getEpisodeData(position);
+        }
     }
 
     @Override
@@ -800,7 +806,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
         fragment.initLoad();
-        getEpisodeData(1);
+        if (mIsOtherService) {
+            renewalEpisodeFragment(mOtherEpisodeListData);
+        } else {
+            getEpisodeData(1);
+        }
     }
 
     @Override
@@ -808,12 +818,23 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         this.mContentsData = contentsData;
         if (isThumbnailTap) {
             String title = getString(R.string.contents_detail_episode_dialog_title);
-            String dtv;
+            String serviceName;
             List<String> list = new ArrayList<>();
             mItems = null;
-            if (ContentUtils.DTV_FLAG_ONE.equals(contentsData.getDtv())) {
-                dtv = getString(R.string.contents_detail_episode_dialog_dtv_start);
-                list.add(dtv);
+            if (mIsOtherService) {
+                if (ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                    serviceName = getString(R.string.contents_detail_episode_dialog_d_anime_store_start);
+                    list.add(serviceName);
+                } else if (ContentUtils.DTV_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                    //「reserved2」が「1」Android視聴不可
+                    if (!ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                        serviceName = getString(R.string.contents_detail_episode_dialog_dtv_start);
+                        list.add(serviceName);
+                    }
+                }
+            } else if (ContentUtils.DTV_FLAG_ONE.equals(contentsData.getDtv())) {
+                serviceName = getString(R.string.contents_detail_episode_dialog_dtv_start);
+                list.add(serviceName);
             }
             String dtvStb = getString(R.string.remote_controller_viewpager_watch_by_tv);
             list.add(dtvStb);
@@ -823,7 +844,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             showCommonControlListDialog(title, mItems, CustomDialog.ShowDialogType.DTV_EPISODE_LIST_ITEM_DIALOG, null, null);
         } else {
             Intent intent = new Intent(ContentDetailActivity.this, EpisodeAllReadActivity.class);
-            intent.putExtra(ContentDetailUtils.EPISODE_TITLE, contentsData.getTitle());
+            intent.putExtra(ContentDetailUtils.EPISODE_TITLE, contentsData.getEpisodeTitle());
             intent.putExtra(ContentDetailUtils.EPISODE_MESSAGE, contentsData.getSynop());
             startActivity(intent);
         }
@@ -1210,9 +1231,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * 他サビースあらすじ取得.
+     * 他サービスあらすじ取得.
+     * @param episodeStartIndex ページングインデックス.
      */
-    private void getContentDetailInfoFromSearchServer() {
+    private void getContentDetailInfoFromSearchServer(final int episodeStartIndex) {
         if (mStbMetaInfoGetDataProvider == null) {
             mStbMetaInfoGetDataProvider = new StbMetaInfoGetDataProvider();
         }
@@ -1223,7 +1245,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 showDialogToClose(this, getString(R.string.common_failed_get_info));
                 return;
             }
-            mStbMetaInfoGetDataProvider.getStbMetaInfo(mDetailData.getContentsId(),
+            mStbMetaInfoGetDataProvider.getStbMetaInfo(episodeStartIndex, mDetailData.getContentsId(),
                     String.valueOf(mDetailData.getServiceId()), mDetailData.getCategoryId(), this);
         }
     }
@@ -1448,11 +1470,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
                     if (mDetailFullData != null) {
                         String[] credit_array = mDetailFullData.getmCredit_array();
-                        List<String> staffList = ContentDetailUtils.getRoleList(credit_array, roleListInfo);
+                        Map<String, String> staffList = ContentDetailUtils.getRoleList(credit_array, roleListInfo);
                         if (staffList.size() > 0) {
                             OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                             if (detailData != null) {
-                                detailData.setStaffList(staffList);
+                                detailData.setStaffInfo(staffList);
                                 detailFragment.setOtherContentsDetailData(detailData);
                                 detailFragment.refreshStaff();
                             }
@@ -1657,26 +1679,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (list != null) {
             this.mActiveDatas = activeDatas;
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                DTVTLogger.start();
-                if (getEpisodeFragment() == null) {
-                    return;
-                }
-                if (list != null && list.size() > 0) {
-                    getEpisodeFragment().addContentsData(list);
-                }
-                if (!NetWorkUtils.isOnline(ContentDetailActivity.this)) {
-                    showGetDataFailedToast(getString(R.string.network_nw_error_message));
-                }
-                getEpisodeFragment().setNotifyDataChanged();
-                if (list == null && getEpisodeFragment().getContentsData().size() == 0) {
-                    getEpisodeFragment().loadFailed();
-                }
-                getEpisodeFragment().showProgress(false);
-            }
-        });
+        renewalEpisodeFragment(list);
     }
 
     /**
@@ -1785,7 +1788,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                        default:
                            break;
                    }
-                   if (!startApp(url)) {
+                   if (!startApp(url, false)) {
                        showUninstallDialog(ContentDetailUtils.getStartAppUnInstallMessage(serviceType, getApplicationContext()),
                                ContentDetailUtils.getStartAppGoogleUrl(serviceType));
                    }
@@ -1828,11 +1831,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * 機能：APP起動.
      * @param url URL
+     * @param intentFlag true:Intentにフラグを追加する、false: Intentにフラグを追加しない
      * @return true:起動成功であること
      */
-    private boolean startApp(final String url) {
+    private boolean startApp(final String url, final boolean intentFlag) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intentFlag) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         try {
             startActivityForResult(intent, ContentDetailUtils.START_APPLICATION_REQUEST_CODE);
         } catch (ActivityNotFoundException exception) {
@@ -1869,15 +1877,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             switch (mDetailData.getServiceId()) {
                 case ContentUtils.DTV_CONTENTS_SERVICE_ID: // dTV
                     showStartStbProgress(View.VISIBLE);
-                    requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentsId());
+                    requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentsId(), null, false);
                     break;
                 case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
                     showStartStbProgress(View.VISIBLE);
-                    requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentsId());
+                    requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentsId(), null, false);
                     break;
                 case ContentUtils.DAZN_CONTENTS_SERVICE_ID: // DAZN
                     showStartStbProgress(View.VISIBLE);
-                    requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mDetailData.getContentsId());
+                    requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mDetailData.getContentsId(), null, false);
                     break;
                 case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
                     showStartStbProgress(View.VISIBLE);
@@ -2486,15 +2494,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         super.startListDialogDismissTask(which);
         if (mItems != null && which != ContentUtils.ILLEGAL_VALUE) {
             if (getString(R.string.contents_detail_episode_dialog_dtv_start).equals(mItems[which])) {
-                ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.HIKARI_IN_DTV, mContentsData.getTitle(), ContentDetailActivity.this);
+                if (mIsOtherService) {
+                    ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.PURE_DTV, mContentsData.getTitle(), ContentDetailActivity.this);
+                } else {
+                    ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.HIKARI_IN_DTV, mContentsData.getTitle(), ContentDetailActivity.this);
+                }
                 if (!checkIsAppInstalled(ContentDetailUtils.StartAppServiceType.H4D_DTV)) {
                     return;
                 }
                 String message = ContentDetailUtils.getStartAppVersionMessage(ContentDetailUtils.StartAppServiceType.H4D_DTV, ContentDetailActivity.this);
                 if (TextUtils.isEmpty(message)) {
-                    String url = ContentDetailUtils.getStartDtvEpisodeAppUrl(mContentsData.getTitleId(),
-                            mContentsData.getEpisodeId(), ContentDetailActivity.this);
-                    if (!startApp(url)) {
+                    String url;
+                    if (mIsOtherService) {
+                        url = ContentDetailUtils.getStartDtvOtherEpisodeAppUrl(mContentsData.getContentsId(),
+                                mContentsData.getEpisodeId(), ContentDetailActivity.this);
+                    } else {
+                        url = ContentDetailUtils.getStartDtvEpisodeAppUrl(mContentsData.getTitleId(),
+                                mContentsData.getEpisodeId(), ContentDetailActivity.this);
+                    }
+                    if (!startApp(url, false)) {
                         showUninstallDialog(ContentDetailUtils.getStartAppUnInstallMessage(ContentDetailUtils.StartAppServiceType.H4D_DTV,
                                 getApplicationContext()), ContentDetailUtils.getStartAppGoogleUrl(ContentDetailUtils.StartAppServiceType.H4D_DTV));
                     }
@@ -2502,6 +2520,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     showCommonControlErrorDialog(message, null, null, null, null);
                 }
             } else if (getString(R.string.remote_controller_viewpager_watch_by_tv).equals(mItems[which])) {
+                if (mIsOtherService) {
+                    if (mDetailData.getServiceId() == ContentUtils.DTV_CONTENTS_SERVICE_ID) {
+                        if (ContentDetailUtils.CONTENTS_DETAIL_RESERVEDID.equals(mContentsData.getReserved1())) {
+                            //「reserved1」が「1」STB視聴不可
+                            showGetDataFailedToast(getString(R.string.contents_detail_episode_cannot_watch_toast));
+                            return;
+                        }
+                    }
+                }
                 switch (StbConnectionManager.shared().getConnectionStatus()) {
                     case NONE_PAIRING:
                         showCommonControlErrorDialog(getString(R.string.contents_detail_episode_dialog_start_stb_dtv_error),
@@ -2512,11 +2539,34 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         createRemoteControllerView(true);
                         getRemoteControllerView().startRemoteUI(true);
                         setActionName(mContentsData.getEpisodeTitle());
-                        startHikariApplication(mContentsData.getVodMetaFullData(), true);
+                        if (mIsOtherService) {
+                            if (mDetailData.getServiceId() == ContentUtils.DTV_CONTENTS_SERVICE_ID) {
+                                requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContentsData.getContentsId(), mContentsData.getEpisodeId(), true);
+                            } else if (mDetailData.getServiceId() == ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                                requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContentsData.getContentsId(), mContentsData.getEpisodeId(), true);
+                            }
+                        } else {
+                            startHikariApplication(mContentsData.getVodMetaFullData(), true);
+                        }
                         break;
                     default:
                         showGetDataFailedToast(getString(R.string.contents_detail_episode_dialog_start_stb_dtv_toast));
                         break;
+                }
+            } else if (getString(R.string.contents_detail_episode_dialog_d_anime_store_start).equals(mItems[which])) {
+                ContentUtils.sendStartSpAppEvent(ContentUtils.ContentsType.D_ANIME_STORE, mContentsData.getTitle(), ContentDetailActivity.this);
+                if (!checkIsAppInstalled(ContentDetailUtils.StartAppServiceType.DANIME)) {
+                    return;
+                }
+                String message = ContentDetailUtils.getStartAppVersionMessage(ContentDetailUtils.StartAppServiceType.DANIME, ContentDetailActivity.this);
+                if (TextUtils.isEmpty(message)) {
+                    String url = ContentDetailUtils.getStartDanimeEpisodeUrl(mContentsData.getEpisodeId());
+                    if (!startApp(url, true)) {
+                        showUninstallDialog(ContentDetailUtils.getStartAppUnInstallMessage(ContentDetailUtils.StartAppServiceType.DANIME,
+                                getApplicationContext()), ContentDetailUtils.getStartAppGoogleUrl(ContentDetailUtils.StartAppServiceType.DANIME));
+                    }
+                } else {
+                    showCommonControlErrorDialog(message, null, null, null, null);
                 }
             }
         }
@@ -3594,7 +3644,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                     ContentDetailUtils.setContentsDetailData(content, detailData, mDetailData);
                     mDetailData = detailData;
+                    if (ContentUtils.DTV_CONTENTS_SERVICE_ID == mDetailData.getServiceId()
+                            || ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                        mOtherEpisodeListData = stbMetaInfoResponseData.getEpisodeListData();
+                        if (mViewPager.getCurrentItem() == ContentDetailUtils.CONTENTS_DETAIL_CHANNEL_EPISODE_TAB_POSITION) {
+                            //ページング刷新.
+                            renewalEpisodeFragment(mOtherEpisodeListData);
+                            return;
+                        }
+                    }
                     checkRecommendResponse();
+                    if (mDetailData.getTotalEpisodeCount() > 1) {
+                        tabType = ContentDetailUtils.TabType.VOD_EPISODE;
+                    }
                     if (tabType != ContentDetailUtils.TabType.VOD) {
                         createViewPagerAdapter();
                     }
@@ -3608,6 +3670,33 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (!mIsOtherServiceDtvChLoading) {
                     showProgressBar(false);
                 }
+            }
+        });
+    }
+
+    /**
+     * エピソードタブ刷新.
+     * @param contentsDataList コンテンツ.
+     */
+    private void renewalEpisodeFragment(final List<ContentsData> contentsDataList) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (getEpisodeFragment() == null) {
+                    return;
+                }
+                if (contentsDataList != null && contentsDataList.size() > 0) {
+                    getEpisodeFragment().addContentsData(contentsDataList);
+                }
+                if (!NetWorkUtils.isOnline(ContentDetailActivity.this)) {
+                    showGetDataFailedToast(getString(R.string.network_nw_error_message));
+                }
+                getEpisodeFragment().setNotifyDataChanged();
+                if (contentsDataList == null && getEpisodeFragment().getContentsData().size() == 0) {
+                    getEpisodeFragment().loadFailed();
+                }
+                getEpisodeFragment().showProgress(false);
             }
         });
     }
@@ -3628,7 +3717,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             return;
         }
         if (mIsOtherService) {
-            getContentDetailInfoFromSearchServer();
+            getContentDetailInfoFromSearchServer(1);
         } else {
             getContentDetailDataFromPlala();
         }

@@ -37,6 +37,7 @@
         <android name="com.google.android.gms.common.api.GoogleApiActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.detail.EpisodeAllReadActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.home.PremiumVideoActivity" rename-class="true"/>

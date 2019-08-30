@@ -167,6 +167,12 @@ public class ContentsData {
     private boolean mIsShowSynopAll = false;
     /** メタデータ.*/
     private VodMetaFullData mVodMetaFullData;
+    /** 話数番号.*/
+    private String mEpisodeNumber;
+    /** 話数表記.*/
+    private String mEpisodeNumberNotation;
+    /** 他サービスエピソードか.*/
+    private  boolean mIsOtherServiceEpisode = false;
 
     /**
      * メタデータ取得.
@@ -1311,6 +1317,53 @@ public class ContentsData {
         this.mIsClipStatusUpdate = mClipStatusUpdate;
     }
 
+    /**
+     * setEpisodeNumber.
+     * @param episodeNumber　episodeNumber
+     */
+    public void setEpisodeNumber(final String episodeNumber) {
+        this.mEpisodeNumber = episodeNumber;
+    }
+
+    /**
+     * getEpisodeNumber.
+     * @return episodeNumber
+     */
+    public String getEpisodeNumber() {
+        return mEpisodeNumber;
+    }
+
+    /**
+     * getEpisodeNumberNotation.
+     * @return episodeNumberNotation
+     */
+    public String getEpisodeNumberNotation() {
+        return mEpisodeNumberNotation;
+    }
+
+    /**
+     * setEpisodeNumberNotation.
+     * @param episodeNumberNotation episodeNumberNotation
+     */
+    public void setEpisodeNumberNotation(final String episodeNumberNotation) {
+        this.mEpisodeNumberNotation = episodeNumberNotation;
+    }
+
+    /**
+     * isOtherServiceEpisode.
+     * @return otherServiceEpisode
+     */
+    public boolean isOtherServiceEpisode() {
+        return mIsOtherServiceEpisode;
+    }
+
+    /**
+     * setOtherServiceEpisode.
+     * @param otherServiceEpisode otherServiceEpisode
+     */
+    public void setOtherServiceEpisode(final boolean otherServiceEpisode) {
+        mIsOtherServiceEpisode = otherServiceEpisode;
+    }
     /**
      * 期限切れコンテンツフラグ取得.
      *

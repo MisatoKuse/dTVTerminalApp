@@ -82,7 +82,10 @@ public class UrlConstants {
          * dアニメストア起動用URL(アニソン（音楽）).
          */
         public static final String D_ANIME_SONG_STORE_START_URL = "danimestore://openWebView?url=https://anime.dmkt-sp.jp/animestore/mci?workId=";
-
+        /**
+         * dアニメストア起動用URL（他サービスエピソード再生）.
+         */
+        public static final String D_ANIME_STORE_START_PLAY_URL = "danimestore://openPlayerView?contentId=%s";
         /**
          * DAZNアプリGoogle Play ストア‎URL.
          */

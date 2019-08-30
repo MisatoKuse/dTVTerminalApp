@@ -150,13 +150,14 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                             mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
                         }
                     }
+                    Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                     if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
-                        bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
+                        copy = BitmapDecodeUtils.createScaleBitmap(mContext, copy, mImageSizeType);
                     }
                     // メモリにプッシュする（詳細画面除外）
                     if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
                         if (mImageView.getTag() != null) {
-                            mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                            mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, copy);
                         }
                     }
                 }

@@ -9,8 +9,7 @@
     <ListView
         android:id="@+id/dtv_contents_channel_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:listSelector="@drawable/content_detail_channel_list_item_selector"/>
+        android:layout_height="wrap_content" />
     <!-- プログレスバー -->
     <RelativeLayout
         android:id="@+id/channel_progress_rl"

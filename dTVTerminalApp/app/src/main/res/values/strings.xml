@@ -421,6 +421,8 @@
     <string name="contents_detail_secure_player_fail_http_error">再生ができませんでした。\nほかのユーザーが既に再生しているため、現在ご利用になれません。(MP-%s)</string>
     <string name="contents_detail_episode_dialog_title">視聴しますか？</string>
     <string name="contents_detail_episode_dialog_dtv_start">dTVで視聴する</string>
+    <string name="contents_detail_episode_dialog_d_anime_store_start">dアニメストアで視聴する</string>
+    <string name="contents_detail_episode_cannot_watch_toast">本コンテンツはテレビで視聴できません</string>
     <string name="contents_detail_episode_detail_all_read">全文を読む</string>
     <string name="contents_detail_episode_dialog_start_stb_dtv_error">テレビで視聴するにはドコモテレビターミナルとペアリングが必要です。</string>
     <string name="contents_detail_episode_dialog_start_stb_dtv_toast">Wi-Fi接続を確認してください</string>
