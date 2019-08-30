@@ -190,7 +190,7 @@
     <!--リモコン -->
     <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>
     <dimen name="remote_watch_by_tv_bottom_width">8dp</dimen>
-    <dimen name="remote_control_display_button_height">52dp</dimen>
+    <dimen name="remote_control_display_button_height">50dp</dimen>
     <dimen name="remote_control_display_button_top_margin">10dp</dimen>
 
     <!-- WatchingVideoActivity -->
