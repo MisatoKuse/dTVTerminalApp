@@ -1540,6 +1540,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             if (isFromEpisode) {
                 requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_STB_APPLICATION);
+                requestJson.put(RELAY_REQUEST_KEY, RELAY_COMMAND_TITLE_DETAIL);
                 requestJson.put(RELAY_COMMAND_START_STB_APPLICATION_INTENT_SETTING_FLAG, RELAY_COMMAND_START_STB_APPLICATION_INTENT_SETTING_FLAG_BLANK);
                 JSONArray objectJSONArray = new JSONArray();
                 if (STB_APPLICATION_DTV.equals(applicationId)) {
